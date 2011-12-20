@@ -1,0 +1,5 @@
+*.o
+pixelpics
+*.pyc
+*.pyo
+a.out
