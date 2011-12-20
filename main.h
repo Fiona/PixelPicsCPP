@@ -48,6 +48,9 @@ public:
     
     void On_Cleanup(); 
 
+    bool Keyboard_key_down(SDLKey Key);
+    std::vector<SDLKey> Keyboard_keys_down;
+
 };
 
 

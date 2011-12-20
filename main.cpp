@@ -6,7 +6,10 @@
  ****************************/
 
 #include <iostream>
+#include <vector>
+#include <algorithm> 
 using namespace std;
+
 #include "main.h"
 
 
@@ -46,6 +49,15 @@ int Main_App::On_Execute()
 
 }
  
+
+bool Main_App::Keyboard_key_down(SDLKey Key)
+{
+    vector<SDLKey>::iterator it = std::find(Keyboard_keys_down.begin(), Keyboard_keys_down.end(), Key);
+    if(it != Keyboard_keys_down.end())
+        return True;      
+    return False;
+}
+
 
 int main(int argc, char* argv[])
 {

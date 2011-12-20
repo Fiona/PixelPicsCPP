@@ -8,12 +8,26 @@
 
 #include "game_objects.h"
 
+#include <iostream>
 
-Ship::Ship(Main_App* game, float pos_x, float pos_y): Process()
+
+Ship::Ship(Main_App* _game, float pos_x, float pos_y): Process()
 {
     x = pos_x;
     y = pos_y;
-    game = game;
+    game = _game;
     image = game->media->gfx["ship"];
+}
+
+void Ship::Execute()
+{
+    if(game->Keyboard_key_down(SDLK_LEFT))
+        x -= 1.0;
+    if(game->Keyboard_key_down(SDLK_RIGHT))
+        x += 1.0;
+    if(game->Keyboard_key_down(SDLK_UP))
+        y -= 1.0;
+    if(game->Keyboard_key_down(SDLK_DOWN))
+        y += 1.0;
 }
 

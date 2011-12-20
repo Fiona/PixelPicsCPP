@@ -24,6 +24,7 @@ private:
 
 public:
     Ship(Main_App* game, float pos_x, float pos_y);
+    void Execute();
 
 };
 
