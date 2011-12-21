@@ -6,16 +6,20 @@
  ****************************/
 
 
-#include "process.h"
+#include "main.h"
 #include <iostream>
  
+
 std::vector<Process*> Process::Process_List;
+bool Process::z_order_dirty;
 
  
 Process::Process()
 {
     x = y = 0.0f;
+    z = 0;
     image = NULL;
+    Process::z_order_dirty = True;
     Process::Process_List.push_back(this);
 }
 

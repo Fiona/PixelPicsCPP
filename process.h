@@ -22,13 +22,13 @@ class Process
 
 public:
     static std::vector<Process*> Process_List;
-    
-public:
+    static bool z_order_dirty;
+
     float   x;
     float   y;
+    int     z;
     Image*  image;
  
-public:
     Process();
     virtual ~Process();
     virtual void Execute();
