@@ -13,6 +13,10 @@
 void Main_App::On_Render()
 {
 
+    SDL_Rect screen_rect = {0,0,640,480};
+
+    SDL_FillRect(surf_display, &screen_rect, 0);
+
     for(std::vector<Process*>::iterator it = Process::Process_List.begin(); it != Process::Process_List.end(); ++it)
     {
 

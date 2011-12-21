@@ -22,12 +22,12 @@ Ship::Ship(Main_App* _game, float pos_x, float pos_y): Process()
 void Ship::Execute()
 {
     if(game->Keyboard_key_down(SDLK_LEFT))
-        x -= 1.0;
+        x -= 10.0;
     if(game->Keyboard_key_down(SDLK_RIGHT))
-        x += 1.0;
+        x += 10.0;
     if(game->Keyboard_key_down(SDLK_UP))
-        y -= 1.0;
+        y -= 10.0;
     if(game->Keyboard_key_down(SDLK_DOWN))
-        y += 1.0;
+        y += 10.0;
 }
 

@@ -12,6 +12,7 @@
 
 #include <GL/gl.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_timer.h>
 #include "media.h"
 #include "process.h"
 #include "image.h"
@@ -30,6 +31,9 @@ class Main_App
 private:
     bool running;
     SDL_Surface*    surf_display;
+    int desired_fps;
+    int delay_ticks;
+    void Wait_till_next_frame();
 
 public:
     Media* media;
