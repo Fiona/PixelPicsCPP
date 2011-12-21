@@ -30,30 +30,27 @@ class Main_App
  
 private:
     bool running;
-    SDL_Surface*    surf_display;
+    SDL_Surface* surf_display;
     int desired_fps;
     int delay_ticks;
+    int frames_rendered;
+    int time_taken_this_frame;
+    int current_fps;
+
     void Wait_till_next_frame();
 
 public:
     Media* media;
+    std::vector<SDLKey> Keyboard_keys_down;
 
     Main_App();
-
     int On_Execute();
-
-    bool On_Init();
-    
-    void On_Event(SDL_Event* Event);
-    
-    void On_Loop();
-    
-    void On_Render();
-    
+    bool On_Init();   
+    void On_Event(SDL_Event* Event);    
+    void On_Loop();    
+    void On_Render();    
     void On_Cleanup(); 
-
     bool Keyboard_key_down(SDLKey Key);
-    std::vector<SDLKey> Keyboard_keys_down;
 
 };
 

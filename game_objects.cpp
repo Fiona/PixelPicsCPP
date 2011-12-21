@@ -29,5 +29,8 @@ void Ship::Execute()
         y -= 10.0;
     if(game->Keyboard_key_down(SDLK_DOWN))
         y += 10.0;
+    if(game->Keyboard_key_down(SDLK_SPACE))
+        new Ship(game, x - 10.0f, y - 10.0f);
+
 }
 

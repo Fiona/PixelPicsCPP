@@ -20,7 +20,8 @@ Main_App::Main_App()
     running = True;
     desired_fps = 60;
     delay_ticks = 0;
-
+    current_fps = 0;
+    frames_rendered = 0;
 }
 
  
@@ -35,7 +36,10 @@ int Main_App::On_Execute()
     SDL_Event event;
 
     desired_fps = 60;
- 
+    frames_rendered = 0;
+    current_fps = 0;
+    time_taken_this_frame = 0;
+
     while(running)
     {
 
@@ -44,9 +48,11 @@ int Main_App::On_Execute()
 
         On_Loop();
         On_Render();
+
+        frames_rendered++;
         
         Wait_till_next_frame();
-
+        
     }
  
     On_Cleanup();
@@ -54,7 +60,7 @@ int Main_App::On_Execute()
     return 0;
 
 }
- 
+
 
 bool Main_App::Keyboard_key_down(SDLKey Key)
 {
@@ -70,6 +76,18 @@ bool Main_App::Keyboard_key_down(SDLKey Key)
 
 void Main_App::Wait_till_next_frame()
 {
+
+    time_taken_this_frame += SDL_GetTicks() - delay_ticks;
+
+    if(time_taken_this_frame > 1000)
+    {
+        if(frames_rendered < desired_fps)
+            current_fps = frames_rendered;
+        else
+            current_fps = desired_fps;
+        frames_rendered = 0;
+        time_taken_this_frame = 0;
+    }
 
     if((SDL_GetTicks() - delay_ticks) < 1000 / desired_fps)
         SDL_Delay((1000 / desired_fps) - (SDL_GetTicks() - delay_ticks));

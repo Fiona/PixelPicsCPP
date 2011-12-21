@@ -7,6 +7,7 @@
 
 
 #include "process.h"
+#include <iostream>
  
 std::vector<Process*> Process::Process_List;
 
@@ -36,10 +37,9 @@ void Process::Draw(SDL_Surface* screen)
         return;
 
     SDL_Rect rect;
- 
     rect.x = x;
     rect.y = y;
- 
+
     SDL_BlitSurface(image->surface, NULL, screen, &rect);
 
 }

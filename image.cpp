@@ -27,7 +27,7 @@ Image::Image(string image)
     if(raw_surface == NULL)
         return;
 
-    surface = SDL_DisplayFormat(raw_surface);
+    surface = SDL_DisplayFormatAlpha(raw_surface);
     SDL_FreeSurface(raw_surface);
 
 }
