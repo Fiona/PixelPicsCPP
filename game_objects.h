@@ -29,4 +29,35 @@ public:
 };
 
 
+/*
+ */
+class Main_input: public Process
+{
+
+private:
+    Main_App* game;
+    void create_vorticies(float x, float y, int type);
+    int current_rotation;
+    int current_rotation_2;
+
+public:
+    Main_input(Main_App* game);
+    void Execute();
+
+};
+
+
+class Shot: public Process
+{
+
+private:
+    Main_App* game;
+    int rotation_to;
+
+public:
+    Shot(Main_App* game, float x, float y, int rotation_to);
+    void Execute();
+
+};
+
 #endif

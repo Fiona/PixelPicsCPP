@@ -48,6 +48,7 @@ int Main_App::On_Execute()
 
         On_Loop();
         On_Render();
+        Do_Process_Clean();
 
         frames_rendered++;
         
@@ -59,6 +60,28 @@ int Main_App::On_Execute()
  
     return 0;
 
+}
+
+
+
+void Main_App::Do_Process_Clean()
+{
+    vector<Process*>::iterator it2;
+    for(std::vector<Process*>::iterator it = Process::Processes_to_kill.begin(); it != Process::Processes_to_kill.end(); ++it)
+    {
+        it2 = std::find(Process::Process_List.begin(), Process::Process_List.end(), *it);
+        if(it2 != Process::Process_List.end())
+            Process::Process_List.erase(it2);
+        //delete *it2;
+        //*it2 = NULL;
+    }
+    Process::Processes_to_kill.clear();
+}
+
+
+void Main_App::Quit()
+{
+    this -> running = False;
 }
 
 

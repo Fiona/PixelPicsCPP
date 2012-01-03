@@ -44,11 +44,13 @@ public:
     std::vector<SDLKey> Keyboard_keys_down;
 
     Main_App();
+    void Quit();
     int On_Execute();
     bool On_Init();   
     void On_Event(SDL_Event* Event);    
     void On_Loop();    
     void On_Render();    
+    void Do_Process_Clean();
     void On_Cleanup(); 
     bool Keyboard_key_down(SDLKey Key);
 

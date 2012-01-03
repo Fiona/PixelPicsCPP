@@ -16,6 +16,7 @@ Media::Media()
 {
 
     gfx.insert(pair<string,Image*>("ship", new Image("ship.png")));
+    gfx.insert(pair<string,Image*>("shot", new Image("shot.png")));
 
 }
 

@@ -8,9 +8,11 @@
 
 #include "main.h"
 #include <iostream>
+#include <math.h>
  
 
 std::vector<Process*> Process::Process_List;
+std::vector<Process*> Process::Processes_to_kill;
 bool Process::z_order_dirty;
 
  
@@ -46,4 +48,17 @@ void Process::Draw(SDL_Surface* screen)
 
     SDL_BlitSurface(image->surface, NULL, screen, &rect);
 
+}
+
+
+void Process::Kill()
+{
+    Process::Processes_to_kill.push_back(this);
+}
+
+
+void Process::move_forward(float distance_to_travel, int rotation_to_move_in)
+{
+    x = x + distance_to_travel * cos(rotation_to_move_in);
+    y = y + distance_to_travel * sin(rotation_to_move_in);
 }

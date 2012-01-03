@@ -22,6 +22,8 @@ bool Main_App::On_Init()
     if(surf_display == NULL)
         return False;
 
+    new Main_input(this);
+
     media = new Media();
 
     new Ship(this, 320.0f, 240.0f);

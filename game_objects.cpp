@@ -11,6 +11,55 @@
 #include <iostream>
 
 
+Main_input::Main_input(Main_App* _game): Process()
+{
+    game = _game;
+    current_rotation = 0;
+    current_rotation_2 = 0;
+}
+
+void Main_input::Execute()
+{
+    if(game -> Keyboard_key_down(SDLK_ESCAPE))
+        game -> Quit();
+    create_vorticies(300.0f, 300.0f, 1);
+}
+
+
+void Main_input::create_vorticies(float x, float y, int type)
+{
+    int range = 1;
+    int amount = 3;
+
+    if(game->Keyboard_key_down(SDLK_SPACE))
+    {
+        range = 4;
+        amount = 20;
+    }
+
+    for(int c = 0; c <= range; c++)
+    {
+        if(type == 1)
+            current_rotation_2 -= amount;
+        else
+            current_rotation += amount;
+
+        if(type == 1)
+        {
+            if(current_rotation_2 < -360)
+                current_rotation_2 = 0;
+        }
+        else
+        {
+            if(current_rotation > 360)
+                current_rotation = 0;
+        }
+
+        new Shot(game, x, y, (type == 1 ? current_rotation_2 : current_rotation));        
+    }
+}
+
+
 Ship::Ship(Main_App* _game, float pos_x, float pos_y): Process()
 {
     x = pos_x;
@@ -29,8 +78,22 @@ void Ship::Execute()
         y -= 10.0;
     if(game->Keyboard_key_down(SDLK_DOWN))
         y += 10.0;
-    if(game->Keyboard_key_down(SDLK_SPACE))
-        new Ship(game, x - 10.0f, y - 10.0f);
-
 }
 
+Shot::Shot(Main_App* _game, float pos_x, float pos_y, int _rotation_to): Process()
+{
+    x = pos_x;
+    y = pos_y;
+    game = _game;
+    rotation_to = _rotation_to;
+    image = game->media->gfx["shot"];
+}
+
+
+void Shot::Execute()
+{
+    move_forward(3.0, rotation_to);
+
+    if(x < 200.0f || x > 440.0f || y < 0.0f || y > 480.0f)
+        Kill();
+}
