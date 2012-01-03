@@ -39,6 +39,8 @@ public:
     void Kill();
 
     void move_forward(float distance_to_travel, int rotation_to_move_in);
+    float deg_to_rad(float deg);
+    float rad_to_deg(float rad);
 
 };
 

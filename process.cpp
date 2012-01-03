@@ -59,6 +59,18 @@ void Process::Kill()
 
 void Process::move_forward(float distance_to_travel, int rotation_to_move_in)
 {
-    x = x + distance_to_travel * cos(rotation_to_move_in);
-    y = y + distance_to_travel * sin(rotation_to_move_in);
+    x = x + distance_to_travel * cos(deg_to_rad(rotation_to_move_in));
+    y = y + distance_to_travel * sin(deg_to_rad(rotation_to_move_in));
+}
+
+
+float Process::deg_to_rad(float deg)
+{
+    return (3.1415926f / 180.0f) * deg;
+}
+ 
+
+float Process::rad_to_deg(float rad)
+{
+    return rad * 180.0f / 3.1415926f;
 }

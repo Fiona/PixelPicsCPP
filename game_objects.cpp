@@ -22,7 +22,8 @@ void Main_input::Execute()
 {
     if(game -> Keyboard_key_down(SDLK_ESCAPE))
         game -> Quit();
-    create_vorticies(300.0f, 300.0f, 1);
+    create_vorticies(200.0f, 300.0f, 1);
+    create_vorticies(400.0f, 300.0f, 1);
 }
 
 
@@ -94,6 +95,6 @@ void Shot::Execute()
 {
     move_forward(3.0, rotation_to);
 
-    if(x < 200.0f || x > 440.0f || y < 0.0f || y > 480.0f)
+    if(x < 50.0f || x > 590.0f || y < 0.0f || y > 480.0f)
         Kill();
 }
