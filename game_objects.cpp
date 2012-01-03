@@ -34,8 +34,8 @@ void Main_input::Execute()
     create_vorticies(200.0f, 300.0f, 1);
     create_vorticies(400.0f, 300.0f, 1);
 
-    current_fps_display->text = str(boost::format("FPS: %1%\n") % game->current_fps);
-    current_process_count_display->text = str(boost::format("Num processes: %1%\n") % Process::Process_List.size());
+    current_fps_display->set_text(str(boost::format("FPS: %1%") % game->current_fps));
+    current_process_count_display->set_text(str(boost::format("Num processes: %1%") % Process::Process_List.size()));
 
 }
 
@@ -47,7 +47,7 @@ void Main_input::create_vorticies(float x, float y, int type)
 
     if(game->Keyboard_key_down(SDLK_SPACE))
     {
-        range = 20;
+        range = 60;
         amount = 10;
     }
 

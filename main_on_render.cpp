@@ -28,8 +28,12 @@ void Main_App::On_Render()
     }
 
     // clear screen
-    SDL_Rect screen_rect = {0,0,640,480};
-    SDL_FillRect(surf_display, &screen_rect, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Set up pre-drawing
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, 0, default_texture_coords);
 
     // Draw in order of z value
     for(std::vector<Process*>::iterator it = Process::Process_List.begin(); it != Process::Process_List.end(); ++it)
@@ -38,12 +42,14 @@ void Main_App::On_Render()
         if(*it == NULL)
             continue;
  
-        (*it)->Draw(surf_display);
+        (*it)->Draw();
 
     }
 
-    // Flippy
-    SDL_Flip(surf_display);
+    // Disable gl stuff and flip buffer
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    SDL_GL_SwapBuffers();
 
 }
 

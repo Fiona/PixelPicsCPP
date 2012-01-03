@@ -14,7 +14,7 @@
 std::vector<Process*> Process::Process_List;
 std::vector<Process*> Process::Processes_to_kill;
 bool Process::z_order_dirty;
-
+GLuint Process::current_bound_texture = -1;
  
 Process::Process()
 {
@@ -36,18 +36,32 @@ void Process::Execute()
 }
 
 
-void Process::Draw(SDL_Surface* screen)
+void Process::Draw()
 {
 
-    if(image == NULL || screen == NULL)
+    if(image == NULL)
         return;
 
-    SDL_Rect rect;
-    tuple<float, float> draw_pos = get_screen_draw_position();
-    rect.x = draw_pos.get<0>();
-    rect.y = draw_pos.get<1>();
+    glPushMatrix();
 
-    SDL_BlitSurface(image->surface, NULL, screen, &rect);
+    // Get drawing coords
+    tuple<float, float> draw_pos = get_screen_draw_position();
+
+    // move to position
+    glTranslatef(draw_pos.get<0>(), draw_pos.get<1>(), 0.0);
+
+    // draw the triangle strip
+    if(Process::current_bound_texture != image->texture)
+    {
+        glBindTexture(GL_TEXTURE_2D, image->texture);
+        glVertexPointer(3, GL_FLOAT, 0, image->vertex_list);
+        Process::current_bound_texture = image->texture;
+    }
+
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glPopMatrix();
 
 }
 
@@ -95,44 +109,61 @@ Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Proce
     y = _y;
     z = Z_TEXT;
     alignment = _alignment;
-    text = _text;
     text_width = 0;
     text_height = 0;
+
+    set_text(_text);
 }
 
 
-void Text::Draw(SDL_Surface* screen)
+void Text::set_text(string new_text)
 {
+
+    text = new_text;
+    generate_new_text_image();
+
+}
+
+
+void Text::generate_new_text_image()
+{
+
+    if(image != NULL)
+        delete image;
 
     if(font == NULL || text == "")
         return;
 
+    // Create a new SDL texture to put our image in.
     SDL_Color colour = {255, 255, 255};
     SDL_Surface *text_surface = TTF_RenderText_Blended(font->font, text.c_str(), colour);
 
-    if(!text_surface)
-        printf("Error drawing text: %s", TTF_GetError());
-    else
-    {
+    // We need to work out the nearest power of 2 so
+    // the texture we generate is valid
+    int width = text_surface->w;
+    int height = text_surface->h;
 
-        SDL_Rect rect;
-        tuple<float, float> draw_pos = get_screen_draw_position();
-        rect.x = draw_pos.get<0>();
-        rect.y = draw_pos.get<1>();
+    text_width = width;
+    text_height = height;
+                       
+    int h = 16;
+    while(h < height)
+        h = h * 2;
+    int w = 16;
+    while(w < width)
+        w = w * 2;
 
-        text_width = text_surface->w;
-        text_height = text_surface->h;
-        
-        SDL_BlitSurface(text_surface, NULL, screen, &rect);
-        SDL_FreeSurface(text_surface);
-    }
+    SDL_Surface *final_surface = SDL_CreateRGBSurface(SDL_HWSURFACE, w, h, 32, 0, 0, 0, 0);
+    memcpy(final_surface, text_surface, sizeof(SDL_Surface));
+    
+    image = new Image(final_surface);
 
 }
 
 
 tuple<float, float> Text::get_screen_draw_position()
 {
- 
+
     switch(alignment)
     {
     case TEXT_ALIGN_TOP:

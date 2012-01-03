@@ -13,6 +13,7 @@
 #include "boost/format.hpp"
 
 #include <GL/gl.h>
+#include <GL/glu.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_timer.h>
 #include <SDL/SDL_ttf.h>
@@ -39,6 +40,7 @@ private:
     int delay_ticks;
     int frames_rendered;
     int time_taken_this_frame;
+    float default_texture_coords[8];
 
     void Wait_till_next_frame();
 

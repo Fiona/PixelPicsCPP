@@ -21,6 +21,8 @@ Main_App::Main_App()
     delay_ticks = 0;
     current_fps = 0;
     frames_rendered = 0;
+    for(uint x = 0; x < 8; x++)
+        default_texture_coords[x] = 0.0f;
 }
 
  
@@ -28,9 +30,7 @@ int Main_App::On_Execute()
 {
 
     if(On_Init() == False)
-    {
         return -1;
-    }
  
     SDL_Event event;
 

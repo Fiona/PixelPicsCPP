@@ -36,6 +36,7 @@ class Process
 public:
     static std::vector<Process*> Process_List;
     static bool z_order_dirty;
+    static GLuint current_bound_texture;
 
     static std::vector<Process*> Processes_to_kill;
 
@@ -47,7 +48,7 @@ public:
     Process();
     virtual ~Process();
     virtual void Execute();
-    virtual void Draw(SDL_Surface* screen);
+    virtual void Draw();
 
     void Kill();
 
@@ -55,7 +56,8 @@ public:
     float deg_to_rad(float deg);
     float rad_to_deg(float rad);
 
-    tuple<float, float> get_screen_draw_position();
+    virtual tuple<float, float> get_screen_draw_position();
+
 };
 
 
@@ -65,9 +67,7 @@ class Text: public Process
 {
 
 public:
-    
     Text(Font* _font, float _x, float _y, int _alignment, string _text);
-    void Draw(SDL_Surface* screen);
 
     Font* font;
     int alignment;    
@@ -76,7 +76,12 @@ public:
     int text_width;
     int text_height;
 
+    void set_text(string _text);
+
     tuple<float, float> get_screen_draw_position();
+
+private:
+    void generate_new_text_image();
 
 };
 

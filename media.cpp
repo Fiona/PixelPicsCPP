@@ -18,7 +18,8 @@ Media::Media()
     gfx.insert(pair<string,Image*>("ship", new Image("ship.png")));
     gfx.insert(pair<string,Image*>("shot", new Image("shot.png")));
 
-    fonts.insert(pair<string,Font*>("basic", new Font("aurulent.ttf", 12)));
+    //fonts.insert(pair<string,Font*>("basic", new Font("boris.ttf", 50)));
+    fonts.insert(pair<string,Font*>("basic", new Font("aurulent.ttf", 16)));
 
 }
 
