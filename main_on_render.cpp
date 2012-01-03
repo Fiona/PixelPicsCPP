@@ -13,7 +13,7 @@
 
 bool sort_by_z(Process* i, Process* j)
 {
-    return ((*i).z < (*j).z);
+    return ((*i).z > (*j).z);
 }
 
  

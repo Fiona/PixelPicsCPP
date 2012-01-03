@@ -44,6 +44,9 @@ public:
     Main_input(Main_App* game);
     void Execute();
 
+    Text* current_fps_display;
+    Text* current_process_count_display;
+
 };
 
 

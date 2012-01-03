@@ -10,13 +10,16 @@
 
 #include <vector>
 #include "boost/tuple/tuple.hpp"
+#include "boost/format.hpp"
 
 #include <GL/gl.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_timer.h>
-#include "media.h"
-#include "process.h"
+#include <SDL/SDL_ttf.h>
 #include "image.h"
+#include "font.h"
+#include "process.h"
+#include "media.h"
 #include "game_objects.h"
 
 // Yeah so what?
@@ -36,13 +39,13 @@ private:
     int delay_ticks;
     int frames_rendered;
     int time_taken_this_frame;
-    int current_fps;
 
     void Wait_till_next_frame();
 
 public:
     Media* media;
     std::vector<SDLKey> Keyboard_keys_down;
+    int current_fps;
 
     Main_App();
     void Quit();

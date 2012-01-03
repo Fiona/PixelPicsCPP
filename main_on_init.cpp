@@ -16,17 +16,17 @@ bool Main_App::On_Init()
     // Initialise SDL
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
         return False;
- 
+    if(TTF_Init() < 0)
+        return False;
+
     surf_display = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 
     if(surf_display == NULL)
         return False;
 
-    new Main_input(this);
-
     media = new Media();
 
-    new Ship(this, .0f, .0f);
+    new Main_input(this);
 
     return True;
 

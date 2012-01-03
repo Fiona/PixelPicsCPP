@@ -14,8 +14,6 @@ using namespace boost;
 #include <vector>
 #include <SDL/SDL.h>
 
-#include "image.h"
-
 
 #define TEXT_ALIGN_TOP_LEFT 0
 #define TEXT_ALIGN_TOP 1
@@ -26,6 +24,8 @@ using namespace boost;
 #define TEXT_ALIGN_BOTTOM_LEFT 6
 #define TEXT_ALIGN_BOTTOM 7
 #define TEXT_ALIGN_BOTTOM_RIGHT 8 
+
+#define Z_TEXT -512
 
 
 /*
@@ -63,7 +63,16 @@ public:
  */
 class Text: public Process
 {
+
+public:
+    
+    Text(Font* _font, float _x, float _y, int _alignment, string _text);
+    void Draw(SDL_Surface* screen);
+
+    Font* font;
     int alignment;    
+    string text;
+
 };
 
 

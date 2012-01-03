@@ -2,27 +2,29 @@
  PIXEL PICS
  2011/2012 STOMPY BLONDIE GAMES
  ****************************
- Media object header
+ Font loading
  ****************************/
 
-#ifndef _MEDIA_H_
-#define _MEDIA_H_
+#ifndef _FONT_H_
+#define _FONT_H_
  
 #include <string>
-#include <map>
 using namespace std;
 
 /*
  */ 
-class Media
+class Font
 {
 
 public:
-    Media();
-    ~Media();
+    TTF_Font* font;
+    
+    Font();
+    Font(string _filename, int _size);
+    ~Font();
 
-    map<string,Image*> gfx;
-    map<string,Font*> fonts;
+    string filename;
+    int size;
 
 };
  

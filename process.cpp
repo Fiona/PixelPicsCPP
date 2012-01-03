@@ -86,3 +86,40 @@ tuple<float, float> Process::get_screen_draw_position()
     return tuple<float, float>(x - (image -> width / 2), y - (image -> height / 2));
 
 }
+
+
+Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Process()
+{
+    font = _font;
+    x = _x;
+    y = _y;
+    z = Z_TEXT;
+    alignment = _alignment;
+    text = _text;
+}
+
+
+void Text::Draw(SDL_Surface* screen)
+{
+
+    if(font == NULL || text == "")
+        return;
+
+    SDL_Color colour = {255, 255, 255};
+    SDL_Surface *text_surface = TTF_RenderText_Blended(font->font, text.c_str(), colour);
+
+    if(!text_surface)
+        printf("Error drawing text: %s", TTF_GetError());
+    else
+    {
+
+        SDL_Rect rect;
+        tuple<float, float> draw_pos = get_screen_draw_position();
+        rect.x = draw_pos.get<0>();
+        rect.y = draw_pos.get<1>();
+
+        SDL_BlitSurface(text_surface, NULL, screen, &rect);
+        SDL_FreeSurface(text_surface);
+    }
+
+}

@@ -15,7 +15,6 @@ using namespace std;
 
 Main_App::Main_App()
 {
-
     surf_display = NULL;
     running = True;
     desired_fps = 60;
