@@ -14,6 +14,8 @@ using namespace std;
 Image::Image()
 {
     surface = NULL;
+    width = 0;
+    height = 0;
 }
 
  
@@ -28,6 +30,10 @@ Image::Image(string image)
         return;
 
     surface = SDL_DisplayFormatAlpha(raw_surface);
+
+    width = surface -> w;
+    height = surface -> h;
+
     SDL_FreeSurface(raw_surface);
 
 }

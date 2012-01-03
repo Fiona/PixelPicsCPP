@@ -29,7 +29,7 @@ void Main_input::Execute()
 
 void Main_input::create_vorticies(float x, float y, int type)
 {
-    int range = 1;
+    int range = 0;
     int amount = 3;
 
     if(game->Keyboard_key_down(SDLK_SPACE))
@@ -65,6 +65,7 @@ Ship::Ship(Main_App* _game, float pos_x, float pos_y): Process()
 {
     x = pos_x;
     y = pos_y;
+    z = -100;
     game = _game;
     image = game->media->gfx["ship"];
 }
@@ -85,6 +86,7 @@ Shot::Shot(Main_App* _game, float pos_x, float pos_y, int _rotation_to): Process
 {
     x = pos_x;
     y = pos_y;
+    z = 100;
     game = _game;
     rotation_to = _rotation_to;
     image = game->media->gfx["shot"];

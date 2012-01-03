@@ -26,7 +26,7 @@ bool Main_App::On_Init()
 
     media = new Media();
 
-    new Ship(this, 320.0f, 240.0f);
+    new Ship(this, .0f, .0f);
 
     return True;
 

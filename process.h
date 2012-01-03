@@ -9,10 +9,23 @@
 #ifndef _PROCESS_H_
 #define _PROCESS_H_
 
+using namespace boost;
+
 #include <vector>
 #include <SDL/SDL.h>
 
 #include "image.h"
+
+
+#define TEXT_ALIGN_TOP_LEFT 0
+#define TEXT_ALIGN_TOP 1
+#define TEXT_ALIGN_TOP_RIGHT 2
+#define TEXT_ALIGN_CENTER_LEFT 3
+#define TEXT_ALIGN_CENTER 4
+#define TEXT_ALIGN_CENTER_RIGHT 5
+#define TEXT_ALIGN_BOTTOM_LEFT 6
+#define TEXT_ALIGN_BOTTOM 7
+#define TEXT_ALIGN_BOTTOM_RIGHT 8 
 
 
 /*
@@ -42,6 +55,15 @@ public:
     float deg_to_rad(float deg);
     float rad_to_deg(float rad);
 
+    tuple<float, float> get_screen_draw_position();
+};
+
+
+/*
+ */
+class Text: public Process
+{
+    int alignment;    
 };
 
 

@@ -9,6 +9,7 @@
 #define _MAIN_H_
 
 #include <vector>
+#include "boost/tuple/tuple.hpp"
 
 #include <GL/gl.h>
 #include <SDL/SDL.h>

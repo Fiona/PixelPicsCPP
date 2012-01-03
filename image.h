@@ -26,6 +26,8 @@ public:
     Image(string image);
     ~Image();
 
+    int width;
+    int height;
 };
  
 #endif

@@ -43,8 +43,9 @@ void Process::Draw(SDL_Surface* screen)
         return;
 
     SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    rect.x = draw_pos.get<0>();
+    rect.y = draw_pos.get<1>();
 
     SDL_BlitSurface(image->surface, NULL, screen, &rect);
 
@@ -73,4 +74,15 @@ float Process::deg_to_rad(float deg)
 float Process::rad_to_deg(float rad)
 {
     return rad * 180.0f / 3.1415926f;
+}
+
+
+tuple<float, float> Process::get_screen_draw_position()
+{
+
+    if(image == NULL)
+        return tuple<float, float>(x, y);
+
+    return tuple<float, float>(x - (image -> width / 2), y - (image -> height / 2));
+
 }
