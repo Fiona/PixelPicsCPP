@@ -18,8 +18,8 @@ Main_input::Main_input(Main_App* _game): Process()
     current_rotation = 0;
     current_rotation_2 = 0;
 
-    current_fps_display = new Text(game->media->fonts["basic"], .0f, .0f, 1, "");
-    current_process_count_display = new Text(game->media->fonts["basic"], .0f, 20.0f, 1, "");
+    current_fps_display = new Text(game->media->fonts["basic"], .0f, .0f, TEXT_ALIGN_TOP_LEFT, "");
+    current_process_count_display = new Text(game->media->fonts["basic"], .0f, 20.0f, TEXT_ALIGN_TOP_LEFT, "");
     new Ship(game, 300.0f, 200.0f);
 
 }

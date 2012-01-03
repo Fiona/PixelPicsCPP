@@ -73,6 +73,11 @@ public:
     int alignment;    
     string text;
 
+    int text_width;
+    int text_height;
+
+    tuple<float, float> get_screen_draw_position();
+
 };
 
 

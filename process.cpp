@@ -96,6 +96,8 @@ Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Proce
     z = Z_TEXT;
     alignment = _alignment;
     text = _text;
+    text_width = 0;
+    text_height = 0;
 }
 
 
@@ -118,8 +120,39 @@ void Text::Draw(SDL_Surface* screen)
         rect.x = draw_pos.get<0>();
         rect.y = draw_pos.get<1>();
 
+        text_width = text_surface->w;
+        text_height = text_surface->h;
+        
         SDL_BlitSurface(text_surface, NULL, screen, &rect);
         SDL_FreeSurface(text_surface);
+    }
+
+}
+
+
+tuple<float, float> Text::get_screen_draw_position()
+{
+ 
+    switch(alignment)
+    {
+    case TEXT_ALIGN_TOP:
+        return tuple<float, float>(x - (text_width / 2), y);
+    case TEXT_ALIGN_TOP_RIGHT:
+        return tuple<float, float>(x - text_width, y);
+    case TEXT_ALIGN_CENTER_LEFT:
+        return tuple<float, float>(x, y - (text_height / 2));
+    case TEXT_ALIGN_CENTER:
+        return tuple<float, float>(x - (text_width / 2), y - (text_height / 2));
+    case TEXT_ALIGN_CENTER_RIGHT:
+        return tuple<float, float>(x - text_width, y - (text_height / 2));
+    case TEXT_ALIGN_BOTTOM_LEFT:
+        return tuple<float, float>(x, y - text_height);
+    case TEXT_ALIGN_BOTTOM:
+        return tuple<float, float>(x - (text_width / 2), y - text_height);
+    case TEXT_ALIGN_BOTTOM_RIGHT:
+        return tuple<float, float>(x - text_width, y - text_height);
+    default:
+        return tuple<float, float>(x, y);
     }
 
 }
