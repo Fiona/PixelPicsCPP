@@ -47,7 +47,7 @@ void Main_input::create_vorticies(float x, float y, int type)
 
     if(game->Keyboard_key_down(SDLK_SPACE))
     {
-        range = 60;
+        range = 150;
         amount = 10;
     }
 

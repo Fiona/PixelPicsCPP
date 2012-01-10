@@ -9,6 +9,8 @@
 using namespace std;
 
 
+Font::Font(){ }
+
 Font::Font(string _filename, int _size)
 {
 

@@ -29,6 +29,8 @@ Main_App::Main_App()
 int Main_App::On_Execute()
 {
 
+    Py_Initialize();
+
     if(On_Init() == False)
         return -1;
  
@@ -47,7 +49,7 @@ int Main_App::On_Execute()
 
         On_Loop();
         On_Render();
-        Do_Process_Clean();
+        //Do_Process_Clean();
 
         frames_rendered++;
         
@@ -65,6 +67,7 @@ int Main_App::On_Execute()
 
 void Main_App::Do_Process_Clean()
 {
+/*
     vector<Process*>::iterator it2;
     for(std::vector<Process*>::iterator it = Process::Processes_to_kill.begin(); it != Process::Processes_to_kill.end(); ++it)
     {
@@ -75,6 +78,7 @@ void Main_App::Do_Process_Clean()
         //*it2 = NULL;
     }
     Process::Processes_to_kill.clear();
+*/
 }
 
 
@@ -116,9 +120,24 @@ void Main_App::Wait_till_next_frame()
 
     delay_ticks = SDL_GetTicks();
 
+    //cout << "cpp " << current_fps << endl;
+
 }
 
 
+
+// ----------------------------------------------------------------------------------
+// ******** PYTHON PROPERTIES ***********
+// ----------------------------------------------------------------------------------
+int Main_App::python_property_get_current_fps()
+{
+    return current_fps;
+}
+
+Media* Main_App::python_property_get_media()
+{
+    return media;
+}
 
 int main(int argc, char* argv[])
 {

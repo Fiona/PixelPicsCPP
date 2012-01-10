@@ -1,0 +1,15 @@
+using gcc ;
+lib SDL : : <name>SDL ; 
+lib pthread : : <name>pthread ; 
+lib m : : <name>m ; 
+lib dl : : <name>dl ; 
+lib SDL_image : : <name>SDL_image ; 
+lib SDL_ttf : : <name>SDL_ttf ; 
+lib freetype : : <name>freetype ; 
+lib z : : <name>z ; 
+lib GL : : <name>GL ; 
+lib python2.7 : : <name>python2.7 ; 
+lib boost_python : : <name>boost_python ; 
+
+
+exe pixelpics : [ glob *.cpp ] z/<link>static freetype/<link>static SDL_ttf/<link>static SDL_image/<link>static SDL/<link>static GL python2.7 boost_python : <cflags>-fno-stack-protector <include>/usr/include/python2.7 ;

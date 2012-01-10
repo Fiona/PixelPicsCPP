@@ -12,7 +12,7 @@ void Main_App::On_Cleanup()
 
     // Bye Bye SDL
     SDL_Quit();
-
+/*
     // Clean up processes
     for(std::vector<Process*>::iterator it = Process::Process_List.begin(); it != Process::Process_List.end(); ++it)
     {
@@ -21,7 +21,7 @@ void Main_App::On_Cleanup()
         delete *it;
         *it = NULL;
     }
-
+*/
     // Kill all the loaded media items
     delete media;
 

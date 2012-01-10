@@ -19,8 +19,15 @@ void Main_App::On_Loop()
 
         if(*it == NULL)
             continue;
- 
-        (*it)->Execute();
+
+        try
+        {
+            (*it)->Execute();
+        }
+        catch(boost::python::error_already_set const &)
+        {
+            PyErr_Print();
+        }
 
     }
 

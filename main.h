@@ -11,6 +11,9 @@
 #include <vector>
 #include "boost/tuple/tuple.hpp"
 #include "boost/format.hpp"
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -59,6 +62,10 @@ public:
     void Do_Process_Clean();
     void On_Cleanup(); 
     bool Keyboard_key_down(SDLKey Key);
+
+    // Python properties
+    int python_property_get_current_fps();
+    Media* python_property_get_media();
 
 };
 

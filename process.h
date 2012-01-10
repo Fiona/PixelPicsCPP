@@ -27,6 +27,7 @@ using namespace boost;
 
 #define Z_TEXT -512
 
+struct ProcessWrapper;
 
 /*
  */
@@ -34,6 +35,8 @@ class Process
 {
 
 public:
+    static boost::python::list internal_list;
+
     static std::vector<Process*> Process_List;
     static bool z_order_dirty;
     static GLuint current_bound_texture;
@@ -57,6 +60,10 @@ public:
     float rad_to_deg(float rad);
 
     virtual tuple<float, float> get_screen_draw_position();
+
+    // Python properties
+    Image* python_property_get_image();
+    void python_property_set_image(Image* _image);
 
 };
 
@@ -82,6 +89,18 @@ public:
 
 private:
     void generate_new_text_image();
+
+};
+
+
+struct ProcessWrapper: Process//, boost::python::wrapper<Process>
+{
+    PyObject *self;
+    ProcessWrapper();
+    void Execute();
+    void Execute_default();
+
+    ProcessWrapper(PyObject *p);
 
 };
 

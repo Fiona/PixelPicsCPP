@@ -12,6 +12,10 @@
 #include <map>
 using namespace std;
 
+
+typedef std::map <string, boost::shared_ptr<Image> > gfx_map;
+
+
 /*
  */ 
 class Media
@@ -21,7 +25,7 @@ public:
     Media();
     ~Media();
 
-    map<string,Image*> gfx;
+    gfx_map gfx;
     map<string,Font*> fonts;
 
 };
