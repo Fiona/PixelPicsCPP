@@ -15,14 +15,19 @@ using namespace std;
 
 Main_App::Main_App()
 {
+
     surf_display = NULL;
     running = True;
     desired_fps = 60;
     delay_ticks = 0;
     current_fps = 0;
+    process_count = 0;
     frames_rendered = 0;
+    python_interface = NULL;
+
     for(uint x = 0; x < 8; x++)
         default_texture_coords[x] = 0.0f;
+
 }
 
  
@@ -49,14 +54,15 @@ int Main_App::On_Execute()
 
         On_Loop();
         On_Render();
-        //Do_Process_Clean();
+        Do_Process_Clean();
 
         frames_rendered++;
+        process_count = Process::Process_List.size();
         
         Wait_till_next_frame();
         
     }
- 
+
     On_Cleanup();
  
     return 0;
@@ -67,7 +73,6 @@ int Main_App::On_Execute()
 
 void Main_App::Do_Process_Clean()
 {
-/*
     vector<Process*>::iterator it2;
     for(std::vector<Process*>::iterator it = Process::Processes_to_kill.begin(); it != Process::Processes_to_kill.end(); ++it)
     {
@@ -78,7 +83,6 @@ void Main_App::Do_Process_Clean()
         //*it2 = NULL;
     }
     Process::Processes_to_kill.clear();
-*/
 }
 
 
@@ -125,19 +129,6 @@ void Main_App::Wait_till_next_frame()
 }
 
 
-
-// ----------------------------------------------------------------------------------
-// ******** PYTHON PROPERTIES ***********
-// ----------------------------------------------------------------------------------
-int Main_App::python_property_get_current_fps()
-{
-    return current_fps;
-}
-
-Media* Main_App::python_property_get_media()
-{
-    return media;
-}
 
 int main(int argc, char* argv[])
 {

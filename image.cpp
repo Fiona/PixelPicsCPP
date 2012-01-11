@@ -35,6 +35,8 @@ Image::Image(string image)
 
     from_sdl_surface(raw_surface);
 
+    SDL_FreeSurface(raw_surface);
+
 }
 
 
@@ -65,8 +67,6 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface)
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height,
                  0, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
 
-    SDL_FreeSurface(raw_surface);
-
     // create vertex list
     for(uint x = 0; x < 12; x++)
         vertex_list[x] = 0.0f;
@@ -80,11 +80,11 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface)
 
 Image::~Image()
 {
-    /*
+
     if(texture > 0)
     {
         glDeleteTextures(1, &texture);
         texture = 0;
     }
-    */
+
 }

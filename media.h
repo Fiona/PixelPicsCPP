@@ -13,7 +13,8 @@
 using namespace std;
 
 
-typedef std::map <string, boost::shared_ptr<Image> > gfx_map;
+typedef std::map <string, Image* > gfx_map;
+typedef std::map <string, Font* > font_map;
 
 
 /*
@@ -26,8 +27,9 @@ public:
     ~Media();
 
     gfx_map gfx;
-    map<string,Font*> fonts;
+    font_map fonts;
 
 };
+
  
 #endif

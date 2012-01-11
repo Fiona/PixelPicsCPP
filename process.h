@@ -50,6 +50,7 @@ public:
  
     Process();
     virtual ~Process();
+    virtual void Init();
     virtual void Execute();
     virtual void Draw();
 
@@ -61,9 +62,22 @@ public:
 
     virtual tuple<float, float> get_screen_draw_position();
 
-    // Python properties
-    Image* python_property_get_image();
-    void python_property_set_image(Image* _image);
+};
+
+
+struct ProcessWrapper : Process
+{
+
+    bool has_init;
+    PyObject *self;
+
+    ProcessWrapper();
+    void Init();
+    void Init_default();
+    void Execute();
+    void Execute_default();
+
+    ProcessWrapper(PyObject *p);
 
 };
 
@@ -74,6 +88,8 @@ class Text: public Process
 {
 
 public:
+    Text();
+    ~Text();
     Text(Font* _font, float _x, float _y, int _alignment, string _text);
 
     Font* font;
@@ -93,14 +109,16 @@ private:
 };
 
 
-struct ProcessWrapper: Process//, boost::python::wrapper<Process>
+struct TextWrapper : Text
 {
+
     PyObject *self;
-    ProcessWrapper();
+
+    TextWrapper(PyObject *p, Font* _font, float _x, float _y, int _alignment, string _text);
     void Execute();
     void Execute_default();
 
-    ProcessWrapper(PyObject *p);
+    TextWrapper(PyObject *p);
 
 };
 

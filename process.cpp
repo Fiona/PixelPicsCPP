@@ -17,36 +17,6 @@ boost::python::list Process::internal_list;
 bool Process::z_order_dirty;
 GLuint Process::current_bound_texture = -1;
 
-void ProcessWrapper::Execute()
-{
-//    cout << "dispatch" << endl;
-/*
-    boost::python::override ex = this->get_override("Execute");
-        ex();
-        return;
-    Process::Execute();
-*/
-    cout << "process wrapper execute" << endl;
-    //this -> Execute();
-    //this->get_override("Execute")();
-    boost::python::call_method<void>(self, "Execute");
-}
-
-
-void ProcessWrapper::Execute_default()
-{
-    cout << "default execute" << endl;
-    this->Process::Execute();
-}
-
-
-ProcessWrapper::ProcessWrapper(PyObject* _self)
-{
-    self = _self;
-    Process::internal_list.append(
-        boost::python::object(boost::python::handle<>(boost::python::borrowed(self)))
-        );
-}
 
  
 Process::Process()
@@ -56,7 +26,6 @@ Process::Process()
     image = NULL;
     Process::z_order_dirty = True;
     Process::Process_List.push_back(this);
-    cout << "base process init" << endl;
 }
 
 
@@ -65,9 +34,13 @@ Process::~Process()
 }
 
 
+void Process::Init()
+{
+}
+
+
 void Process::Execute()
 {
-    cout << "cpp default" << endl;
 }
 
 
@@ -137,15 +110,53 @@ tuple<float, float> Process::get_screen_draw_position()
 }
 
 
-Image* Process::python_property_get_image()
+/*
+ *
+ */
+void ProcessWrapper::Init(){ }
+void ProcessWrapper::Init_default()
 {
-    return image;
-}
-void Process::python_property_set_image(Image* _image)
-{
-    image = _image;
+    this->Process::Init();
 }
 
+
+void ProcessWrapper::Execute()
+{
+    if(!has_init)
+    {
+        boost::python::call_method<void>(self, "Init");    
+        has_init = True;
+    }
+    boost::python::call_method<void>(self, "Execute");
+}
+void ProcessWrapper::Execute_default()
+{
+    this->Process::Execute();
+}
+
+
+ProcessWrapper::ProcessWrapper(PyObject* _self) : Process()
+{
+    has_init = False;
+    self = _self;
+    Process::internal_list.append(
+        boost::python::object(boost::python::handle<>(boost::python::borrowed(self)))
+        );
+}
+
+
+
+/*
+ *
+ */
+Text::Text(): Process()
+{
+    font = NULL;
+    alignment = 0;
+    text_width = 0;
+    text_height = 0;
+    text = "";
+}
 
 Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Process()
 {
@@ -158,6 +169,17 @@ Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Proce
     text_height = 0;
 
     set_text(_text);
+
+}
+
+
+Text::~Text()
+{
+/*
+    if(image != NULL)
+        delete image;
+    image = NULL;
+*/
 }
 
 
@@ -198,13 +220,18 @@ void Text::generate_new_text_image()
     while(w < width)
         w = w * 2;
 
-    SDL_Surface *final_surface = SDL_CreateRGBSurface(SDL_HWSURFACE, w, h, 32, 0, 0, 0, 0);
+    SDL_Surface *final_surface;
 
-    memcpy(final_surface, text_surface, sizeof(SDL_Surface));
-    
+    final_surface = text_surface;
+    final_surface->refcount++;
+
     image = new Image(final_surface);
 
+    SDL_FreeSurface(text_surface);
+    SDL_FreeSurface(final_surface);
+
 }
+
 
 
 tuple<float, float> Text::get_screen_draw_position()
@@ -235,3 +262,20 @@ tuple<float, float> Text::get_screen_draw_position()
 }
 
 
+/*
+ *
+ */
+void TextWrapper::Execute(){}
+void TextWrapper::Execute_default()
+{
+    this->Text::Execute();
+}
+
+
+TextWrapper::TextWrapper(PyObject* _self, Font* _font, float _x, float _y, int _alignment, string _text) : Text(_font, _x, _y, _alignment, _text)
+{
+    self = _self;
+    Process::internal_list.append(
+        boost::python::object(boost::python::handle<>(boost::python::borrowed(self)))
+        );
+}

@@ -118,7 +118,7 @@ Shot::Shot(Main_App* _game, float pos_x, float pos_y, int _rotation_to): Process
 
 void Shot::Execute()
 {
-    move_forward(3.0, rotation_to);
+    //move_forward(3.0, rotation_to);
 
     if(x < 50.0f || x > 590.0f || y < 0.0f || y > 480.0f)
         Kill();

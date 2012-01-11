@@ -27,8 +27,13 @@ void Main_App::On_Loop()
         catch(boost::python::error_already_set const &)
         {
             PyErr_Print();
+            cout << "Error from Python interpreter. Bailing out." << endl;
+            Quit();
         }
 
     }
+
+    if(Keyboard_key_down(SDLK_ESCAPE))
+        Quit();
 
 }

@@ -25,6 +25,7 @@
 #include "process.h"
 #include "media.h"
 #include "game_objects.h"
+#include "python_interface.h"
 
 // Yeah so what?
 #define True true
@@ -44,13 +45,16 @@ private:
     int frames_rendered;
     int time_taken_this_frame;
     float default_texture_coords[8];
+    Python_Interface* python_interface;
 
     void Wait_till_next_frame();
+
 
 public:
     Media* media;
     std::vector<SDLKey> Keyboard_keys_down;
     int current_fps;
+    int process_count;
 
     Main_App();
     void Quit();
@@ -62,10 +66,6 @@ public:
     void Do_Process_Clean();
     void On_Cleanup(); 
     bool Keyboard_key_down(SDLKey Key);
-
-    // Python properties
-    int python_property_get_current_fps();
-    Media* python_property_get_media();
 
 };
 
