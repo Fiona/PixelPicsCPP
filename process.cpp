@@ -23,6 +23,13 @@ Process::Process()
 {
     x = y = 0.0f;
     z = 0;
+    scale = 1.0;
+    rotation = 0;
+    colour.resize(3, 1.0f);
+    alpha = 1.0;
+    image_sequence = 0;
+
+    self = NULL;
     image = NULL;
     Process::z_order_dirty = True;
     Process::Process_List.push_back(this);
@@ -44,6 +51,11 @@ void Process::Execute()
 }
 
 
+void Process::On_Exit()
+{
+}
+
+
 void Process::Draw()
 {
 
@@ -55,10 +67,30 @@ void Process::Draw()
     // Get drawing coords
     tuple<float, float> draw_pos = get_screen_draw_position();
 
-    // move to position
-    glTranslatef(draw_pos.get<0>(), draw_pos.get<1>(), 0.0);
+    // glrotate works by you translating to the point around which you wish to rotate
+    // and applying the rotation you can translate back to apply the real translation
+    // position
+    if(rotation < 0 || rotation > 0)
+    {
+        float rot_x = (draw_pos.get<0>() * scale) + ((image->width/2) * scale);
+        float rot_y = (draw_pos.get<1>() * scale) + ((image->height/2) * scale);
+        glTranslatef(rot_x, rot_y, 0.0f);
+        glRotatef(rotation, 0.0f, 0.0f, 1.0f);
+        glTranslatef(-rot_x, -rot_y, 0.0f);
+    }
 
-    // draw the triangle strip
+    // move to position
+    glTranslatef(draw_pos.get<0>(), draw_pos.get<1>(), 0.0f);
+
+    // scaling
+    if(scale < 1.0f || scale > 1.0f)
+    {
+        glTranslatef(image->width/2, image->height/2, 0.0f);
+        glScalef(scale, scale, 1.0f);
+        glTranslatef(-image->width/2, -image->height/2, 0.0f);
+    }
+                                    
+    // Binding texture
     if(Process::current_bound_texture != image->texture)
     {
         glBindTexture(GL_TEXTURE_2D, image->texture);
@@ -66,7 +98,10 @@ void Process::Draw()
         Process::current_bound_texture = image->texture;
     }
 
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    // Changing colour and transparency
+    glColor4f(colour[0], colour[1], colour[2], alpha);
+
+    // draw the triangle strip
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glPopMatrix();
@@ -77,6 +112,14 @@ void Process::Draw()
 void Process::Kill()
 {
     Process::Processes_to_kill.push_back(this);
+}
+
+
+void Process::Set_colour(boost::python::list list)
+{
+    colour[0] = boost::python::extract<float>(list[0]);
+    colour[2] = boost::python::extract<float>(list[1]);
+    colour[3] = boost::python::extract<float>(list[2]);
 }
 
 
@@ -113,6 +156,24 @@ tuple<float, float> Process::get_screen_draw_position()
 /*
  *
  */
+ProcessWrapper::ProcessWrapper(PyObject* _self) : Process()
+{
+    has_init = False;
+    has_killed = False;
+    self = _self;
+    self_hold = boost::python::object(boost::python::handle<>(boost::python::borrowed(self)));
+    Process::internal_list.append(self_hold);
+}
+
+
+void ProcessWrapper::Kill()
+{
+    boost::python::call_method<void>(self, "On_Exit");
+    Process::internal_list.remove(self_hold);
+    this->Process::Kill();
+}
+
+
 void ProcessWrapper::Init(){ }
 void ProcessWrapper::Init_default()
 {
@@ -129,21 +190,19 @@ void ProcessWrapper::Execute()
     }
     boost::python::call_method<void>(self, "Execute");
 }
+
+
 void ProcessWrapper::Execute_default()
 {
     this->Process::Execute();
 }
 
 
-ProcessWrapper::ProcessWrapper(PyObject* _self) : Process()
+void ProcessWrapper::On_Exit(){ }
+void ProcessWrapper::On_Exit_default()
 {
-    has_init = False;
-    self = _self;
-    Process::internal_list.append(
-        boost::python::object(boost::python::handle<>(boost::python::borrowed(self)))
-        );
+    this->Process::On_Exit();
 }
-
 
 
 /*
@@ -157,6 +216,7 @@ Text::Text(): Process()
     text_height = 0;
     text = "";
 }
+
 
 Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Process()
 {
@@ -175,11 +235,9 @@ Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Proce
 
 Text::~Text()
 {
-/*
     if(image != NULL)
         delete image;
     image = NULL;
-*/
 }
 
 

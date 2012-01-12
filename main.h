@@ -12,7 +12,7 @@
 #include "boost/tuple/tuple.hpp"
 #include "boost/format.hpp"
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <GL/gl.h>

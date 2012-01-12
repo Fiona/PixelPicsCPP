@@ -32,14 +32,23 @@ BOOST_PYTHON_MODULE(game_core)
         .def_readonly("fonts", &Media::fonts)
         ;
 
+    // Expose common vectors
+    boost::python::class_<std::vector<float> >("FloatVector")
+        .def(boost::python::vector_indexing_suite<std::vector<float> >());
+
     // Expose Process object
     class_<Process, ProcessWrapper, boost::noncopyable, boost::shared_ptr<ProcessWrapper> >("Process", init<>())
         .def("Execute", &Process::Execute, &ProcessWrapper::Execute_default)
         .def("Init", &Process::Init, &ProcessWrapper::Init_default)
+        .def("On_Exit", &Process::On_Exit, &ProcessWrapper::On_Exit_default)
 
         .add_property("x", make_getter(&Process::x), make_setter(&Process::x))
         .add_property("y", make_getter(&Process::y), make_setter(&Process::y))
         .add_property("z", make_getter(&Process::z), make_setter(&Process::z))
+        .add_property("colour", make_getter(&Process::colour), &Process::Set_colour)
+        .add_property("alpha", make_getter(&Process::alpha), make_setter(&Process::alpha))
+        .add_property("scale", make_getter(&Process::scale), make_setter(&Process::scale))
+        .add_property("rotation", make_getter(&Process::rotation), make_setter(&Process::rotation))
 
         .add_property(
             "image",
@@ -48,7 +57,7 @@ BOOST_PYTHON_MODULE(game_core)
             )
 
         .def("move_forward", &Process::move_forward)
-        .def("Kill", &Process::Kill)
+        .def("Kill", &ProcessWrapper::Kill)
         ;
 
     // Expose Text object
@@ -71,18 +80,14 @@ BOOST_PYTHON_MODULE(game_core)
 
     // Expose the framework constants
     scope().attr("TEXT_ALIGN_TOP_LEFT") = TEXT_ALIGN_TOP_LEFT;
-/*
-#define TEXT_ALIGN_TOP_LEFT 0
-#define TEXT_ALIGN_TOP 1
-#define TEXT_ALIGN_TOP_RIGHT 2
-#define TEXT_ALIGN_CENTER_LEFT 3
-#define TEXT_ALIGN_CENTER 4
-#define TEXT_ALIGN_CENTER_RIGHT 5
-#define TEXT_ALIGN_BOTTOM_LEFT 6
-#define TEXT_ALIGN_BOTTOM 7
-#define TEXT_ALIGN_BOTTOM_RIGHT 8 
-*/
-
+    scope().attr("TEXT_ALIGN_TOP") = TEXT_ALIGN_TOP;
+    scope().attr("TEXT_ALIGN_TOP_RIGHT") = TEXT_ALIGN_TOP_RIGHT;
+    scope().attr("TEXT_ALIGN_CENTER_LEFT") = TEXT_ALIGN_CENTER_LEFT;
+    scope().attr("TEXT_ALIGN_CENTER") = TEXT_ALIGN_CENTER;
+    scope().attr("TEXT_ALIGN_CENTER_RIGHT") = TEXT_ALIGN_CENTER_RIGHT;
+    scope().attr("TEXT_ALIGN_BOTTOM_LEFT") = TEXT_ALIGN_BOTTOM_LEFT;
+    scope().attr("TEXT_ALIGN_BOTTOM") = TEXT_ALIGN_BOTTOM;
+    scope().attr("TEXT_ALIGN_BOTTOM_RIGHT") = TEXT_ALIGN_BOTTOM_RIGHT;
 
     // Expose all the SDL Keybinding constants
     enum_<SDLKey>("key")

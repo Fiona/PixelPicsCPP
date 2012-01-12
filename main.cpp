@@ -78,7 +78,20 @@ void Main_App::Do_Process_Clean()
     {
         it2 = std::find(Process::Process_List.begin(), Process::Process_List.end(), *it);
         if(it2 != Process::Process_List.end())
+        {
             Process::Process_List.erase(it2);
+            
+        try
+        {
+//            cout << "remove from list" << endl;
+        }
+        catch(boost::python::error_already_set const &)
+        {
+            PyErr_Print();
+            Quit();
+        }
+
+        }
         //delete *it2;
         //*it2 = NULL;
     }

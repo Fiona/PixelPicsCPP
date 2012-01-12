@@ -35,6 +35,9 @@ class Process
 {
 
 public:
+    Process();
+    virtual ~Process();
+
     static boost::python::list internal_list;
 
     static std::vector<Process*> Process_List;
@@ -47,14 +50,22 @@ public:
     float   y;
     int     z;
     Image*  image;
- 
-    Process();
-    virtual ~Process();
+    float   scale;
+    int rotation;
+    std::vector<float> colour;
+    float alpha;
+    int image_sequence;
+
+    PyObject* self;
+
     virtual void Init();
     virtual void Execute();
+    virtual void On_Exit();
     virtual void Draw();
 
     void Kill();
+
+    void Set_colour(boost::python::list list);
 
     void move_forward(float distance_to_travel, int rotation_to_move_in);
     float deg_to_rad(float deg);
@@ -68,16 +79,21 @@ public:
 struct ProcessWrapper : Process
 {
 
+    ProcessWrapper(PyObject *p);
+
     bool has_init;
+    bool has_killed;
     PyObject *self;
+    boost::python::object self_hold;
 
     ProcessWrapper();
     void Init();
     void Init_default();
     void Execute();
     void Execute_default();
-
-    ProcessWrapper(PyObject *p);
+    void On_Exit();
+    void On_Exit_default();
+    void Kill();
 
 };
 
@@ -89,18 +105,16 @@ class Text: public Process
 
 public:
     Text();
-    ~Text();
     Text(Font* _font, float _x, float _y, int _alignment, string _text);
+    ~Text();
 
     Font* font;
     int alignment;    
     string text;
-
     int text_width;
     int text_height;
 
     void set_text(string _text);
-
     tuple<float, float> get_screen_draw_position();
 
 private:
@@ -112,13 +126,13 @@ private:
 struct TextWrapper : Text
 {
 
+    TextWrapper(PyObject *p);
+    TextWrapper(PyObject *p, Font* _font, float _x, float _y, int _alignment, string _text);
+
     PyObject *self;
 
-    TextWrapper(PyObject *p, Font* _font, float _x, float _y, int _alignment, string _text);
     void Execute();
     void Execute_default();
-
-    TextWrapper(PyObject *p);
 
 };
 
