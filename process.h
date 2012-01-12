@@ -44,7 +44,12 @@ public:
     static bool z_order_dirty;
     static GLuint current_bound_texture;
 
+    static void Initialise_draw_strategies();
+
     static std::vector<Process*> Processes_to_kill;
+
+    // Draw strategies
+    void Draw_strategy_primitive_square();
 
     float   x;
     float   y;
@@ -56,6 +61,7 @@ public:
     float alpha;
     int image_sequence;
 
+    string draw_strategy;
     PyObject* self;
 
     virtual void Init();
@@ -65,7 +71,7 @@ public:
 
     void Kill();
 
-    void Set_colour(boost::python::list list);
+    void Set_colour(boost::python::object list);
 
     void move_forward(float distance_to_travel, int rotation_to_move_in);
     float deg_to_rad(float deg);

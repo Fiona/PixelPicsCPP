@@ -41,8 +41,19 @@ void Main_App::On_Render()
 
         if(*it == NULL)
             continue;
- 
-        (*it)->Draw();
+
+        // Call custom strategy if necessary
+        if((*it)->draw_strategy == "")
+            (*it)->Draw();
+        else
+        {
+            map<std::string, FuncGetter>::iterator found = draw_strategies.find((*it)->draw_strategy);
+            if(found != draw_strategies.end())
+            {
+                FuncGetter func = found->second;
+                ((*it)->*func)();
+            }
+        }
 
     }
 

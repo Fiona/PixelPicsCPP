@@ -51,6 +51,9 @@ private:
 
 
 public:
+    typedef void (Process::*FuncGetter)();
+    static map <string, FuncGetter> draw_strategies;
+
     Media* media;
     std::vector<SDLKey> Keyboard_keys_down;
     int current_fps;

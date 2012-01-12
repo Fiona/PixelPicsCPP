@@ -57,6 +57,10 @@ bool Main_App::On_Init()
     if(!python_interface -> initialise_python_interpreter())
         return False;
 
+    // Set up process draw strategies
+    Process::Initialise_draw_strategies();
+    draw_strategies["primitive_square"] = &Process::Draw_strategy_primitive_square;
+
     // Init game
     media = new Media();
     //new Main_input(this);

@@ -54,6 +54,11 @@ class Ship(Process):
         self.y = 300.0
         self.z = -100
         self.image = game.media.gfx['ship']
+
+        # Draw strategy data
+        self.draw_strategy = "primitive_square"
+        self.primitive_square_width = 100.0
+        self.primitive_square_height = 200.0
         
     def Execute(self):
         if game.Keyboard_key_down(key.LEFT):
@@ -64,7 +69,7 @@ class Ship(Process):
             self.y -= 10.0
         if game.Keyboard_key_down(key.DOWN):
             self.y += 10.0
-        self.colour = [.5, .1, 0]
+        self.colour = (.5, .1, 0)
         if game.Keyboard_key_down(key.a):
             self.alpha -= .05
         if game.Keyboard_key_down(key.o):

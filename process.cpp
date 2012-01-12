@@ -18,6 +18,14 @@ bool Process::z_order_dirty;
 GLuint Process::current_bound_texture = -1;
 
 
+/*
+ * Set up draw strategies
+ */
+void Process::Initialise_draw_strategies()
+{
+
+}
+
  
 Process::Process()
 {
@@ -28,6 +36,7 @@ Process::Process()
     colour.resize(3, 1.0f);
     alpha = 1.0;
     image_sequence = 0;
+    draw_strategy = "";
 
     self = NULL;
     image = NULL;
@@ -115,7 +124,7 @@ void Process::Kill()
 }
 
 
-void Process::Set_colour(boost::python::list list)
+void Process::Set_colour(boost::python::object list)
 {
     colour[0] = boost::python::extract<float>(list[0]);
     colour[2] = boost::python::extract<float>(list[1]);
@@ -150,6 +159,15 @@ tuple<float, float> Process::get_screen_draw_position()
 
     return tuple<float, float>(x - (image -> width / 2), y - (image -> height / 2));
 
+}
+
+
+/*
+ * DRAW STRATEGIES
+ */
+void Process::Draw_strategy_primitive_square()
+{
+    cout << "drawing using primitive" << endl;
 }
 
 

@@ -49,6 +49,7 @@ BOOST_PYTHON_MODULE(game_core)
         .add_property("alpha", make_getter(&Process::alpha), make_setter(&Process::alpha))
         .add_property("scale", make_getter(&Process::scale), make_setter(&Process::scale))
         .add_property("rotation", make_getter(&Process::rotation), make_setter(&Process::rotation))
+        .add_property("draw_strategy", make_getter(&Process::draw_strategy), make_setter(&Process::draw_strategy))
 
         .add_property(
             "image",

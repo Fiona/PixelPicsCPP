@@ -13,6 +13,9 @@ using namespace std;
 #include "main.h"
 
 
+map <string, Main_App::FuncGetter> Main_App::draw_strategies;
+
+
 Main_App::Main_App()
 {
 
