@@ -74,7 +74,7 @@ struct map_item {
     static boost::python::list items(Map const& self) {
         boost::python::list t;
         for(typename Map::const_iterator it=self.begin(); it!=self.end(); ++it)
-            t.append( make_tuple(it->first, it->second) );
+            t.append( boost::python::make_tuple(it->first, it->second) );
         return t;
     }
 };

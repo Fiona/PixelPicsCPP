@@ -376,17 +376,20 @@ bool Python_Interface::initialise_python_interpreter()
         initgame_core();
 
         // Give the main app instance
-        main_namespace["game"] = ptr(game);
+		main_namespace["game"] = ptr(game);
+		string const file_name = "core/main.py";
 
         object ignored = exec_file(
-            "core/main.py",
-            main_namespace
+            file_name.c_str(),
+            main_namespace,
+			main_namespace
             );
 
     }
     catch(error_already_set const &)
     {
 
+		cout << "Here" << endl;
         PyErr_Print();
         return False;
 

@@ -84,7 +84,7 @@ void Process::Draw()
         float rot_x = (draw_pos.get<0>() * scale) + ((image->width/2) * scale);
         float rot_y = (draw_pos.get<1>() * scale) + ((image->height/2) * scale);
         glTranslatef(rot_x, rot_y, 0.0f);
-        glRotatef(rotation, 0.0f, 0.0f, 1.0f);
+        glRotatef((float)rotation, 0.0f, 0.0f, 1.0f);
         glTranslatef(-rot_x, -rot_y, 0.0f);
     }
 
@@ -94,9 +94,9 @@ void Process::Draw()
     // scaling
     if(scale < 1.0f || scale > 1.0f)
     {
-        glTranslatef(image->width/2, image->height/2, 0.0f);
+        glTranslatef((float)(image->width/2), (float)(image->height/2), 0.0f);
         glScalef(scale, scale, 1.0f);
-        glTranslatef(-image->width/2, -image->height/2, 0.0f);
+        glTranslatef((float)(-image->width/2), (float)(-image->height/2), 0.0f);
     }
                                     
     // Binding texture
@@ -127,15 +127,15 @@ void Process::Kill()
 void Process::Set_colour(boost::python::object list)
 {
     colour[0] = boost::python::extract<float>(list[0]);
-    colour[2] = boost::python::extract<float>(list[1]);
-    colour[3] = boost::python::extract<float>(list[2]);
+    colour[1] = boost::python::extract<float>(list[1]);
+    colour[2] = boost::python::extract<float>(list[2]);
 }
 
 
 void Process::move_forward(float distance_to_travel, int rotation_to_move_in)
 {
-    x = x + distance_to_travel * cos(deg_to_rad(rotation_to_move_in));
-    y = y + distance_to_travel * sin(deg_to_rad(rotation_to_move_in));
+    x = x + distance_to_travel * cos(deg_to_rad((float)rotation_to_move_in));
+    y = y + distance_to_travel * sin(deg_to_rad((float)rotation_to_move_in));
 }
 
 

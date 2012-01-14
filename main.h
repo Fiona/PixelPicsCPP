@@ -8,6 +8,21 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+#define BOOST_PYTHON_STATIC_LIB
+
+#if _WIN32
+#include <windows.h>
+
+// Thanks microsoft
+#ifndef GL_BGR
+#define GL_BGR GL_BGR_EXT
+#endif
+#ifndef GL_BGRA
+#define GL_BGRA GL_BGRA_EXT
+#endif
+
+#endif
+
 #include <vector>
 #include "boost/tuple/tuple.hpp"
 #include "boost/format.hpp"

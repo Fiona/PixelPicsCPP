@@ -28,7 +28,7 @@ Main_App::Main_App()
     frames_rendered = 0;
     python_interface = NULL;
 
-    for(uint x = 0; x < 8; x++)
+    for(int x = 0; x < 8; x++)
         default_texture_coords[x] = 0.0f;
 
 }
@@ -37,6 +37,7 @@ Main_App::Main_App()
 int Main_App::On_Execute()
 {
 
+	Py_NoSiteFlag = 1;
     Py_Initialize();
 
     if(On_Init() == False)

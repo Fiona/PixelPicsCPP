@@ -68,12 +68,12 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface)
                  0, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
 
     // create vertex list
-    for(uint x = 0; x < 12; x++)
+    for(int x = 0; x < 12; x++)
         vertex_list[x] = 0.0f;
-    vertex_list[0] = width;
-    vertex_list[1] = height;
-    vertex_list[4] = height;
-    vertex_list[6] = width;
+    vertex_list[0] = (float)width;
+    vertex_list[1] = (float)height;
+    vertex_list[4] = (float)height;
+    vertex_list[6] = (float)width;
 
 }
 
