@@ -18,11 +18,14 @@ using namespace boost::python;
  * It exposes all the objects and methods that Python needs
  * to be able to access.
  */
-BOOST_PYTHON_MODULE(game_core)
+BOOST_PYTHON_MODULE(core)
 {
     
     // Expose all media related objects
-    class_<Image>("Image");
+    class_<Image>("Image")
+        .def_readonly("width", &Image::width)
+        .def_readonly("height", &Image::height)
+        ;
     class_<Font>("Font");
 
     STL_MAP_WRAPPING_PTR(string, Image*, "gfxMap");
@@ -49,6 +52,7 @@ BOOST_PYTHON_MODULE(game_core)
         .add_property("alpha", make_getter(&Process::alpha), make_setter(&Process::alpha))
         .add_property("scale", make_getter(&Process::scale), make_setter(&Process::scale))
         .add_property("rotation", make_getter(&Process::rotation), make_setter(&Process::rotation))
+        .add_property("image_sequence", make_getter(&Process::image_sequence), make_setter(&Process::image_sequence))
         .add_property("draw_strategy", make_getter(&Process::draw_strategy), make_setter(&Process::draw_strategy))
 
         .add_property(
@@ -70,8 +74,25 @@ BOOST_PYTHON_MODULE(game_core)
             )
         ;
 
+    // Expose the mouse class
+    class_<Mouse>("Mouse")
+        .add_property("x", make_getter(&Mouse::x))
+        .add_property("y", make_getter(&Mouse::y))
+        .add_property("x_rel", make_getter(&Mouse::x_rel))
+        .add_property("y_rel", make_getter(&Mouse::y_rel))
+        .add_property("left_down", make_getter(&Mouse::left_down))
+        .add_property("left_up", make_getter(&Mouse::left_up))
+        .add_property("right_down", make_getter(&Mouse::right_down))
+        .add_property("right_up", make_getter(&Mouse::right_up))
+        .add_property("middle_down", make_getter(&Mouse::middle_down))
+        .add_property("middle_up", make_getter(&Mouse::middle_up))
+        .add_property("wheel_down", make_getter(&Mouse::wheel_down))
+        .add_property("wheel_up", make_getter(&Mouse::wheel_up))
+        ;
+
     // Expose the main app obj
     class_<Main_App>("Main_App")
+        .add_property("mouse", make_getter(&Main_App::mouse, return_value_policy<reference_existing_object>()))
         .add_property("current_fps", make_getter(&Main_App::current_fps))
         .add_property("process_count", make_getter(&Main_App::process_count))
         .add_property("media", make_getter(&Main_App::media, return_value_policy<reference_existing_object>()))
@@ -373,11 +394,11 @@ bool Python_Interface::initialise_python_interpreter()
         object main_module = import("__main__");
         object main_namespace = main_module.attr("__dict__");
 
-        initgame_core();
+        initcore();
 
         // Give the main app instance
-		main_namespace["game"] = ptr(game);
-		string const file_name = "core/main.py";
+		main_namespace["core"] = ptr(game);
+		string const file_name = "logic/main.py";
 
         object ignored = exec_file(
             file_name.c_str(),
@@ -389,7 +410,6 @@ bool Python_Interface::initialise_python_interpreter()
     catch(error_already_set const &)
     {
 
-		cout << "Here" << endl;
         PyErr_Print();
         return False;
 

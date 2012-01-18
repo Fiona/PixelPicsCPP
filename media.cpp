@@ -15,7 +15,7 @@ using namespace std;
 Media::Media()
 {
 
-    gfx.insert(pair<string, Image*>("ship", new Image("ship.png")));
+    gfx.insert(pair<string, Image*>("ship", new Image("ship.png", 2)));
     gfx.insert(pair<string, Image*>("shot", new Image("shot.png")));
 
     fonts.insert(pair<string,Font*>("basic", new Font("aurulent.ttf", 16)));

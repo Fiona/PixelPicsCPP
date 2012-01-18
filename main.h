@@ -46,6 +46,8 @@
 #define True true
 #define False false
 
+class Mouse;
+
 
 /*
  */
@@ -59,7 +61,6 @@ private:
     int delay_ticks;
     int frames_rendered;
     int time_taken_this_frame;
-    float default_texture_coords[8];
     Python_Interface* python_interface;
 
     void Wait_till_next_frame();
@@ -74,6 +75,8 @@ public:
     int current_fps;
     int process_count;
 
+    Mouse* mouse;
+
     Main_App();
     void Quit();
     int On_Execute();
@@ -87,5 +90,24 @@ public:
 
 };
 
+
+/*
+ */
+class Mouse
+{
+public:
+    float x;
+    float y;
+    float x_rel;
+    float y_rel;
+    bool left_down;
+    bool left_up;
+    bool right_down;
+    bool right_up;
+    bool middle_down;
+    bool middle_up;
+    bool wheel_down;
+    bool wheel_up;
+};
 
 #endif

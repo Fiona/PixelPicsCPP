@@ -33,7 +33,7 @@ void Main_App::On_Render()
     // Set up pre-drawing
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, default_texture_coords);
+    glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
 
     // Draw in order of z value
     for(std::vector<Process*>::iterator it = Process::Process_List.begin(); it != Process::Process_List.end(); ++it)

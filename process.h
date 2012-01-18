@@ -44,12 +44,8 @@ public:
     static bool z_order_dirty;
     static GLuint current_bound_texture;
 
-    static void Initialise_draw_strategies();
-
+    static vector<float> default_texture_coords;
     static std::vector<Process*> Processes_to_kill;
-
-    // Draw strategies
-    void Draw_strategy_primitive_square();
 
     float   x;
     float   y;
@@ -63,6 +59,7 @@ public:
 
     string draw_strategy;
     PyObject* self;
+    boost::python::object self_;
 
     virtual void Init();
     virtual void Execute();
@@ -79,6 +76,9 @@ public:
 
     virtual tuple<float, float> get_screen_draw_position();
 
+    // Draw strategies
+    void Draw_strategy_primitive_square();
+
 };
 
 
@@ -90,7 +90,7 @@ struct ProcessWrapper : Process
     bool has_init;
     bool has_killed;
     PyObject *self;
-    boost::python::object self_hold;
+    boost::python::object self_;
 
     ProcessWrapper();
     void Init();
@@ -141,6 +141,7 @@ struct TextWrapper : Text
     void Execute_default();
 
 };
+
 
 
 #endif 

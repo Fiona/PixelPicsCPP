@@ -21,17 +21,20 @@ class Image
 {
 
 public:
-    GLuint texture;
-
     Image();
-    Image(string image);
+    Image(string image, int _num_of_frames = 1);
     Image(SDL_Surface *existing_surface);
     ~Image();
 
     int width;
     int height;
+    int num_of_frames;
+    int surface_width;
+    float sequence_pos;
 
+    GLuint texture;
     float vertex_list[12];
+    vector<float> get_tex_coord_list(int sequence);
 
 private:
     void from_sdl_surface(SDL_Surface* raw_surface);

@@ -21,8 +21,8 @@ bool Main_App::On_Init()
         return False;
 
     // create window
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
     surf_display = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
 
     if(surf_display == NULL)
@@ -43,14 +43,17 @@ bool Main_App::On_Init()
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glEnable(GL_LINE_SMOOTH);
+    //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    //glEnable(GL_LINE_SMOOTH);
 
     // Need this little titbit
-    default_texture_coords[0] = 1.0f;
-    default_texture_coords[1] = 1.0f;
-    default_texture_coords[3] = 1.0f;
-    default_texture_coords[4] = 1.0f;
+    Process::default_texture_coords[0] = 1.0f;
+    Process::default_texture_coords[1] = 1.0f;
+    Process::default_texture_coords[3] = 1.0f;
+    Process::default_texture_coords[4] = 1.0f;
+
+    // Create the mouse
+    mouse = new Mouse();
 
     // Start up python
     python_interface = new Python_Interface(this);
@@ -58,7 +61,6 @@ bool Main_App::On_Init()
         return False;
 
     // Set up process draw strategies
-    Process::Initialise_draw_strategies();
     draw_strategies["primitive_square"] = &Process::Draw_strategy_primitive_square;
 
     // Init game

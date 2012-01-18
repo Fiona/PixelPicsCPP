@@ -27,10 +27,8 @@ Main_App::Main_App()
     process_count = 0;
     frames_rendered = 0;
     python_interface = NULL;
-
-    for(int x = 0; x < 8; x++)
-        default_texture_coords[x] = 0.0f;
-
+    mouse = NULL;
+    
 }
 
  
@@ -52,6 +50,15 @@ int Main_App::On_Execute()
 
     while(running)
     {
+
+        // Reset mouse states for these
+        mouse->left_up = False;
+        mouse->right_up = False;
+        mouse->middle_up = False;
+        mouse->x_rel = 0.0f;
+        mouse->y_rel = 0.0f;
+        mouse->wheel_up = False;
+        mouse->wheel_down = False;
 
         while(SDL_PollEvent(&event))
             On_Event(&event);
@@ -84,17 +91,6 @@ void Main_App::Do_Process_Clean()
         if(it2 != Process::Process_List.end())
         {
             Process::Process_List.erase(it2);
-            
-        try
-        {
-//            cout << "remove from list" << endl;
-        }
-        catch(boost::python::error_already_set const &)
-        {
-            PyErr_Print();
-            Quit();
-        }
-
         }
         //delete *it2;
         //*it2 = NULL;
@@ -140,8 +136,6 @@ void Main_App::Wait_till_next_frame()
         SDL_Delay((1000 / desired_fps) - (SDL_GetTicks() - delay_ticks));
 
     delay_ticks = SDL_GetTicks();
-
-    //cout << "cpp " << current_fps << endl;
 
 }
 

@@ -15,7 +15,7 @@ void Main_App::On_Event(SDL_Event* Event)
 {
 
     if(Event->type == SDL_QUIT)
-        running = False;
+        running = False;    
 
     switch(Event->type)
     {
@@ -25,10 +25,58 @@ void Main_App::On_Event(SDL_Event* Event)
         break;
  
     case SDL_KEYUP:
+    {
         vector<SDLKey>::iterator it;
         it = std::find(Keyboard_keys_down.begin(), Keyboard_keys_down.end(), Event -> key.keysym.sym);
         if(it != Keyboard_keys_down.end())
             Keyboard_keys_down.erase(it);
+        break;
+    }
+
+    case SDL_MOUSEMOTION:
+        mouse->x = Event->motion.x;
+        mouse->y = Event->motion.y;
+        mouse->x_rel = Event->motion.xrel;
+        mouse->y_rel = Event->motion.yrel;
+        break;
+
+    case SDL_MOUSEBUTTONDOWN:
+        switch(Event->button.button)
+        {
+        case SDL_BUTTON_LEFT:
+            mouse->left_down = True;
+            break;
+        case SDL_BUTTON_RIGHT:
+            mouse->right_down = True;
+            break;
+        case SDL_BUTTON_MIDDLE:
+            mouse->middle_down = True;
+            break;
+        case SDL_BUTTON_WHEELUP:
+            mouse->wheel_up = True;
+            break;
+        case SDL_BUTTON_WHEELDOWN:
+            mouse->wheel_down = True;
+            break;
+        }
+        break;
+
+    case SDL_MOUSEBUTTONUP:
+        switch(Event->button.button)
+        {
+        case SDL_BUTTON_LEFT:
+            mouse->left_down = False;
+            mouse->left_up = True;
+            break;
+        case SDL_BUTTON_RIGHT:
+            mouse->right_down = False;
+            mouse->right_up = True;
+            break;
+        case SDL_BUTTON_MIDDLE:
+            mouse->middle_down = False;
+            mouse->middle_up = True;
+            break;
+        }
         break;
 
     }
