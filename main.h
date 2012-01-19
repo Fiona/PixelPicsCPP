@@ -23,6 +23,10 @@
 
 #endif
 
+// Yeah so what?
+#define True true
+#define False false
+
 #include <vector>
 #include "boost/tuple/tuple.hpp"
 #include "boost/format.hpp"
@@ -41,10 +45,6 @@
 #include "media.h"
 #include "game_objects.h"
 #include "python_interface.h"
-
-// Yeah so what?
-#define True true
-#define False false
 
 class Mouse;
 

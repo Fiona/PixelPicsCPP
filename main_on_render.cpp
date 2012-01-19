@@ -11,6 +11,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include <typeinfo>
+
 bool sort_by_z(Process* i, Process* j)
 {
     return ((*i).z > (*j).z);
@@ -39,9 +41,9 @@ void Main_App::On_Render()
     for(std::vector<Process*>::iterator it = Process::Process_List.begin(); it != Process::Process_List.end(); ++it)
     {
 
-        if(*it == NULL or (*it)->is_dead)
+        if(*it == NULL || (*it)->is_dead == True)
             continue;
-
+        
         // Call custom strategy if necessary
         if((*it)->draw_strategy == "")
             (*it)->Draw();

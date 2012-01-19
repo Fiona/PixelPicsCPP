@@ -64,8 +64,8 @@ int Main_App::On_Execute()
             On_Event(&event);
 
         On_Loop();
-        On_Render();
         Do_Process_Clean();
+        On_Render();
 
         frames_rendered++;
         process_count = Process::Process_List.size();

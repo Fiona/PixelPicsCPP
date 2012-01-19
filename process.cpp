@@ -64,7 +64,7 @@ void Process::On_Exit()
 void Process::Draw()
 {
 
-    if(image == NULL)
+    if(image == NULL || is_dead == True)
         return;
 
     glPushMatrix();
@@ -287,13 +287,14 @@ Text::Text(): Process()
 }
 
 
-Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Process()
+Text::Text(Font* _font, float _x, float _y, int _alignment, string _text, bool _show_shadow): Process()
 {
     font = _font;
     x = _x;
     y = _y;
     z = Z_TEXT;
     alignment = _alignment;
+    show_shadow = _show_shadow;
     text_width = 0;
     text_height = 0;
     image_sequence = 1;
@@ -403,15 +404,17 @@ void TextWrapper::Execute_default()
 
 void TextWrapper::Kill()
 {
+/*
     Process::internal_list.remove(self_);
     this->Process::Kill();
     boost::python::decref(self);
     boost::python::decref(self);
     self = NULL;
+*/
 }
 
 
-TextWrapper::TextWrapper(PyObject* _self, Font* _font, float _x, float _y, int _alignment, string _text) : Text(_font, _x, _y, _alignment, _text)
+TextWrapper::TextWrapper(PyObject* _self, Font* _font, float _x, float _y, int _alignment, string _text, bool _show_shadow) : Text(_font, _x, _y, _alignment, _text, _show_shadow)
 {
     self = _self;
     self_ = boost::python::object(boost::python::handle<>(boost::python::borrowed(self)));
