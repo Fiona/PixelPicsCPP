@@ -11,7 +11,6 @@
 #include <iostream>
 #include <algorithm>
 
-#include <typeinfo>
 
 bool sort_by_z(Process* i, Process* j)
 {

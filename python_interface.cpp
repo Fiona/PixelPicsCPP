@@ -99,6 +99,7 @@ BOOST_PYTHON_MODULE(core)
         .add_property("current_fps", make_getter(&Main_App::current_fps))
         .add_property("process_count", make_getter(&Main_App::process_count))
         .add_property("media", make_getter(&Main_App::media, return_value_policy<reference_existing_object>()))
+        .add_property("path_application_dir", make_getter(&Main_App::path_application_data))
         .def("Keyboard_key_down", &Main_App::Keyboard_key_down)
         .def("Quit", &Main_App::Quit)
         ;

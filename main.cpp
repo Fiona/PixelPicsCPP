@@ -16,6 +16,25 @@ using namespace std;
 map <string, Main_App::FuncGetter> Main_App::draw_strategies;
 
 
+bool dir_exists(const char* path)
+{
+    if(path == NULL)
+        return false;
+
+    bool exists = false;
+
+    DIR* dir = opendir(path);
+
+    if(dir != NULL)
+    {
+        exists = True;    
+        (void)closedir(dir);
+    }
+
+    return exists;
+}
+
+
 Main_App::Main_App()
 {
 
@@ -28,7 +47,30 @@ Main_App::Main_App()
     frames_rendered = 0;
     python_interface = NULL;
     mouse = NULL;
-    
+
+    // Get the application data path depending on system
+#if __LINUX__
+    path_application_data = getenv("HOME");
+    path_application_data += "/.pixelpics";
+#elif __APPLE__
+    path_application_data = getenv("HOME");
+    path_application_data += "/Library/Application Support";
+    path_application_data += "/PixelPics";
+#elif __WIN32
+    TCHAR path[MAX_PATH];
+    if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, path)))
+        path_application_data = path;
+    path_application_data += "\StompyBlondie";
+
+    if(!dir_exists(path_application_data.c_str()))
+        mkdir(path_application_data.c_str(), 0777);
+
+    path_application_data += "\PixelPics";
+#endif
+
+    if(!dir_exists(path_application_data.c_str()))
+        mkdir(path_application_data.c_str(), 0777);
+
 }
 
  
@@ -89,11 +131,7 @@ void Main_App::Do_Process_Clean()
     {
         it2 = std::find(Process::Process_List.begin(), Process::Process_List.end(), *it);
         if(it2 != Process::Process_List.end())
-        {
             Process::Process_List.erase(it2);
-        }
-        //delete *it2;
-        //*it2 = NULL;
     }
     Process::Processes_to_kill.clear();
 }

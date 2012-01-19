@@ -27,6 +27,8 @@
 #define True true
 #define False false
 
+#include <dirent.h>
+
 #include <vector>
 #include "boost/tuple/tuple.hpp"
 #include "boost/format.hpp"
@@ -74,6 +76,7 @@ public:
     std::vector<SDLKey> Keyboard_keys_down;
     int current_fps;
     int process_count;
+    string path_application_data;
 
     Mouse* mouse;
 
