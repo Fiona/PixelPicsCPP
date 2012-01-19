@@ -94,12 +94,9 @@ void Process::Draw()
         glTranslatef((float)(-image->width/2), (float)(-image->height/2), 0.0f);
     }
 
+    // Text texture coords to different ones for texture atlasses
     if(image->num_of_frames > 1)
-    {
-        glTranslatef((float)image->width, (float)image->height, 0.0f);
-        glScalef(-1.0, -1.0,1.0f);
-        glTexCoordPointer(2, GL_FLOAT, 0, &image->get_tex_coord_list(image_sequence)[0]);
-    }
+        glTexCoordPointer(2, GL_FLOAT, 0, &image->texture_coords[image_sequence-1][0]);
                                
     // Binding texture
     if(Process::current_bound_texture != image->texture)
@@ -115,6 +112,7 @@ void Process::Draw()
     // draw the triangle strip
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+    // Reset the texture coords back to default if necessary
     if(image->num_of_frames > 1)
         glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
 
@@ -235,7 +233,7 @@ ProcessWrapper::ProcessWrapper(PyObject* _self) : Process()
 void ProcessWrapper::Kill()
 {
     boost::python::call_method<void>(self, "On_Exit");
-   Process::internal_list.remove(self_);
+    Process::internal_list.remove(self_);
     this->Process::Kill();
 }
 
@@ -293,6 +291,7 @@ Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Proce
     alignment = _alignment;
     text_width = 0;
     text_height = 0;
+    image_sequence = 1;
 
     set_text(_text);
 

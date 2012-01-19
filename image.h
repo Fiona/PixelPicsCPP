@@ -31,13 +31,14 @@ public:
     int num_of_frames;
     int surface_width;
     float sequence_pos;
-
     GLuint texture;
     float vertex_list[12];
-    vector<float> get_tex_coord_list(int sequence);
+    vector< vector<float> > texture_coords;
 
 private:
     void from_sdl_surface(SDL_Surface* raw_surface);
+    void make_vertex_list();
+    void make_texture_coords();
 
 };
  

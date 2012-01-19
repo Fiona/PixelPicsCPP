@@ -47,30 +47,64 @@ Image::Image(string image, int _num_of_frames)
     else
         sequence_pos = 0.0f;
 
-    // create vertex list
-    for(int x = 0; x < 12; x++)
-        vertex_list[x] = 0.0f;
-    vertex_list[0] = (float)width;
-    vertex_list[1] = (float)height;
-    vertex_list[4] = (float)height;
-    vertex_list[6] = (float)width;
+    make_vertex_list();
+    make_texture_coords();
 
 }
 
 
-
 Image::Image(SDL_Surface *existing_surface)
 {
+
     from_sdl_surface(existing_surface);
     num_of_frames = 1;
+    make_vertex_list();
+    make_texture_coords();
 
-    // create vertex list
+}
+
+
+void Image::make_texture_coords()
+{
+
+    float texture_x_from;
+    float texture_x_to;
+
+    texture_coords = vector< vector<float> >(num_of_frames, vector<float>(8, 0.0f));
+
+    for(int frame = 0; frame < num_of_frames; frame++)
+    {
+
+        if(num_of_frames == 1)
+        {
+            texture_x_from = 0.0f;
+            texture_x_to = 1.0;
+        }
+        else
+        {
+            texture_x_from = sequence_pos*frame;
+            texture_x_to = (sequence_pos*frame) + sequence_pos;
+        }
+
+        texture_coords[frame][0] = texture_x_to; texture_coords[frame][1] = 1.0f;
+        texture_coords[frame][2] = texture_x_from; texture_coords[frame][3] = 1.0f;
+        texture_coords[frame][4] = texture_x_to;
+        texture_coords[frame][6] = texture_x_from;
+
+    }
+
+}
+
+
+void Image::make_vertex_list()
+{
+
     for(int x = 0; x < 12; x++)
         vertex_list[x] = 0.0f;
     vertex_list[0] = (float)width;
     vertex_list[1] = (float)height;
     vertex_list[4] = (float)height;
-    vertex_list[6] = (float)width;
+    vertex_list[6] = (float)width; 
 
 }
 
@@ -94,30 +128,6 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface)
     
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height,
                  0, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
-
-}
-
-
-vector<float> Image::get_tex_coord_list(int sequence)
-{
-    
-    vector<float> t_list(8);
-
-    float texture_x_from = (((float)width * (sequence - 1)) / (float)surface_width);
-    float texture_x_to = (((float)width * sequence) / (float)surface_width);
-
-    t_list[0] = texture_x_from; t_list[1] = 0.0;
-    t_list[2] = texture_x_to; t_list[3] = 0.0;
-    t_list[4] = texture_x_from; t_list[5] = 1.0;
-    t_list[6] = texture_x_to; t_list[7] = 1.0;
-/*
-    t_list[0] = 0.0; t_list[1] = 0.0;
-    t_list[2] = 0.5; t_list[3] = 0.0;
-    t_list[4] = 0.0; t_list[5] = 1.0;
-    t_list[6] = 0.5; t_list[7] = 1.0;
-
- */
-    return t_list;
 
 }
 

@@ -21,11 +21,6 @@ class Game(Process):
         self.current_fps_display.text = "FPS: " + str(core.current_fps)
         self.current_process_count_display.text = "Num processes: " + str(core.process_count)
 
-        print "Mouse pos - ", core.mouse.x, "x", core.mouse.y, " ... Rel - ", core.mouse.x_rel, "x", core.mouse.y_rel
-        print "Left down - ", core.mouse.left_down, " ... up - ",  core.mouse.left_up
-        print "Right down - ", core.mouse.right_down, " ... up - ",  core.mouse.right_up
-        print "Middle down - ", core.mouse.middle_down, " ... up - ",  core.mouse.middle_up
-        print "Wheel down - ", core.mouse.wheel_down, " ... up - ",  core.mouse.wheel_up
 
     def create_vorticies(self, x, y, type):
         _range = 1
@@ -57,29 +52,25 @@ class Ship(Process):
     def __init__(self, game):
         Process.__init__(self)
         self.game = game
+        self.image_sequence = 2
+        self.x = 500.0
+        self.y = 300.0
+        self.z = -100
+        self.image = core.media.gfx['ship']
 
         # Draw strategy data
         self.draw_strategy = "primitive_square"
         self.draw_strategy_call_parent = True
         self.primitive_square_filled = False
-        self.primitive_square_width = 0
-        self.primitive_square_height = 0
+        self.primitive_square_width = self.image.width
+        self.primitive_square_height = self.image.height
         self.primitive_square_x = 0.0
         self.primitive_square_y = 0.0
         self.primitive_square_line_width = 1.0
         self.primitive_square_colour = (0.0, 1.0, 0.0, 1.0)
-        
 
-    def Init(self):
-        self.x = 500.0
-        self.y = 300.0
-        self.z = -100
-        self.image = core.media.gfx['ship']
-        self.primitive_square_width = self.image.width
-        self.primitive_square_height = self.image.height
         
     def Execute(self):
-        self.image_sequence = 1
 
         self.primitive_square_x = self.x - (self.image.width/2)
         self.primitive_square_y = self.y - (self.image.height/2)
@@ -104,8 +95,6 @@ class Ship(Process):
             self.rotation -= 10
         if core.Keyboard_key_down(key.j):
             self.rotation += 10
-
-
         
 
 
@@ -124,6 +113,7 @@ class Shot(Process):
 
         if self.x < 50.0 or self.x > 590.0 or self.y < 0.0 or self.y > 480.0:
             self.Kill()
-        
+
+
 
 Game()
