@@ -72,6 +72,7 @@ BOOST_PYTHON_MODULE(core)
             make_getter(&Text::text),
             &Text::set_text
             )
+        .def("Kill", &TextWrapper::Kill)
         ;
 
     // Expose the mouse class

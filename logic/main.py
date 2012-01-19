@@ -10,6 +10,8 @@ class Game(Process):
         self.current_fps_display = Text(core.media.fonts["basic"], 0, 0, TEXT_ALIGN_TOP_LEFT, "TESTING")
         self.current_process_count_display = Text(core.media.fonts["basic"], 0, 20.0, TEXT_ALIGN_TOP_LEFT, "")
 
+        self.text_show = True
+
 
     def Execute(self):
         if core.Keyboard_key_down(key.ESCAPE):
@@ -44,7 +46,6 @@ class Game(Process):
                     self.current_rotation = 0
 
             Shot(self, x, y, self.current_rotation_2  if type else self.current_rotation)
-
 
 
 class Ship(Process):

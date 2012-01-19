@@ -31,6 +31,7 @@ Process::Process()
     alpha = 1.0;
     image_sequence = 1;
     draw_strategy = "";
+    is_dead = False;
 
     self = NULL;
 
@@ -124,6 +125,7 @@ void Process::Draw()
 void Process::Kill()
 {
     Process::Processes_to_kill.push_back(this);
+    is_dead = True;
 }
 
 
@@ -235,6 +237,9 @@ void ProcessWrapper::Kill()
     boost::python::call_method<void>(self, "On_Exit");
     Process::internal_list.remove(self_);
     this->Process::Kill();
+    boost::python::decref(self);
+    boost::python::decref(self);
+    self = NULL;
 }
 
 
@@ -395,12 +400,22 @@ void TextWrapper::Execute_default()
 }
 
 
+
+void TextWrapper::Kill()
+{
+    Process::internal_list.remove(self_);
+    this->Process::Kill();
+    boost::python::decref(self);
+    boost::python::decref(self);
+    self = NULL;
+}
+
+
 TextWrapper::TextWrapper(PyObject* _self, Font* _font, float _x, float _y, int _alignment, string _text) : Text(_font, _x, _y, _alignment, _text)
 {
     self = _self;
-    Process::internal_list.append(
-        boost::python::object(boost::python::handle<>(boost::python::borrowed(self)))
-        );
+    self_ = boost::python::object(boost::python::handle<>(boost::python::borrowed(self)));
+    Process::internal_list.append(self_);
 }
 
 

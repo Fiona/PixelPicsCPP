@@ -39,7 +39,7 @@ void Main_App::On_Render()
     for(std::vector<Process*>::iterator it = Process::Process_List.begin(); it != Process::Process_List.end(); ++it)
     {
 
-        if(*it == NULL)
+        if(*it == NULL or (*it)->is_dead)
             continue;
 
         // Call custom strategy if necessary

@@ -56,6 +56,8 @@ public:
     std::vector<float> colour;
     float alpha;
     int image_sequence;
+    
+    bool is_dead;
 
     string draw_strategy;
     PyObject* self;
@@ -86,13 +88,13 @@ struct ProcessWrapper : Process
 {
 
     ProcessWrapper(PyObject *p);
+    ProcessWrapper();
 
     bool has_init;
     bool has_killed;
     PyObject *self;
     boost::python::object self_;
 
-    ProcessWrapper();
     void Init();
     void Init_default();
     void Execute();
@@ -123,6 +125,8 @@ public:
     void set_text(string _text);
     tuple<float, float> get_screen_draw_position();
 
+    void Kill();
+
 private:
     void generate_new_text_image();
 
@@ -136,9 +140,11 @@ struct TextWrapper : Text
     TextWrapper(PyObject *p, Font* _font, float _x, float _y, int _alignment, string _text);
 
     PyObject *self;
+    boost::python::object self_;
 
     void Execute();
     void Execute_default();
+    void Kill();
 
 };
 
