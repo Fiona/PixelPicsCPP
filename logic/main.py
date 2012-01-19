@@ -8,7 +8,12 @@ class Game(Process):
         Ship(self)
 
         self.current_fps_display = Text(core.media.fonts["basic"], 0, 0, TEXT_ALIGN_TOP_LEFT, "TESTING")
+        self.current_fps_display.shadow = 2
+        self.current_fps_display.shadow_colour = (1.0, 0.0, 0.0)
+
         self.current_process_count_display = Text(core.media.fonts["basic"], 0, 20.0, TEXT_ALIGN_TOP_LEFT, "")
+        self.current_process_count_display.shadow = 2
+        self.current_process_count_display.shadow_colour = (1.0, 0.0, 0.0)
 
         self.text_show = True
 

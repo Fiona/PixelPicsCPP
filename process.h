@@ -113,7 +113,7 @@ class Text: public Process
 
 public:
     Text();
-    Text(Font* _font, float _x, float _y, int _alignment, string _text, bool _show_shadow = False);
+    Text(Font* _font, float _x, float _y, int _alignment, string _text);
     ~Text();
 
     Font* font;
@@ -121,11 +121,14 @@ public:
     string text;
     int text_width;
     int text_height;
-    bool show_shadow;
+    int shadow;
+    std::vector<float> shadow_colour;
 
     void set_text(string _text);
+    void Set_shadow_colour(boost::python::object list);
     tuple<float, float> get_screen_draw_position();
 
+    void Draw();
     void Kill();
 
 private:
@@ -138,7 +141,7 @@ struct TextWrapper : Text
 {
 
     TextWrapper(PyObject *p);
-    TextWrapper(PyObject *p, Font* _font, float _x, float _y, int _alignment, string _text, bool _show_shadow = False);
+    TextWrapper(PyObject *p, Font* _font, float _x, float _y, int _alignment, string _text);
 
     PyObject *self;
     boost::python::object self_;

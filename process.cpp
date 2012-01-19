@@ -287,14 +287,16 @@ Text::Text(): Process()
 }
 
 
-Text::Text(Font* _font, float _x, float _y, int _alignment, string _text, bool _show_shadow): Process()
+Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Process()
 {
+
     font = _font;
     x = _x;
     y = _y;
     z = Z_TEXT;
     alignment = _alignment;
-    show_shadow = _show_shadow;
+    shadow = 0;
+    shadow_colour.resize(3, 1.0f);
     text_width = 0;
     text_height = 0;
     image_sequence = 1;
@@ -318,6 +320,14 @@ void Text::set_text(string new_text)
     text = new_text;
     generate_new_text_image();
 
+}
+
+
+void Text::Set_shadow_colour(boost::python::object list)
+{
+    shadow_colour[0] = boost::python::extract<float>(list[0]);
+    shadow_colour[1] = boost::python::extract<float>(list[1]);
+    shadow_colour[2] = boost::python::extract<float>(list[2]);
 }
 
 
@@ -391,6 +401,68 @@ tuple<float, float> Text::get_screen_draw_position()
 }
 
 
+void Text::Draw()
+{
+
+    if(is_dead == True)
+        return;
+
+    glPushMatrix();
+
+    // Get drawing coords
+    tuple<float, float> draw_pos = get_screen_draw_position();
+
+    // glrotate works by you translating to the point around which you wish to rotate
+    // and applying the rotation you can translate back to apply the real translation
+    // position
+    if(rotation < 0 || rotation > 0)
+    {
+        float rot_x = (draw_pos.get<0>() * scale) + ((image->width/2) * scale);
+        float rot_y = (draw_pos.get<1>() * scale) + ((image->height/2) * scale);
+        glTranslatef(rot_x, rot_y, 0.0f);
+        glRotatef((float)rotation, 0.0f, 0.0f, 1.0f);
+        glTranslatef(-rot_x, -rot_y, 0.0f);
+    }
+
+    // move to position
+    glTranslatef(draw_pos.get<0>(), draw_pos.get<1>(), 0.0f);
+
+    // scaling
+    if(scale < 1.0f || scale > 1.0f)
+    {
+        glTranslatef((float)(image->width/2), (float)(image->height/2), 0.0f);
+        glScalef(scale, scale, 1.0f);
+        glTranslatef((float)(-image->width/2), (float)(-image->height/2), 0.0f);
+    }
+                               
+    // Binding texture
+    if(Process::current_bound_texture != image->texture)
+    {
+        glBindTexture(GL_TEXTURE_2D, image->texture);
+        glVertexPointer(3, GL_FLOAT, 0, image->vertex_list);
+        Process::current_bound_texture = image->texture;
+    }
+
+    // Shadow stuff
+    if(shadow > 0)
+    {
+        glTranslatef(shadow, shadow, 0.0f);
+        glColor4f(shadow_colour[0], shadow_colour[1], shadow_colour[2], alpha);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glTranslatef(-shadow, -shadow, 0.0f);
+    }
+
+    // Changing colour and transparency
+    glColor4f(colour[0], colour[1], colour[2], alpha);
+
+    // draw the triangle strip
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glPopMatrix();
+
+}
+
+
 /*
  *
  */
@@ -404,17 +476,16 @@ void TextWrapper::Execute_default()
 
 void TextWrapper::Kill()
 {
-/*
+    is_dead = True;
     Process::internal_list.remove(self_);
     this->Process::Kill();
     boost::python::decref(self);
     boost::python::decref(self);
     self = NULL;
-*/
 }
 
 
-TextWrapper::TextWrapper(PyObject* _self, Font* _font, float _x, float _y, int _alignment, string _text, bool _show_shadow) : Text(_font, _x, _y, _alignment, _text, _show_shadow)
+TextWrapper::TextWrapper(PyObject* _self, Font* _font, float _x, float _y, int _alignment, string _text) : Text(_font, _x, _y, _alignment, _text)
 {
     self = _self;
     self_ = boost::python::object(boost::python::handle<>(boost::python::borrowed(self)));

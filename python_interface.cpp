@@ -66,12 +66,14 @@ BOOST_PYTHON_MODULE(core)
         ;
 
     // Expose Text object
-    class_<Text, TextWrapper, boost::noncopyable, boost::shared_ptr<TextWrapper> >("Text", init<Font*, float, float, int, string>())
+    class_<Text, TextWrapper, boost::noncopyable, boost::shared_ptr<TextWrapper> >("Text", init< Font*, float, float, int, string >())
         .add_property(
             "text",
             make_getter(&Text::text),
             &Text::set_text
             )
+        .add_property("shadow", make_getter(&Text::shadow), make_setter(&Text::shadow))
+        .add_property("shadow_colour", make_getter(&Text::shadow_colour), &Text::Set_shadow_colour)
         .def("Kill", &TextWrapper::Kill)
         ;
 
