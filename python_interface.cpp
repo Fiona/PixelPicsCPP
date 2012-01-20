@@ -35,6 +35,13 @@ BOOST_PYTHON_MODULE(core)
         .def_readonly("fonts", &Media::fonts)
         ;
 
+    // Expose settings object
+    class_<Settings>("Settings")
+        .add_property("screen_width", make_getter(&Settings::screen_width), make_setter(&Settings::screen_width))
+        .add_property("screen_height", make_getter(&Settings::screen_height), make_setter(&Settings::screen_height))
+        .add_property("full_screen", make_getter(&Settings::full_screen), make_setter(&Settings::full_screen))
+        ;
+
     // Expose common vectors
     boost::python::class_<std::vector<float> >("FloatVector")
         .def(boost::python::vector_indexing_suite<std::vector<float> >());
@@ -99,7 +106,9 @@ BOOST_PYTHON_MODULE(core)
         .add_property("current_fps", make_getter(&Main_App::current_fps))
         .add_property("process_count", make_getter(&Main_App::process_count))
         .add_property("media", make_getter(&Main_App::media, return_value_policy<reference_existing_object>()))
-        .add_property("path_application_dir", make_getter(&Main_App::path_application_data))
+        .add_property("settings", make_getter(&Main_App::settings, return_value_policy<reference_existing_object>()))
+        .add_property("path_application_data", make_getter(&Main_App::path_application_data))
+        .add_property("path_settings_file", make_getter(&Main_App::path_settings_file))
         .def("Keyboard_key_down", &Main_App::Keyboard_key_down)
         .def("Quit", &Main_App::Quit)
         ;

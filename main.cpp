@@ -16,25 +16,6 @@ using namespace std;
 map <string, Main_App::FuncGetter> Main_App::draw_strategies;
 
 
-bool dir_exists(const char* path)
-{
-    if(path == NULL)
-        return false;
-
-    bool exists = false;
-
-    DIR* dir = opendir(path);
-
-    if(dir != NULL)
-    {
-        exists = True;    
-        (void)closedir(dir);
-    }
-
-    return exists;
-}
-
-
 Main_App::Main_App()
 {
 
@@ -62,14 +43,18 @@ Main_App::Main_App()
         path_application_data = path;
     path_application_data += "\StompyBlondie";
 
-    if(!dir_exists(path_application_data.c_str()))
-        mkdir(path_application_data.c_str(), 0777);
+    if(!boost::filesystem::exists(path_application_data.c_str()) || !boost::filesystem::is_directory(path_application_data.c_str()))
+        boost::filesystem::create_directory(path_application_data.c_str());
 
     path_application_data += "\PixelPics";
 #endif
 
-    if(!dir_exists(path_application_data.c_str()))
-        mkdir(path_application_data.c_str(), 0777);
+    if(!boost::filesystem::exists(path_application_data.c_str()) || !boost::filesystem::is_directory(path_application_data.c_str()))
+        boost::filesystem::create_directory(path_application_data.c_str());
+
+    // Deal with loading default settings etc
+    path_settings_file = path_application_data + FILE_SETTINGS;
+    settings = new Settings(path_settings_file);
 
 }
 
@@ -177,6 +162,54 @@ void Main_App::Wait_till_next_frame()
 
 }
 
+
+Settings::Settings(){ }
+
+Settings::Settings(string _filename)
+{
+
+    filename = _filename;
+
+    using boost::property_tree::ptree;
+    ptree pt;
+
+    try
+    {
+        read_json(filename, pt);
+    }
+    catch(std::exception &e)
+    {
+        pt.put("screen_width", DEFAULT_SETTING_SCREEN_WIDTH);
+        pt.put("screen_height", DEFAULT_SETTING_SCREEN_HEIGHT);
+        pt.put("full_screen", DEFAULT_SETTING_FULL_SCREEN);
+    }
+
+    screen_width = pt.get<float>("screen_width");
+    screen_height = pt.get<float>("screen_height");
+    full_screen = pt.get<bool>("full_screen");
+
+}
+
+
+bool Settings::save()
+{
+
+    using boost::property_tree::ptree;
+    ptree pt;
+    pt.put("screen_width", screen_width);
+    pt.put("screen_height", screen_height);
+    pt.put("full_screen", full_screen);
+    try
+    {
+        write_json(filename, pt);
+        return True;
+    }
+    catch(std::exception &e)
+    {
+        return False;
+    }
+
+}
 
 
 int main(int argc, char* argv[])

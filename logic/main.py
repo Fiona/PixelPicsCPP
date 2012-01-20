@@ -2,7 +2,17 @@ from core import *
 
 
 class Game(Process):
+    settings = {
+        'screen_width' : 1,
+        'screen_height' : 1,
+        'full_screen' : 1
+        }
+    
     def Init(self):
+        self.settings['screen_width'] = core.settings.screen_width
+        self.settings['screen_height'] = core.settings.screen_height
+        self.settings['full_screen'] = core.settings.full_screen
+        
         self.current_rotation = 0
         self.current_rotation_2 = 0
         Ship(self)
@@ -22,8 +32,8 @@ class Game(Process):
         if core.Keyboard_key_down(key.ESCAPE):
             core.Quit()
 
-        self.create_vorticies(200.0, 300.0, 1)
-        self.create_vorticies(400.0, 300.0, 1)
+        self.create_vorticies((self.settings['screen_width'] / 2) - 200, (self.settings['screen_height'] / 2), 1)
+        self.create_vorticies((self.settings['screen_width'] / 2) + 200, (self.settings['screen_height'] / 2), 1)
 
         self.current_fps_display.text = "FPS: " + str(core.current_fps)
         self.current_process_count_display.text = "Num processes: " + str(core.process_count)
@@ -117,7 +127,7 @@ class Shot(Process):
     def Execute(self):
         self.move_forward(3.0, self.angle)
 
-        if self.x < 50.0 or self.x > 590.0 or self.y < 0.0 or self.y > 480.0:
+        if self.x < 50.0 or self.x > self.game.settings['screen_width'] - 50 or self.y < 0.0 or self.y > self.game.settings['screen_height'] + 50:
             self.Kill()
 
 

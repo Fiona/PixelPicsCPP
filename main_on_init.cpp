@@ -23,7 +23,12 @@ bool Main_App::On_Init()
     // create window
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
-    surf_display = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
+    Uint32 flags = SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL;
+
+    if(settings->full_screen)
+        flags |= SDL_FULLSCREEN;
+
+    surf_display = SDL_SetVideoMode(settings->screen_width, settings->screen_height, 32, flags);
 
     if(surf_display == NULL)
         return False;
@@ -32,12 +37,12 @@ bool Main_App::On_Init()
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glViewport(0, 0, 640, 480);
+    glViewport(0, 0, settings->screen_width, settings->screen_height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    glOrtho(0, 640, 480, 0, -1, 1);
+    glOrtho(0, settings->screen_width, settings->screen_height, 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
 
     glEnable(GL_TEXTURE_2D);
