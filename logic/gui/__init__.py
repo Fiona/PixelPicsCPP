@@ -84,8 +84,8 @@ class GUI(Process):
         self.primitive_square_x = 0.0
         self.primitive_square_y = 0.0
         self.primitive_square_colour = (0.0, 0.0, 0.0, 1.0)
+        self.mouse = Mouse(self.game)
 
-    
 
     def Execute(self):
         self.current_game_state_gui_ticks += 1
@@ -213,7 +213,7 @@ class GUI(Process):
         self.parent_window = None
                                                   
         if self.gui_state == GUI_STATE_LOGO:
-            self.mouse.alpha = 0.0
+            self.mouse.alpha = 1.0
             self.mouse.z = Z_MOUSE
             self.mouse.image = None
             self.current_visible_gui_elements[GUI_STATE_LOGO]['stompyblondie_logo'] = Stompyblondie_Logo(self.game)

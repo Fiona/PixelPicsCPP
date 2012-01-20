@@ -20,6 +20,8 @@ bool Main_App::On_Init()
     if(TTF_Init() < 0)
         return False;
 
+    SDL_ShowCursor(SDL_DISABLE);
+
     // create window
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
@@ -60,6 +62,9 @@ bool Main_App::On_Init()
     // Create the mouse
     mouse = new Mouse();
 
+    // Load all the media
+    media = new Media();
+
     // Start up python
     python_interface = new Python_Interface(this);
     if(!python_interface -> initialise_python_interpreter())
@@ -67,10 +72,6 @@ bool Main_App::On_Init()
 
     // Set up process draw strategies
     draw_strategies["primitive_square"] = &Process::Draw_strategy_primitive_square;
-
-    // Init game
-    media = new Media();
-    //new Main_input(this);
 
     return True;
 

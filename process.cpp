@@ -229,6 +229,8 @@ ProcessWrapper::ProcessWrapper(PyObject* _self) : Process()
 
     this->Process::self = self;
     this->Process::self_ = self_;
+
+    //boost::python::call_method<void>(self, "Execute");
 }
 
 
@@ -254,7 +256,7 @@ void ProcessWrapper::Execute()
 {
     if(!has_init)
     {
-        boost::python::call_method<void>(self, "Init");    
+        //boost::python::call_method<void>(self, "Init");    
         has_init = True;
     }
     boost::python::call_method<void>(self, "Execute");

@@ -61,6 +61,7 @@ class Game(Process):
     def __init__(self, core):
         Process.__init__(self)
         self.core = core
+        self.Init()
         
 
     def Init(self):
@@ -80,9 +81,6 @@ class Game(Process):
             
         #self.manager = Puzzle_manager(self)
         self.gui = GUI(self)
-        self.gui.mouse = Mouse(self)
-
-        #self.gui.Init()
         self.switch_game_state_to(GAME_STATE_LOGO)
 
 
