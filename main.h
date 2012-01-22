@@ -14,6 +14,8 @@
 // lololol microsoft on the GL_BGR thing
 #if _WIN32
 #include <windows.h>
+#include <Shlobj.h>
+#include <string>
 
 #ifndef GL_BGR
 #define GL_BGR GL_BGR_EXT
@@ -21,6 +23,12 @@
 #ifndef GL_BGRA
 #define GL_BGRA GL_BGRA_EXT
 #endif
+
+#define SEPARATOR "\\"
+
+#else 
+
+#define SEPARATOR "/"
 
 #endif
 
@@ -31,13 +39,13 @@
 // Default settings
 #define DEFAULT_SETTING_SCREEN_WIDTH 1024
 #define DEFAULT_SETTING_SCREEN_HEIGHT 768
-#define DEFAULT_SETTING_FULL_SCREEN "1"
+#define DEFAULT_SETTING_FULL_SCREEN "0"
 
 // Misc defines
-#define FILE_SETTINGS "/settings.json"
+#define FILE_SETTINGS "settings.json"
 
 // STD and boost includes
-#include <dirent.h>
+//#include <dirent.h>
 #include <vector>
 #include "boost/tuple/tuple.hpp"
 #include "boost/format.hpp"

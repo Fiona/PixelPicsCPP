@@ -37,23 +37,22 @@ Main_App::Main_App()
     path_application_data = getenv("HOME");
     path_application_data += "/Library/Application Support";
     path_application_data += "/PixelPics";
-#elif __WIN32
+#elif __WIN32__
     TCHAR path[MAX_PATH];
-    if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, path)))
-        path_application_data = path;
-    path_application_data += "\StompyBlondie";
-
+    if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path)))
+		path_application_data = string(path);
+    path_application_data += "\\StompyBlondie";
     if(!boost::filesystem::exists(path_application_data.c_str()) || !boost::filesystem::is_directory(path_application_data.c_str()))
         boost::filesystem::create_directory(path_application_data.c_str());
 
-    path_application_data += "\PixelPics";
+    path_application_data += "\\PixelPics";
 #endif
 
     if(!boost::filesystem::exists(path_application_data.c_str()) || !boost::filesystem::is_directory(path_application_data.c_str()))
         boost::filesystem::create_directory(path_application_data.c_str());
 
     // Deal with loading default settings etc
-    path_settings_file = path_application_data + FILE_SETTINGS;
+    path_settings_file = path_application_data + SEPARATOR + FILE_SETTINGS;
     settings = new Settings(path_settings_file);
 
 }
@@ -182,6 +181,7 @@ Settings::Settings(string _filename)
         pt.put("screen_width", DEFAULT_SETTING_SCREEN_WIDTH);
         pt.put("screen_height", DEFAULT_SETTING_SCREEN_HEIGHT);
         pt.put("full_screen", DEFAULT_SETTING_FULL_SCREEN);
+		write_json(filename, pt);
     }
 
     screen_width = pt.get<float>("screen_width");
