@@ -223,6 +223,80 @@ void Process::Draw_strategy_gui_button()
 }
 
 
+void Process::Draw_strategy_gui_window_frame()
+{
+
+    if(alpha <= 0.0)
+        return;
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float draw_x = draw_pos.get<0>();
+    float draw_y = draw_pos.get<1>();
+
+    glPushMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+
+    //glVertex2f(top_left[0], top_left[1])
+    //glVertex2f(bottom_right[0], top_left[1])
+    //glVertex2f(bottom_right[0], bottom_right[1])
+    //glVertex2f(top_left[0], bottom_right[1])
+
+    // Background grey shadow
+    glColor4f(0.7, 0.7, 0.7, 0.7);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x + 12.0f,        draw_y + 12.0f);
+    glVertex2f(draw_x + width - 4.0f, draw_y + 12.0f);
+    glVertex2f(draw_x + width - 4.0f, draw_y + height - 4.0f);
+    glVertex2f(draw_x + 12.0f,        draw_y + height - 4.0f);
+    glEnd();
+
+    // Background of frame
+    glBegin(GL_QUADS);
+    glColor4f(0.8, 1.0, 1.0, 1.0);
+    glVertex2f(draw_x + 8.0f,          draw_y + 8.0f);
+    glVertex2f(draw_x + width - 8.0f,  draw_y + 8.0f);
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glVertex2f(draw_x + width - 8.0f,  draw_y + height - 8.0f);
+    glVertex2f(draw_x + 8.0f,          draw_y + height - 8.0f);
+    glEnd();
+
+    // Frame border
+    glColor4f(0.7, 0.7, 0.7, 1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(draw_x + 10.0f,          draw_y + 10.0f);
+    glVertex2f(draw_x + width - 10.0f,  draw_y + 10.0f);
+    glVertex2f(draw_x + width - 10.0f,  draw_y + height - 10.0f);
+    glVertex2f(draw_x + 10.0f,          draw_y + height - 10.0f);
+    glEnd();
+
+    // Title shadow
+    glColor4f(0.7, 0.7, 0.7, 0.7);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x + 16.0f,   draw_y + 6.0f);
+    glVertex2f(draw_x + 250.0f,  draw_y + 6.0f);
+    glVertex2f(draw_x + 250.0f,  draw_y + 20.0f);
+    glVertex2f(draw_x + 16.0f,   draw_y + 20.0f);
+    glEnd();
+
+    // Title 
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x + 10.0f,   draw_y);
+    glVertex2f(draw_x + 244.0f,  draw_y);
+    glVertex2f(draw_x + 244.0f,  draw_y + 16.0f);
+    glVertex2f(draw_x + 10.0f,   draw_y + 16.0f);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+
+    glPopMatrix();
+
+}
+
+
 void Process::Draw_strategy_primitive_square()
 {
 
@@ -478,7 +552,10 @@ void Text::generate_new_text_image()
         delete image;
 
     if(font == NULL || text == "")
+    {
+        image = NULL;
         return;
+    }
 
     // Create a new SDL texture to put our image in.
     SDL_Color colour = {255, 255, 255};
@@ -544,7 +621,7 @@ tuple<float, float> Text::get_screen_draw_position()
 void Text::Draw()
 {
 
-    if(is_dead == True)
+    if(is_dead == True || image == NULL)
         return;
 
     glPushMatrix();

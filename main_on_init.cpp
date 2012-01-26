@@ -73,6 +73,7 @@ bool Main_App::On_Init()
     // Set up process draw strategies
     draw_strategies["primitive_square"] = &Process::Draw_strategy_primitive_square;
     draw_strategies["gui_button"] = &Process::Draw_strategy_gui_button;
+    draw_strategies["gui_window_frame"] = &Process::Draw_strategy_gui_window_frame;
 
     return True;
 

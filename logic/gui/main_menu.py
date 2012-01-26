@@ -182,16 +182,13 @@ class GUI_main_menu_quit_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
-        """
         self.conf_box = GUI_element_confirmation_box(
             self.game,
             self,
-            Really Quit?,
-            [Are you sure you want to quit?],
+            "Really Quit?",
+            ["Are you sure you want to quit?"],
             confirm_callback = self.confirm
             )
-            """
-        pass
 
 
     def confirm(self):
@@ -250,7 +247,7 @@ class GUI_main_menu_credits_button(GUI_element_button):
     
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
-        #GUI_main_menu_credits(self.game, self)
+        GUI_main_menu_credits(self.game, self)
         
 
     def mouse_over(self):
@@ -270,3 +267,104 @@ class GUI_main_menu_credits_button(GUI_element_button):
     def On_Exit(self):
         GUI_element_button.On_Exit(self)
         self.text.Kill()
+
+
+
+class GUI_main_menu_credits(GUI_element_window):
+    title = "Credits"
+    height = 420
+    width = 450
+    objs = {}
+    text_to_write = [
+        "PixelPics",
+        "",
+        "Dedicated to Felix",
+        "",
+        "",
+        " -- Programming -- ",
+        "Fiona Burrows",
+        "",
+        " -- Additional Programming -- ",
+        "Mark Frimston",
+        "",
+        " -- Visuals -- ",
+        "Fiona Burrows",
+        "",
+        " -- Audio -- ",
+        "Fiona Burrows",
+        "",
+        " -- Level Design -- ",
+        "Fiona Burrows",
+        "Mark Frimston",
+        "",
+        "Stompy Blondie Games, 2011-2012",
+        ]
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+        # Draw strategy data
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_filled = True
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
+
+    
+    def gui_init(self):
+        self.z = Z_GUI_OBJECT_LEVEL_8
+        self.x = (self.game.settings['screen_width'] / 2) - (self.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - (self.height / 2)
+        GUI_element_window.gui_init(self)
+
+        self.objs = {}
+        y = 0
+        for text in self.text_to_write:
+            txt = Text(self.game.core.media.fonts['basic'], self.x + (self.width/2), self.y + 30 + y, TEXT_ALIGN_CENTER, text)
+            txt.z = self.z - 2
+            txt.colour = (0.0, 0.0, 0.0)
+            self.objs['text_' + str(y)] = txt
+            y += 15
+
+        GUI_main_menu_credits_close_button(self.game, self)
+
+        self.game.gui.block_gui_keyboard_input = True
+        self.x = 0
+        self.y = 0
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+
+
+    def On_Exit(self):
+        GUI_element_window.On_Exit(self)
+        self.game.gui.block_gui_keyboard_input = False
+        for x in self.objs:
+            self.objs[x].Kill()
+
+
+
+class GUI_main_menu_credits_close_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Close"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.gui_init()
+        self.x = self.parent.x + self.parent.width - 100
+        self.y = self.parent.y + self.parent.height - 50
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        self.parent.Kill()
+

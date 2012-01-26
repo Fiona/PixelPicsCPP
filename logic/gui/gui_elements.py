@@ -185,10 +185,6 @@ class GUI_element(Process):
 
 
     def get_screen_draw_position(self):
-        # IMPLEMENT
-        # TODO
-        # DO THIS
-        return (self.x, self.y)
         if not self.scroll_element is None:
             self.clip = ((self.scroll_element.x, self.scroll_element.y), (self.scroll_element.width, self.scroll_element.height))
             return (self.x + self.scroll_element.x, self.y + self.scroll_element.y - self.scroll_element.contents_scroll_location)
@@ -298,6 +294,262 @@ class GUI_element_button(GUI_element):
         GUI_element.On_Exit(self)
         if self.generic_button:
             self.generic_button_text_object.Kill()
+
+
+
+class GUI_element_window_frame(GUI_element):
+    """
+    Generic window frame.
+    Used by GUI_Window to simply draw the background of it.
+    """
+    def __init__(self, game, parent, x, y, width, height):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.z = self.parent.z - 1
+        self.draw_strategy = "gui_window_frame"
+
+
+
+class GUI_element_window(GUI_element):
+    """ Provides a window frame. Windows should subclass this. """
+    # Set to the text that needs to appear as the title of the window    
+    title = ""
+    
+    # Set to the desired pixel height of the window
+    height = 0
+    
+    # Set to the desired width of the window
+    width = 0
+
+    frame = None
+    text = None
+    
+    def gui_init(self):
+        GUI_element.gui_init(self)
+        self.frame = GUI_element_window_frame(self.game, self, self.x, self.y, self.width, self.height)
+        self.text = Text(self.game.core.media.fonts['small'], self.x+16.0, self.y+4.0, TEXT_ALIGN_TOP_LEFT,  self.title)
+        self.text.colour = (0.0,0.0,0.0)
+        self.text.z = self.z - 1
+
+    
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.text.Kill()
+
+
+
+class GUI_element_dialog_box(GUI_element):
+    title = ""
+    message = []
+    caption_image = None
+    
+    frame = None
+    title_text = None
+    message_text = []
+    caption_image_obj = None
+
+    min_box_height = 95
+    min_box_width = 300    
+       
+    def __init__(self, game, parent = None, title = "test", message = ["test message"], caption_image = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.title = title
+        self.message = message
+        self.caption_image = caption_image
+        self.gui_init()
+        
+
+    def gui_init(self):
+        GUI_element.gui_init(self)
+        self.z = Z_GUI_OBJECT_LEVEL_9
+
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+
+        # Create the title text objects
+        self.title_text = Text(self.game.core.media.fonts['small'], 0.0, 0.0, TEXT_ALIGN_TOP_LEFT, self.title)
+        self.title_text.colour = (0.0,0.0,0.0)
+        self.title_text.z = Z_GUI_OBJECT_LEVEL_10 - 1
+
+        # Create all the message texts
+        self.message_text = []
+
+        y = 30.0
+        max_text_width = None
+
+        for msg in self.message:
+            txt_obj = Text(self.game.core.media.fonts['basic'], 0.0, y, TEXT_ALIGN_TOP_LEFT, msg)
+            txt_obj.colour = (0.0,0.0,0.0)
+            txt_obj.z = Z_GUI_OBJECT_LEVEL_10 - 1
+            self.message_text.append(txt_obj)
+            y += txt_obj.text_height + 2
+
+            if max_text_width is None or txt_obj.text_width > max_text_width:
+                max_text_width = txt_obj.text_width
+
+        # Create the caption image
+        if not self.caption_image is None:
+            self.caption_image_obj = GUI_element_dialog_box_caption_image(self.game, self, self.caption_image)
+            
+        # Work out the width of the frame based on the max width of the text objects and captions
+        if max_text_width + 60 > self.min_box_width:
+            self.min_box_width = max_text_width + 60
+
+        if not self.caption_image is None and self.caption_image_obj.image.width > self.min_box_width:
+            self.min_box_width = self.caption_image_obj.image.width + 60
+
+        # Work out the height of the frame based on the number of text objects and the height of any caption image
+        self.min_box_height = self.min_box_height + (len(self.message_text) * self.message_text[0].text_height) + (0 if self.caption_image is None else (self.caption_image_obj.image.height + 20))
+
+        # Work out where the frame should be (the middle of the screen)
+        self.frame_location_y = (self.game.settings['screen_height'] / 2) - (self.min_box_height / 2)
+        self.frame_location_x = (self.game.settings['screen_width'] / 2) - (self.min_box_width / 2)
+
+        # Create the frame
+        self.frame = GUI_element_window_frame(self.game, self, self.frame_location_x, self.frame_location_y, self.min_box_width, self.min_box_height)
+
+        # Adjust the position of the text objects based on the final location of the frame
+        self.title_text.x = self.frame_location_x + 16
+        self.title_text.y = self.frame_location_y + 4
+
+        for txt_obj in self.message_text:
+            txt_obj.x = self.frame_location_x + 28
+            txt_obj.y += self.frame_location_y + (0 if self.caption_image is None else (self.caption_image_obj.image.height + 20))
+
+        # Put the caption image in the right place
+        if not self.caption_image is None:
+            self.caption_image_obj.x = (self.frame_location_x + (self.min_box_width / 2)) - (self.caption_image_obj.image.width / 2)
+            self.caption_image_obj.y = self.frame_location_y + 35
+            
+        # Stop the user pressing keys and shit
+        self.game.gui.block_gui_keyboard_input = True
+        
+        # Create the relevant buttons
+        self.create_button_objects()        
+
+        # Draw strategy data
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_filled = True
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
+
+
+    def create_button_objects(self):
+        GUI_button_dialog_box_confirm(self.game, self, self.frame.x + (self.frame.width/2) - 27)
+
+        
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.title_text.Kill()
+        for msg_obj in self.message_text:
+            msg_obj.Kill()
+        self.game.gui.block_gui_keyboard_input = False
+
+
+
+class GUI_button_dialog_box_confirm(GUI_element_button):
+    """ Button on dialogs boxes to confirm the message. """
+    generic_button = True
+    generic_button_text = "Okay"
+
+    def __init__(self, game, parent = None, x = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.frame.z - 1
+        self.x = x
+        self.y = self.parent.frame.y + self.parent.frame.height - 50.0
+        self.gui_init()
+
+    
+    def mouse_left_up(self):
+        self.parent.Kill()
+
+
+
+class GUI_element_dialog_box_caption_image(GUI_element):
+    def __init__(self, game, parent = None, type = 1):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.image = self.game.core.media.gfx['gui_dialog_caption_' + str(type)]
+        self.gui_init()
+
+
+
+class GUI_element_confirmation_box(GUI_element_dialog_box):
+    def __init__(self, game, parent = None, title = "test", message = ["test message"], caption_image = None, confirm_callback = None, cancel_callback = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.title = title
+        self.message = message
+        self.caption_image = caption_image
+        self.confirm_callback = confirm_callback
+        self.cancel_callback = cancel_callback
+        self.gui_init()
+
+
+    def create_button_objects(self):
+        GUI_button_confirmation_box_confirm(self.game, self, self.frame.x + (self.frame.width/2) - 50)
+        GUI_button_confirmation_box_cancel(self.game, self, self.frame.x + (self.frame.width/2) + 20)
+
+
+
+class GUI_button_confirmation_box_confirm(GUI_element_button):
+    """ Button on confirmation boxes to confirm the message. """
+    generic_button = True
+    generic_button_text = "Yes"
+
+    def __init__(self, game, parent = None, x = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.frame.z - 1
+        self.x = x
+        self.y = self.parent.frame.y + self.parent.frame.height - 50.0
+        self.gui_init()
+
+    
+    def mouse_left_up(self):
+        if not self.parent.confirm_callback is None:
+            self.parent.confirm_callback()
+        self.parent.Kill()
+
+
+
+class GUI_button_confirmation_box_cancel(GUI_element_button):
+    """ Button on confirmation boxes to confirm the message. """
+    generic_button = True
+    generic_button_text = "No"
+
+    def __init__(self, game, parent = None, x = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.frame.z - 1
+        self.x = x
+        self.y = self.parent.frame.y + self.parent.frame.height - 50.0
+        self.gui_init()
+
+    
+    def mouse_left_up(self):
+        if not self.parent.cancel_callback is None:
+            self.parent.cancel_callback()
+        self.parent.Kill()
 
 
 
