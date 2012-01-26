@@ -77,6 +77,9 @@ int Main_App::On_Execute()
     while(running)
     {
 
+        // Empty keyboard keys released vector. it's only relevant once a frame.
+        Keyboard_keys_released.clear();
+        
         // Reset mouse states for these
         mouse->left_up = False;
         mouse->right_up = False;
@@ -137,6 +140,16 @@ bool Main_App::Keyboard_key_down(SDLKey Key)
 
 }
 
+
+bool Main_App::Keyboard_key_released(SDLKey Key)
+{
+
+    vector<SDLKey>::iterator it = std::find(Keyboard_keys_released.begin(), Keyboard_keys_released.end(), Key);
+    if(it != Keyboard_keys_released.end())
+        return True;      
+    return False;
+
+}
 
 
 void Main_App::Wait_till_next_frame()
@@ -219,3 +232,9 @@ int main(int argc, char* argv[])
     return app.On_Execute();
 
 }
+
+
+bool hasattr(boost::python::object obj, std::string const &attr_name)
+{
+     return PyObject_HasAttrString(obj.ptr(), attr_name.c_str());
+} 

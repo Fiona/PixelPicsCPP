@@ -42,7 +42,7 @@ void Main_App::On_Render()
 
         if(*it == NULL || (*it)->is_dead == True)
             continue;
-        
+
         // Call custom strategy if necessary
         if((*it)->draw_strategy == "")
             (*it)->Draw();

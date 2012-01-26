@@ -76,7 +76,7 @@ class Game(Process):
         # Debug display
         if DEBUG_SHOW_FPS:
             self.fps_text = Text(self.core.media.fonts["basic"], 0, 0, TEXT_ALIGN_TOP_LEFT, "blank")
-            self.fps_text.colour = (0.0, 1.0, 0.0)
+            self.fps_text.colour = (0.0, 0.0, 0.0)
             self.fps_text.z = -2000
             
         #self.manager = Puzzle_manager(self)

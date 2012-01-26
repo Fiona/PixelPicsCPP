@@ -103,6 +103,7 @@ public:
     Settings* settings;
     Media* media;
     std::vector<SDLKey> Keyboard_keys_down;
+    std::vector<SDLKey> Keyboard_keys_released;
     int current_fps;
     int process_count;
     string path_application_data;
@@ -120,6 +121,7 @@ public:
     void Do_Process_Clean();
     void On_Cleanup(); 
     bool Keyboard_key_down(SDLKey Key);
+    bool Keyboard_key_released(SDLKey Key);
 
 };
 
@@ -159,5 +161,9 @@ public:
 
     bool save();
 };
+
+
+bool hasattr(boost::python::object obj, std::string const &attr_name);
+
 
 #endif

@@ -12,6 +12,31 @@ using namespace std;
 
 using namespace boost::python;
 
+namespace my
+{
+
+    boost::python::object tuple_to_python(boost::tuples::null_type)
+    {
+        return boost::python::tuple();
+    }
+
+    template <class H, class T>
+    boost::python::object tuple_to_python(boost::tuples::cons<H,T> const& x)
+    {
+        return boost::python::make_tuple(x.get_head()) + my::tuple_to_python(x.get_tail());
+    }
+
+    template <class T>
+    struct tupleconverter
+    {
+        static PyObject* convert(T const& x)
+        {
+            return incref(my::tuple_to_python(x).ptr());
+        }
+    };
+
+}
+
 
 /*
  * This is the code that creates the game_core module.
@@ -20,9 +45,13 @@ using namespace boost::python;
  */
 BOOST_PYTHON_MODULE(core)
 {
+
+    typedef boost::tuples::tuple<float, float> screen_pos_tuple;
+    to_python_converter<screen_pos_tuple, my::tupleconverter<screen_pos_tuple> >();
     
     // Expose all media related objects
     class_<Image>("Image")
+        .def_readonly("num_of_frames", &Image::num_of_frames)
         .def_readonly("width", &Image::width)
         .def_readonly("height", &Image::height)
         ;
@@ -49,12 +78,12 @@ BOOST_PYTHON_MODULE(core)
     // Expose Process object
     class_<Process, ProcessWrapper, boost::noncopyable, boost::shared_ptr<ProcessWrapper> >("Process", init<>())
         .def("Execute", &Process::Execute, &ProcessWrapper::Execute_default)
-        .def("Init", &Process::Init, &ProcessWrapper::Init_default)
         .def("On_Exit", &Process::On_Exit, &ProcessWrapper::On_Exit_default)
+        .def("get_screen_draw_position", &Process::get_screen_draw_position, &ProcessWrapper::get_screen_draw_position_default)
 
         .add_property("x", make_getter(&Process::x), make_setter(&Process::x))
         .add_property("y", make_getter(&Process::y), make_setter(&Process::y))
-        .add_property("z", make_getter(&Process::z), make_setter(&Process::z))
+        .add_property("z", make_getter(&Process::z), &Process::Set_z)
         .add_property("colour", make_getter(&Process::colour), &Process::Set_colour)
         .add_property("alpha", make_getter(&Process::alpha), make_setter(&Process::alpha))
         .add_property("scale", make_getter(&Process::scale), make_setter(&Process::scale))
@@ -79,8 +108,17 @@ BOOST_PYTHON_MODULE(core)
             make_getter(&Text::text),
             &Text::set_text
             )
+        .add_property("x", make_getter(&Text::x), make_setter(&Text::x))
+        .add_property("y", make_getter(&Text::y), make_setter(&Text::y))
+        .add_property("z", make_getter(&Text::z), &Text::Set_z)
+        .add_property("alpha", make_getter(&Text::alpha), make_setter(&Text::alpha))
+        .add_property("scale", make_getter(&Text::scale), make_setter(&Text::scale))
+        .add_property("rotation", make_getter(&Text::rotation), make_setter(&Text::rotation))
+        .add_property("colour", make_getter(&Text::colour), &Text::Set_colour)
         .add_property("shadow", make_getter(&Text::shadow), make_setter(&Text::shadow))
         .add_property("shadow_colour", make_getter(&Text::shadow_colour), &Text::Set_shadow_colour)
+        .add_property("text_width", make_getter(&Text::text_width), make_setter(&Text::text_width))
+        .add_property("text_height", make_getter(&Text::text_height), make_setter(&Text::text_height))
         .def("Kill", &TextWrapper::Kill)
         ;
 
@@ -110,6 +148,7 @@ BOOST_PYTHON_MODULE(core)
         .add_property("path_application_data", make_getter(&Main_App::path_application_data))
         .add_property("path_settings_file", make_getter(&Main_App::path_settings_file))
         .def("Keyboard_key_down", &Main_App::Keyboard_key_down)
+        .def("Keyboard_key_released", &Main_App::Keyboard_key_released)
         .def("Quit", &Main_App::Quit)
         ;
 

@@ -63,13 +63,13 @@ public:
     PyObject* self;
     boost::python::object self_;
 
-    virtual void Init();
     virtual void Execute();
     virtual void On_Exit();
     virtual void Draw();
 
     void Kill();
 
+    void Set_z(int new_z);
     void Set_colour(boost::python::object list);
 
     void move_forward(float distance_to_travel, int rotation_to_move_in);
@@ -80,6 +80,7 @@ public:
 
     // Draw strategies
     void Draw_strategy_primitive_square();
+    void Draw_strategy_gui_button();
 
 };
 
@@ -95,13 +96,13 @@ struct ProcessWrapper : Process
     PyObject *self;
     boost::python::object self_;
 
-    void Init();
-    void Init_default();
     void Execute();
     void Execute_default();
     void On_Exit();
     void On_Exit_default();
     void Kill();
+    tuple<float, float> get_screen_draw_position();
+    tuple<float, float> get_screen_draw_position_default();
 
 };
 
@@ -116,6 +117,13 @@ public:
     Text(Font* _font, float _x, float _y, int _alignment, string _text);
     ~Text();
 
+    float   x;
+    float   y;
+    int     z;
+    float   scale;
+    int rotation;
+    float alpha;
+
     Font* font;
     int alignment;    
     string text;
@@ -124,7 +132,9 @@ public:
     int shadow;
     std::vector<float> shadow_colour;
 
+    void Set_z(int new_z);
     void set_text(string _text);
+    void Set_colour(boost::python::object list);
     void Set_shadow_colour(boost::python::object list);
     tuple<float, float> get_screen_draw_position();
 

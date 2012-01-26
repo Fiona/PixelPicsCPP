@@ -13,7 +13,7 @@ from core import *
 from consts import *
 from helpers  import *
 from gui.logo import *
-#from gui.main_menu import *
+from gui.main_menu import *
 #from gui.puzzle import *
 #from gui.designer import *
 
@@ -100,16 +100,16 @@ class GUI(Process):
             if self.current_game_state_gui_ticks == 120 or self.game.core.Keyboard_key_down(key.ESCAPE):
                 self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), colour = (0,0,0))
 
-        """
         elif self.game.game_state == GAME_STATE_MENU:
             """
-        #MAIN MENU
-        """
+            MAIN MENU
+            """
             if not self.block_gui_keyboard_input:
                 # Quit on escape
-                if MyrmidonGame.engine['input'].keyboard_key_released(K_ESCAPE):
+                if self.game.core.Keyboard_key_released(key.ESCAPE):
                     self.game.quit_game()
-
+                    
+        """
         elif self.game.game_state == GAME_STATE_PUZZLE:
             """
         #IN A PUZZLE
@@ -142,10 +142,9 @@ class GUI(Process):
             self.mouse.image = self.game.core.media.gfx['gui_cursor_' + str(self.game.cursor_tool_state)]
 
         # Handle overall gui input
-        """
         if not self.parent_window is None:
-            mouse_over = self.parent_window.handle_input((MyrmidonGame.engine['input'].mouse.x, MyrmidonGame.engine['input'].mouse.y))
-            if not mouse_over is None and not MyrmidonGame.engine['input'].disable_input and not self.block_gui_mouse_input:
+            mouse_over = self.parent_window.handle_input((self.mouse.x, self.mouse.y))
+            if not mouse_over is None and not self.block_gui_mouse_input:
 
                 if not mouse_over._currently_hovered:
                     mouse_over.mouse_enter()
@@ -153,32 +152,32 @@ class GUI(Process):
 
                 mouse_over.mouse_over()
 
-                if MyrmidonGame.engine['input'].mouse.left:
+                if self.game.core.mouse.left_down:
                     mouse_over.mouse_left_down()
-                elif MyrmidonGame.engine['input'].mouse.left_up:
+                elif self.game.core.mouse.left_up:
                     mouse_over.mouse_left_up()
 
-                if MyrmidonGame.engine['input'].mouse.right:
+                if self.game.core.mouse.right_down:
                     mouse_over.mouse_right_down()
-                elif MyrmidonGame.engine['input'].mouse.right_up:
+                elif self.game.core.mouse.right_up:
                     mouse_over.mouse_right_up()
 
-                if MyrmidonGame.engine['input'].mouse.middle:
+                if self.game.core.mouse.middle_down:
                     mouse_over.mouse_middle_down()
-                elif MyrmidonGame.engine['input'].mouse.middle_up:
+                elif self.game.core.mouse.middle_up:
                     mouse_over.mouse_middle_up()
 
-                if MyrmidonGame.engine['input'].mouse.wheel_down:
+                if self.game.core.mouse.wheel_down:
                     mouse_over.mouse_wheel_down()
-                elif MyrmidonGame.engine['input'].mouse.wheel_up:
+                elif self.game.core.mouse.wheel_up:
                     mouse_over.mouse_wheel_up()
-                    """
 
         # Handle the fading stuff
         if not self.fading == None and self.fading_done == False:
             self.iter += 1
             self.alpha = lerp(self.iter, self.fade_speed, self.fading, self.fade_to)
             if self.iter == self.fade_speed:
+                self.alpha = self.fade_to
                 self.fading = None
                 self.fading_done = True
                 if not self.fading_callback == None:
@@ -217,12 +216,12 @@ class GUI(Process):
             self.mouse.z = Z_MOUSE
             self.mouse.image = None
             self.current_visible_gui_elements[GUI_STATE_LOGO]['stompyblondie_logo'] = Stompyblondie_Logo(self.game)
-        """
         if self.gui_state == GUI_STATE_MENU:
-            MyrmidonGame.engine['input'].mouse.alpha = 1.0
-            MyrmidonGame.engine['input'].mouse.image = self.game.media.graphics['gui']['cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
+            self.mouse.alpha = 1.0
+            self.mouse.image = self.game.core.media.gfx['gui_cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
             self.current_visible_gui_elements[GUI_STATE_MENU]['main_menu_container'] = GUI_main_menu_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_MENU]['main_menu_container']
+        """
         if self.gui_state == GUI_STATE_PUZZLE:
             MyrmidonGame.engine['input'].mouse.image = self.game.media.graphics['gui']['cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
             self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container'] = GUI_puzzle_container(self.game)
@@ -262,7 +261,6 @@ class GUI(Process):
     def fade_toggle(self, callback = None, speed = 15, colour = (1.0, 1.0, 1.0)):
         if not self.fading_done:
             return
-
         self.fade_speed = speed
         self.fading_callback = callback
         self.fading = self.alpha

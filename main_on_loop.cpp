@@ -32,8 +32,10 @@ void Main_App::On_Loop()
         }
 
     }
-
+    
+    /*
     if(Keyboard_key_down(SDLK_ESCAPE))
         Quit();
+    */
 
 }

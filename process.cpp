@@ -46,11 +46,6 @@ Process::~Process()
 }
 
 
-void Process::Init()
-{
-}
-
-
 void Process::Execute()
 {
 }
@@ -129,6 +124,13 @@ void Process::Kill()
 }
 
 
+void Process::Set_z(int new_z)
+{
+    z = new_z;
+    Process::z_order_dirty = True;
+}
+
+
 void Process::Set_colour(boost::python::object list)
 {
     colour[0] = boost::python::extract<float>(list[0]);
@@ -170,6 +172,57 @@ tuple<float, float> Process::get_screen_draw_position()
 /*
  * DRAW STRATEGIES
  */
+void Process::Draw_strategy_gui_button()
+{
+
+    if(alpha <= 0.0)
+        return;
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    // Draw the background gradient
+    glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
+
+    glTexCoordPointer(2, GL_FLOAT, 0, &image->texture_coords[image_sequence-1][0]);
+                               
+    glBindTexture(GL_TEXTURE_2D, image->texture);
+    Process::current_bound_texture = image->texture;
+
+    float vertex_list[12];
+    for(int i = 0; i < 12; i++)
+        vertex_list[i] = 0.0f;
+    vertex_list[0] = (float)width;
+    vertex_list[1] = (float)height;
+    vertex_list[4] = (float)height;
+    vertex_list[6] = (float)width; 
+
+    glVertexPointer(3, GL_FLOAT, 0, vertex_list);
+
+    glTranslatef(x, y, 0.0);
+    glColor4f(1.0, 1.0, 1.0, alpha);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
+
+    // Draw the surrounding rectangle    
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(2.0);
+    glColor4f(.5, .5, .5, alpha);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(0.0, 0.0);
+    glVertex2f(width, 0.0);
+    glVertex2f(width, height);
+    glVertex2f(0.0, height);
+    glEnd();
+    glEnable(GL_TEXTURE_2D);
+
+    glPopMatrix();
+
+}
+
+
 void Process::Draw_strategy_primitive_square()
 {
 
@@ -177,8 +230,19 @@ void Process::Draw_strategy_primitive_square()
     float square_y = boost::python::extract<float>(self_.attr("primitive_square_y"));
     float width = boost::python::extract<float>(self_.attr("primitive_square_width"));
     float height = boost::python::extract<float>(self_.attr("primitive_square_height"));
-    bool filled = boost::python::extract<bool>(self_.attr("primitive_square_filled"));
     boost::python::tuple colour = boost::python::extract<boost::python::tuple>(self_.attr("primitive_square_colour"))();
+
+    bool filled;
+    if(hasattr(self_, "primitive_square_filled"))
+        filled = boost::python::extract<bool>(self_.attr("primitive_square_filled"));
+    else
+        filled = True;
+
+    bool four_colours;
+    if(hasattr(self_, "primitive_square_four_colours"))
+        four_colours = boost::python::extract<bool>(self_.attr("primitive_square_four_colours"));
+    else
+        four_colours = False;
 
     glPushMatrix();
 
@@ -188,20 +252,69 @@ void Process::Draw_strategy_primitive_square()
         glBegin(GL_QUADS);
     else
     {
-        float line_width = boost::python::extract<float>(self_.attr("primitive_square_line_width"));
+
+        float line_width;
+        if(hasattr(self_, "primitive_square_line_width"))
+            line_width = boost::python::extract<float>(self_.attr("primitive_square_line_width"));
+        else
+            line_width = 1.0;
+
         glLineWidth(line_width);
         glBegin(GL_LINE_LOOP);
+
     }
 
+    boost::python::tuple col_1;
+    if(four_colours)
+        col_1 = boost::python::extract<boost::python::tuple>(colour[0]);
+    else
+        col_1 = colour;
     glColor4f(
-        boost::python::extract<float>(colour[0]),
-        boost::python::extract<float>(colour[1]),
-        boost::python::extract<float>(colour[2]),
-        boost::python::extract<float>(colour[3])
+        boost::python::extract<float>(col_1[0]),
+        boost::python::extract<float>(col_1[1]),
+        boost::python::extract<float>(col_1[2]),
+        boost::python::extract<float>(col_1[3])
         );
+
     glVertex2f(square_x, square_y);
+
+    if(four_colours)
+    {
+        col_1 = boost::python::extract<boost::python::tuple>(colour[1]);
+        glColor4f(
+            boost::python::extract<float>(col_1[0]),
+            boost::python::extract<float>(col_1[1]),
+            boost::python::extract<float>(col_1[2]),
+            boost::python::extract<float>(col_1[3])
+            );
+    }
+
     glVertex2f(square_x + width, square_y);
+
+    if(four_colours)
+    {
+        col_1 = boost::python::extract<boost::python::tuple>(colour[2]);
+        glColor4f(
+            boost::python::extract<float>(col_1[0]),
+            boost::python::extract<float>(col_1[1]),
+            boost::python::extract<float>(col_1[2]),
+            boost::python::extract<float>(col_1[3])
+            );
+    }
+
     glVertex2f(square_x + width, square_y + height);
+
+    if(four_colours)
+    {
+        col_1 = boost::python::extract<boost::python::tuple>(colour[3]);
+        glColor4f(
+            boost::python::extract<float>(col_1[0]),
+            boost::python::extract<float>(col_1[1]),
+            boost::python::extract<float>(col_1[2]),
+            boost::python::extract<float>(col_1[3])
+            );
+    }
+
     glVertex2f(square_x, square_y + height);
     glEnd();
                                           
@@ -209,7 +322,13 @@ void Process::Draw_strategy_primitive_square()
 
     glPopMatrix();
 
-    if(boost::python::extract<bool>(self_.attr("draw_strategy_call_parent")))
+    bool call_parent;
+    if(hasattr(self_, "draw_strategy_call_parent"))
+        call_parent = boost::python::extract<bool>(self_.attr("draw_strategy_call_parent"));
+    else
+        call_parent = True;
+
+    if(call_parent)
         this->Draw();
 
 }
@@ -245,24 +364,11 @@ void ProcessWrapper::Kill()
 }
 
 
-void ProcessWrapper::Init(){ }
-void ProcessWrapper::Init_default()
-{
-    this->Process::Init();
-}
-
 
 void ProcessWrapper::Execute()
 {
-    if(!has_init)
-    {
-        //boost::python::call_method<void>(self, "Init");    
-        has_init = True;
-    }
     boost::python::call_method<void>(self, "Execute");
 }
-
-
 void ProcessWrapper::Execute_default()
 {
     this->Process::Execute();
@@ -275,6 +381,18 @@ void ProcessWrapper::On_Exit_default()
     this->Process::On_Exit();
 }
 
+
+tuple<float, float> ProcessWrapper::get_screen_draw_position()
+{
+    boost::python::object tup = boost::python::call_method<boost::python::object>(self, "get_screen_draw_position");
+    return tuple<float, float>(boost::python::extract<float>(tup[0]), boost::python::extract<float>(tup[1]));
+    //return this->Process::get_screen_draw_position();
+
+}
+tuple<float, float> ProcessWrapper::get_screen_draw_position_default()
+{
+    return this->Process::get_screen_draw_position();
+}
 
 /*
  *
@@ -296,12 +414,16 @@ Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Proce
     x = _x;
     y = _y;
     z = Z_TEXT;
+    Process::z = z;
     alignment = _alignment;
     shadow = 0;
     shadow_colour.resize(3, 1.0f);
     text_width = 0;
     text_height = 0;
     image_sequence = 1;
+    scale = 1.0;
+    rotation = 0;
+    alpha = 1.0f;
 
     set_text(_text);
 
@@ -313,6 +435,22 @@ Text::~Text()
     if(image != NULL)
         delete image;
     image = NULL;
+}
+
+
+void Text::Set_z(int new_z)
+{
+    z = new_z;
+    Process::z = new_z;
+    Process::z_order_dirty = True;
+}
+
+
+void Text::Set_colour(boost::python::object list)
+{
+    colour[0] = boost::python::extract<float>(list[0]);
+    colour[1] = boost::python::extract<float>(list[1]);
+    colour[2] = boost::python::extract<float>(list[2]);
 }
 
 

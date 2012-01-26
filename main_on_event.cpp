@@ -30,6 +30,7 @@ void Main_App::On_Event(SDL_Event* Event)
         it = std::find(Keyboard_keys_down.begin(), Keyboard_keys_down.end(), Event -> key.keysym.sym);
         if(it != Keyboard_keys_down.end())
             Keyboard_keys_down.erase(it);
+        Keyboard_keys_released.push_back(Event -> key.keysym.sym);
         break;
     }
 
