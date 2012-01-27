@@ -134,7 +134,7 @@ class Game(Process):
             self.current_zoom_level = 1.0
             self.lives = INITIAL_LIVES
             self.timer = 0
-            #self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file)
+            self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file)
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
 

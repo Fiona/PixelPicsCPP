@@ -14,7 +14,7 @@ from consts import *
 from helpers  import *
 from gui.logo import *
 from gui.main_menu import *
-#from gui.puzzle import *
+from gui.puzzle import *
 #from gui.designer import *
 
 
@@ -109,19 +109,18 @@ class GUI(Process):
                 if self.game.core.Keyboard_key_released(key.ESCAPE):
                     self.game.quit_game()
                     
-        """
         elif self.game.game_state == GAME_STATE_PUZZLE:
             """
-        #IN A PUZZLE
-        """
+            IN A PUZZLE
+            """
             if not self.block_gui_keyboard_input:
                 # Back to menu on escape
-                if MyrmidonGame.engine['input'].keyboard_key_released(K_ESCAPE):
+                if self.game.core.Keyboard_key_released(key.ESCAPE):
                     self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 120)
 
             if not self.block_gui_mouse_input:
                 self.do_mouse_wheel_zooming()
-
+        """
         elif self.game.game_state == GAME_STATE_DESIGNER:
             """
         #IN DESINGER MODE
@@ -180,10 +179,9 @@ class GUI(Process):
                 self.alpha = self.fade_to
                 self.fading = None
                 self.fading_done = True
+                self.iter = 0
                 if not self.fading_callback == None:
                     self.fading_callback()
-        else:
-            self.iter = 0
 
         # Colour of fade
         self.primitive_square_colour = (self.fade_colour[0], self.fade_colour[1], self.fade_colour[2], self.alpha)
@@ -221,11 +219,11 @@ class GUI(Process):
             self.mouse.image = self.game.core.media.gfx['gui_cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
             self.current_visible_gui_elements[GUI_STATE_MENU]['main_menu_container'] = GUI_main_menu_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_MENU]['main_menu_container']
-        """
         if self.gui_state == GUI_STATE_PUZZLE:
-            MyrmidonGame.engine['input'].mouse.image = self.game.media.graphics['gui']['cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
+            self.mouse.image = self.game.core.media.gfx['gui_cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
             self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container'] = GUI_puzzle_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container']
+        """
         if self.gui_state == GUI_STATE_DESIGNER_PACKS:
             self.current_visible_gui_elements[GUI_STATE_DESIGNER_PACKS]['designer_packs_container'] = GUI_designer_packs_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_DESIGNER_PACKS]['designer_packs_container']
@@ -267,3 +265,4 @@ class GUI(Process):
         self.fade_colour = colour
         self.fade_to = 1.0 if self.fading < 1.0 else 0.0
         self.fading_done = False
+        print self.fade_to

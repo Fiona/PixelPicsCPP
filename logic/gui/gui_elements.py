@@ -662,3 +662,8 @@ class Pixel_message_pixel(Process):
             self.y = lerp(self.iter, 20, self.y, self.y_to)
             if self.iter == 20:
                 self.pixel_message_pixel_state = 2
+
+
+
+class Puzzle_image(GUI_element):
+    pass
