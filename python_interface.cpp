@@ -145,8 +145,10 @@ BOOST_PYTHON_MODULE(core)
         .add_property("process_count", make_getter(&Main_App::process_count))
         .add_property("media", make_getter(&Main_App::media, return_value_policy<reference_existing_object>()))
         .add_property("settings", make_getter(&Main_App::settings, return_value_policy<reference_existing_object>()))
+        .add_property("author_id", make_getter(&Main_App::author_id))
         .add_property("path_application_data", make_getter(&Main_App::path_application_data))
         .add_property("path_settings_file", make_getter(&Main_App::path_settings_file))
+        .add_property("path_user_pack_directory", make_getter(&Main_App::path_user_pack_directory))
         .def("Keyboard_key_down", &Main_App::Keyboard_key_down)
         .def("Keyboard_key_released", &Main_App::Keyboard_key_released)
         .def("Quit", &Main_App::Quit)
@@ -162,6 +164,13 @@ BOOST_PYTHON_MODULE(core)
     scope().attr("TEXT_ALIGN_BOTTOM_LEFT") = TEXT_ALIGN_BOTTOM_LEFT;
     scope().attr("TEXT_ALIGN_BOTTOM") = TEXT_ALIGN_BOTTOM;
     scope().attr("TEXT_ALIGN_BOTTOM_RIGHT") = TEXT_ALIGN_BOTTOM_RIGHT;
+
+    // Expose some pixelpics constants
+    scope().attr("FILE_PACK_INFO_FILE") = FILE_PACK_INFO_FILE;
+    scope().attr("FILE_PUZZLE_EXTENSION") = FILE_PUZZLE_EXTENSION;
+    scope().attr("MAX_PUZZLES_PER_PACK") = MAX_PUZZLES_PER_PACK;
+    scope().attr("MIN_PUZZLE_SIZE") = MIN_PUZZLE_SIZE;
+    scope().attr("MAX_PUZZLE_SIZE") = MAX_PUZZLE_SIZE;
 
     // Expose all the SDL Keybinding constants
     enum_<SDLKey>("key")

@@ -55,6 +55,56 @@ Main_App::Main_App()
     path_settings_file = path_application_data + SEPARATOR + FILE_SETTINGS;
     settings = new Settings(path_settings_file);
 
+    // Other settings
+    path_user_pack_directory = path_application_data + SEPARATOR + FILE_USER_PACK_DIRECTORY;
+    if(!boost::filesystem::exists(path_user_pack_directory.c_str()) || !boost::filesystem::is_directory(path_user_pack_directory.c_str()))
+        boost::filesystem::create_directory(path_user_pack_directory.c_str());
+
+    // Generate and save new author id if file doesn't exist
+    path_author_id_file = path_application_data + SEPARATOR + FILE_AUTHOR_ID_FILE;
+    if(!boost::filesystem::exists(path_author_id_file.c_str()))
+    {
+
+        boost::uuids::random_generator gen;
+        boost::uuids::uuid u = gen();
+        author_id = boost::uuids::to_string(u);
+
+        ofstream author_id_file;
+        author_id_file.open(path_author_id_file.c_str(), ios::trunc | ios::out);
+        author_id_file << author_id;
+        author_id_file.close();
+
+    }
+    else
+    {
+
+        // Load in first line of current author id
+        fstream author_id_file;
+        author_id_file.open(path_author_id_file.c_str(), ios::in);
+        getline(author_id_file, author_id);
+        author_id_file.close();
+
+        try
+        {
+            // Ensure that the id is a valid UUID
+            boost::uuids::string_generator sgen;
+            boost::uuids::uuid u = sgen(author_id);
+            author_id = boost::uuids::to_string(u);
+        }
+        catch(std::exception &e)
+        {
+            // If not valid, generate a new one and save it.
+            boost::uuids::random_generator gen;
+            boost::uuids::uuid u = gen();
+            author_id = boost::uuids::to_string(u);
+            fstream new_author_id_file;
+            new_author_id_file.open(path_author_id_file.c_str(), ios::trunc | ios::out);
+            new_author_id_file << author_id;
+            new_author_id_file.close();
+        }
+
+    }
+
 }
 
  

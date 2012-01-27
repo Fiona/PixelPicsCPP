@@ -43,10 +43,18 @@
 
 // Misc defines
 #define FILE_SETTINGS "settings.json"
+#define FILE_PACK_INFO_FILE "pack.dat"
+#define FILE_PUZZLE_EXTENSION ".puz"
+#define FILE_USER_PACK_DIRECTORY "packs"
+#define FILE_AUTHOR_ID_FILE "author_id.dat"
+#define MAX_PUZZLES_PER_PACK 20
+#define MIN_PUZZLE_SIZE 5
+#define MAX_PUZZLE_SIZE 40
 
 // STD and boost includes
-//#include <dirent.h>
 #include <vector>
+#include <iostream>
+#include <fstream>
 #include "boost/tuple/tuple.hpp"
 #include "boost/format.hpp"
 #include <boost/python.hpp>
@@ -54,11 +62,11 @@
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-//#include <boost/property_tree/ptree.hpp>
-//#include <boost/property_tree/detail/json_parser_read.hpp>
-//#include <boost/property_tree/detail/json_parser_write.hpp>
-//#include <boost/property_tree/detail/json_parser_error.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/string_generator.hpp>
+#include <boost/uuid/random_generator.hpp>
 
 // GL and SDL
 #include <GL/gl.h>
@@ -108,6 +116,9 @@ public:
     int process_count;
     string path_application_data;
     string path_settings_file;
+    string path_user_pack_directory;
+    string path_author_id_file;
+    string author_id;
 
     Mouse* mouse;
 

@@ -12,9 +12,8 @@ from core import *
 # Game imports
 sys.path.append(os.path.join(os.getcwd(), "logic"))
 from consts import *
-#from media import Media
 from gui import GUI, Mouse
-#from puzzle import Puzzle_manager
+from puzzle import Puzzle_manager
 
 
 class Game(Process):
@@ -79,7 +78,7 @@ class Game(Process):
             self.fps_text.colour = (0.0, 0.0, 0.0)
             self.fps_text.z = -2000
             
-        #self.manager = Puzzle_manager(self)
+        self.manager = Puzzle_manager(self)
         self.gui = GUI(self)
         self.switch_game_state_to(GAME_STATE_LOGO)
 
@@ -125,7 +124,7 @@ class Game(Process):
             self.current_zoom_level = 1.0
             self.lives = INITIAL_LIVES
             self.timer = 0
-            #self.manager.load_puzzle("001", "003.puz")
+            self.manager.load_puzzle("Testpack0001", "Bird0001.puz")
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
         elif state == GAME_STATE_DESIGNER:
