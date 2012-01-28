@@ -28,9 +28,14 @@ class Mouse(Process):
         self.game = game
         self.z = Z_MOUSE
 
+
     def Execute(self):
         self.x = self.game.core.mouse.x
         self.y = self.game.core.mouse.y
+
+
+    def get_screen_draw_position(self):
+        return self.x, self.y
 
         
 
@@ -89,6 +94,25 @@ class GUI(Process):
 
     def Execute(self):
         self.current_game_state_gui_ticks += 1
+
+        # Handle the fading stuff
+        if not self.fading == None and self.fading_done == False:
+            self.iter += 1
+            self.alpha = lerp(self.iter, self.fade_speed, self.fading, self.fade_to)
+            if self.iter == self.fade_speed:
+                self.alpha = self.fade_to
+                self.fading = None
+                self.fading_done = True
+                self.iter = 0
+                if not self.fading_callback == None:
+                    self.fading_callback()
+
+        # Colour of fade
+        self.primitive_square_colour = (self.fade_colour[0], self.fade_colour[1], self.fade_colour[2], self.alpha)
+
+        # Block input on fade
+        if not self.fading == None and self.fading_done == False:
+            return
 
         if self.game.game_state == GAME_STATE_LOGO:
             """
@@ -171,20 +195,6 @@ class GUI(Process):
                 elif self.game.core.mouse.wheel_up:
                     mouse_over.mouse_wheel_up()
 
-        # Handle the fading stuff
-        if not self.fading == None and self.fading_done == False:
-            self.iter += 1
-            self.alpha = lerp(self.iter, self.fade_speed, self.fading, self.fade_to)
-            if self.iter == self.fade_speed:
-                self.alpha = self.fade_to
-                self.fading = None
-                self.fading_done = True
-                self.iter = 0
-                if not self.fading_callback == None:
-                    self.fading_callback()
-
-        # Colour of fade
-        self.primitive_square_colour = (self.fade_colour[0], self.fade_colour[1], self.fade_colour[2], self.alpha)
 
 
     def do_mouse_wheel_zooming(self):
@@ -265,4 +275,3 @@ class GUI(Process):
         self.fade_colour = colour
         self.fade_to = 1.0 if self.fading < 1.0 else 0.0
         self.fading_done = False
-        print self.fade_to

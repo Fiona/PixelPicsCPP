@@ -20,10 +20,11 @@ Image::Image()
 }
 
  
-Image::Image(string image, int _num_of_frames)
+Image::Image(string image, bool _for_repeat, int _num_of_frames)
 {
 
     texture = 0;
+    for_repeat = _for_repeat;
 
     // Load the image in as an SDL surface and extract size info 
     SDL_Surface* raw_surface = IMG_Load(image.c_str());
@@ -56,6 +57,7 @@ Image::Image(string image, int _num_of_frames)
 Image::Image(SDL_Surface *existing_surface)
 {
 
+    for_repeat = False;
     from_sdl_surface(existing_surface);
     num_of_frames = 1;
     make_vertex_list();
@@ -120,14 +122,22 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface)
     glBindTexture(GL_TEXTURE_2D, texture);
 
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
+    if(for_repeat)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
+    else
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    }
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height,
                  0, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
+    //gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
 
 }
 

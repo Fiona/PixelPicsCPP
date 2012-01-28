@@ -22,13 +22,14 @@ class Image
 
 public:
     Image();
-    Image(string image, int _num_of_frames = 1);
+    Image(string image, bool _for_repeat = False, int _num_of_frames = 1);
     Image(SDL_Surface *existing_surface);
     ~Image();
 
     int width;
     int height;
     int num_of_frames;
+    bool for_repeat;
     int surface_width;
     float sequence_pos;
     GLuint texture;

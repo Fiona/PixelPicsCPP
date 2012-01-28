@@ -136,6 +136,7 @@ BOOST_PYTHON_MODULE(core)
         .add_property("middle_up", make_getter(&Mouse::middle_up))
         .add_property("wheel_down", make_getter(&Mouse::wheel_down))
         .add_property("wheel_up", make_getter(&Mouse::wheel_up))
+        .def("set_pos", &Mouse::set_pos)
         ;
 
     // Expose the main app obj
@@ -171,6 +172,9 @@ BOOST_PYTHON_MODULE(core)
     scope().attr("MAX_PUZZLES_PER_PACK") = MAX_PUZZLES_PER_PACK;
     scope().attr("MIN_PUZZLE_SIZE") = MIN_PUZZLE_SIZE;
     scope().attr("MAX_PUZZLE_SIZE") = MAX_PUZZLE_SIZE;
+    scope().attr("PUZZLE_CELL_WIDTH") = PUZZLE_CELL_WIDTH;
+    scope().attr("PUZZLE_CELL_HEIGHT") = PUZZLE_CELL_HEIGHT;
+    scope().attr("PUZZLE_HINT_GRADIENT_WIDTH") = PUZZLE_HINT_GRADIENT_WIDTH;
 
     // Expose all the SDL Keybinding constants
     enum_<SDLKey>("key")

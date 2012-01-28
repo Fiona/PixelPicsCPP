@@ -275,6 +275,12 @@ bool Settings::save()
 }
 
 
+void Mouse::set_pos(int x_pos, int y_pos)
+{
+    SDL_WarpMouse(x_pos, y_pos);
+}
+
+
 int main(int argc, char* argv[])
 {
 

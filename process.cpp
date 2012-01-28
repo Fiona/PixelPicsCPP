@@ -408,6 +408,291 @@ void Process::Draw_strategy_primitive_square()
 }
 
 
+void Process::Draw_strategy_puzzle()
+{
+
+    // Get prelim vals from python
+    float screen_width;
+    float screen_height;
+    float camera_x;
+    float camera_y;
+    float zoom_level;
+    int grid_x;
+    int grid_y;
+    float grid_width;
+    float grid_height;
+    int current_puzzle_width;
+    int current_puzzle_height;
+    boost::python::object game;
+    boost::python::object core;
+    Media* media;
+
+        try
+        {
+
+             screen_width = boost::python::extract<float>(self_.attr("draw_strategy_screen_width"));
+             screen_height = boost::python::extract<float>(self_.attr("draw_strategy_screen_height"));
+             camera_x = boost::python::extract<float>(self_.attr("draw_strategy_camera_x"));
+             camera_y = boost::python::extract<float>(self_.attr("draw_strategy_camera_y"));
+             zoom_level = boost::python::extract<float>(self_.attr("draw_strategy_current_zoom_level"));
+             current_puzzle_width = boost::python::extract<float>(self_.attr("draw_strategy_current_puzzle_width"));
+             current_puzzle_height = boost::python::extract<float>(self_.attr("draw_strategy_current_puzzle_height"));
+             grid_x = boost::python::extract<int>(self_.attr("grid_x"));
+             grid_y = boost::python::extract<int>(self_.attr("grid_y"));
+             grid_width = boost::python::extract<float>(self_.attr("grid_width"));
+             grid_height = boost::python::extract<float>(self_.attr("grid_height"));
+             game = boost::python::extract<boost::python::object>(self_.attr("game"));
+             core = boost::python::extract<boost::python::object>(game.attr("core"));
+             media = boost::python::extract<Media*>(core.attr("media"));
+
+        }
+        catch(boost::python::error_already_set const &)
+        {
+            PyErr_Print();
+        }
+
+    // Set up matrix
+    glPushMatrix();
+
+    glTranslatef(
+        ((grid_x - camera_x) * zoom_level) + (screen_width/2),
+        ((grid_y - camera_y) * zoom_level) + (screen_height/2),
+        0.0
+        );
+
+    glScalef(zoom_level, zoom_level, 1.0);
+
+    // White puzzle background
+    glDisable(GL_TEXTURE_2D);
+    glColor4f(1.0, 1.0, 1.0, 0.9);
+    glBegin(GL_QUADS);
+    glVertex2f(0.0, 0.0);
+    glVertex2f(grid_width, 0);
+    glVertex2f(grid_width, grid_height);
+    glVertex2f(0, grid_height);
+    glEnd();
+
+    // Textured background
+    float coords_x = grid_width / (PUZZLE_CELL_WIDTH * 2);
+    float coords_y = grid_height / (PUZZLE_CELL_HEIGHT * 2);
+    float tex_coords_pointer[] = {coords_x, coords_y, 0.0, coords_y, coords_x, 0.0, 0.0, 0.0};
+    glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_pointer);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_grid_background"]->texture);
+    Process::current_bound_texture = media->gfx["gui_puzzle_grid_background"]->texture;
+    float vertex_pointer[] = {grid_width, grid_height, 0.0, 0.0, grid_height, 0.0, grid_width, 0.0, 0.0, 0.0, 0.0, 0.0};
+    glVertexPointer(3, GL_FLOAT, 0, vertex_pointer);
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+     
+    //Gradients behind numbers
+    float draw_start;
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glDisable(GL_TEXTURE_2D);
+
+    static vector<float> number_gradient_squares;
+    if(number_gradient_squares.size() == 0)
+    {
+
+        draw_start = 0;
+        for(int y = 0; y <= current_puzzle_height; y++)
+        {
+            
+            if(y % 2)
+            {
+                draw_start += PUZZLE_CELL_HEIGHT;
+                continue;
+            }
+
+            number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
+            number_gradient_squares.push_back(draw_start);
+
+            number_gradient_squares.push_back(0.0);
+            number_gradient_squares.push_back(draw_start);
+
+            number_gradient_squares.push_back(0.0);
+            number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
+
+            number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
+            number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
+
+            draw_start += (float)PUZZLE_CELL_HEIGHT;
+
+        }
+
+        draw_start = 0;
+        for(int x = 0; x <= current_puzzle_width; x++)
+        {
+            
+            if(x % 2)
+            {
+                draw_start += PUZZLE_CELL_WIDTH;
+                continue;
+            }
+
+            number_gradient_squares.push_back(draw_start);
+            number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
+
+            number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
+            number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
+
+            number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
+            number_gradient_squares.push_back(0.0);
+
+            number_gradient_squares.push_back(draw_start);
+            number_gradient_squares.push_back(0.0);
+
+            draw_start += (float)PUZZLE_CELL_WIDTH;
+
+        }
+
+    }
+
+    static vector<float> number_gradient_colours;
+    if(number_gradient_colours.size() == 0)
+    {
+
+        float horisontal_colours[] = {
+            1.0, 1.0, 1.0, 0.0,
+            .5, .7, .8, 1.0,
+            .5, .7, .8, 1.0,
+            1.0, 1.0, 1.0, 0.0
+        };
+
+        float vertical_colours[] = {
+            1.0, 1.0, 1.0, 0.0,
+            1.0, 1.0, 1.0, 0.0,
+            .5, .7, .8, 1.0,
+            .5, .7, .8, 1.0
+        };
+
+        for(int y = 0; y <= current_puzzle_height; y++)
+        {
+            if(y % 2)
+                continue;
+            for(int i = 0; i < 16; i++)
+                number_gradient_colours.push_back(horisontal_colours[i]);
+        }
+
+        for(int x = 0; x <= current_puzzle_width; x++)
+        {
+            if(x % 2)
+                continue;
+            for(int i = 0; i < 16; i++)
+                number_gradient_colours.push_back(vertical_colours[i]);
+        }
+
+    }
+
+    glColorPointer(4, GL_FLOAT, 0, &number_gradient_colours[0]);
+    glVertexPointer(2, GL_FLOAT, 0, &number_gradient_squares[0]);
+    glDrawArrays(GL_QUADS, 0, number_gradient_squares.size() / 2);
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    // Column / Row Hover
+    // TODO TODO
+
+    // Grid Lines
+    static vector<float> grid_lines;
+    if(grid_lines.size() == 0)
+    {
+
+        draw_start = (float)PUZZLE_CELL_HEIGHT;
+        for(int y = 0; y < current_puzzle_width; y++)
+        {
+            grid_lines.push_back(draw_start);
+            grid_lines.push_back(0.0);
+            grid_lines.push_back(draw_start);
+            grid_lines.push_back(grid_height);
+            draw_start += (float)PUZZLE_CELL_HEIGHT;
+        } 
+
+        draw_start = (float)PUZZLE_CELL_WIDTH;
+        for(int x = 0; x < current_puzzle_height; x++)
+        {
+            grid_lines.push_back(0.0);
+            grid_lines.push_back(draw_start);
+            grid_lines.push_back(grid_width);
+            grid_lines.push_back(draw_start);
+            draw_start += (float)PUZZLE_CELL_WIDTH;
+        } 
+
+    }
+
+    glLineWidth(1.0 * zoom_level);
+    glColor4f(0.3, 0.3, 0.3, 1.0);
+    glVertexPointer(2, GL_FLOAT, 0, &grid_lines[0]);
+    glDrawArrays(GL_LINES, 0, (current_puzzle_width + current_puzzle_height) * 2);
+    
+    // Every five lines draw marker lines
+    static vector<float> every_five_lines;
+    if(every_five_lines.size() == 0)
+    {
+
+        draw_start = (float)(PUZZLE_CELL_HEIGHT * 5);
+        for(int y = 0; y < (int)ceil((float)current_puzzle_width / 5); y++)
+        {
+            every_five_lines.push_back(draw_start);
+            every_five_lines.push_back(0.0);
+            every_five_lines.push_back(draw_start);
+            every_five_lines.push_back(grid_height);
+            draw_start += (float)(PUZZLE_CELL_HEIGHT * 5);
+        } 
+
+        draw_start = (float)(PUZZLE_CELL_WIDTH * 5);
+        for(int x = 0; x < (int)ceil((float)current_puzzle_height / 5); x++)
+        {
+            every_five_lines.push_back(0.0);
+            every_five_lines.push_back(draw_start);
+            every_five_lines.push_back(grid_width);
+            every_five_lines.push_back(draw_start);
+            draw_start += (float)(PUZZLE_CELL_WIDTH * 5);
+        } 
+
+    }
+
+    glLineWidth(2.0 * zoom_level);
+    glColor4f(0.3, 0.7, 0.3, 1.0);
+    glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
+    glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
+
+    // Puzzle border
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glLineWidth(2.0 * zoom_level);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(0.0, 0.0);
+    glVertex2f(grid_width, 0);
+    glVertex2f(grid_width, grid_height);
+    glVertex2f(0, grid_height);
+    glEnd();
+
+    // Cell Hover
+    // TODO TODO
+
+    // Set up for drawing markers
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glEnable(GL_TEXTURE_2D);
+
+    // The black squares marking location of grid elements
+    // TODO TODO
+
+    // Recreate vertex lists if we should
+    // TODO TODO
+
+    // The white squares marking location of blank squares
+    // TODO TODO
+
+    // Recreate vertex lists if we should
+    // TODO TODO
+
+    // Reset matrix
+    glPopMatrix();
+    glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
+
+}
+
 
 /*
  *

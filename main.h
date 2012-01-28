@@ -50,11 +50,15 @@
 #define MAX_PUZZLES_PER_PACK 20
 #define MIN_PUZZLE_SIZE 5
 #define MAX_PUZZLE_SIZE 40
+#define PUZZLE_CELL_WIDTH 64
+#define PUZZLE_CELL_HEIGHT 64
+#define PUZZLE_HINT_GRADIENT_WIDTH 300.0
 
 // STD and boost includes
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <math.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/format.hpp"
 #include <boost/python.hpp>
@@ -154,6 +158,8 @@ public:
     bool middle_up;
     bool wheel_down;
     bool wheel_up;
+
+    void set_pos(int x_pos, int y_pos);
 };
 
 

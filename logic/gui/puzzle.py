@@ -90,6 +90,9 @@ class GUI_puzzle(GUI_element):
     fill_stack = []
     checked_fill_stack = []
 
+    black_squares_to_ignore = []
+    white_squares_to_ignore = []
+
     def __init__(self, game, parent = None):
         Process.__init__(self)
         self.game = game
@@ -115,9 +118,26 @@ class GUI_puzzle(GUI_element):
         if self.game.game_state == GAME_STATE_DESIGNER:
             self.state = PUZZLE_STATE_SOLVING
         # --- DESIGNER ONLY ---
-        
+
+        self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
+        self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
+
+        self.grid_x = 0
+        self.grid_y = 0
+
+        self.draw_strategy = "puzzle"
+        self.draw_strategy_screen_width = self.game.settings['screen_width']
+        self.draw_strategy_screen_height = self.game.settings['screen_height']
+        self.draw_strategy_camera_x = self.camera_pos[0]
+        self.draw_strategy_camera_y = self.camera_pos[1]
+        self.draw_strategy_current_zoom_level = self.game.current_zoom_level
+        self.draw_strategy_current_puzzle_width = self.game.manager.current_puzzle.width
+        self.draw_strategy_current_puzzle_height = self.game.manager.current_puzzle.height
 
     def Execute(self):
+        self.draw_strategy_camera_x = self.camera_pos[0]
+        self.draw_strategy_camera_y = self.camera_pos[1]
+        self.draw_strategy_current_zoom_level = self.game.current_zoom_level
 
         self.adjust_gui_coords()
         self.adjust_text_hint_coords()
@@ -125,7 +145,6 @@ class GUI_puzzle(GUI_element):
         # ****************
         # PUZZLE_STATE - Ready message displaying
         # ****************
-        """
         if self.state == PUZZLE_STATE_READY_MESSAGE:
             self.game.gui.block_gui_mouse_input = True
             self.game.gui.block_gui_keyboard_input = True
@@ -139,7 +158,28 @@ class GUI_puzzle(GUI_element):
                 self.game.gui.block_gui_mouse_input = False
                 self.game.gui.block_gui_keyboard_input = False
                 self.state = PUZZLE_STATE_SOLVING
-        """
+
+        # ****************
+        # PUZZLE_STATE - Actually solving the puzzle, marking cells
+        # ****************
+        if self.state == PUZZLE_STATE_SOLVING:
+            self.game.timer += 1
+
+            # --- DESIGNER ONLY ---
+            if self.game.game_state == GAME_STATE_DESIGNER:
+                 if self.puzzle_solver_state is None:
+                     if self.puzzle_solver is None:
+                         self.puzzle_solver = verify_puzzle(self.game.manager.current_puzzle)
+                     for i in xrange(PUZZLE_VERIFIER_ITERATIONS):
+                         try:
+                             self.puzzle_solver_state = self.puzzle_solver.next()
+                         except (ContradictionException, AmbiguousException, GuessesExceededException) as e:
+                             self.puzzle_solver_state = False
+                             break
+                         if self.puzzle_solver_state == True:
+                             break
+            # --- DESIGNER ONLY ---
+
         self.wait_time += 1
         self.update()
 
@@ -377,7 +417,7 @@ class GUI_puzzle(GUI_element):
 
         self.currently_panning = True
         self.game.gui.mouse.alpha = 0.0
-        self.game.core.mouse.set_pos(*self.remember_mouse_pos)
+        self.game.core.mouse.set_pos(int(self.remember_mouse_pos[0]), int(self.remember_mouse_pos[1]))
         
 
     def mouse_middle_up(self):
@@ -386,7 +426,7 @@ class GUI_puzzle(GUI_element):
 
         self.remember_mouse_pos = (0, 0)
         self.currently_panning = False
-        self.game.core.mouse.alpha = 1.0
+        self.game.gui.mouse.alpha = 1.0
 
 
     def fill_at(self, value, cell_list):
@@ -766,9 +806,9 @@ class Puzzle_marker(Process):
             self.alpha = lerp(self.iter, 10, self.alpha, 1.0)
             if self.iter > 10:
                 if self.state:
-                    self.puzzle.black_squares_to_ignore.remove((row, col))
+                    self.puzzle.black_squares_to_ignore.remove((self.row, self.col))
                 else:
-                    self.puzzle.white_squares_to_ignore.remove((row, col))
+                    self.puzzle.white_squares_to_ignore.remove((self.row, self.col))
                 self.marker_state = 0
                 self.iter = 0
             else:
@@ -800,9 +840,9 @@ class Puzzle_marker(Process):
                 return
         else:
             if self.state:
-                self.puzzle.reset_drawing_blacks((row, col))
+                self.puzzle.reset_drawing_blacks((self.row, self.col))
             else:
-                self.puzzle.reset_drawing_whites((row, col))
+                self.puzzle.reset_drawing_whites((self.row, self.col))
             self.Kill()
 
         self.update_pos()
@@ -818,6 +858,10 @@ class Puzzle_marker(Process):
         self.y = self.puzzle.grid_gui_y + ((self.incorrect_y_movement + (self.row * PUZZLE_CELL_HEIGHT)) * self.game.current_zoom_level)
 
 
+    def get_screen_draw_position(self):
+        return self.x, self.y
+
+    
 
 class Puzzle_pixel_message(Pixel_message):
 
@@ -943,7 +987,7 @@ class Player_lives(Process):
         self.draw_strategy_call_parent = False
         self.primitive_square_filled = True
         self.primitive_square_x = self.game.settings['screen_width'] - 300.0
-        self.primitive_square_y = self.game.settings['screen_height'] - 10.0
+        self.primitive_square_y = self.game.settings['screen_height'] - 74.0
         self.primitive_square_width = 300.0
         self.primitive_square_height = 74.0
         self.primitive_square_four_colours = True
@@ -964,6 +1008,10 @@ class Player_lives(Process):
         self.current_lives = self.game.lives
 
 
+    def get_screen_draw_position(self):
+        return self.x, self.y
+
+
     def On_Exit(self):
         for x in self.lives_objs:
             x.Kill()
@@ -981,7 +1029,7 @@ class Player_lives_life(Process):
         self.image = self.game.core.media.gfx['gui_heart']
         self.x = self.game.settings['screen_width'] - ((self.image.width * (num + 1)) + 15)
         self.y = self.game.settings['screen_height'] - self.image.height - 10
-        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.z = Z_GUI_OBJECT_LEVEL_6 - 1
         self.scale_point = (self.image.width / 2, self.image.height / 2)
         self.scale = .8
         self.dying = False
@@ -1004,6 +1052,10 @@ class Player_lives_life(Process):
                 self.scale_dir = not self.scale_dir
 
 
+    def get_screen_draw_position(self):
+        return self.x, self.y
+
+    
     def die(self):
         self.dying = True
         self.init_y = self.y
@@ -1022,7 +1074,7 @@ class Timer(Process):
         self.text.colour = (1.0, 1.0, 1.0)
         self.text.shadow = 2
         self.text.shadow_colour = (.3, .3, .3, .5)
-        self.text.z = self.z
+        self.text.z = self.z - 1
 
         # Draw strategy data
         self.draw_strategy = "primitive_square"
@@ -1053,6 +1105,10 @@ class Timer(Process):
             minutes = minutes - (hours * 60)
                 
             self.text.text = str(hours).rjust(2, "0") + ":" + str(minutes).rjust(2, "0") + ":" + str(seconds).rjust(2, "0")
+
+
+    def get_screen_draw_position(self):
+        return self.x, self.y
 
 
     def On_Exit(self):

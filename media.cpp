@@ -39,28 +39,28 @@ Media::Media()
     //gfx.insert(pair<string, Image*>("gui_cursor_5", new Image("gfx/gui/cursor_tool_5.png")));
     //gfx.insert(pair<string, Image*>("gui_cursor_6", new Image("gfx/gui/cursor_tool_6.png")));
 
-    gfx.insert(pair<string, Image*>("gui_button_generic_background", new Image("gfx/gui/button_generic_background.png", 4)));
-    gfx.insert(pair<string, Image*>("gui_button_spinner_down", new Image("gfx/gui/button_spinner_down.png", 3)));
-    gfx.insert(pair<string, Image*>("gui_button_spinner_up", new Image("gfx/gui/button_spinner_up.png", 3)));
-    gfx.insert(pair<string, Image*>("gui_dropdown_arrrow", new Image("gfx/gui/dropdown_arrrow.png", 3)));
+    gfx.insert(pair<string, Image*>("gui_button_generic_background", new Image("gfx/gui/button_generic_background.png", True, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_spinner_down", new Image("gfx/gui/button_spinner_down.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_spinner_up", new Image("gfx/gui/button_spinner_up.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_dropdown_arrrow", new Image("gfx/gui/dropdown_arrrow.png", False, 3)));
 
     gfx.insert(pair<string, Image*>("gui_main_menu_title_pixel", new Image("gfx/gui/main_menu_title_pixel.png")));
     gfx.insert(pair<string, Image*>("gui_main_menu_background", new Image("gfx/gui/main_menu_background.png")));
-    gfx.insert(pair<string, Image*>("gui_stompyblondie_logo_mini", new Image("gfx/gui/stompyblondie_logo_mini.png", 2)));
+    gfx.insert(pair<string, Image*>("gui_stompyblondie_logo_mini", new Image("gfx/gui/stompyblondie_logo_mini.png", False, 2)));
 
-    gfx.insert(pair<string, Image*>("gui_puzzle_grid_background", new Image("gfx/gui/puzzle_grid_background.png")));
+    gfx.insert(pair<string, Image*>("gui_puzzle_grid_background", new Image("gfx/gui/puzzle_grid_background.png", True)));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_white", new Image("gfx/gui/puzzle_cell_white.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_black", new Image("gfx/gui/puzzle_cell_black.png")));
 
-    gfx.insert(pair<string, Image*>("gui_heart", new Image("gfx/gui/heart.png", 2)));
+    gfx.insert(pair<string, Image*>("gui_heart", new Image("gfx/gui/heart.png", False, 2)));
 
-    gfx.insert(pair<string, Image*>("gui_verify_status", new Image("gfx/gui/verify_status.png", 3)));
+    gfx.insert(pair<string, Image*>("gui_verify_status", new Image("gfx/gui/verify_status.png", False, 3)));
 
-    gfx.insert(pair<string, Image*>("gui_button_scroll_window_arrow", new Image("gfx/gui/button_scroll_window_arrow.png", 3)));
-    gfx.insert(pair<string, Image*>("gui_button_designer_edit", new Image("gfx/gui/button_designer_edit.png", 3)));
-    gfx.insert(pair<string, Image*>("gui_button_designer_detele", new Image("gfx/gui/button_designer_delete.png", 3)));
-    gfx.insert(pair<string, Image*>("gui_button_designer_move_down", new Image("gfx/gui/button_designer_move_down.png", 3)));
-    gfx.insert(pair<string, Image*>("gui_button_designer_move_up", new Image("gfx/gui/button_designer_move_up.png", 3)));
+    gfx.insert(pair<string, Image*>("gui_button_scroll_window_arrow", new Image("gfx/gui/button_scroll_window_arrow.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_edit", new Image("gfx/gui/button_designer_edit.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_detele", new Image("gfx/gui/button_designer_delete.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_move_down", new Image("gfx/gui/button_designer_move_down.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_move_up", new Image("gfx/gui/button_designer_move_up.png", False, 3)));
 
 }
 

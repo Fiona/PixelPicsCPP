@@ -17,6 +17,6 @@ void Main_App::On_Cleanup()
     Py_Finalize();
 
     // Kill all the loaded media items
-    delete media;
+    delete Main_App::media;
 
 }
