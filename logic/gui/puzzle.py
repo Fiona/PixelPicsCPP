@@ -67,8 +67,8 @@ class GUI_puzzle(GUI_element):
     """
     The main puzzle grid. Draws it, creates texts and responds to mouse clicks.
     """
-    hovered_column = None
-    hovered_row = None
+    hovered_column = -1
+    hovered_row = -1
     last_hovered_cell = (None, None)
     last_state_set = "ignore"
     
@@ -289,7 +289,7 @@ class GUI_puzzle(GUI_element):
         # Don't even ask about this, it works, alright?
         for row_num, number_list in enumerate(self.text['rows']):
             grid_x = self.grid_gui_x
-            if not self.hovered_row is None and row_num == self.hovered_row:
+            if self.hovered_row > -1 and row_num == self.hovered_row:
                 if self.grid_gui_x - (((len(self.game.manager.current_puzzle.row_numbers[row_num]) * PUZZLE_CELL_WIDTH)) * self.game.current_zoom_level) < 0:
                     grid_x = (PUZZLE_CELL_WIDTH * len(self.game.manager.current_puzzle.row_numbers[row_num])) * self.game.current_zoom_level
                     if grid_x > self.game.gui.mouse.x:
@@ -307,7 +307,7 @@ class GUI_puzzle(GUI_element):
                 
         for col_num, number_list in enumerate(self.text['cols']):
             grid_y = self.grid_gui_y                
-            if not self.hovered_column is None and col_num == self.hovered_column:
+            if self.hovered_column > -1 and col_num == self.hovered_column:
                 if self.grid_gui_y - (((len(self.game.manager.current_puzzle.column_numbers[col_num]) * PUZZLE_CELL_HEIGHT)) * self.game.current_zoom_level) < 0:
                     grid_y = (PUZZLE_CELL_HEIGHT * len(self.game.manager.current_puzzle.column_numbers[col_num])) * self.game.current_zoom_level
                     if grid_y > self.game.gui.mouse.y:
@@ -342,8 +342,8 @@ class GUI_puzzle(GUI_element):
         else:
             self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
             self.last_hovered_cell = (self.hovered_row, self.hovered_column)
-            self.hovered_column = None
-            self.hovered_row = None
+            self.hovered_column = -1
+            self.hovered_row = -1
             self.last_state_set = "ignore"
 
 

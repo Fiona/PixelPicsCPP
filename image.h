@@ -23,7 +23,7 @@ class Image
 public:
     Image();
     Image(string image, bool _for_repeat = False, int _num_of_frames = 1);
-    Image(SDL_Surface *existing_surface);
+    Image(SDL_Surface *existing_surface, bool mipmaps = true);
     ~Image();
 
     int width;
@@ -37,7 +37,7 @@ public:
     vector< vector<float> > texture_coords;
 
 private:
-    void from_sdl_surface(SDL_Surface* raw_surface);
+    void from_sdl_surface(SDL_Surface* raw_surface, bool mipmaps = true);
     void make_vertex_list();
     void make_texture_coords();
 

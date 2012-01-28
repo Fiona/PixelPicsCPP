@@ -54,11 +54,11 @@ Image::Image(string image, bool _for_repeat, int _num_of_frames)
 }
 
 
-Image::Image(SDL_Surface *existing_surface)
+Image::Image(SDL_Surface *existing_surface, bool mipmaps)
 {
 
     for_repeat = False;
-    from_sdl_surface(existing_surface);
+    from_sdl_surface(existing_surface, mipmaps);
     num_of_frames = 1;
     make_vertex_list();
     make_texture_coords();
@@ -111,7 +111,7 @@ void Image::make_vertex_list()
 }
 
 
-void Image::from_sdl_surface(SDL_Surface* raw_surface)
+void Image::from_sdl_surface(SDL_Surface* raw_surface, bool mipmaps)
 {
 
     width = raw_surface->w;
@@ -132,12 +132,20 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     }
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height,
-                 0, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
-    //gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
+
+    if(mipmaps)
+    {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
+    }
+    else
+    {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height,
+                     0, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
+    }
 
 }
 

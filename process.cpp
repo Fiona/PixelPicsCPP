@@ -423,6 +423,8 @@ void Process::Draw_strategy_puzzle()
     float grid_height;
     int current_puzzle_width;
     int current_puzzle_height;
+    int hovered_column;
+    int hovered_row;
     boost::python::object game;
     boost::python::object core;
     Media* media;
@@ -441,6 +443,8 @@ void Process::Draw_strategy_puzzle()
              grid_y = boost::python::extract<int>(self_.attr("grid_y"));
              grid_width = boost::python::extract<float>(self_.attr("grid_width"));
              grid_height = boost::python::extract<float>(self_.attr("grid_height"));
+             hovered_column = boost::python::extract<int>(self_.attr("hovered_column"));
+             hovered_row = boost::python::extract<int>(self_.attr("hovered_row"));
              game = boost::python::extract<boost::python::object>(self_.attr("game"));
              core = boost::python::extract<boost::python::object>(game.attr("core"));
              media = boost::python::extract<Media*>(core.attr("media"));
@@ -479,7 +483,6 @@ void Process::Draw_strategy_puzzle()
     glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_pointer);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_grid_background"]->texture);
-    Process::current_bound_texture = media->gfx["gui_puzzle_grid_background"]->texture;
     float vertex_pointer[] = {grid_width, grid_height, 0.0, 0.0, grid_height, 0.0, grid_width, 0.0, 0.0, 0.0, 0.0, 0.0};
     glVertexPointer(3, GL_FLOAT, 0, vertex_pointer);
     glColor4f(1.0, 1.0, 1.0, 1.0);
@@ -591,7 +594,27 @@ void Process::Draw_strategy_puzzle()
     glDisableClientState(GL_COLOR_ARRAY);
 
     // Column / Row Hover
-    // TODO TODO
+    if(hovered_row > -1)
+    {
+        glColor4f(.5, .5, 1.0, .2);
+        glBegin(GL_QUADS);
+        glVertex2f(0.0, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
+        glVertex2f(grid_width, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
+        glVertex2f(grid_width, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
+        glVertex2f(0.0, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
+        glEnd();
+    }
+
+    if(hovered_column > -1)
+    {
+        glColor4f(.5, .5, 1.0, .2);
+        glBegin(GL_QUADS);
+        glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), 0.0);
+        glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), 0.0);
+        glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), grid_height);
+        glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), grid_height);
+        glEnd();
+    }
 
     // Grid Lines
     static vector<float> grid_lines;
@@ -619,6 +642,7 @@ void Process::Draw_strategy_puzzle()
         } 
 
     }
+
 
     glLineWidth(1.0 * zoom_level);
     glColor4f(0.3, 0.3, 0.3, 1.0);
@@ -662,13 +686,23 @@ void Process::Draw_strategy_puzzle()
     glLineWidth(2.0 * zoom_level);
     glBegin(GL_LINE_LOOP);
     glVertex2f(0.0, 0.0);
-    glVertex2f(grid_width, 0);
+    glVertex2f(grid_width, 0.0);
     glVertex2f(grid_width, grid_height);
-    glVertex2f(0, grid_height);
+    glVertex2f(0.0, grid_height);
     glEnd();
 
     // Cell Hover
-    // TODO TODO
+    if(hovered_row > -1 && hovered_column > -1)
+    {
+        glColor4f(1.0, 0.0, 0.0, .8);
+        glBegin(GL_LINE_LOOP);
+        glLineWidth(3.0 * zoom_level);
+        glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
+        glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
+        glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT + (PUZZLE_CELL_HEIGHT * hovered_row)));
+        glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), (float)(PUZZLE_CELL_HEIGHT + (PUZZLE_CELL_HEIGHT * hovered_row)));
+        glEnd();
+    }
 
     // Set up for drawing markers
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -676,13 +710,14 @@ void Process::Draw_strategy_puzzle()
     glEnable(GL_TEXTURE_2D);
 
     // The black squares marking location of grid elements
-    // TODO TODO
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_black"]->texture);
 
     // Recreate vertex lists if we should
     // TODO TODO
 
     // The white squares marking location of blank squares
-    // TODO TODO
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_white"]->texture);
+    Process::current_bound_texture = media->gfx["gui_puzzle_cell_white"]->texture;
 
     // Recreate vertex lists if we should
     // TODO TODO
@@ -707,8 +742,6 @@ ProcessWrapper::ProcessWrapper(PyObject* _self) : Process()
 
     this->Process::self = self;
     this->Process::self_ = self_;
-
-    //boost::python::call_method<void>(self, "Execute");
 }
 
 
@@ -745,8 +778,6 @@ tuple<float, float> ProcessWrapper::get_screen_draw_position()
 {
     boost::python::object tup = boost::python::call_method<boost::python::object>(self, "get_screen_draw_position");
     return tuple<float, float>(boost::python::extract<float>(tup[0]), boost::python::extract<float>(tup[1]));
-    //return this->Process::get_screen_draw_position();
-
 }
 tuple<float, float> ProcessWrapper::get_screen_draw_position_default()
 {
@@ -866,7 +897,7 @@ void Text::generate_new_text_image()
     final_surface = text_surface;
     final_surface->refcount++;
 
-    image = new Image(final_surface);
+    image = new Image(final_surface, False);
 
     SDL_FreeSurface(text_surface);
     SDL_FreeSurface(final_surface);

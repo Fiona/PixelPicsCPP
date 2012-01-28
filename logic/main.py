@@ -125,6 +125,7 @@ class Game(Process):
             self.lives = INITIAL_LIVES
             self.timer = 0
             self.manager.load_puzzle("Testpack0001", "Bird0001.puz")
+            #self.manager.load_puzzle("test0001", "forty0001.puz")
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
         elif state == GAME_STATE_DESIGNER:
