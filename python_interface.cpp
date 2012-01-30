@@ -89,6 +89,7 @@ BOOST_PYTHON_MODULE(core)
         .add_property("scale", make_getter(&Process::scale), make_setter(&Process::scale))
         .add_property("rotation", make_getter(&Process::rotation), make_setter(&Process::rotation))
         .add_property("image_sequence", make_getter(&Process::image_sequence), make_setter(&Process::image_sequence))
+        .add_property("scale_pos", make_getter(&Process::scale_pos), &Process::Set_scale_pos)
         .add_property("draw_strategy", make_getter(&Process::draw_strategy), make_setter(&Process::draw_strategy))
 
         .add_property(

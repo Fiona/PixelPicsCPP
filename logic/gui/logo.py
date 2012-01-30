@@ -33,6 +33,7 @@ class Stompyblondie_Logo_Text(Process):
         self.scale = 0.0
         self.scale_state = 0
         self.iter = 0
+        self.scale_pos = (0.0, self.image.height)
         
     
     def Execute(self):

@@ -56,6 +56,7 @@ public:
     std::vector<float> colour;
     float alpha;
     int image_sequence;
+    std::vector<float> scale_pos;
     
     bool is_dead;
 
@@ -71,6 +72,7 @@ public:
 
     void Set_z(int new_z);
     void Set_colour(boost::python::object list);
+    void Set_scale_pos(boost::python::object list);
 
     void move_forward(float distance_to_travel, int rotation_to_move_in);
     float deg_to_rad(float deg);

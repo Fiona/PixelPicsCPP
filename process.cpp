@@ -28,6 +28,7 @@ Process::Process()
     scale = 1.0;
     rotation = 0;
     colour.resize(3, 1.0f);
+    scale_pos.resize(2, 0.0f);
     alpha = 1.0;
     image_sequence = 1;
     draw_strategy = "";
@@ -85,9 +86,9 @@ void Process::Draw()
     // scaling
     if(scale < 1.0f || scale > 1.0f)
     {
-        glTranslatef((float)(image->width/2), (float)(image->height/2), 0.0f);
+        glTranslatef(scale_pos[0], scale_pos[1], 0.0f);
         glScalef(scale, scale, 1.0f);
-        glTranslatef((float)(-image->width/2), (float)(-image->height/2), 0.0f);
+        glTranslatef(-scale_pos[0], -scale_pos[1], 0.0f);
     }
 
     // Text texture coords to different ones for texture atlasses
@@ -136,6 +137,13 @@ void Process::Set_colour(boost::python::object list)
     colour[0] = boost::python::extract<float>(list[0]);
     colour[1] = boost::python::extract<float>(list[1]);
     colour[2] = boost::python::extract<float>(list[2]);
+}
+
+
+void Process::Set_scale_pos(boost::python::object list)
+{
+    scale_pos[0] = boost::python::extract<float>(list[0]);
+    scale_pos[1] = boost::python::extract<float>(list[1]);
 }
 
 
@@ -499,7 +507,7 @@ void Process::Draw_strategy_puzzle()
     {
 
         draw_start = 0;
-        for(int y = 0; y <= current_puzzle_height; y++)
+        for(int y = 0; y < current_puzzle_height; y++)
         {
             
             if(y % 2)
@@ -525,7 +533,7 @@ void Process::Draw_strategy_puzzle()
         }
 
         draw_start = 0;
-        for(int x = 0; x <= current_puzzle_width; x++)
+        for(int x = 0; x < current_puzzle_width; x++)
         {
             
             if(x % 2)
@@ -570,7 +578,7 @@ void Process::Draw_strategy_puzzle()
             .5, .7, .8, 1.0
         };
 
-        for(int y = 0; y <= current_puzzle_height; y++)
+        for(int y = 0; y < current_puzzle_height; y++)
         {
             if(y % 2)
                 continue;
@@ -578,7 +586,7 @@ void Process::Draw_strategy_puzzle()
                 number_gradient_colours.push_back(horisontal_colours[i]);
         }
 
-        for(int x = 0; x <= current_puzzle_width; x++)
+        for(int x = 0; x < current_puzzle_width; x++)
         {
             if(x % 2)
                 continue;
@@ -655,7 +663,7 @@ void Process::Draw_strategy_puzzle()
     {
 
         draw_start = (float)(PUZZLE_CELL_HEIGHT * 5);
-        for(int y = 0; y < (int)ceil((float)current_puzzle_width / 5); y++)
+        for(int y = 0; y < (int)ceil((float)current_puzzle_width / 5) - 1; y++)
         {
             every_five_lines.push_back(draw_start);
             every_five_lines.push_back(0.0);
@@ -665,7 +673,7 @@ void Process::Draw_strategy_puzzle()
         } 
 
         draw_start = (float)(PUZZLE_CELL_WIDTH * 5);
-        for(int x = 0; x < (int)ceil((float)current_puzzle_height / 5); x++)
+        for(int x = 0; x < (int)ceil((float)current_puzzle_height / 5) - 1; x++)
         {
             every_five_lines.push_back(0.0);
             every_five_lines.push_back(draw_start);
@@ -710,14 +718,15 @@ void Process::Draw_strategy_puzzle()
     glEnable(GL_TEXTURE_2D);
 
     // The black squares marking location of grid elements
-    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_black"]->texture);
+    //glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_black"]->texture);
 
     // Recreate vertex lists if we should
     // TODO TODO
 
     // The white squares marking location of blank squares
-    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_white"]->texture);
-    Process::current_bound_texture = media->gfx["gui_puzzle_cell_white"]->texture;
+    //glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_white"]->texture);
+    //Process::current_bound_texture = media->gfx["gui_puzzle_cell_white"]->texture;
+    Process::current_bound_texture = media->gfx["gui_puzzle_grid_background"]->texture;
 
     // Recreate vertex lists if we should
     // TODO TODO
@@ -963,9 +972,9 @@ void Text::Draw()
     // scaling
     if(scale < 1.0f || scale > 1.0f)
     {
-        glTranslatef((float)(image->width/2), (float)(image->height/2), 0.0f);
+        glTranslatef(scale_pos[0], scale_pos[1], 0.0f);
         glScalef(scale, scale, 1.0f);
-        glTranslatef((float)(-image->width/2), (float)(-image->height/2), 0.0f);
+        glTranslatef(-scale_pos[0], -scale_pos[1], 0.0f);
     }
                                
     // Binding texture

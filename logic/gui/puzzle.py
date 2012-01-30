@@ -122,9 +122,6 @@ class GUI_puzzle(GUI_element):
         self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
         self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
 
-        self.grid_x = 0
-        self.grid_y = 0
-
         self.draw_strategy = "puzzle"
         self.draw_strategy_screen_width = self.game.settings['screen_width']
         self.draw_strategy_screen_height = self.game.settings['screen_height']
@@ -133,6 +130,13 @@ class GUI_puzzle(GUI_element):
         self.draw_strategy_current_zoom_level = self.game.current_zoom_level
         self.draw_strategy_current_puzzle_width = self.game.manager.current_puzzle.width
         self.draw_strategy_current_puzzle_height = self.game.manager.current_puzzle.height
+
+        self.adjust_gui_coords()
+        self.adjust_text_hint_coords()
+
+        self.camera_pos = [0.0, 0.0]
+
+
 
     def Execute(self):
         self.draw_strategy_camera_x = self.camera_pos[0]
@@ -252,8 +256,8 @@ class GUI_puzzle(GUI_element):
         self.game.minimum_zoom_level = self.game.current_zoom_level
 
         # Work out initial placement of the grid
-        self.grid_x = self.row_number_width - ((self.row_number_width + self.grid_width) / 2) - PUZZLE_CELL_WIDTH
-        self.grid_y = self.column_number_height - ((self.column_number_height + self.grid_height) / 2) - PUZZLE_CELL_HEIGHT
+        self.grid_x = int(self.row_number_width - ((self.row_number_width + self.grid_width) / 2) - PUZZLE_CELL_WIDTH)
+        self.grid_y = int(self.column_number_height - ((self.column_number_height + self.grid_height) / 2) - PUZZLE_CELL_HEIGHT)
 
 
     def zoom_out_fade_and_position(self, num):
@@ -432,7 +436,7 @@ class GUI_puzzle(GUI_element):
     def fill_at(self, value, cell_list):
         cell = self.fill_stack.pop()
         
-        if None in cell or self.game.manager.current_puzzle_state[cell[0]][cell[1]] == value or cell in self.checked_fill_stack:
+        if -1 in cell or self.game.manager.current_puzzle_state[cell[0]][cell[1]] == value or cell in self.checked_fill_stack:
             return len(self.fill_stack) > 0
         
         self.checked_fill_stack.append(cell)
@@ -509,7 +513,7 @@ class GUI_puzzle(GUI_element):
 
 
     def mark_cell(self, state, cell, skip_animation = False):
-        if None in cell:
+        if -1 in cell:
             return
 
         # --- DESIGNER ONLY ---
@@ -799,6 +803,8 @@ class Puzzle_marker(Process):
             self.alpha = 0.0
             self.marker_state = 1
 
+        self.update_pos()
+        
 
     def Execute(self):
         if self.marker_state == 1:
@@ -1030,7 +1036,7 @@ class Player_lives_life(Process):
         self.x = self.game.settings['screen_width'] - ((self.image.width * (num + 1)) + 15)
         self.y = self.game.settings['screen_height'] - self.image.height - 10
         self.z = Z_GUI_OBJECT_LEVEL_6 - 1
-        self.scale_point = (self.image.width / 2, self.image.height / 2)
+        self.scale_pos = (float(self.image.width / 2), float(self.image.height / 2))
         self.scale = .8
         self.dying = False
         self.iter = 0

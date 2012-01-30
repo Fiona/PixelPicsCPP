@@ -8,9 +8,10 @@ lib SDL_ttf : : <name>SDL_ttf ;
 lib freetype : : <name>freetype ; 
 lib z : : <name>z ; 
 lib GL : : <name>GL ; 
+lib GLU : : <name>GLU ; 
 lib python2.7 : : <name>python2.7 ; 
 lib boost_python : : <name>boost_python ; 
 lib boost_filesystem : : <name>boost_filesystem ; 
 
 
-exe pixelpics : [ glob *.cpp ] z/<link>static freetype/<link>static SDL_ttf/<link>static SDL_image/<link>static SDL/<link>static python2.7 boost_python boost_filesystem GL : <cflags>-fno-stack-protector <include>/usr/include/python2.7 ;
+exe pixelpics : [ glob *.cpp ] z/<link>static freetype/<link>static SDL_ttf/<link>static SDL_image/<link>static SDL/<link>static python2.7 boost_python boost_filesystem GL GLU : <cflags>-fno-stack-protector <include>/usr/include/python2.7 ;
