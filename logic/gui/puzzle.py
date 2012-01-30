@@ -90,6 +90,11 @@ class GUI_puzzle(GUI_element):
     fill_stack = []
     checked_fill_stack = []
 
+    reset_drawing_all_blacks = True
+    reset_drawing_all_whites = True
+    black_chunks_to_redraw = []
+    white_chunks_to_redraw = []
+
     black_squares_to_ignore = []
     white_squares_to_ignore = []
 
@@ -122,6 +127,9 @@ class GUI_puzzle(GUI_element):
         self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
         self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
 
+        self.black_chunks_to_redraw = []
+        self.white_chunks_to_redraw = []
+        
         self.draw_strategy = "puzzle"
         self.draw_strategy_screen_width = self.game.settings['screen_width']
         self.draw_strategy_screen_height = self.game.settings['screen_height']
@@ -130,7 +138,8 @@ class GUI_puzzle(GUI_element):
         self.draw_strategy_current_zoom_level = self.game.current_zoom_level
         self.draw_strategy_current_puzzle_width = self.game.manager.current_puzzle.width
         self.draw_strategy_current_puzzle_height = self.game.manager.current_puzzle.height
-
+        self.draw_strategy_current_puzzle_state = self.game.manager.current_puzzle_state
+        
         self.adjust_gui_coords()
         self.adjust_text_hint_coords()
 
@@ -143,6 +152,16 @@ class GUI_puzzle(GUI_element):
         self.draw_strategy_camera_y = self.camera_pos[1]
         self.draw_strategy_current_zoom_level = self.game.current_zoom_level
 
+        if self.reset_drawing_all_blacks:
+            self.reset_drawing_all_blacks = False
+        if self.reset_drawing_all_whites:
+            self.reset_drawing_all_whites = False
+
+        if len(self.black_chunks_to_redraw):
+            self.black_chunks_to_redraw = []
+        if len(self.white_chunks_to_redraw):
+            self.white_chunks_to_redraw = []
+            
         self.adjust_gui_coords()
         self.adjust_text_hint_coords()
 
@@ -735,11 +754,16 @@ class GUI_puzzle(GUI_element):
 
 
     def reset_drawing_blacks(self, cell = None):
-        pass
-
+        if cell is None:
+            self.reset_drawing_all_blacks = True
+        else:
+            self.black_chunks_to_redraw.append((cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE))
 
     def reset_drawing_whites(self, cell = None):
-        pass
+        if cell is None:
+            self.reset_drawing_all_whites = True
+        else:
+            self.white_chunks_to_redraw.append((cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE))
 
 
     def On_Exit(self):
@@ -809,8 +833,8 @@ class Puzzle_marker(Process):
     def Execute(self):
         if self.marker_state == 1:
             self.iter += 1
-            self.alpha = lerp(self.iter, 10, self.alpha, 1.0)
-            if self.iter > 10:
+            self.alpha = lerp(self.iter, 20, self.alpha, 1.0)
+            if self.iter > 20:
                 if self.state:
                     self.puzzle.black_squares_to_ignore.remove((self.row, self.col))
                 else:

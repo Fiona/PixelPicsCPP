@@ -419,7 +419,9 @@ void Process::Draw_strategy_primitive_square()
 void Process::Draw_strategy_puzzle()
 {
 
+    // ****************
     // Get prelim vals from python
+    // ****************
     float screen_width;
     float screen_height;
     float camera_x;
@@ -436,6 +438,7 @@ void Process::Draw_strategy_puzzle()
     boost::python::object game;
     boost::python::object core;
     Media* media;
+    boost::python::list current_puzzle_state;
 
         try
         {
@@ -456,6 +459,7 @@ void Process::Draw_strategy_puzzle()
              game = boost::python::extract<boost::python::object>(self_.attr("game"));
              core = boost::python::extract<boost::python::object>(game.attr("core"));
              media = boost::python::extract<Media*>(core.attr("media"));
+             current_puzzle_state = boost::python::extract<boost::python::list>(self_.attr("draw_strategy_current_puzzle_state"));
 
         }
         catch(boost::python::error_already_set const &)
@@ -463,7 +467,9 @@ void Process::Draw_strategy_puzzle()
             PyErr_Print();
         }
 
+    // ****************
     // Set up matrix
+    // ****************
     glPushMatrix();
 
     glTranslatef(
@@ -474,7 +480,9 @@ void Process::Draw_strategy_puzzle()
 
     glScalef(zoom_level, zoom_level, 1.0);
 
+    // ****************
     // White puzzle background
+    // ****************
     glDisable(GL_TEXTURE_2D);
     glColor4f(1.0, 1.0, 1.0, 0.9);
     glBegin(GL_QUADS);
@@ -484,7 +492,9 @@ void Process::Draw_strategy_puzzle()
     glVertex2f(0, grid_height);
     glEnd();
 
+    // ****************
     // Textured background
+    // ****************
     float coords_x = grid_width / (PUZZLE_CELL_WIDTH * 2);
     float coords_y = grid_height / (PUZZLE_CELL_HEIGHT * 2);
     float tex_coords_pointer[] = {coords_x, coords_y, 0.0, coords_y, coords_x, 0.0, 0.0, 0.0};
@@ -496,7 +506,9 @@ void Process::Draw_strategy_puzzle()
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
      
+    // ****************
     //Gradients behind numbers
+    // ****************
     float draw_start;
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
@@ -601,7 +613,9 @@ void Process::Draw_strategy_puzzle()
     glDrawArrays(GL_QUADS, 0, number_gradient_squares.size() / 2);
     glDisableClientState(GL_COLOR_ARRAY);
 
+    // ****************
     // Column / Row Hover
+    // ****************
     if(hovered_row > -1)
     {
         glColor4f(.5, .5, 1.0, .2);
@@ -624,7 +638,9 @@ void Process::Draw_strategy_puzzle()
         glEnd();
     }
 
+    // ****************
     // Grid Lines
+    // ****************
     static vector<float> grid_lines;
     if(grid_lines.size() == 0)
     {
@@ -657,7 +673,9 @@ void Process::Draw_strategy_puzzle()
     glVertexPointer(2, GL_FLOAT, 0, &grid_lines[0]);
     glDrawArrays(GL_LINES, 0, (current_puzzle_width + current_puzzle_height) * 2);
     
+    // ****************
     // Every five lines draw marker lines
+    // ****************
     static vector<float> every_five_lines;
     if(every_five_lines.size() == 0)
     {
@@ -689,7 +707,9 @@ void Process::Draw_strategy_puzzle()
     glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
     glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
 
+    // ****************
     // Puzzle border
+    // ****************
     glColor4f(0.0, 0.0, 0.0, 1.0);
     glLineWidth(2.0 * zoom_level);
     glBegin(GL_LINE_LOOP);
@@ -699,7 +719,9 @@ void Process::Draw_strategy_puzzle()
     glVertex2f(0.0, grid_height);
     glEnd();
 
+    // ****************
     // Cell Hover
+    // ****************
     if(hovered_row > -1 && hovered_column > -1)
     {
         glColor4f(1.0, 0.0, 0.0, .8);
@@ -712,27 +734,310 @@ void Process::Draw_strategy_puzzle()
         glEnd();
     }
 
+    // ****************
     // Set up for drawing markers
+    // ****************
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glEnable(GL_TEXTURE_2D);
 
+    // ****************
     // The black squares marking location of grid elements
-    //glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_black"]->texture);
+    // ****************
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_black"]->texture);
 
     // Recreate vertex lists if we should
-    // TODO TODO
+    static vector< vector< vector<float> > > black_chunks;
+    static vector< vector< vector<float> > > black_chunks_textures;
 
+    // If resetting all chunks then clear every vector
+    if(boost::python::extract<bool>(self_.attr("reset_drawing_all_blacks")))
+    {
+        black_chunks.clear();
+        black_chunks_textures.clear();
+        black_chunks.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+        black_chunks_textures.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+
+        BOOST_FOREACH(vector< vector<float> > &col, black_chunks)
+            col.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+        BOOST_FOREACH(vector< vector<float> > &col, black_chunks_textures)
+            col.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+    }
+    
+    // Check each individual chunk we need to potentially reset.
+    boost::python::list black_chunks_to_redraw = boost::python::extract<boost::python::list>(self_.attr("black_chunks_to_redraw"));
+    
+    if(boost::python::len(black_chunks_to_redraw) > 0)
+    {
+        for(int i=0; i<boost::python::len(black_chunks_to_redraw); i++)
+        {
+            boost::python::tuple chunk_to_redraw = boost::python::extract<boost::python::tuple>(black_chunks_to_redraw[i]);
+            black_chunks[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+            black_chunks_textures[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+        }
+    }
+
+    // iterate through each chunk and add to the vertex list
+    float draw_x;
+    float draw_y;
+    boost::python::list black_squares_to_ignore = boost::python::extract<boost::python::list>(self_.attr("black_squares_to_ignore"));
+    bool do_ignore;
+
+    // First we go through every chunk we could potentially draw
+    for(int h=0; h < (int)black_chunks.size(); h++)
+    {
+
+        for(int w=0; w < (int)black_chunks[h].size(); w++)
+        {
+
+            // If the chunk has something in it then we can assume it's be filled with something. This is a pretty lazy way of doing it.
+            if(black_chunks[h][w].size() > 0)
+                continue;
+
+            // We initialise the starting position along the x axis, according to which chunk this is 
+            draw_x = (float)(PUZZLE_CELL_WIDTH * (PUZZLE_RENDER_CHUNK_SIZE * w));
+
+            // Iterate through each column of this particular chunk
+            for(int i = (w * PUZZLE_RENDER_CHUNK_SIZE); i < (w * PUZZLE_RENDER_CHUNK_SIZE) + PUZZLE_RENDER_CHUNK_SIZE; i++)
+            {
+
+                // Initialise where the y axis coordinate starts in this column
+                draw_y = (float)(PUZZLE_CELL_HEIGHT * (PUZZLE_RENDER_CHUNK_SIZE * h));
+
+                // Iterate through each row of this column in this chunk
+                for(int j = (h * PUZZLE_RENDER_CHUNK_SIZE); j < (h * PUZZLE_RENDER_CHUNK_SIZE) + PUZZLE_RENDER_CHUNK_SIZE; j++)
+                {
+
+                    // If we're out of bounds then scoot out of here
+                    if(j >= boost::python::len(current_puzzle_state) or i >= boost::python::len(current_puzzle_state[j]))
+                        break;
+
+                    // Sometimes we want to not draw certain squares, if those squares are being represented by dynamic
+                    // processes, this chunk of code checks if the cell is to be ignored
+                    do_ignore = False;
+                    if(boost::python::len(black_squares_to_ignore) > 0)
+                    {
+                        for(int ign = 0; ign < boost::python::len(black_squares_to_ignore); ign++)
+                        {
+                            if(boost::python::extract<int>(black_squares_to_ignore[ign][0]) == j and boost::python::extract<int>(black_squares_to_ignore[ign][1]) == i)
+                            {
+                                do_ignore = True;
+                                break;
+                            }
+                        }
+                    }
+
+                    // If this cell is not to be ignored and is currently set as True (as in, filled), then we add it to the vert lists
+                    if(!do_ignore && boost::python::extract<bool>(current_puzzle_state[j][i]) == True)
+                    {
+
+                        // Add the verticies for this quad 
+                        black_chunks[h][w].push_back(draw_x + (float)PUZZLE_CELL_WIDTH);
+                        black_chunks[h][w].push_back(draw_y);
+                        black_chunks[h][w].push_back(0.0f);
+
+                        black_chunks[h][w].push_back(draw_x);
+                        black_chunks[h][w].push_back(draw_y);
+                        black_chunks[h][w].push_back(0.0f);
+
+                        black_chunks[h][w].push_back(draw_x);
+                        black_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
+                        black_chunks[h][w].push_back(0.0f);
+
+                        black_chunks[h][w].push_back(draw_x + (float)PUZZLE_CELL_WIDTH);
+                        black_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
+                        black_chunks[h][w].push_back(0.0f);
+
+                        // Add the texture coordinates
+                        black_chunks_textures[h][w].push_back(1.0); black_chunks_textures[h][w].push_back(0.0);
+                        black_chunks_textures[h][w].push_back(0.0); black_chunks_textures[h][w].push_back(0.0);
+                        black_chunks_textures[h][w].push_back(0.0); black_chunks_textures[h][w].push_back(1.0);
+                        black_chunks_textures[h][w].push_back(1.0); black_chunks_textures[h][w].push_back(1.0);
+
+                    }
+
+                    // Move the y coordinate along one cell
+                    draw_y += (float)PUZZLE_CELL_HEIGHT;
+
+                }
+
+                // Move the x coordinate along one cell
+                draw_x += (float)PUZZLE_CELL_WIDTH;
+
+            }
+
+        }
+
+    }
+
+    // Now draw each chunk, assuming the chunks have things in them
+    for(int h=0; h < (int)black_chunks.size(); h++)
+    {
+
+        for(int w=0; w < (int)black_chunks[h].size(); w++)
+        {
+
+            if(black_chunks[h][w].size() == 0)
+                continue;
+
+            glTexCoordPointer(2, GL_FLOAT, 0, &black_chunks_textures[h][w][0]);
+            glVertexPointer(3, GL_FLOAT, 0, &black_chunks[h][w][0]);
+            glDrawArrays(GL_QUADS, 0, (black_chunks[h][w].size() / 2));
+
+        }
+
+    }
+
+    // ****************
     // The white squares marking location of blank squares
-    //glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_white"]->texture);
-    //Process::current_bound_texture = media->gfx["gui_puzzle_cell_white"]->texture;
-    Process::current_bound_texture = media->gfx["gui_puzzle_grid_background"]->texture;
+    // ****************
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_white"]->texture);
 
     // Recreate vertex lists if we should
-    // TODO TODO
+    static vector< vector< vector<float> > > white_chunks;
+    static vector< vector< vector<float> > > white_chunks_textures;
 
+    // If resetting all chunks then clear every vector
+    if(boost::python::extract<bool>(self_.attr("reset_drawing_all_whites")))
+    {
+        white_chunks.clear();
+        white_chunks_textures.clear();
+        white_chunks.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+        white_chunks_textures.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+
+        BOOST_FOREACH(vector< vector<float> > &col, white_chunks)
+            col.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+        BOOST_FOREACH(vector< vector<float> > &col, white_chunks_textures)
+            col.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+    }
+
+    // Check each individual chunk we need to potentially reset.
+    boost::python::list white_chunks_to_redraw = boost::python::extract<boost::python::list>(self_.attr("white_chunks_to_redraw"));
+    
+    if(boost::python::len(white_chunks_to_redraw) > 0)
+    {
+        for(int i=0; i<boost::python::len(white_chunks_to_redraw); i++)
+        {
+            boost::python::tuple chunk_to_redraw = boost::python::extract<boost::python::tuple>(white_chunks_to_redraw[i]);
+            white_chunks[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+            white_chunks_textures[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+        }
+    }
+
+    // iterate through each chunk and add to the vertex list
+    boost::python::list white_squares_to_ignore = boost::python::extract<boost::python::list>(self_.attr("white_squares_to_ignore"));
+
+    // First we go through every chunk we could potentially draw
+    for(int h=0; h < (int)white_chunks.size(); h++)
+    {
+
+        for(int w=0; w < (int)white_chunks[h].size(); w++)
+        {
+
+            // If the chunk has something in it then we can assume it's be filled with something. This is a pretty lazy way of doing it.
+            if(white_chunks[h][w].size() > 0)
+                continue;
+
+            // We initialise the starting position along the x axis, according to which chunk this is 
+            draw_x = (float)(PUZZLE_CELL_WIDTH * (PUZZLE_RENDER_CHUNK_SIZE * w));
+
+            // Iterate through each column of this particular chunk
+            for(int i = (w * PUZZLE_RENDER_CHUNK_SIZE); i < (w * PUZZLE_RENDER_CHUNK_SIZE) + PUZZLE_RENDER_CHUNK_SIZE; i++)
+            {
+
+                // Initialise where the y axis coordinate starts in this column
+                draw_y = (float)(PUZZLE_CELL_HEIGHT * (PUZZLE_RENDER_CHUNK_SIZE * h));
+
+                // Iterate through each row of this column in this chunk
+                for(int j = (h * PUZZLE_RENDER_CHUNK_SIZE); j < (h * PUZZLE_RENDER_CHUNK_SIZE) + PUZZLE_RENDER_CHUNK_SIZE; j++)
+                {
+
+                    // If we're out of bounds then scoot out of here
+                    if(j >= boost::python::len(current_puzzle_state) or i >= boost::python::len(current_puzzle_state[j]))
+                        break;
+
+                    // Sometimes we want to not draw certain squares, if those squares are being represented by dynamic
+                    // processes, this chunk of code checks if the cell is to be ignored
+                    do_ignore = False;
+                    if(boost::python::len(white_squares_to_ignore) > 0)
+                    {
+                        for(int ign = 0; ign < boost::python::len(white_squares_to_ignore); ign++)
+                        {
+                            if(boost::python::extract<int>(white_squares_to_ignore[ign][0]) == j and boost::python::extract<int>(white_squares_to_ignore[ign][1]) == i)
+                            {
+                                do_ignore = True;
+                                break;
+                            }
+                        }
+                    }
+
+                    // If this cell is not to be ignored and is currently set as False (as in, marked as not filled), then we add it to the vert lists
+                    boost::python::object check = boost::python::extract<boost::python::object>(current_puzzle_state[j][i]);
+                    if(!do_ignore && !check.is_none() && boost::python::extract<bool>(current_puzzle_state[j][i]) == False)
+                    {
+
+                        // Add the verticies for this quad 
+                        white_chunks[h][w].push_back(draw_x + (float)PUZZLE_CELL_WIDTH);
+                        white_chunks[h][w].push_back(draw_y);
+                        white_chunks[h][w].push_back(0.0f);
+
+                        white_chunks[h][w].push_back(draw_x);
+                        white_chunks[h][w].push_back(draw_y);
+                        white_chunks[h][w].push_back(0.0f);
+
+                        white_chunks[h][w].push_back(draw_x);
+                        white_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
+                        white_chunks[h][w].push_back(0.0f);
+
+                        white_chunks[h][w].push_back(draw_x + (float)PUZZLE_CELL_WIDTH);
+                        white_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
+                        white_chunks[h][w].push_back(0.0f);
+
+                        // Add the texture coordinates
+                        white_chunks_textures[h][w].push_back(1.0); white_chunks_textures[h][w].push_back(0.0);
+                        white_chunks_textures[h][w].push_back(0.0); white_chunks_textures[h][w].push_back(0.0);
+                        white_chunks_textures[h][w].push_back(0.0); white_chunks_textures[h][w].push_back(1.0);
+                        white_chunks_textures[h][w].push_back(1.0); white_chunks_textures[h][w].push_back(1.0);
+
+                    }
+
+                    // Move the y coordinate along one cell
+                    draw_y += (float)PUZZLE_CELL_HEIGHT;
+
+                }
+
+                // Move the x coordinate along one cell
+                draw_x += (float)PUZZLE_CELL_WIDTH;
+
+            }
+
+        }
+
+    }
+
+    // Now draw each chunk, assuming the chunks have things in them
+    for(int h=0; h < (int)white_chunks.size(); h++)
+    {
+
+        for(int w=0; w < (int)white_chunks[h].size(); w++)
+        {
+
+            if(white_chunks[h][w].size() == 0)
+                continue;
+
+            glTexCoordPointer(2, GL_FLOAT, 0, &white_chunks_textures[h][w][0]);
+            glVertexPointer(3, GL_FLOAT, 0, &white_chunks[h][w][0]);
+            glDrawArrays(GL_QUADS, 0, (white_chunks[h][w].size() / 2));
+
+        }
+
+    }
+
+    // ****************
     // Reset matrix
+    // ****************
     glPopMatrix();
+    Process::current_bound_texture = -1;
     glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
 
 }
