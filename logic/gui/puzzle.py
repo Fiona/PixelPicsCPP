@@ -152,15 +152,10 @@ class GUI_puzzle(GUI_element):
         self.draw_strategy_camera_y = self.camera_pos[1]
         self.draw_strategy_current_zoom_level = self.game.current_zoom_level
 
-        if self.reset_drawing_all_blacks:
-            self.reset_drawing_all_blacks = False
-        if self.reset_drawing_all_whites:
-            self.reset_drawing_all_whites = False
-
-        if len(self.black_chunks_to_redraw):
-            self.black_chunks_to_redraw = []
-        if len(self.white_chunks_to_redraw):
-            self.white_chunks_to_redraw = []
+        self.reset_drawing_all_blacks = False
+        self.reset_drawing_all_whites = False
+        self.black_chunks_to_redraw = []
+        self.white_chunks_to_redraw = []
             
         self.adjust_gui_coords()
         self.adjust_text_hint_coords()
@@ -327,7 +322,6 @@ class GUI_puzzle(GUI_element):
                 else:
                     text.z = Z_GUI_OBJECT_LEVEL_7
 
-                
         for col_num, number_list in enumerate(self.text['cols']):
             grid_y = self.grid_gui_y                
             if self.hovered_column > -1 and col_num == self.hovered_column:
@@ -756,7 +750,7 @@ class GUI_puzzle(GUI_element):
     def reset_drawing_blacks(self, cell = None):
         if cell is None:
             self.reset_drawing_all_blacks = True
-        else:
+        elif not (cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE) in self.black_chunks_to_redraw:
             self.black_chunks_to_redraw.append((cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE))
 
     def reset_drawing_whites(self, cell = None):
@@ -833,8 +827,8 @@ class Puzzle_marker(Process):
     def Execute(self):
         if self.marker_state == 1:
             self.iter += 1
-            self.alpha = lerp(self.iter, 20, self.alpha, 1.0)
-            if self.iter > 20:
+            self.alpha = lerp(self.iter, 10, self.alpha, 1.0)
+            if self.iter > 10:
                 if self.state:
                     self.puzzle.black_squares_to_ignore.remove((self.row, self.col))
                 else:

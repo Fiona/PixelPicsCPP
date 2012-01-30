@@ -755,26 +755,30 @@ void Process::Draw_strategy_puzzle()
     {
         black_chunks.clear();
         black_chunks_textures.clear();
-        black_chunks.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
-        black_chunks_textures.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+        black_chunks.resize((int)ceil((float)current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE), vector< vector<float> >());
+        black_chunks_textures.resize((int)ceil((float)current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE), vector< vector<float> >());
 
         BOOST_FOREACH(vector< vector<float> > &col, black_chunks)
-            col.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+            col.resize((int)ceil((float)current_puzzle_width / PUZZLE_RENDER_CHUNK_SIZE), vector<float>());
         BOOST_FOREACH(vector< vector<float> > &col, black_chunks_textures)
-            col.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+            col.resize((int)ceil((float)current_puzzle_width / PUZZLE_RENDER_CHUNK_SIZE), vector<float>());
     }
-    
-    // Check each individual chunk we need to potentially reset.
-    boost::python::list black_chunks_to_redraw = boost::python::extract<boost::python::list>(self_.attr("black_chunks_to_redraw"));
-    
-    if(boost::python::len(black_chunks_to_redraw) > 0)
+    else
     {
-        for(int i=0; i<boost::python::len(black_chunks_to_redraw); i++)
+
+        // Check each individual chunk we need to potentially reset.
+        boost::python::list black_chunks_to_redraw = boost::python::extract<boost::python::list>(self_.attr("black_chunks_to_redraw"));
+    
+        if(boost::python::len(black_chunks_to_redraw) > 0)
         {
-            boost::python::tuple chunk_to_redraw = boost::python::extract<boost::python::tuple>(black_chunks_to_redraw[i]);
-            black_chunks[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
-            black_chunks_textures[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+            for(int i=0; i<boost::python::len(black_chunks_to_redraw); i++)
+            {
+                boost::python::tuple chunk_to_redraw = boost::python::extract<boost::python::tuple>(black_chunks_to_redraw[i]);
+                black_chunks[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+                black_chunks_textures[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+            }
         }
+
     }
 
     // iterate through each chunk and add to the vertex list
@@ -834,19 +838,15 @@ void Process::Draw_strategy_puzzle()
                         // Add the verticies for this quad 
                         black_chunks[h][w].push_back(draw_x + (float)PUZZLE_CELL_WIDTH);
                         black_chunks[h][w].push_back(draw_y);
-                        black_chunks[h][w].push_back(0.0f);
 
                         black_chunks[h][w].push_back(draw_x);
                         black_chunks[h][w].push_back(draw_y);
-                        black_chunks[h][w].push_back(0.0f);
 
                         black_chunks[h][w].push_back(draw_x);
                         black_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
-                        black_chunks[h][w].push_back(0.0f);
 
                         black_chunks[h][w].push_back(draw_x + (float)PUZZLE_CELL_WIDTH);
                         black_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
-                        black_chunks[h][w].push_back(0.0f);
 
                         // Add the texture coordinates
                         black_chunks_textures[h][w].push_back(1.0); black_chunks_textures[h][w].push_back(0.0);
@@ -881,7 +881,7 @@ void Process::Draw_strategy_puzzle()
                 continue;
 
             glTexCoordPointer(2, GL_FLOAT, 0, &black_chunks_textures[h][w][0]);
-            glVertexPointer(3, GL_FLOAT, 0, &black_chunks[h][w][0]);
+            glVertexPointer(2, GL_FLOAT, 0, &black_chunks[h][w][0]);
             glDrawArrays(GL_QUADS, 0, (black_chunks[h][w].size() / 2));
 
         }
@@ -979,19 +979,15 @@ void Process::Draw_strategy_puzzle()
                         // Add the verticies for this quad 
                         white_chunks[h][w].push_back(draw_x + (float)PUZZLE_CELL_WIDTH);
                         white_chunks[h][w].push_back(draw_y);
-                        white_chunks[h][w].push_back(0.0f);
 
                         white_chunks[h][w].push_back(draw_x);
                         white_chunks[h][w].push_back(draw_y);
-                        white_chunks[h][w].push_back(0.0f);
 
                         white_chunks[h][w].push_back(draw_x);
                         white_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
-                        white_chunks[h][w].push_back(0.0f);
 
                         white_chunks[h][w].push_back(draw_x + (float)PUZZLE_CELL_WIDTH);
                         white_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
-                        white_chunks[h][w].push_back(0.0f);
 
                         // Add the texture coordinates
                         white_chunks_textures[h][w].push_back(1.0); white_chunks_textures[h][w].push_back(0.0);
@@ -1026,7 +1022,7 @@ void Process::Draw_strategy_puzzle()
                 continue;
 
             glTexCoordPointer(2, GL_FLOAT, 0, &white_chunks_textures[h][w][0]);
-            glVertexPointer(3, GL_FLOAT, 0, &white_chunks[h][w][0]);
+            glVertexPointer(2, GL_FLOAT, 0, &white_chunks[h][w][0]);
             glDrawArrays(GL_QUADS, 0, (white_chunks[h][w].size() / 2));
 
         }
