@@ -756,7 +756,7 @@ class GUI_puzzle(GUI_element):
     def reset_drawing_whites(self, cell = None):
         if cell is None:
             self.reset_drawing_all_whites = True
-        else:
+        elif not (cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE) in self.white_chunks_to_redraw:
             self.white_chunks_to_redraw.append((cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE))
 
 

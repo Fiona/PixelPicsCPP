@@ -668,7 +668,7 @@ void Process::Draw_strategy_puzzle()
     }
 
 
-    glLineWidth(1.0 * zoom_level);
+    glLineWidth(1.0 / zoom_level);
     glColor4f(0.3, 0.3, 0.3, 1.0);
     glVertexPointer(2, GL_FLOAT, 0, &grid_lines[0]);
     glDrawArrays(GL_LINES, 0, (current_puzzle_width + current_puzzle_height) * 2);
@@ -702,7 +702,7 @@ void Process::Draw_strategy_puzzle()
 
     }
 
-    glLineWidth(2.0 * zoom_level);
+    glLineWidth(2.0 / zoom_level);
     glColor4f(0.3, 0.7, 0.3, 1.0);
     glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
     glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
@@ -711,7 +711,7 @@ void Process::Draw_strategy_puzzle()
     // Puzzle border
     // ****************
     glColor4f(0.0, 0.0, 0.0, 1.0);
-    glLineWidth(2.0 * zoom_level);
+    glLineWidth(2.0 / zoom_level);
     glBegin(GL_LINE_LOOP);
     glVertex2f(0.0, 0.0);
     glVertex2f(grid_width, 0.0);
@@ -726,7 +726,7 @@ void Process::Draw_strategy_puzzle()
     {
         glColor4f(1.0, 0.0, 0.0, .8);
         glBegin(GL_LINE_LOOP);
-        glLineWidth(3.0 * zoom_level);
+        glLineWidth(3.0 / zoom_level);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT + (PUZZLE_CELL_HEIGHT * hovered_row)));
@@ -902,25 +902,29 @@ void Process::Draw_strategy_puzzle()
     {
         white_chunks.clear();
         white_chunks_textures.clear();
-        white_chunks.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
-        white_chunks_textures.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+        white_chunks.resize((int)ceil((float)current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE), vector< vector<float> >());
+        white_chunks_textures.resize((int)ceil((float)current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE), vector< vector<float> >());
 
         BOOST_FOREACH(vector< vector<float> > &col, white_chunks)
-            col.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+            col.resize((int)ceil((float)current_puzzle_width / PUZZLE_RENDER_CHUNK_SIZE), vector<float>());
         BOOST_FOREACH(vector< vector<float> > &col, white_chunks_textures)
-            col.resize(current_puzzle_height / PUZZLE_RENDER_CHUNK_SIZE);
+            col.resize((int)ceil((float)current_puzzle_width / PUZZLE_RENDER_CHUNK_SIZE), vector<float>());
     }
 
     // Check each individual chunk we need to potentially reset.
     boost::python::list white_chunks_to_redraw = boost::python::extract<boost::python::list>(self_.attr("white_chunks_to_redraw"));
-    
+
     if(boost::python::len(white_chunks_to_redraw) > 0)
     {
         for(int i=0; i<boost::python::len(white_chunks_to_redraw); i++)
         {
-            boost::python::tuple chunk_to_redraw = boost::python::extract<boost::python::tuple>(white_chunks_to_redraw[i]);
-            white_chunks[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
-            white_chunks_textures[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+            boost::python::tuple chunk_to_redraw = boost::python::extract<boost::python::tuple>(
+                white_chunks_to_redraw[i]
+                );
+            white_chunks[boost::python::extract<int>(chunk_to_redraw[0])]
+                [boost::python::extract<int>(chunk_to_redraw[1])].clear();
+            white_chunks_textures[boost::python::extract<int>(chunk_to_redraw[0])]
+                [boost::python::extract<int>(chunk_to_redraw[1])].clear();
         }
     }
 
