@@ -235,6 +235,7 @@ class GUI_puzzle(GUI_element):
                 text.colour = PUZZLE_HINT_COMPLETED_COLOUR if number_list == (0,) else PUZZLE_HINT_COLOUR
                 text.shadow = 2
                 text.shadow_colour = (.3, .3, .3, .5)
+                text.generate_mipmaps = True
                 text.z = Z_GUI_OBJECT_LEVEL_5
                 self.text['rows'][row_num].append(text)
 
@@ -250,6 +251,7 @@ class GUI_puzzle(GUI_element):
                 text.colour = PUZZLE_HINT_COMPLETED_COLOUR if number_list == (0,) else PUZZLE_HINT_COLOUR
                 text.shadow = 2
                 text.shadow_colour = (.3, .3, .3, .5)
+                text.generate_mipmaps = True
                 text.z = Z_GUI_OBJECT_LEVEL_5
                 self.text['cols'][col_num].append(text)
 

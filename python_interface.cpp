@@ -120,6 +120,7 @@ BOOST_PYTHON_MODULE(core)
         .add_property("shadow_colour", make_getter(&Text::shadow_colour), &Text::Set_shadow_colour)
         .add_property("text_width", make_getter(&Text::text_width), make_setter(&Text::text_width))
         .add_property("text_height", make_getter(&Text::text_height), make_setter(&Text::text_height))
+        .add_property("generate_mipmaps", make_getter(&Text::generate_mipmaps), &Text::Set_generate_mipmaps)
         .def("Kill", &TextWrapper::Kill)
         ;
 

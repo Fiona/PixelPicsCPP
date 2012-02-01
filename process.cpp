@@ -1128,6 +1128,7 @@ Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Proce
     scale = 1.0;
     rotation = 0;
     alpha = 1.0f;
+    generate_mipmaps = False;
 
     set_text(_text);
 
@@ -1175,6 +1176,13 @@ void Text::Set_shadow_colour(boost::python::object list)
 }
 
 
+void Text::Set_generate_mipmaps(bool generate_mipmaps_)
+{
+    generate_mipmaps = generate_mipmaps_;
+    generate_new_text_image();
+}
+
+
 void Text::generate_new_text_image()
 {
 
@@ -1211,7 +1219,7 @@ void Text::generate_new_text_image()
     final_surface = text_surface;
     final_surface->refcount++;
 
-    image = new Image(final_surface, False);
+    image = new Image(final_surface, generate_mipmaps);
 
     SDL_FreeSurface(text_surface);
     SDL_FreeSurface(final_surface);

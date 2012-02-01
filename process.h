@@ -135,11 +135,13 @@ public:
     int text_height;
     int shadow;
     std::vector<float> shadow_colour;
+    bool generate_mipmaps;
 
     void Set_z(int new_z);
     void set_text(string _text);
     void Set_colour(boost::python::object list);
     void Set_shadow_colour(boost::python::object list);
+    void Set_generate_mipmaps(bool generate_mipmaps_);
     tuple<float, float> get_screen_draw_position();
 
     void Draw();
