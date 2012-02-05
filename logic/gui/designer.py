@@ -164,3 +164,123 @@ class GUI_designer_packs_create_pack(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_designer_packs_add_pack_dialog(self.game, self.parent)
+
+
+
+class GUI_designer_packs_add_pack_dialog(GUI_element_window):
+    title = "Create Pack"
+    height = 240
+    width = 450
+    objs = {}
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+    
+    def gui_init(self):
+        self.z = Z_GUI_OBJECT_LEVEL_8
+        self.x = (self.game.settings['screen_width'] / 2) - (self.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - (self.height / 2)
+        GUI_element_window.gui_init(self)
+
+        self.objs = {}
+        y = 0
+        for text in ["Enter a simple descriptive name for your new pack", "and your name as the author."]:
+            txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
+            txt.z = self.z - 1
+            txt.colour = (0.0, 0.0, 0.0)
+            self.objs['text_' + str(y)] = txt
+            y += 15
+
+        #self.pack_name_text = GUI_designer_packs_add_pack_pack_name_text_input(self.game, self)
+        #self.author_text = GUI_designer_packs_add_pack_author_text_input(self.game, self)
+        GUI_designer_packs_add_pack_pack_confirm_button(self.game, self)
+        GUI_designer_packs_add_pack_pack_cancel_button(self.game, self)
+
+        txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 147, TEXT_ALIGN_TOP_LEFT, "Game mode: ")
+        txt.z = self.z - 1
+        txt.colour = (0.0, 0.0, 0.0)
+        self.objs['text_dropdown'] = txt        
+        #self.puzzle_type_dropdown = GUI_designer_packs_edit_pack_puzzle_type_dropdown(self.game, self)
+        
+        self.game.gui.block_gui_keyboard_input = True
+        self.x = 0
+        self.y = 0
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_width = self.x + self.width
+        self.primitive_square_height = self.y + self.height
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
+
+
+    def add_new_pack(self):
+        dont_kill = False
+        
+        try:
+            self.game.manager.add_new_pack(self.pack_name_text.current_text, self.author_text.current_text, True if self.puzzle_type_dropdown.selected_item == 1 else False)
+        except IOError as e:
+            GUI_element_dialog_box(self.game, self.parent, "Input error", [str(e)])
+            dont_kill = True
+        except Exception as e:
+            GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
+        finally:
+            self.parent.scroll.reread_pack_items()
+            if not dont_kill:
+                self.Kill()
+        
+
+    def On_Exit(self):
+        GUI_element_window.On_Exit(self)
+        self.game.gui.block_gui_keyboard_input = False
+        for x in self.objs:
+            self.objs[x].Kill()
+            
+
+
+class GUI_designer_packs_add_pack_pack_confirm_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Add Pack"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.gui_init()
+        self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
+        self.y = self.parent.y + 180
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        self.parent.add_new_pack()
+
+
+
+class GUI_designer_packs_add_pack_pack_cancel_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Cancel"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.gui_init()
+        self.x = self.parent.x + (self.parent.width / 2) + 10
+        self.y = self.parent.y + 180
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        self.parent.Kill()

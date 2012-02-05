@@ -335,7 +335,7 @@ class GUI_element_window(GUI_element):
         self.frame = GUI_element_window_frame(self.game, self, self.x, self.y, self.width, self.height)
         self.text = Text(self.game.core.media.fonts['small'], self.x+16.0, self.y+4.0, TEXT_ALIGN_TOP_LEFT,  self.title)
         self.text.colour = (0.0,0.0,0.0)
-        self.text.z = self.z - 1
+        self.text.z = self.z - 2
 
     
     def On_Exit(self):
