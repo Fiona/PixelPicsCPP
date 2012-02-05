@@ -226,7 +226,7 @@ class GUI_puzzle(GUI_element):
                     self.iter = 0
 
             elif self.anim_state == 2:
-                if not self.title_text is None and self.wait_time > 120:
+                if not self.title_text is None and self.wait_time > 220:
                     self.title_text.die()
                     self.title_text = None
                     self.additional_text = Puzzle_nameplate_text(
@@ -273,7 +273,7 @@ class GUI_puzzle(GUI_element):
                     self.iter = 0
 
             elif self.anim_state == 2:
-                if not self.title_text is None and self.wait_time > 100:
+                if not self.title_text is None and self.wait_time > 220:
                     self.title_text.die()
                     self.title_text = None
 
@@ -999,10 +999,10 @@ class Puzzle_marker(Process):
 
 class Puzzle_pixel_message(Pixel_message):
 
-    def __init__(self, game, x, y, z = Z_GUI_OBJECT_LEVEL_5, wait = 3):
+    def __init__(self, game, x, y, z = Z_GUI_OBJECT_LEVEL_7, wait = 3):
         Pixel_message.__init__(self, game, x, y, z, wait)
-        # TODO
-        #self.draw_strategy = "puzzle_pixel_message"
+        self.draw_strategy = "puzzle_pixel_message"
+        self.draw_strategy_screen_width = self.game.settings['screen_width']
 
 
 

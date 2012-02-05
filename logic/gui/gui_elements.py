@@ -641,7 +641,7 @@ class Pixel_message_pixel(Process):
         self.game = game
         self.x = x
         self.y_to = y
-        self.z = z
+        self.z = z - 1
         self.wait = wait
         self.image = self.game.core.media.gfx['gui_main_menu_title_pixel']
         self.y = -self.image.height
