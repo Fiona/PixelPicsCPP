@@ -15,7 +15,7 @@ from helpers  import *
 from gui.logo import *
 from gui.main_menu import *
 from gui.puzzle import *
-#from gui.designer import *
+from gui.designer import *
 
 
 
@@ -218,22 +218,20 @@ class GUI(Process):
         self.gui_state = state
         self.current_game_state_gui_ticks = 0
         self.parent_window = None
+
+        self.mouse.alpha = 1.0
+        self.mouse.image = self.game.core.media.gfx['gui_cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
+        self.mouse.z = Z_MOUSE
                                                   
         if self.gui_state == GUI_STATE_LOGO:
-            self.mouse.alpha = 1.0
-            self.mouse.z = Z_MOUSE
             self.mouse.image = None
             self.current_visible_gui_elements[GUI_STATE_LOGO]['stompyblondie_logo'] = Stompyblondie_Logo(self.game)
         if self.gui_state == GUI_STATE_MENU:
-            self.mouse.alpha = 1.0
-            self.mouse.image = self.game.core.media.gfx['gui_cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
             self.current_visible_gui_elements[GUI_STATE_MENU]['main_menu_container'] = GUI_main_menu_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_MENU]['main_menu_container']
         if self.gui_state == GUI_STATE_PUZZLE:
-            self.mouse.image = self.game.core.media.gfx['gui_cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
             self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container'] = GUI_puzzle_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container']
-        """
         if self.gui_state == GUI_STATE_DESIGNER_PACKS:
             self.current_visible_gui_elements[GUI_STATE_DESIGNER_PACKS]['designer_packs_container'] = GUI_designer_packs_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_DESIGNER_PACKS]['designer_packs_container']
@@ -242,12 +240,9 @@ class GUI(Process):
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_DESIGNER_PUZZLES]['designer_puzzles_container']
             self.fade_toggle(speed = 20, colour = (1.0, 1.0, 1.0))
         if self.gui_state == GUI_STATE_DESIGNER_DESIGNER:
-            MyrmidonGame.engine['input'].mouse.alpha = 1.0
-            MyrmidonGame.engine['input'].mouse.image = self.game.media.graphics['gui']['cursor_' + str(DRAWING_TOOL_STATE_NORMAL)]
             self.current_visible_gui_elements[GUI_STATE_DESIGNER_DESIGNER]['designer_designer_container'] = GUI_designer_designer_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_DESIGNER_DESIGNER]['designer_designer_container']
             self.fade_toggle(speed = 20, colour = (1.0, 1.0, 1.0))
-            """
 
 
     def destroy_current_gui_state(self):
