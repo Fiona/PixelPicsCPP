@@ -19,7 +19,7 @@ Media::Media()
     fonts.insert(pair<string,Font*>("basic", new Font("fnt/arulent.ttf", 13)));
     fonts.insert(pair<string,Font*>("small", new Font("fnt/bitmap1.ttf", 10)));
     fonts.insert(pair<string,Font*>("puzzle_hint_numbers", new Font("fnt/borisblackbloxx.ttf", 40)));
-    fonts.insert(pair<string,Font*>("puzzle_message", new Font("fnt/aurulent.ttf", 25)));
+    fonts.insert(pair<string,Font*>("puzzle_message", new Font("fnt/arulent.ttf", 25)));
     fonts.insert(pair<string,Font*>("puzzle_timer", new Font("fnt/borisblackbloxx.ttf", 30)));
     fonts.insert(pair<string,Font*>("menu_titles", new Font("fnt/borisblackbloxx.ttf", 35)));
     fonts.insert(pair<string,Font*>("menu_subtitles", new Font("fnt/borisblackbloxx.ttf", 25)));

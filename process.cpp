@@ -307,7 +307,7 @@ void Process::Draw_strategy_gui_window_frame()
 
 void Process::Draw_strategy_primitive_square()
 {
-
+ 
     float square_x = boost::python::extract<float>(self_.attr("primitive_square_x"));
     float square_y = boost::python::extract<float>(self_.attr("primitive_square_y"));
     float width = boost::python::extract<float>(self_.attr("primitive_square_width"));

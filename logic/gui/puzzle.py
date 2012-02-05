@@ -145,18 +145,19 @@ class GUI_puzzle(GUI_element):
 
         self.camera_pos = [0.0, 0.0]
 
+        self.anim_state = 0
+        self.iter = 0
 
 
     def Execute(self):
         self.draw_strategy_camera_x = self.camera_pos[0]
         self.draw_strategy_camera_y = self.camera_pos[1]
         self.draw_strategy_current_zoom_level = self.game.current_zoom_level
-
         self.reset_drawing_all_blacks = False
         self.reset_drawing_all_whites = False
         self.black_chunks_to_redraw = []
         self.white_chunks_to_redraw = []
-            
+
         self.adjust_gui_coords()
         self.adjust_text_hint_coords()
 
@@ -198,6 +199,110 @@ class GUI_puzzle(GUI_element):
                              break
             # --- DESIGNER ONLY ---
 
+        # ****************
+        # PUZZLE_STATE - Player has failed the puzzle, display message
+        # ****************
+        if self.state == PUZZLE_STATE_FAILED:
+            if self.anim_state == 0:
+                self.hovered_column = -1
+                self.hovered_row = -1
+
+                if self.title_text is None and self.additional_text is None:
+                    self.game.gui.block_gui_keyboard_input = True
+                    self.game.gui.block_gui_mouse_input = True
+                    self.game.gui.mouse.alpha = 0.0
+                    self.title_text = Title_failed(self.game, 0, 100, wait = 1)
+                    self.wait_time = 0
+
+                self.anim_state = 1
+
+            elif self.anim_state == 1:
+                if self.hint_alpha > 0.0:
+                    if self.iter < 120:
+                        self.zoom_out_fade_and_position(self.iter)
+                        self.iter += 1
+                else:
+                    self.anim_state = 2
+                    self.iter = 0
+
+            elif self.anim_state == 2:
+                if not self.title_text is None and self.wait_time > 120:
+                    self.title_text.die()
+                    self.title_text = None
+                    self.additional_text = Puzzle_nameplate_text(
+                        self.game,
+                        self.game.settings['screen_width'] /2,
+                        self.game.settings['screen_height'] - 50,
+                        "Click to continue..."
+                        )
+                    self.objs.append(self.additional_text)
+
+                if self.title_text is None and self.game.core.mouse.left_up:
+                    if self.game.game_state == GAME_STATE_TEST:
+                        self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
+                    else:
+                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 60)
+                    self.game.gui.block_gui_mouse_input = False
+                    self.game.gui.block_gui_keyboard_input = False
+
+        # ****************
+        # PUZZLE_STATE - Puzzle has been cleared, display the coloured image and cleared message
+        # ****************
+        if self.state == PUZZLE_STATE_CLEARED:
+            if self.anim_state == 0:
+                self.hovered_column = -1
+                self.hovered_row = -1
+
+                if self.title_text is None and self.additional_text is None:
+                    self.game.gui.block_gui_keyboard_input = True
+                    self.game.gui.block_gui_mouse_input = True
+                    self.game.gui.mouse.alpha = 0.0
+                    self.title_text = Title_cleared(self.game, 0, 100, wait = 1)
+                    self.wait_time = 0
+
+                self.anim_state = 1
+
+            elif self.anim_state == 1:
+                if self.hint_alpha > 0.0:
+                    if self.iter < 120:
+                        self.zoom_out_fade_and_position(self.iter)
+                        self.iter += 1
+                else:
+                    #Finished_puzzle_image(self.game, self, self.grid_x, self.grid_y)
+                    self.anim_state = 2
+                    self.iter = 0
+
+            elif self.anim_state == 2:
+                if not self.title_text is None and self.wait_time > 100:
+                    self.title_text.die()
+                    self.title_text = None
+
+                    self.additional_text = Puzzle_nameplate_text(
+                        self.game,
+                        self.game.settings['screen_width'] / 2,
+                        self.game.settings['screen_height'] - 50,
+                        "Click to continue..."
+                        )
+                    self.objs.append(self.additional_text)
+                    
+                    self.objs.append(
+                        Puzzle_nameplate_text(
+                        self.game,
+                        self.game.settings['screen_width'] / 2,
+                        50,
+                        str(self.game.manager.current_puzzle.name)
+                        )
+                        )
+
+                if self.title_text is None and self.game.core.mouse.left_up:
+                    if self.game.game_state == GAME_STATE_TEST:
+                        self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
+                    else:
+                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 60)
+                    self.game.gui.block_gui_mouse_input = False
+                    self.game.gui.block_gui_keyboard_input = False
+                    
+            
         self.wait_time += 1
         self.update()
 
@@ -286,13 +391,10 @@ class GUI_puzzle(GUI_element):
         self.camera_pos[0] = lerp(num, 120, self.camera_pos[0], 0.0)
         self.camera_pos[1] = lerp(num, 120, self.camera_pos[1], 0.0)
 
-        self.grid_x = lerp(num, 120, self.grid_x, -(self.grid_width/2))
-        self.grid_y = lerp(num, 120, self.grid_y, -(self.grid_height/2))
+        self.grid_x = int(lerp(num, 120, self.grid_x, -(self.grid_width/2)))
+        self.grid_y = int(lerp(num, 120, self.grid_y, -(self.grid_height/2)))
 
         self.game.current_zoom_level = lerp(num, 120, self.game.current_zoom_level, self.game.minimum_zoom_level)
-
-        self.adjust_gui_coords()
-        self.adjust_text_hint_coords()                
 
 
     def adjust_gui_coords(self):
@@ -762,7 +864,7 @@ class GUI_puzzle(GUI_element):
             self.white_chunks_to_redraw.append((cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE))
 
 
-    def On_Exit(self):
+    def On_Exit(self):        
         GUI_element.On_Exit(self)
         for x in self.cell_marker_objs:
             self.cell_marker_objs[x].Kill()
@@ -774,6 +876,7 @@ class GUI_puzzle(GUI_element):
             self.title_text.Kill()
         for x in self.objs:
             x.Kill()
+            
 
     
 class Puzzle_marker(Process):
@@ -887,6 +990,11 @@ class Puzzle_marker(Process):
     def get_screen_draw_position(self):
         return self.x, self.y
 
+
+    def On_Exit(self):
+        if (self.row, self.col) in self.puzzle.cell_marker_objs:
+            del(self.puzzle.cell_marker_objs[(self.row, self.col)])
+        
     
 
 class Puzzle_pixel_message(Pixel_message):
@@ -962,7 +1070,7 @@ class Puzzle_nameplate_text(Process):
         self.text.shadow = 2
         self.text.shadow_colour = (.3, .3, .3, .5)
 
-        self.text.z = self.z
+        self.text.z = self.z - 1
         self.do_fade = True
         self.iter = 0
         self.alpha = 0.0
@@ -971,8 +1079,8 @@ class Puzzle_nameplate_text(Process):
         self.draw_strategy = "primitive_square"
         self.draw_strategy_call_parent = False
         self.primitive_square_filled = True
-        self.primitive_square_width = self.text.text_width + 20.0
-        self.primitive_square_height = self.text.text_height + 2.0
+        self.primitive_square_width = self.text.text_width + 40.0
+        self.primitive_square_height = self.text.text_height + 4.0
         self.primitive_square_x = self.x - (self.text.text_width/2) - 20.0
         self.primitive_square_y = self.y - (self.text.text_height/2) - 2.0
         self.primitive_square_colour = (0.0, 0.0, 0.0, 0.0)

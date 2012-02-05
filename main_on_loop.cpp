@@ -17,7 +17,7 @@ void Main_App::On_Loop()
     for(std::vector<Process*>::iterator it = copy_list.begin(); it != copy_list.end(); ++it)
     {
 
-        if(*it == NULL)
+        if(*it == NULL || (*it)->is_dead == True)
             continue;
 
         try
