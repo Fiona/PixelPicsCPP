@@ -85,6 +85,8 @@ public:
     void Draw_strategy_gui_button();
     void Draw_strategy_gui_window_frame();
     void Draw_strategy_gui_text_input();
+    void Draw_strategy_gui_dropdown_currently_selected();
+    void Draw_strategy_gui_dropdown_options();
     void Draw_strategy_puzzle();
     void Draw_strategy_puzzle_pixel_message();
 

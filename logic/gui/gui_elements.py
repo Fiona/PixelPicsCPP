@@ -819,3 +819,222 @@ class GUI_element_text_input(GUI_element):
             self.label_text_object.Kill()
         self.text_object.Kill()
 
+
+
+class GUI_element_dropdown(GUI_element):
+    """
+    A generic dropdown object.
+    Instead of setting width,height,x,y,z as you normally would. Instead set
+    display_width, display_height, display_x, display_y and display_z respectively.
+    This is because the dropdown object uses a bunch of crazy things to make full
+    use of the cascading GUI system.
+    """
+    # Set to the maximum length the currently selected text should be before being truncated
+    max_selected_text_len = 20
+
+    # Override these instead of the typical attributes
+    display_width = 300
+    display_height = 25
+    display_x = 0
+    display_y = 0
+    display_z = Z_GUI_OBJECT_LEVEL_6
+
+    # Override to set to your own dropdown options
+    dropdown_options = [
+        {'text' : "The first option", 'data' : 1},
+        {'text' : "The second option", 'data' : 10},
+        {'text' : "The third option", 'data' : 100}
+        ]
+
+    # Override to set what the initial selected item should be.
+    selected_item = 0
+    
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()        
+
+
+    def on_selected_new_item(self, item):
+        """
+        Override this to hook into selection
+        """
+        pass
+    
+        
+    def change_selected_item(self, selected_item):
+        self.selected_item = selected_item
+        self.set_visible_selected_text()
+        self.on_selected_new_item(self.dropdown_options[self.selected_item])
+
+
+    def change_selected_item_to_data(self, data):
+        seq = 0
+        for x in self.dropdown_options:
+            if x['data'] == data:
+                self.change_selected_item(seq)
+                return
+            seq += 1
+
+        
+    def set_visible_selected_text(self):
+        if len(self.dropdown_options[self.selected_item]['text']) > self.max_selected_text_len:
+            text = self.dropdown_options[self.selected_item]['text'][:self.max_selected_text_len] + "..."
+        else:
+            text = self.dropdown_options[self.selected_item]['text']
+
+        self.currently_selected_object.set_text_to(text)
+
+
+    def gui_init(self):
+        GUI_element.gui_init(self)
+
+        self.z = Z_GUI_OBJECT_LEVEL_9
+        
+        self.currently_selected_object = GUI_element_dropdown_currently_selected(self.game, self)
+        self.currently_selected_object.width = self.display_width
+        self.currently_selected_object.height = self.display_height
+        self.currently_selected_object.x = self.display_x
+        self.currently_selected_object.y = self.display_y
+        
+        self.options_object = GUI_element_dropdown_options(self.game, self)
+        self.options_object.width = self.display_width
+        self.options_object.x = self.display_x
+        self.options_object.y = self.display_y + self.display_height
+        self.options_object.z = Z_GUI_OBJECT_LEVEL_9 - 1
+
+        self.set_visible_selected_text()
+
+
+    def mouse_left_up(self):
+        self.hide_all_options()
+
+        
+    def display_all_options(self):
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+        self.options_object.show()
+
+        
+    def hide_all_options(self):
+        self.width = 0
+        self.height = 0
+        self.options_object.hide()        
+        
+
+    
+class GUI_element_dropdown_currently_selected(GUI_element):
+    """
+    -- Displays the currently selected option
+    -- display z
+    -- clicking makes the options display
+    """
+    text_object = None
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.display_z
+        self.draw_strategy = "gui_dropdown_currently_selected"
+        self.image = self.game.core.media.gfx['gui_dropdown_arrow']
+        self.gui_init()
+
+
+    def update(self):
+        self.image_sequence = 1
+        GUI_element.update(self)
+
+
+    def set_text_to(self, text):
+        if self.text_object is None:
+            self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 2, self.y + 2, TEXT_ALIGN_TOP_LEFT, text)
+            self.text_object.z = self.z - 2
+        else:
+            self.text_object.text = text
+            
+        
+    def mouse_over(self):
+        self.image_sequence = 2
+
+
+    def mouse_left_down(self):
+        self.image_sequence = 3
+
+
+    def mouse_left_up(self):
+        self.parent.display_all_options()
+
+
+    def On_Exit(self):
+        self.text_object.Kill()
+
+
+
+class GUI_element_dropdown_options(GUI_element):
+    """
+    -- Displays all options
+    -- clicking on changes the currently selected item in the dropdown
+    """
+    texts = []
+    hovered_item = -1
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+        self.draw_strategy = "gui_dropdown_options"
+        self.display_height = self.parent.display_height
+        self.num_dropdown_options = len(self.parent.dropdown_options)
+        
+
+    def Execute(self):
+        self.hovered_item = -1
+        self.update()
+    
+
+    def show(self):
+        self.texts = []
+        
+        self.height = 0
+        for item in self.parent.dropdown_options:
+            new_text = Text(self.game.core.media.fonts['basic'], self.x + 2, self.y + 2 + self.height, TEXT_ALIGN_TOP_LEFT, item['text'])
+            new_text.z = self.z - 2
+            self.texts.append(new_text)
+
+            self.height += self.parent.display_height
+
+            if new_text.text_width > self.width:
+                self.width = new_text.text_width
+
+        if self.width < self.parent.display_width:
+            self.width = self.parent.display_width
+            
+
+    def hide(self):
+        for x in self.texts:
+            x.Kill()
+        self.width = 0
+        self.height = 0        
+        self.texts = []
+
+
+    def mouse_over(self):
+        self.hovered_item = int((self.game.gui.mouse.y - self.y) / (self.parent.display_height))
+        if self.hovered_item >= len(self.parent.dropdown_options):
+            self.hovered_item = -1
+
+
+    def mouse_left_up(self):
+        if self.hovered_item > -1:
+            self.parent.hide_all_options()
+            self.parent.change_selected_item(self.hovered_item)
+            
+
+    def On_Exit(self):
+        for x in self.texts:
+            x.Kill()
+

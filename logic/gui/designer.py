@@ -202,10 +202,10 @@ class GUI_designer_packs_add_pack_dialog(GUI_element_window):
         GUI_designer_packs_add_pack_pack_cancel_button(self.game, self)
 
         txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 147, TEXT_ALIGN_TOP_LEFT, "Game mode: ")
-        txt.z = self.z - 1
+        txt.z = self.z - 2
         txt.colour = (0.0, 0.0, 0.0)
         self.objs['text_dropdown'] = txt        
-        #self.puzzle_type_dropdown = GUI_designer_packs_edit_pack_puzzle_type_dropdown(self.game, self)
+        self.puzzle_type_dropdown = GUI_designer_packs_edit_pack_puzzle_type_dropdown(self.game, self)
         
         self.game.gui.block_gui_keyboard_input = True
         self.x = 0
@@ -274,6 +274,28 @@ class GUI_designer_packs_add_pack_author_text_input(GUI_element_text_input):
         self.z = self.parent.z - 2
         self.x = self.parent.x + 30
         self.y = self.parent.y + 115
+        self.gui_init()
+
+
+
+class GUI_designer_packs_edit_pack_puzzle_type_dropdown(GUI_element_dropdown):
+    display_width = 290
+    display_height = 25
+
+    dropdown_options = [
+        {'text' : "Normal Mode (lives)", 'data' : 'normal'},
+        {'text' : "Freemode (no lives)", 'data' : 'freemode'}
+        ]
+
+    selected_item = 0
+        
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.display_x = self.parent.x + 120
+        self.display_y = self.parent.y + 145
+        self.display_z = self.parent.z - 2
         self.gui_init()
 
 

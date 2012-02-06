@@ -348,6 +348,105 @@ void Process::Draw_strategy_gui_text_input()
 }
 
 
+void Process::Draw_strategy_gui_dropdown_currently_selected()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    glPushMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(x, y);
+    glVertex2f(width + x, y);
+    glVertex2f(width + x, height + y);
+    glVertex2f(x, height + y);
+    glEnd();
+
+    glColor4f(0.5, 0.5, 0.5, 1.0);
+    glLineWidth(1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(x, y);
+    glVertex2f(width + x, y);
+    glVertex2f(width + x, height + y);
+    glVertex2f(x, height + y);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glTranslatef(x + width - 25.0, y + 1.0, 0.0);
+    glTexCoordPointer(2, GL_FLOAT, 0, &image->texture_coords[image_sequence-1][0]);
+    glBindTexture(GL_TEXTURE_2D, image->texture);
+    glVertexPointer(3, GL_FLOAT, 0, image->vertex_list);
+    Process::current_bound_texture = image->texture;
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
+
+    glPopMatrix();
+
+}
+
+
+void Process::Draw_strategy_gui_dropdown_options()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    int hovered_item = boost::python::extract<int>(self_.attr("hovered_item"));
+    int display_height = boost::python::extract<int>(self_.attr("display_height"));
+    int num_dropdown_options = boost::python::extract<int>(self_.attr("num_dropdown_options"));
+
+    if(width == 0 || height == 0)
+        return;
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    // Background behind items
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(x, y);
+    glVertex2f(width + x, y);
+    glVertex2f(width + x, height + y);
+    glVertex2f(x, height + y);
+    glEnd();
+
+    // highlight on hovered item
+    if(hovered_item > -1)
+    {
+        glColor4f(0.2, 0.2, 0.2, 1.0);
+        glBegin(GL_QUADS);
+        glVertex2f(x, y + (display_height * hovered_item));
+        glVertex2f(width + x, y + (display_height * hovered_item));
+        glVertex2f(width + x, y + (display_height * (hovered_item + 1)));
+        glVertex2f(x, y + (display_height * (hovered_item + 1)));
+        glEnd();
+    }
+
+    // Border around all items
+    int start_y = 0;
+    for(int i = 0; i < num_dropdown_options; i++)
+    {
+        glColor4f(0.4, 0.4, 0.4, 1.0);
+        glLineWidth(1.0);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(x, y + start_y);
+        glVertex2f(width + x, y + start_y);
+        glVertex2f(width + x, y + start_y + display_height);
+        glVertex2f(x, y + start_y + display_height);
+        glEnd();
+        start_y += display_height;
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+}
+
+
 void Process::Draw_strategy_primitive_square()
 {
  
