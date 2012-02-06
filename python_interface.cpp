@@ -74,6 +74,8 @@ BOOST_PYTHON_MODULE(core)
     // Expose common vectors
     boost::python::class_<std::vector<float> >("FloatVector")
         .def(boost::python::vector_indexing_suite<std::vector<float> >());
+    boost::python::class_<std::vector<int> >("IntVector")
+        .def(boost::python::vector_indexing_suite<std::vector<int> >());
 
     // Expose Process object
     class_<Process, ProcessWrapper, boost::noncopyable, boost::shared_ptr<ProcessWrapper> >("Process", init<>())
@@ -146,6 +148,8 @@ BOOST_PYTHON_MODULE(core)
         .add_property("mouse", make_getter(&Main_App::mouse, return_value_policy<reference_existing_object>()))
         .add_property("current_fps", make_getter(&Main_App::current_fps))
         .add_property("process_count", make_getter(&Main_App::process_count))
+        .add_property("text_input_enabled", make_getter(&Main_App::text_input_enabled), make_setter(&Main_App::text_input_enabled))
+        .add_property("Text_input", make_getter(&Main_App::Text_input))
         .add_property("media", make_getter(&Main_App::media, return_value_policy<reference_existing_object>()))
         .add_property("settings", make_getter(&Main_App::settings, return_value_policy<reference_existing_object>()))
         .add_property("author_id", make_getter(&Main_App::author_id))
@@ -154,6 +158,7 @@ BOOST_PYTHON_MODULE(core)
         .add_property("path_user_pack_directory", make_getter(&Main_App::path_user_pack_directory))
         .def("Keyboard_key_down", &Main_App::Keyboard_key_down)
         .def("Keyboard_key_released", &Main_App::Keyboard_key_released)
+        .def("Toggle_text_input", &Main_App::Toggle_text_input)
         .def("Quit", &Main_App::Quit)
         ;
 

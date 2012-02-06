@@ -28,6 +28,7 @@ Main_App::Main_App()
     frames_rendered = 0;
     python_interface = NULL;
     mouse = NULL;
+    text_input_enabled = False;
 
     // Get the application data path depending on system
 #if __LINUX__
@@ -129,6 +130,8 @@ int Main_App::On_Execute()
 
         // Empty keyboard keys released vector. it's only relevant once a frame.
         Keyboard_keys_released.clear();
+        if(text_input_enabled)
+            Text_input.clear();
         
         // Reset mouse states for these
         mouse->left_up = False;
@@ -221,6 +224,27 @@ void Main_App::Wait_till_next_frame()
         SDL_Delay((1000 / desired_fps) - (SDL_GetTicks() - delay_ticks));
 
     delay_ticks = SDL_GetTicks();
+
+}
+
+
+void Main_App::Toggle_text_input()
+{
+
+    if(text_input_enabled)
+    {
+        text_input_enabled = False;
+        SDL_EnableKeyRepeat(0, 0);
+        SDL_EnableUNICODE(0);
+    }
+    else
+    {
+        text_input_enabled = True;
+        SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+        SDL_EnableUNICODE(1);
+    }
+
+    Text_input.clear();
 
 }
 

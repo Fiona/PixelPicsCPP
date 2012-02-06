@@ -667,3 +667,155 @@ class Pixel_message_pixel(Process):
 
 class Puzzle_image(GUI_element):
     pass
+
+
+
+class GUI_element_text_input(GUI_element):
+    """
+    This is a simple text input box.
+    """
+    # Set to relevant sizes
+    width = 200
+    height = 25
+
+    # None will not add a label. Setting to a string will label the text input with a label.
+    label = None
+
+    # This is the maximum text length that this input will accept.
+    max_length = 25
+
+    # What the current text in the input element is.
+    current_text = ""
+    
+    # text objects
+    label_text_object = None
+    text_object = None
+
+    # If set to True then we are currently typing into the text input.
+    active = False
+
+    # Caret blinking related stuff
+    blink = False
+    blink_wait = 0
+    
+    # Whereever the blinking caret is at the time.
+    caret_location = 0
+       
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+        
+
+    def gui_init(self):
+        GUI_element.gui_init(self)
+
+        if not self.label is None:            
+            self.label_text_object = Text(self.game.core.media.fonts['basic'], self.x, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.label + " "))
+            self.label_text_object.z = self.z
+            self.label_text_object.colour = (0,0,0)
+            self.width -= self.label_text_object.text_width
+            
+        self.x += self.label_text_object.text_width
+
+        self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_text))
+        self.text_object.z = self.z - 1
+
+        self.draw_strategy = "gui_text_input"
+
+
+    def update(self):
+        GUI_element.update(self)
+        
+        if not self.active:
+            return
+
+        for input_key in self.game.core.Text_input:
+            # Backspace
+            if input_key == key.BACKSPACE:
+                if len(self.current_text) > 0 and self.caret_location > 0:
+                    self.current_text = self.current_text[0:self.caret_location-1] + self.current_text[self.caret_location:]
+                    self.caret_location -= 1
+
+            # Delete key
+            elif input_key == key.DELETE:
+                if len(self.current_text) > 0 and self.caret_location < len(self.current_text):            
+                    self.current_text = self.current_text[0:self.caret_location] + self.current_text[self.caret_location+1:]
+        
+            # If we've input any normal key event that isn't quitting then add it to the text input
+            if (
+                input_key > 0 and input_key <= 127
+                and not input_key == key.RETURN
+                and not input_key == key.ESCAPE
+                and not input_key == key.BACKSPACE
+                and not input_key == key.DELETE
+                ):
+                if len(self.current_text) < self.max_length:
+                    self.current_text = self.current_text[0:self.caret_location] + chr(input_key).decode('utf-8') + self.current_text[self.caret_location:]
+                    self.caret_location += 1
+
+        # Arrow keys move the caret
+        if self.game.core.Keyboard_key_released(key.LEFT):
+            if len(self.current_text) > 0 and self.caret_location > 0:
+                self.caret_location -= 1
+        elif self.game.core.Keyboard_key_released(key.RIGHT):
+            if len(self.current_text) > 0 and self.caret_location < len(self.current_text):
+                self.caret_location += 1
+
+        # Update the display text, blinking if necessary
+        if self.blink_wait == 10:
+            self.blink_wait = 0
+            self.blink = True if not self.blink else False
+        self.blink_wait += 1
+
+        if len(self.current_text) > 0:
+            char_at_caret_location = "" if self.caret_location == len(self.current_text) else self.current_text[self.caret_location]
+            self.text_object.text = str(self.current_text[0:self.caret_location] + ("_" if self.blink else char_at_caret_location) + self.current_text[self.caret_location+1:])
+        else:
+            self.text_object.text = str("_" if self.blink else "")
+
+        # Get rid
+        if self.game.core.mouse.left_up or self.game.core.Keyboard_key_released(key.RETURN) or self.game.core.Keyboard_key_released(key.ESCAPE):
+            self.unfocus()
+
+
+    def set_current_text_to(self, new_text):
+        self.current_text = new_text
+        self.text_object.text = str(new_text)
+           
+
+    def mouse_left_up(self):
+        if self.active:
+            return
+        self.focus()
+
+
+    def focus(self):
+        if self.active:
+            return
+        if not self.game.gui.focussed_text_input is None:
+            self.game.gui.focussed_text_input.unfocus()
+        self.game.gui.focussed_text_input = self
+        self.active = True
+        self.caret_location = len(self.current_text)        
+        self.game.core.Toggle_text_input()
+
+
+    def unfocus(self):
+        if not self.active:
+            return
+        self.game.focussed_text_input = None
+        self.active = False
+        self.text_object.text = str(self.current_text)
+        self.game.core.Toggle_text_input()
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        if self.active:
+            self.unfocus()
+        if not self.label is None:
+            self.label_text_object.Kill()
+        self.text_object.Kill()
+

@@ -69,6 +69,9 @@ class GUI(Process):
     # Pointer to the mouse process
     mouse = None
 
+    # If a text input has focus this points to the relevant gui element
+    focussed_text_input = None
+
     def __init__(self, game):
         Process.__init__(self)
         self.game = game
@@ -248,9 +251,12 @@ class GUI(Process):
     def destroy_current_gui_state(self):
         if self.gui_state is None:
             return
+        if not self.focussed_text_input is None:
+            self.focussed_text_input.unfocus()
+            self.focussed_text_input = None
         for x in self.current_visible_gui_elements[self.gui_state]:
             self.current_visible_gui_elements[self.gui_state][x].Kill()
-        self.current_visible_gui_elements[self.gui_state] = {}
+        self.current_visible_gui_elements[self.gui_state] = {}        
 
 
     fading = None

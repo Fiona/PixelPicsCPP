@@ -15,6 +15,7 @@ from gui.gui_elements import *
 from gui.puzzle import GUI_puzzle
 
 
+
 ###############################################################
 ############ PUZZLE PACK LISTINGS ############################
 ###############################################################
@@ -190,13 +191,13 @@ class GUI_designer_packs_add_pack_dialog(GUI_element_window):
         y = 0
         for text in ["Enter a simple descriptive name for your new pack", "and your name as the author."]:
             txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
-            txt.z = self.z - 1
+            txt.z = self.z - 2
             txt.colour = (0.0, 0.0, 0.0)
             self.objs['text_' + str(y)] = txt
             y += 15
 
-        #self.pack_name_text = GUI_designer_packs_add_pack_pack_name_text_input(self.game, self)
-        #self.author_text = GUI_designer_packs_add_pack_author_text_input(self.game, self)
+        self.pack_name_text = GUI_designer_packs_add_pack_pack_name_text_input(self.game, self)
+        self.author_text = GUI_designer_packs_add_pack_author_text_input(self.game, self)
         GUI_designer_packs_add_pack_pack_confirm_button(self.game, self)
         GUI_designer_packs_add_pack_pack_cancel_button(self.game, self)
 
@@ -245,6 +246,38 @@ class GUI_designer_packs_add_pack_dialog(GUI_element_window):
             
 
 
+class GUI_designer_packs_add_pack_pack_name_text_input(GUI_element_text_input):
+    label = "Pack name:"
+    width = 380
+    max_length = 25
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = self.parent.x + 30
+        self.y = self.parent.y + 85
+        self.gui_init()
+
+
+
+class GUI_designer_packs_add_pack_author_text_input(GUI_element_text_input):
+    label = "Author:"
+    width = 380
+    max_length = 25
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = self.parent.x + 30
+        self.y = self.parent.y + 115
+        self.gui_init()
+
+
+
 class GUI_designer_packs_add_pack_pack_confirm_button(GUI_element_button):
     generic_button = True
     generic_button_text = "Add Pack"
@@ -284,3 +317,5 @@ class GUI_designer_packs_add_pack_pack_cancel_button(GUI_element_button):
 
     def mouse_left_up(self):
         self.parent.Kill()
+
+

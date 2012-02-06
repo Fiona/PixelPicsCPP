@@ -74,6 +74,7 @@ bool Main_App::On_Init()
     draw_strategies["primitive_square"] = &Process::Draw_strategy_primitive_square;
     draw_strategies["gui_button"] = &Process::Draw_strategy_gui_button;
     draw_strategies["gui_window_frame"] = &Process::Draw_strategy_gui_window_frame;
+    draw_strategies["gui_text_input"] = &Process::Draw_strategy_gui_text_input;
     draw_strategies["puzzle"] = &Process::Draw_strategy_puzzle;
     draw_strategies["puzzle_pixel_message"] = &Process::Draw_strategy_puzzle_pixel_message;
     return True;

@@ -304,6 +304,49 @@ void Process::Draw_strategy_gui_window_frame()
 
 }
 
+void Process::Draw_strategy_gui_text_input()
+{
+
+    if(alpha <= 0.0)
+        return;
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    bool active = boost::python::extract<float>(self_.attr("active"));
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float draw_x = draw_pos.get<0>();
+    float draw_y = draw_pos.get<1>();
+
+    glPushMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    if(active)
+        glColor4f(0.8, 0.8, 0.8, 1.0);
+    else
+        glColor4f(0.5, 0.5, 0.5, 1.0);
+    glLineWidth(1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+
+    glPopMatrix();
+
+}
+
 
 void Process::Draw_strategy_primitive_square()
 {

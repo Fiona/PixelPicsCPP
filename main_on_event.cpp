@@ -22,6 +22,8 @@ void Main_App::On_Event(SDL_Event* Event)
     
     case SDL_KEYDOWN:
         Keyboard_keys_down.push_back(Event -> key.keysym.sym);
+        if(text_input_enabled)
+            Text_input.push_back(Event->key.keysym.unicode);
         break;
  
     case SDL_KEYUP:

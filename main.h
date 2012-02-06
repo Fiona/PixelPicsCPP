@@ -118,8 +118,10 @@ public:
     Media* media;
     std::vector<SDLKey> Keyboard_keys_down;
     std::vector<SDLKey> Keyboard_keys_released;
+    std::vector<int> Text_input;
     int current_fps;
     int process_count;
+    bool text_input_enabled;
     string path_application_data;
     string path_settings_file;
     string path_user_pack_directory;
@@ -139,6 +141,7 @@ public:
     void On_Cleanup(); 
     bool Keyboard_key_down(SDLKey Key);
     bool Keyboard_key_released(SDLKey Key);
+    void Toggle_text_input();
 
 };
 
