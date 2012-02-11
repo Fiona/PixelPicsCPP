@@ -71,6 +71,7 @@ class Game(Process):
         self.settings['screen_width'] = self.core.settings.screen_width
         self.settings['screen_height'] = self.core.settings.screen_height
         self.settings['full_screen'] = self.core.settings.full_screen
+        self.author_id = self.core.author_id
 
         # Debug display
         if DEBUG_SHOW_FPS:

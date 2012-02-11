@@ -29,6 +29,7 @@ Process::Process()
     rotation = 0;
     colour.resize(3, 1.0f);
     scale_pos.resize(2, 0.0f);
+    clip.resize(4, 0.0f);
     alpha = 1.0;
     image_sequence = 1;
     draw_strategy = "";
@@ -67,6 +68,19 @@ void Process::Draw()
 
     // Get drawing coords
     tuple<float, float> draw_pos = get_screen_draw_position();
+
+    // Clip the process if necessary
+    // glScissor assumes origin as bottom-left rather than top-left which explains the fudging with the second param
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
 
     // glrotate works by you translating to the point around which you wish to rotate
     // and applying the rotation you can translate back to apply the real translation
@@ -113,6 +127,10 @@ void Process::Draw()
     if(image->num_of_frames > 1)
         glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
 
+    // Stop clipping
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
     glPopMatrix();
 
 }
@@ -120,6 +138,8 @@ void Process::Draw()
 
 void Process::Kill()
 {
+    if(is_dead)
+        return;
     Process::Processes_to_kill.push_back(this);
     is_dead = True;
 }
@@ -137,6 +157,15 @@ void Process::Set_colour(boost::python::object list)
     colour[0] = boost::python::extract<float>(list[0]);
     colour[1] = boost::python::extract<float>(list[1]);
     colour[2] = boost::python::extract<float>(list[2]);
+}
+
+
+void Process::Set_clip(boost::python::object list)
+{
+    clip[0] = boost::python::extract<float>(list[0]);
+    clip[1] = boost::python::extract<float>(list[1]);
+    clip[2] = boost::python::extract<float>(list[2]);
+    clip[3] = boost::python::extract<float>(list[3]);
 }
 
 
@@ -189,6 +218,18 @@ void Process::Draw_strategy_gui_button()
     float width = boost::python::extract<float>(self_.attr("width"));
     float height = boost::python::extract<float>(self_.attr("height"));
 
+    // Clip the process if necessary
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
     // Draw the background gradient
     glPushMatrix();
     glEnable(GL_TEXTURE_2D);
@@ -228,6 +269,10 @@ void Process::Draw_strategy_gui_button()
 
     glPopMatrix();
 
+    // Stop clip
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
 }
 
 
@@ -243,14 +288,21 @@ void Process::Draw_strategy_gui_window_frame()
     float draw_x = draw_pos.get<0>();
     float draw_y = draw_pos.get<1>();
 
+    // Clip the process if necessary
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
     glPushMatrix();
 
     glDisable(GL_TEXTURE_2D);
-
-    //glVertex2f(top_left[0], top_left[1])
-    //glVertex2f(bottom_right[0], top_left[1])
-    //glVertex2f(bottom_right[0], bottom_right[1])
-    //glVertex2f(top_left[0], bottom_right[1])
 
     // Background grey shadow
     glColor4f(0.7, 0.7, 0.7, 0.7);
@@ -302,6 +354,10 @@ void Process::Draw_strategy_gui_window_frame()
 
     glPopMatrix();
 
+    // Stop clipping
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
 }
 
 void Process::Draw_strategy_gui_text_input()
@@ -309,6 +365,18 @@ void Process::Draw_strategy_gui_text_input()
 
     if(alpha <= 0.0)
         return;
+
+    // Clip the process if necessary
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
 
     float width = boost::python::extract<float>(self_.attr("width"));
     float height = boost::python::extract<float>(self_.attr("height"));
@@ -344,6 +412,10 @@ void Process::Draw_strategy_gui_text_input()
     glEnable(GL_TEXTURE_2D);
 
     glPopMatrix();
+
+    // Stop clipping
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
 
 }
 
@@ -443,6 +515,62 @@ void Process::Draw_strategy_gui_dropdown_options()
 
     glEnable(GL_TEXTURE_2D);
     glPopMatrix();
+
+}
+
+
+void Process::Draw_strategy_gui_scroll_window()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    if(width == 0 || height == 0)
+        return;
+
+    // Clip the process if necessary
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    //glVertex2f(top_left[0], top_left[1])
+    //glVertex2f(bottom_right[0], top_left[1])
+    //glVertex2f(bottom_right[0], bottom_right[1])
+    //glVertex2f(top_left[0], bottom_right[1])
+
+    glColor4f(0.5, 0.5, 0.5, 0.5);
+    glBegin(GL_QUADS);
+    glVertex2f(x, y);
+    glVertex2f(width + x, y);
+    glVertex2f(width + x, height + y);
+    glVertex2f(x, height + y);
+    glEnd();
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glLineWidth(1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(x, y);
+    glVertex2f(width + x, y);
+    glVertex2f(width + x, height + y);
+    glVertex2f(x, height + y);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+    // stop clipping
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
 
 }
 
@@ -567,11 +695,6 @@ void Process::Draw_strategy_puzzle_pixel_message()
     glPopMatrix();
     glDisable(GL_TEXTURE_2D);
     
-    //glVertex2f(top_left[0], top_left[1])
-    //glVertex2f(bottom_right[0], top_left[1])
-    //glVertex2f(bottom_right[0], bottom_right[1])
-    //glVertex2f(top_left[0], bottom_right[1])
-
     glBegin(GL_QUADS);
       glColor4f(0.6, 0.8, 0.8, 0.0);
       glVertex2f(0.0, y - (float)(height / 2));
@@ -1227,6 +1350,61 @@ void Process::Draw_strategy_puzzle()
 }
 
 
+void Process::Draw_strategy_gui_designer_packs_pack_item()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    if(width == 0 || height == 0)
+        return;
+
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float draw_x = draw_pos.get<0>();
+    float draw_y = draw_pos.get<1>();
+
+    // Clip the process if necessary
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.5, 0.5, 0.5, alpha);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glLineWidth(1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+    // stop clipping
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
+}
+
+
 /*
  *
  */
@@ -1234,6 +1412,7 @@ ProcessWrapper::ProcessWrapper(PyObject* _self) : Process()
 {
     has_init = False;
     has_killed = False;
+    is_dead = False;
     self = _self;
     self_ = boost::python::object(boost::python::handle<>(boost::python::borrowed(self)));
     Process::internal_list.append(self_);
@@ -1245,12 +1424,16 @@ ProcessWrapper::ProcessWrapper(PyObject* _self) : Process()
 
 void ProcessWrapper::Kill()
 {
+    if(is_dead)
+        return;
     boost::python::call_method<void>(self, "On_Exit");
     Process::internal_list.remove(self_);
     this->Process::Kill();
     boost::python::decref(self);
     boost::python::decref(self);
     self = NULL;
+    is_dead = True;
+    this->Process::is_dead = True;
 }
 
 
@@ -1340,6 +1523,15 @@ void Text::Set_colour(boost::python::object list)
     colour[0] = boost::python::extract<float>(list[0]);
     colour[1] = boost::python::extract<float>(list[1]);
     colour[2] = boost::python::extract<float>(list[2]);
+}
+
+
+void Text::Set_clip(boost::python::object list)
+{
+    clip[0] = boost::python::extract<float>(list[0]);
+    clip[1] = boost::python::extract<float>(list[1]);
+    clip[2] = boost::python::extract<float>(list[2]);
+    clip[3] = boost::python::extract<float>(list[3]);
 }
 
 
@@ -1451,6 +1643,18 @@ void Text::Draw()
     // Get drawing coords
     tuple<float, float> draw_pos = get_screen_draw_position();
 
+    // Clip the process if necessary
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
     // glrotate works by you translating to the point around which you wish to rotate
     // and applying the rotation you can translate back to apply the real translation
     // position
@@ -1497,6 +1701,10 @@ void Text::Draw()
     // draw the triangle strip
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+    // Stop clipping
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
     glPopMatrix();
 
 }
@@ -1515,12 +1723,15 @@ void TextWrapper::Execute_default()
 
 void TextWrapper::Kill()
 {
-    is_dead = True;
+    if(is_dead)
+        return;
     Process::internal_list.remove(self_);
     this->Process::Kill();
     boost::python::decref(self);
     boost::python::decref(self);
     self = NULL;
+    is_dead = True;
+    this->Process::is_dead = True;
 }
 
 

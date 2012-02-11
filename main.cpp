@@ -14,6 +14,8 @@ using namespace std;
 
 
 map <string, Main_App::FuncGetter> Main_App::draw_strategies;
+float Main_App::screen_width;
+float Main_App::screen_height;
 
 
 Main_App::Main_App()

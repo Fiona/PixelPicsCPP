@@ -114,6 +114,9 @@ public:
     typedef void (Process::*FuncGetter)();
     static map <string, FuncGetter> draw_strategies;
 
+    static float screen_width;
+    static float screen_height;
+
     Settings* settings;
     Media* media;
     std::vector<SDLKey> Keyboard_keys_down;

@@ -54,6 +54,7 @@ public:
     float   scale;
     int rotation;
     std::vector<float> colour;
+    std::vector<float> clip;
     float alpha;
     int image_sequence;
     std::vector<float> scale_pos;
@@ -72,6 +73,7 @@ public:
 
     void Set_z(int new_z);
     void Set_colour(boost::python::object list);
+    void Set_clip(boost::python::object list);
     void Set_scale_pos(boost::python::object list);
 
     void move_forward(float distance_to_travel, int rotation_to_move_in);
@@ -89,6 +91,8 @@ public:
     void Draw_strategy_gui_dropdown_options();
     void Draw_strategy_puzzle();
     void Draw_strategy_puzzle_pixel_message();
+    void Draw_strategy_gui_scroll_window();
+    void Draw_strategy_gui_designer_packs_pack_item();
 
 };
 
@@ -101,6 +105,7 @@ struct ProcessWrapper : Process
 
     bool has_init;
     bool has_killed;
+    bool is_dead;
     PyObject *self;
     boost::python::object self_;
 
@@ -144,6 +149,7 @@ public:
     void Set_z(int new_z);
     void set_text(string _text);
     void Set_colour(boost::python::object list);
+    void Set_clip(boost::python::object list);
     void Set_shadow_colour(boost::python::object list);
     void Set_generate_mipmaps(bool generate_mipmaps_);
     tuple<float, float> get_screen_draw_position();

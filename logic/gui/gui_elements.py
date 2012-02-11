@@ -186,10 +186,10 @@ class GUI_element(Process):
 
     def get_screen_draw_position(self):
         if not self.scroll_element is None:
-            self.clip = ((self.scroll_element.x, self.scroll_element.y), (self.scroll_element.width, self.scroll_element.height))
+            self.clip = (self.scroll_element.x, self.scroll_element.y, self.scroll_element.width, self.scroll_element.height)
             return (self.x + self.scroll_element.x, self.y + self.scroll_element.y - self.scroll_element.contents_scroll_location)
         else:
-            self.clip = None
+            self.clip = (0, 0, 0, 0)
             return (self.x, self.y)
     
 
@@ -197,6 +197,7 @@ class GUI_element(Process):
         kids = list(self.children)
         for child in kids:
             child.Kill()
+        self.children = []
 
         if not self.parent is None and self in self.parent.children:
             self.parent.children.remove(self)
@@ -386,7 +387,7 @@ class GUI_element_dialog_box(GUI_element):
         max_text_width = None
 
         for msg in self.message:
-            txt_obj = Text(self.game.core.media.fonts['basic'], 0.0, y, TEXT_ALIGN_TOP_LEFT, msg)
+            txt_obj = Text(self.game.core.media.fonts['basic'], 0.0, y, TEXT_ALIGN_TOP_LEFT, str(msg))
             txt_obj.colour = (0.0,0.0,0.0)
             txt_obj.z = Z_GUI_OBJECT_LEVEL_10 - 1
             self.message_text.append(txt_obj)
@@ -1037,4 +1038,72 @@ class GUI_element_dropdown_options(GUI_element):
     def On_Exit(self):
         for x in self.texts:
             x.Kill()
+
+
+
+class GUI_element_scroll_window(GUI_element):
+    contents_height = 0
+    contents_scroll_location = 0.0
+    arrows = []
+
+    def gui_init(self):
+        GUI_element.gui_init(self)
+        self.arrows = []
+        self.arrows.append(GUI_element_button_scroll_window_arrow(self.game, self, up_arrow = True))
+        self.arrows.append(GUI_element_button_scroll_window_arrow(self.game, self, up_arrow = False))
+        self.draw_strategy = "gui_scroll_window"
+
+        
+    def update(self):
+        GUI_element.update(self)
+        
+        # Make sure the scroll is not out of bounds
+        self.normalise_scroll_location()
+
+
+    def mouse_wheel_down(self):
+        self.contents_scroll_location += GUI_SCROLL_ELEMENT_SCROLL_AMOUNT
+        self.normalise_scroll_location()
+
+        
+    def mouse_wheel_up(self):
+        self.contents_scroll_location -= GUI_SCROLL_ELEMENT_SCROLL_AMOUNT
+        self.normalise_scroll_location()
+
+
+    def normalise_scroll_location(self):
+        if self.contents_height < self.height:
+            self.contents_height = self.height
+        if self.contents_scroll_location < 0:
+            self.contents_scroll_location = 0
+        if self.contents_scroll_location > self.contents_height - self.height:
+            self.contents_scroll_location = self.contents_height - self.height
+
+        for x in self.arrows:
+            x.y = (64 if x.up_arrow else self.height - 128) + self.contents_scroll_location
+
+
+
+class GUI_element_button_scroll_window_arrow(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent, up_arrow):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.up_arrow = up_arrow
+        self.scroll_element = self.parent
+        self.x = self.parent.width - 64
+        self.z = self.parent.z - 1
+        self.rotation = 0 if self.up_arrow else 180
+        self.image = self.game.core.media.gfx['gui_button_scroll_window_arrow']
+        self.gui_init()
+
+
+    def mouse_left_down(self):
+        GUI_element_button.mouse_left_down(self)
+        if self.up_arrow:
+            self.parent.mouse_wheel_up()
+        else:
+            self.parent.mouse_wheel_down()
 

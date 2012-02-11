@@ -35,6 +35,9 @@ bool Main_App::On_Init()
     if(surf_display == NULL)
         return False;
 
+    screen_width = settings -> screen_width;
+    screen_height = settings -> screen_height;
+
     // set up opengl context
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -77,8 +80,10 @@ bool Main_App::On_Init()
     draw_strategies["gui_text_input"] = &Process::Draw_strategy_gui_text_input;
     draw_strategies["gui_dropdown_currently_selected"] = &Process::Draw_strategy_gui_dropdown_currently_selected;
     draw_strategies["gui_dropdown_options"] = &Process::Draw_strategy_gui_dropdown_options;
+    draw_strategies["gui_scroll_window"] = &Process::Draw_strategy_gui_scroll_window;
     draw_strategies["puzzle"] = &Process::Draw_strategy_puzzle;
     draw_strategies["puzzle_pixel_message"] = &Process::Draw_strategy_puzzle_pixel_message;
+    draw_strategies["gui_designer_packs_pack_item"] = &Process::Draw_strategy_gui_designer_packs_pack_item;
     return True;
 
 }
