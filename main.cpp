@@ -169,11 +169,15 @@ int Main_App::On_Execute()
 void Main_App::Do_Process_Clean()
 {
     vector<Process*>::iterator it2;
+    vector<Process*>::iterator it3;
     for(std::vector<Process*>::iterator it = Process::Processes_to_kill.begin(); it != Process::Processes_to_kill.end(); ++it)
     {
         it2 = std::find(Process::Process_List.begin(), Process::Process_List.end(), *it);
+        it3 = std::find(Process::Priority_List.begin(), Process::Priority_List.end(), *it);
         if(it2 != Process::Process_List.end())
-            Process::Process_List.erase(it2);
+            it2 = Process::Process_List.erase(it2);
+        if(it3 != Process::Priority_List.end())
+            it3 = Process::Priority_List.erase(it3);
     }
     Process::Processes_to_kill.clear();
 }

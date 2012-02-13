@@ -147,21 +147,19 @@ class GUI(Process):
 
             if not self.block_gui_mouse_input:
                 self.do_mouse_wheel_zooming()
-        """
         elif self.game.game_state == GAME_STATE_DESIGNER:
             """
-        #IN DESINGER MODE
-        """
+            IN DESINGER MODE
+            """
             if self.gui_state == GUI_STATE_DESIGNER_DESIGNER:
                 self.do_mouse_wheel_zooming()
-
+        
         elif self.game.game_state == GAME_STATE_TEST:
             """
-        #TESTING A PUZZLE
-        """
+            TESTING A PUZZLE
+            """
             if not self.block_gui_mouse_input:
                 self.do_mouse_wheel_zooming()
-        """
 
         # sort out the current mouse image
         if not self.mouse.image is None:

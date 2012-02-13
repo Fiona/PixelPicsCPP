@@ -84,6 +84,8 @@ bool Main_App::On_Init()
     draw_strategies["puzzle"] = &Process::Draw_strategy_puzzle;
     draw_strategies["puzzle_pixel_message"] = &Process::Draw_strategy_puzzle_pixel_message;
     draw_strategies["gui_designer_packs_pack_item"] = &Process::Draw_strategy_gui_designer_packs_pack_item;
+    draw_strategies["gui_spinner"] = &Process::Draw_strategy_gui_spinner;
+    draw_strategies["gui_designer_designer_menu_bar"] = &Process::Draw_strategy_gui_designer_designer_menu_bar;
     return True;
 
 }

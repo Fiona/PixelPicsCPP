@@ -13,7 +13,7 @@ from core import *
 from consts import *
 from helpers  import *
 from gui.gui_elements import *
-#from solver import verify_puzzle, ContradictionException, AmbiguousException, GuessesExceededException
+from solver import verify_puzzle, ContradictionException, AmbiguousException, GuessesExceededException
 
 
 
@@ -129,17 +129,7 @@ class GUI_puzzle(GUI_element):
 
         self.black_chunks_to_redraw = []
         self.white_chunks_to_redraw = []
-        
-        self.draw_strategy = "puzzle"
-        self.draw_strategy_screen_width = self.game.settings['screen_width']
-        self.draw_strategy_screen_height = self.game.settings['screen_height']
-        self.draw_strategy_camera_x = self.camera_pos[0]
-        self.draw_strategy_camera_y = self.camera_pos[1]
-        self.draw_strategy_current_zoom_level = self.game.current_zoom_level
-        self.draw_strategy_current_puzzle_width = self.game.manager.current_puzzle.width
-        self.draw_strategy_current_puzzle_height = self.game.manager.current_puzzle.height
-        self.draw_strategy_current_puzzle_state = self.game.manager.current_puzzle_state
-        
+                
         self.adjust_gui_coords()
         self.adjust_text_hint_coords()
 
@@ -184,7 +174,7 @@ class GUI_puzzle(GUI_element):
         if self.state == PUZZLE_STATE_SOLVING:
             self.game.timer += 1
 
-            # --- DESIGNER ONLY ---
+            # --- DESIGNER ONLY ---            
             if self.game.game_state == GAME_STATE_DESIGNER:
                  if self.puzzle_solver_state is None:
                      if self.puzzle_solver is None:
@@ -379,6 +369,20 @@ class GUI_puzzle(GUI_element):
         # Work out initial placement of the grid
         self.grid_x = int(self.row_number_width - ((self.row_number_width + self.grid_width) / 2) - PUZZLE_CELL_WIDTH)
         self.grid_y = int(self.column_number_height - ((self.column_number_height + self.grid_height) / 2) - PUZZLE_CELL_HEIGHT)
+
+        # Reset the drawing
+        self.draw_strategy_reset_vectors = True
+        #print "PYTHON ", self.draw_strategy_reset_vectors
+
+        self.draw_strategy = "puzzle"
+        self.draw_strategy_screen_width = self.game.settings['screen_width']
+        self.draw_strategy_screen_height = self.game.settings['screen_height']
+        self.draw_strategy_camera_x = self.camera_pos[0]
+        self.draw_strategy_camera_y = self.camera_pos[1]
+        self.draw_strategy_current_zoom_level = self.game.current_zoom_level
+        self.draw_strategy_current_puzzle_width = self.game.manager.current_puzzle.width
+        self.draw_strategy_current_puzzle_height = self.game.manager.current_puzzle.height
+        self.draw_strategy_current_puzzle_state = self.game.manager.current_puzzle_state
 
 
     def zoom_out_fade_and_position(self, num):

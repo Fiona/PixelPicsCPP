@@ -11,12 +11,14 @@
 #include <math.h>
 
 std::vector<Process*> Process::Process_List;
+std::vector<Process*> Process::Priority_List;
 std::vector<Process*> Process::Processes_to_kill;
 boost::python::list Process::internal_list;
 
 vector<float> Process::default_texture_coords(8);
 
 bool Process::z_order_dirty;
+bool Process::priority_order_dirty;
 GLuint Process::current_bound_texture = -1;
 
 
@@ -25,6 +27,7 @@ Process::Process()
 {
     x = y = 0.0f;
     z = 0;
+    priority = 0;
     scale = 1.0;
     rotation = 0;
     colour.resize(3, 1.0f);
@@ -39,6 +42,8 @@ Process::Process()
 
     image = NULL;
     Process::z_order_dirty = True;
+    Process::priority_order_dirty = True;
+    Process::Priority_List.push_back(this);
     Process::Process_List.push_back(this);
 }
 
@@ -149,6 +154,13 @@ void Process::Set_z(int new_z)
 {
     z = new_z;
     Process::z_order_dirty = True;
+}
+
+
+void Process::Set_priority(int priority_)
+{
+    priority = priority_;
+    Process::priority_order_dirty = True;
 }
 
 
@@ -416,6 +428,98 @@ void Process::Draw_strategy_gui_text_input()
     // Stop clipping
     if(clip[2] > 0 and clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
+
+}
+
+
+void Process::Draw_strategy_gui_spinner()
+{
+
+    if(alpha <= 0.0)
+        return;
+
+    // Clip the process if necessary
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float draw_x = draw_pos.get<0>();
+    float draw_y = draw_pos.get<1>();
+
+    glPushMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glColor4f(0.5, 0.5, 0.5, 1.0);
+    glLineWidth(1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+
+    glPopMatrix();
+
+    // Stop clipping
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
+}
+
+
+void Process::Draw_strategy_gui_designer_designer_menu_bar()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    glPushMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.0, 0.0, 0.0, alpha);
+    glBegin(GL_QUADS);
+    glVertex2f(0.0, 0.0);
+    glVertex2f(width, 0.0);
+    glVertex2f(width, height);
+    glVertex2f(0.0, height);
+    glEnd();
+
+    glBegin(GL_QUADS);
+    glColor4f(0.0, 0.0, 0.0, alpha);
+    glVertex2f(0.0, height);
+    glColor4f(0.0, 0.0, 0.0, alpha);
+    glVertex2f(width, height);
+    glColor4f(0.0, 0.0, 0.0, 0.0);
+    glVertex2f(width, height + 10.0f);
+    glColor4f(0.0, 0.0, 0.0, 0.0);
+    glVertex2f(0.0, height + 10.0f);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+
+    glPopMatrix();
 
 }
 
@@ -746,9 +850,10 @@ void Process::Draw_strategy_puzzle()
     boost::python::object core;
     Media* media;
     boost::python::list current_puzzle_state;
+    bool reset_vectors;
 
-        try
-        {
+    try
+    {
 
              screen_width = boost::python::extract<float>(self_.attr("draw_strategy_screen_width"));
              screen_height = boost::python::extract<float>(self_.attr("draw_strategy_screen_height"));
@@ -767,12 +872,28 @@ void Process::Draw_strategy_puzzle()
              core = boost::python::extract<boost::python::object>(game.attr("core"));
              media = boost::python::extract<Media*>(core.attr("media"));
              current_puzzle_state = boost::python::extract<boost::python::list>(self_.attr("draw_strategy_current_puzzle_state"));
+             reset_vectors = boost::python::extract<bool>(self_.attr("draw_strategy_reset_vectors"));
 
-        }
-        catch(boost::python::error_already_set const &)
-        {
-            PyErr_Print();
-        }
+    }
+    catch(boost::python::error_already_set const &)
+    {
+        PyErr_Print();
+    }
+
+    // reset stuff
+    static vector<float> number_gradient_squares;
+    static vector<float> number_gradient_colours;
+    static vector<float> every_five_lines;
+    static vector<float> grid_lines;
+
+    if(reset_vectors)
+    {
+        number_gradient_squares.clear();
+        number_gradient_colours.clear();
+        every_five_lines.clear();
+        grid_lines.clear();
+        self_.attr("__dict__")["draw_strategy_reset_vectors"] = False;
+    }
 
     // ****************
     // Set up matrix
@@ -821,7 +942,6 @@ void Process::Draw_strategy_puzzle()
     glEnableClientState(GL_COLOR_ARRAY);
     glDisable(GL_TEXTURE_2D);
 
-    static vector<float> number_gradient_squares;
     if(number_gradient_squares.size() == 0)
     {
 
@@ -879,7 +999,6 @@ void Process::Draw_strategy_puzzle()
 
     }
 
-    static vector<float> number_gradient_colours;
     if(number_gradient_colours.size() == 0)
     {
 
@@ -948,7 +1067,6 @@ void Process::Draw_strategy_puzzle()
     // ****************
     // Grid Lines
     // ****************
-    static vector<float> grid_lines;
     if(grid_lines.size() == 0)
     {
 
@@ -983,7 +1101,6 @@ void Process::Draw_strategy_puzzle()
     // ****************
     // Every five lines draw marker lines
     // ****************
-    static vector<float> every_five_lines;
     if(every_five_lines.size() == 0)
     {
 
@@ -1485,6 +1602,7 @@ Text::Text(Font* _font, float _x, float _y, int _alignment, string _text): Proce
     x = _x;
     y = _y;
     z = Z_TEXT;
+    priority = 0;
     Process::z = z;
     alignment = _alignment;
     shadow = 0;

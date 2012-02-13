@@ -42,6 +42,8 @@ public:
 
     static std::vector<Process*> Process_List;
     static bool z_order_dirty;
+    static std::vector<Process*> Priority_List;
+    static bool priority_order_dirty;
     static GLuint current_bound_texture;
 
     static vector<float> default_texture_coords;
@@ -50,6 +52,7 @@ public:
     float   x;
     float   y;
     int     z;
+    int priority;
     Image*  image;
     float   scale;
     int rotation;
@@ -72,6 +75,7 @@ public:
     void Kill();
 
     void Set_z(int new_z);
+    void Set_priority(int priority_);
     void Set_colour(boost::python::object list);
     void Set_clip(boost::python::object list);
     void Set_scale_pos(boost::python::object list);
@@ -93,6 +97,8 @@ public:
     void Draw_strategy_puzzle_pixel_message();
     void Draw_strategy_gui_scroll_window();
     void Draw_strategy_gui_designer_packs_pack_item();
+    void Draw_strategy_gui_spinner();
+    void Draw_strategy_gui_designer_designer_menu_bar();
 
 };
 
@@ -133,6 +139,7 @@ public:
     float   x;
     float   y;
     int     z;
+    int     priority;
     float   scale;
     int rotation;
     float alpha;

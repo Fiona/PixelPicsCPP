@@ -1107,3 +1107,138 @@ class GUI_element_button_scroll_window_arrow(GUI_element_button):
         else:
             self.parent.mouse_wheel_down()
 
+
+
+class GUI_element_spinner(GUI_element):
+    # Set to relevant sizes
+    width = 75
+    height = 25
+
+    # None will not add a label. Setting to a string will label the spinner.
+    label = None
+
+    # Bounds
+    max_value = 100
+    min_value = -100
+
+    # What the current value is.
+    current_value = 1
+    
+    # text objects
+    label_text_object = None
+    text_object = None
+
+    # Spinner button objects
+    spinner_down = None
+    spinner_up = None
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+
+    def gui_init(self):
+        GUI_element.gui_init(self)
+        
+        if not self.label is None:            
+            self.label_text_object = Text(self.game.core.media.fonts['basic'], self.x, self.y + 2, TEXT_ALIGN_TOP_LEFT, self.label + " ")
+            self.label_text_object.z = self.z -1
+            self.label_text_object.colour = (0,0,0)
+            
+        self.x += self.label_text_object.text_width
+
+        self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
+        self.text_object.z = self.z - 1
+
+        self.spinner_down = GUI_element_spinner_button_down(self.game, self)
+        self.spinner_up = GUI_element_spinner_button_up(self.game, self)
+
+        self.draw_strategy = "gui_spinner"
+        
+
+    def decrease_current_value(self):
+        if self.current_value > self.min_value:
+            self.set_current_value(self.current_value - 1)
+
+
+    def increase_current_value(self):
+        if self.current_value < self.max_value:
+            self.set_current_value(self.current_value + 1)
+
+
+    def set_current_value(self, new_val):
+        self.current_value = int(new_val)
+        self.text_object.text = str(self.current_value)
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        if not self.label is None:
+            self.label_text_object.Kill()
+        self.text_object.Kill()
+
+
+
+class GUI_element_spinner_button_down(GUI_element_button):
+    generic_button = False
+    spinner_wait = 0
+    
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.width = 19
+        self.height = 12
+        self.x = self.parent.x + self.parent.width - self.width
+        self.y = self.parent.y + 13
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_button_spinner_down']
+        self.gui_init()
+
+
+    def mouse_left_down(self):
+        GUI_element_button.mouse_left_down(self)
+        self.spinner_wait += 1
+        if self.spinner_wait == 10:
+            self.parent.decrease_current_value()
+            self.spinner_wait = 0
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.spinner_wait = 0
+        self.parent.decrease_current_value()
+
+
+
+class GUI_element_spinner_button_up(GUI_element_button):
+    generic_button = False
+    spinner_wait = 0
+
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.width = 19
+        self.height = 12
+        self.x = self.parent.x + self.parent.width - self.width
+        self.y = self.parent.y + 1
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_button_spinner_up']
+        self.gui_init()
+
+
+    def mouse_left_down(self):
+        GUI_element_button.mouse_left_down(self)
+        self.spinner_wait += 1
+        if self.spinner_wait == 10:
+            self.parent.increase_current_value()
+            self.spinner_wait = 0
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.spinner_wait = 0
+        self.parent.increase_current_value()
