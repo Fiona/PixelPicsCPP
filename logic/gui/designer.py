@@ -945,7 +945,6 @@ class GUI_designer_puzzles_puzzle_item(GUI_element):
         self.text_puzzle_size.z = self.z - 1
         self.text_puzzle_size.colour = (1.0, 1.0, 1.0)
 
-        """
         f = open(os.path.join(self.game.path_user_pack_directory, self.game.manager.current_puzzle_pack, self.puzzle_filename), "rb")
         puzzle = pickle.load(f)
         f.close()
@@ -959,7 +958,6 @@ class GUI_designer_puzzles_puzzle_item(GUI_element):
             colour = False,
             fade_in_time = None
             )
-            """
 
         self.draw_strategy = "gui_designer_packs_pack_item"
 

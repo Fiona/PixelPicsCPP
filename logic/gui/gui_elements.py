@@ -667,7 +667,69 @@ class Pixel_message_pixel(Process):
 
 
 class Puzzle_image(GUI_element):
-    pass
+    def __init__(self, game, parent, x, y, puzzle_object = None, colour = True, fade_in_time = 60):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.fade_in_time = fade_in_time
+        pos = (x, y)
+        self.gui_init()
+        self.puzzle = puzzle_object
+        if self.puzzle is None:
+            self.puzzle = self.game.manager.current_puzzle
+
+        # create surface
+        """
+        surf = pygame.Surface((self.puzzle.width, self.puzzle.height), SRCALPHA, 32)
+        for y in range(self.puzzle.height):
+            for x in range(self.puzzle.width):
+                if colour:
+                    colour = self.puzzle.cells[y][x][1]
+                    colour_arg = pygame.Color(colour[0], colour[1], colour[2], 255)
+                    surf.set_at((x, y), colour_arg)
+                else:
+                    surf.set_at((x, y), pygame.Color(130, 180, 170) if self.puzzle.cells[y][x][0] else (255, 255, 255))
+                    
+        # We need to work out the nearest power of 2 to appease opengl
+        self.width = surf.get_width()
+        self.height = surf.get_height()
+                        
+        h = 16
+        while(h < self.height):
+            h = h * 2
+
+        w = 16
+        while(w < self.width):
+            w = w * 2
+                                
+        new_surface = pygame.Surface((w, h), SRCALPHA, 32)
+        new_surface.blit(surf, (0, 0))
+
+        self.image = MyrmidonGame.engine['gfx'].Image(new_surface)
+        """
+        self.set_position_z_scale(*pos)
+
+        if not self.fade_in_time is None:
+            self.alpha = 0.0
+            self.iter = 0
+            
+
+    def Execute(self):
+        self.update()
+
+        # Fade in
+        if not self.fade_in_time is None:
+            self.iter += 1
+            self.alpha = lerp(self.iter, 60, self.alpha, 1.0)
+            if self.iter >= 60:
+                self.fade_in_time = None
+                
+
+    def set_position_z_scale(self, x, y):
+        self.x = 0
+        self.y = 0
+        self.z = Z_GUI_OBJECT_LEVEL_4
+        self.scale = 1.0
 
 
 
