@@ -117,6 +117,30 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface, bool mipmaps)
     width = raw_surface->w;
     height = raw_surface->h;
 
+    GLenum texture_format;
+    GLint  nOfColors;
+
+    nOfColors = raw_surface->format->BytesPerPixel;
+    if(nOfColors == 4)
+    {
+        if(raw_surface->format->Rmask == 0x000000ff)
+            texture_format = GL_RGBA;
+        else
+            texture_format = GL_BGRA;
+    }
+    else if(nOfColors == 3)
+    {
+        if(raw_surface->format->Rmask == 0x000000ff)
+            texture_format = GL_RGB;
+        else
+            texture_format = GL_BGR;
+    }
+    else
+    {
+        cout << "warning: image is not truecolor" << endl;
+        texture_format = GL_BGRA;
+    }
+
     // create GL texture from string representation of surface
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -137,14 +161,14 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface, bool mipmaps)
     {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
+        gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, texture_format, GL_UNSIGNED_BYTE, raw_surface->pixels);
     }
     else
     {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height,
-                     0, GL_BGRA, GL_UNSIGNED_BYTE, raw_surface->pixels);
+                     0, texture_format, GL_UNSIGNED_BYTE, raw_surface->pixels);
     }
 
 }

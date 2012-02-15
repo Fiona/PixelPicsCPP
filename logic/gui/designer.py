@@ -892,7 +892,7 @@ class GUI_designer_puzzles_puzzles_list_scroll_window(GUI_element_scroll_window)
         for puzzle_filename in self.game.manager.current_pack.order:
             last_item = GUI_designer_puzzles_puzzle_item(self.game, self, num, puzzle_filename, self.game.manager.current_pack.puzzles[puzzle_filename])
             self.puzzle_items.append(last_item)
-            
+
             self.puzzle_items.append(
                 GUI_designer_puzzles_button_edit_puzzle(self.game, self, num, puzzle_filename, self.game.manager.current_pack.puzzles[puzzle_filename])
             )
@@ -945,20 +945,16 @@ class GUI_designer_puzzles_puzzle_item(GUI_element):
         self.text_puzzle_size.z = self.z - 1
         self.text_puzzle_size.colour = (1.0, 1.0, 1.0)
 
-        f = open(os.path.join(self.game.path_user_pack_directory, self.game.manager.current_puzzle_pack, self.puzzle_filename), "rb")
-        puzzle = pickle.load(f)
-        f.close()
-
         Monochrome_puzzle_image(
             self.game,
             self,
             self.x + 5,
             self.y + 4,
-            puzzle_object = puzzle,
-            colour = False,
+            puzzle_path = os.path.join(self.game.core.path_user_pack_directory, self.game.manager.current_puzzle_pack, self.puzzle_filename),
+            in_colour = False,
             fade_in_time = None
             )
-
+            
         self.draw_strategy = "gui_designer_packs_pack_item"
 
 
@@ -989,6 +985,23 @@ class GUI_designer_puzzles_puzzle_item(GUI_element):
         self.game.manager.load_puzzle(self.game.manager.current_puzzle_pack, self.puzzle_filename, set_state = True)
         self.game.freemode = True
         self.game.gui.fade_toggle(lambda: self.game.gui.switch_gui_state_to(GUI_STATE_DESIGNER_DESIGNER), speed = 20)
+
+
+
+class Monochrome_puzzle_image(Puzzle_image):
+    
+    def gui_init(self):
+        Puzzle_image.gui_init(self)
+        self.scroll_element = self.parent.parent
+        self.draw_strategy = "gui_designer_monochrome_puzzle_image"
+        
+        
+    def set_position_z_scale(self, x, y):        
+        self.x = x
+        self.y = y
+        self.z = Z_GUI_OBJECT_LEVEL_7 - 1
+        scale_start = self.height if self.height > self.width else self.width
+        self.scale = .01 * ((DESIGNER_PUZZLE_ICON_HEIGHT / scale_start) * 100)
 
 
 
@@ -1627,7 +1640,7 @@ class GUI_designer_puzzles_change_size_dialog(GUI_element_window):
         y = 0
         for text in ["Using this dialog you can edit the size of this puzzle.", "Note that reducing the size could cause you to lose", "some of the shape you've drawn."]:
             txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
-            txt.z = self.z - 1
+            txt.z = self.z - 2
             txt.colour = (0, 0, 0)
             self.objs['text_' + str(y)] = txt
             y += 15

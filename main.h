@@ -133,6 +133,8 @@ public:
 
     Mouse* mouse;
 
+    static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
+
     Main_App();
     void Quit();
     int On_Execute();

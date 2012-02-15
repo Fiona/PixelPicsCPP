@@ -138,6 +138,8 @@ class GUI_puzzle(GUI_element):
         self.anim_state = 0
         self.iter = 0
 
+        self.PUZZLE_VERIFIER_ITERATIONS = PUZZLE_VERIFIER_ITERATIONS
+
 
     def Execute(self):
         self.draw_strategy_camera_x = self.camera_pos[0]
@@ -179,7 +181,11 @@ class GUI_puzzle(GUI_element):
                  if self.puzzle_solver_state is None:
                      if self.puzzle_solver is None:
                          self.puzzle_solver = verify_puzzle(self.game.manager.current_puzzle)
-                     for i in xrange(PUZZLE_VERIFIER_ITERATIONS):
+                     if self.game.core.current_fps < 50 and self.PUZZLE_VERIFIER_ITERATIONS > 10:
+                         self.PUZZLE_VERIFIER_ITERATIONS -= 10
+                     if self.game.core.current_fps > 50 and self.PUZZLE_VERIFIER_ITERATIONS < PUZZLE_VERIFIER_MAX_ITERATIONS:
+                         self.PUZZLE_VERIFIER_ITERATIONS += 10
+                     for i in xrange(self.PUZZLE_VERIFIER_ITERATIONS):
                          try:
                              self.puzzle_solver_state = self.puzzle_solver.next()
                          except (ContradictionException, AmbiguousException, GuessesExceededException) as e:
@@ -372,7 +378,8 @@ class GUI_puzzle(GUI_element):
 
         # Reset the drawing
         self.draw_strategy_reset_vectors = True
-        #print "PYTHON ", self.draw_strategy_reset_vectors
+        self.reset_drawing_blacks()
+        self.reset_drawing_whites()
 
         self.draw_strategy = "puzzle"
         self.draw_strategy_screen_width = self.game.settings['screen_width']

@@ -174,10 +174,17 @@ void Main_App::Do_Process_Clean()
     {
         it2 = std::find(Process::Process_List.begin(), Process::Process_List.end(), *it);
         it3 = std::find(Process::Priority_List.begin(), Process::Priority_List.end(), *it);
+
+        boost::python::decref((*it2)->self);
+        boost::python::decref((*it2)->self);
+        Process::internal_list.remove((*it2)->self_);
+        (*it2)->self = NULL;
+
         if(it2 != Process::Process_List.end())
             it2 = Process::Process_List.erase(it2);
         if(it3 != Process::Priority_List.end())
             it3 = Process::Priority_List.erase(it3);
+
     }
     Process::Processes_to_kill.clear();
 }
@@ -251,6 +258,46 @@ void Main_App::Toggle_text_input()
     }
 
     Text_input.clear();
+
+}
+
+
+void Main_App::putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+{
+
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to set */
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch(bpp)
+    {
+    case 1:
+        *p = pixel;
+        break;
+
+    case 2:
+        *(Uint16 *)p = pixel;
+        break;
+
+    case 3:
+        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+        {
+            p[0] = (pixel >> 16) & 0xff;
+            p[1] = (pixel >> 8) & 0xff;
+            p[2] = pixel & 0xff;
+        }
+        else
+        {
+            p[0] = pixel & 0xff;
+            p[1] = (pixel >> 8) & 0xff;
+            p[2] = (pixel >> 16) & 0xff;
+        }
+        break;
+
+    case 4:
+        *(Uint32 *)p = pixel;
+        break;
+    }
 
 }
 

@@ -104,6 +104,8 @@ BOOST_PYTHON_MODULE(core)
 
         .def("move_forward", &Process::move_forward)
         .def("Kill", &ProcessWrapper::Kill)
+        .def("create_image_from_puzzle", &Process::create_image_from_puzzle)
+        .def("destroy_puzzle_image", &Process::destroy_puzzle_image)
         ;
 
     // Expose Text object

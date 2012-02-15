@@ -1477,8 +1477,8 @@ void Process::Draw_strategy_gui_designer_packs_pack_item()
         return;
 
     tuple<float, float> draw_pos = get_screen_draw_position();
-    float draw_x = draw_pos.get<0>();
-    float draw_y = draw_pos.get<1>();
+    float draw_x = draw_pos.get<0>() + 1.0;
+    float draw_y = draw_pos.get<1>() + 1.0;
 
     // Clip the process if necessary
     if(clip[2] > 0 and clip[3] > 0)
@@ -1522,6 +1522,146 @@ void Process::Draw_strategy_gui_designer_packs_pack_item()
 }
 
 
+void Process::Draw_strategy_gui_designer_monochrome_puzzle_image()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    if(width == 0 || height == 0)
+        return;
+
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float draw_x = draw_pos.get<0>();
+    float draw_y = draw_pos.get<1>();
+
+    // Clip the process if necessary
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    //glVertex2f(top_left[0], top_left[1])
+    //glVertex2f(bottom_right[0], top_left[1])
+    //glVertex2f(bottom_right[0], bottom_right[1])
+    //glVertex2f(top_left[0], bottom_right[1])
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x - 1, draw_y - 1);
+    glVertex2f((width * scale) + draw_x + 1, draw_y - 1);
+    glVertex2f((width * scale) + draw_x + 1, (height * scale) + draw_y + 1);
+    glVertex2f(draw_x - 1, (height * scale) + draw_y + 1);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+    // stop clipping
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
+    this->Draw();
+
+}
+
+
+void Process::create_image_from_puzzle()
+{
+
+    boost::python::object puzzle = boost::python::extract<boost::python::object>(self_.attr("puzzle"));
+    boost::python::object puzzle_cells = boost::python::extract<boost::python::object>(puzzle.attr("cells"));
+    bool in_colour = boost::python::extract<bool>(self_.attr("in_colour"));
+    int puzzle_width = boost::python::extract<int>(puzzle.attr("width"));
+    int puzzle_height = boost::python::extract<int>(puzzle.attr("height"));
+
+    int surf_height = 16;
+    while(surf_height < puzzle_height)
+        surf_height = surf_height * 2;
+
+    int surf_width = 16;
+    while(surf_width < puzzle_width)
+        surf_width = surf_width * 2;
+
+    Uint32 rmask, gmask, bmask, amask;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
+    SDL_Surface *raw_surface = SDL_CreateRGBSurface(
+        SDL_SWSURFACE, surf_width, surf_height, 32,
+        rmask, gmask, bmask, amask
+        );
+
+    SDL_LockSurface(raw_surface);
+
+    for(int i = 0; i < puzzle_height; i++)
+    {
+
+        for(int j = 0; j < puzzle_width; j++)
+        {
+
+            Uint32 pixel_colour;
+
+            if(in_colour)
+            {
+/*
+                    colour = self.puzzle.cells[y][x][1]
+                    colour_arg = pygame.Color(colour[0], colour[1], colour[2], 255)
+                    surf.set_at((x, y), colour_arg)
+*/
+            }
+            else
+            {
+                if(boost::python::extract<bool>(puzzle_cells[i][j][0]))
+                    pixel_colour = SDL_MapRGBA(raw_surface -> format, 130, 180, 170, 255);
+                else
+                    pixel_colour = SDL_MapRGBA(raw_surface -> format, 255, 255, 255, 255);
+            }
+
+            Main_App::putpixel(raw_surface, j, i, pixel_colour);
+
+        }
+
+    }
+
+    SDL_SaveBMP(raw_surface, "blah.bmp");
+    SDL_UnlockSurface(raw_surface);
+
+    image = new Image(raw_surface, False);
+
+    SDL_FreeSurface(raw_surface);
+
+}
+
+
+void Process::destroy_puzzle_image()
+{
+    if(image == NULL)
+        return;
+    delete image;
+    image = NULL;
+}
+
+
 /*
  *
  */
@@ -1544,10 +1684,7 @@ void ProcessWrapper::Kill()
     if(is_dead)
         return;
     boost::python::call_method<void>(self, "On_Exit");
-    Process::internal_list.remove(self_);
     this->Process::Kill();
-    boost::python::decref(self);
-    boost::python::decref(self);
     self = NULL;
     is_dead = True;
     this->Process::is_dead = True;
@@ -1843,10 +1980,7 @@ void TextWrapper::Kill()
 {
     if(is_dead)
         return;
-    Process::internal_list.remove(self_);
     this->Process::Kill();
-    boost::python::decref(self);
-    boost::python::decref(self);
     self = NULL;
     is_dead = True;
     this->Process::is_dead = True;
@@ -1858,6 +1992,8 @@ TextWrapper::TextWrapper(PyObject* _self, Font* _font, float _x, float _y, int _
     self = _self;
     self_ = boost::python::object(boost::python::handle<>(boost::python::borrowed(self)));
     Process::internal_list.append(self_);
+    this->Process::self = self;
+    this->Process::self_ = self_;
 }
 
 
