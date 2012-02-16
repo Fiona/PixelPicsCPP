@@ -68,11 +68,11 @@ BACKGROUNDS = {
         },
     'green' : {
         'type' : BACKGROUND_TYPE_COLOUR,
-        'data' : (.7,1.0,.7,1.0)
+        'data' : (.5,1.0,.5,1.0)
         },
     'red' : {
         'type' : BACKGROUND_TYPE_COLOUR,
-        'data' : (1.0,.7,.7,1.0)
+        'data' : (1.0,.5,.5,1.0)
         },
     'purple' : {
         'type' : BACKGROUND_TYPE_COLOUR,
@@ -80,7 +80,7 @@ BACKGROUNDS = {
         },    
     'yellow' : {
         'type' : BACKGROUND_TYPE_COLOUR,
-        'data' : (1.0,1.0,.7,1.0)
+        'data' : (1.0,1.0,.5,1.0)
         },
     }
 

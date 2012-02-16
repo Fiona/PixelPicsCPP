@@ -1354,7 +1354,7 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
             self.primitive_square_four_colours = True
             self.primitive_square_colour = (
                 BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                (1.0,1.0,1.0,1.0),
+                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
                 (1.0,1.0,1.0,1.0),
                 BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
                 )
@@ -1780,7 +1780,7 @@ class GUI_designer_designer_change_puzzle_background_button(GUI_element_button):
 
 
     def mouse_left_up(self):
-        pass
+        GUI_designer_puzzles_change_puzzle_background_dialog(self.game, self.parent)
     
 
 
@@ -1852,3 +1852,163 @@ class GUI_designer_designer_flood_fill_button(GUI_element_button):
         else:
             self.parent.tool = DRAWING_TOOL_STATE_DRAW
             self.parent.tool_message_display = False
+
+
+
+class GUI_designer_puzzles_change_puzzle_background_dialog(GUI_element_window):
+    title = "Puzzle Background"
+    height = 490
+    width = 550
+    objs = {}
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+    
+    def gui_init(self):
+        self.z = Z_GUI_OBJECT_LEVEL_8
+        self.x = (self.game.settings['screen_width'] / 2) - (self.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - (self.height / 2)
+        GUI_element_window.gui_init(self)
+
+        GUI_designer_puzzle_change_puzzle_background_cancel_button(self.game, self)
+        GUI_designer_puzzle_change_puzzle_background_apply_button(self.game, self)
+        GUI_designer_puzzle_change_puzzle_background_scroll_window(self.game, self)
+
+        self.selected_background = self.game.manager.current_puzzle.background
+        
+        self.game.gui.block_gui_keyboard_input = True
+        self.x = 0
+        self.y = 0
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_width = self.x + self.width
+        self.primitive_square_height = self.y + self.height
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
+
+
+    def edit_puzzle(self):
+        dont_kill = False
+
+        try:
+            self.game.manager.change_current_puzzle_background(self.selected_background)
+        except IOError as e:
+            GUI_element_dialog_box(self.game, self.parent, "Input error", [str(e)])
+            dont_kill = True
+        except Exception as e:
+            GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
+        finally:
+            if not dont_kill:
+                self.Kill()
+
+                
+    def On_Exit(self):
+        GUI_element_window.On_Exit(self)
+        self.game.gui.block_gui_keyboard_input = False
+        for x in self.objs:
+            self.objs[x].Kill()
+
+
+
+class GUI_designer_puzzle_change_puzzle_background_apply_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Apply"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.gui_init()
+        self.x = self.parent.x + self.parent.width - 175
+        self.y = self.parent.y + self.parent.height - 50
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        self.parent.edit_puzzle()
+
+
+
+class GUI_designer_puzzle_change_puzzle_background_cancel_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Cancel"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.gui_init()
+        self.x = self.parent.x + self.parent.width - 100
+        self.y = self.parent.y + self.parent.height - 50
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        self.parent.Kill()
+
+
+
+class GUI_designer_puzzle_change_puzzle_background_scroll_window(GUI_element_scroll_window):
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = self.parent.x + 25
+        self.y = self.parent.y + 30
+        self.width = 500
+        self.height = 400
+        self.gui_init()
+
+        num = 0
+        for background_name in BACKGROUNDS:
+            GUI_designer_puzzle_change_puzzle_background_item(self.game, self, BACKGROUNDS[background_name], num)
+            num+=1
+
+
+
+class GUI_designer_puzzle_change_puzzle_background_item(GUI_element):
+    def __init__(self, game, parent = None, background = {}, num = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent
+        self.z = self.parent.z - 2
+        self.x = ((num % 3) * 128) + ((num % 3) * 16) + 16
+        self.y = ((num / 3) * 128) + ((num / 3) * 16) + 16
+        self.width = 128
+        self.height = 128
+        self.gui_init()
+        
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = self.x + self.parent.x
+        self.primitive_square_y = self.y + self.parent.y
+        self.primitive_square_four_colours = True
+        self.primitive_square_colour = (
+            background['data'],
+            background['data'],
+            (1.0,1.0,1.0,1.0),
+            background['data'],
+            )
+
+
+    def Execute(self):
+        self.update()
+        self.primitive_square_x, self.primitive_square_y = self.get_screen_draw_position()
+    

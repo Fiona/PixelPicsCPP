@@ -50,7 +50,7 @@ class GUI_puzzle_container(GUI_element):
             self.primitive_square_four_colours = True
             self.primitive_square_colour = (
                 BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                (1.0,1.0,1.0,1.0),
+                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
                 (1.0,1.0,1.0,1.0),
                 BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
                 )

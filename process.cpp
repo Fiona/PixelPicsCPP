@@ -702,6 +702,17 @@ void Process::Draw_strategy_primitive_square()
 
     glPushMatrix();
 
+    if(clip[2] > 0 and clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
     glDisable(GL_TEXTURE_2D);
 
     if(filled)
@@ -775,6 +786,9 @@ void Process::Draw_strategy_primitive_square()
     glEnd();
                                           
     glEnable(GL_TEXTURE_2D);
+
+    if(clip[2] > 0 and clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
 
     glPopMatrix();
 
