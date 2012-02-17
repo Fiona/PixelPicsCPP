@@ -1906,6 +1906,7 @@ class GUI_designer_puzzles_change_puzzle_background_dialog(GUI_element_window):
         except Exception as e:
             GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
         finally:
+            self.parent.puzzle_object.reload_puzzle_background()
             if not dont_kill:
                 self.Kill()
 
@@ -1975,13 +1976,13 @@ class GUI_designer_puzzle_change_puzzle_background_scroll_window(GUI_element_scr
 
         num = 0
         for background_name in BACKGROUNDS:
-            GUI_designer_puzzle_change_puzzle_background_item(self.game, self, BACKGROUNDS[background_name], num)
+            GUI_designer_puzzle_change_puzzle_background_item(self.game, self, background_name, num)
             num+=1
 
 
 
 class GUI_designer_puzzle_change_puzzle_background_item(GUI_element):
-    def __init__(self, game, parent = None, background = {}, num = 0):
+    def __init__(self, game, parent = None, background = "", num = 0):
         Process.__init__(self)
         self.game = game
         self.parent = parent
@@ -1993,22 +1994,32 @@ class GUI_designer_puzzle_change_puzzle_background_item(GUI_element):
         self.height = 128
         self.gui_init()
         
-        self.draw_strategy = "primitive_square"
-        self.draw_strategy_call_parent = False
-        self.primitive_square_width = self.width
-        self.primitive_square_height = self.height
-        self.primitive_square_x = self.x + self.parent.x
-        self.primitive_square_y = self.y + self.parent.y
-        self.primitive_square_four_colours = True
-        self.primitive_square_colour = (
-            background['data'],
-            background['data'],
+        self.draw_strategy = "designer_puzzle_background_item"
+        self.draw_strategy_colour = (
+            BACKGROUNDS[background]['data'],
+            BACKGROUNDS[background]['data'],
             (1.0,1.0,1.0,1.0),
-            background['data'],
+            BACKGROUNDS[background]['data'],
             )
+
+        self.hover = False
+        self.is_current = False
+        self.background = background
+
+
+    def mouse_over(self):
+        self.hover = True
+
+
+    def mouse_not_over(self):
+        self.hover = False
+
+
+    def mouse_left_up(self):
+        self.parent.parent.selected_background = self.background
 
 
     def Execute(self):
         self.update()
-        self.primitive_square_x, self.primitive_square_y = self.get_screen_draw_position()
+        self.is_current = (self.parent.parent.selected_background == self.background)
     

@@ -39,22 +39,6 @@ class GUI_puzzle_container(GUI_element):
             self.objs.append(Player_lives(self.game))
         self.objs.append(Timer(self.game))
 
-        # Draw strat
-        if BACKGROUNDS[self.game.manager.current_puzzle.background]['type'] == BACKGROUND_TYPE_COLOUR:
-            self.draw_strategy = "primitive_square"
-            self.draw_strategy_call_parent = False
-            self.primitive_square_width = self.width
-            self.primitive_square_height = self.height
-            self.primitive_square_x = 0.0
-            self.primitive_square_y = 0.0
-            self.primitive_square_four_colours = True
-            self.primitive_square_colour = (
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                (1.0,1.0,1.0,1.0),
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                )
-
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
@@ -106,6 +90,7 @@ class GUI_puzzle(GUI_element):
         self.z = Z_GUI_OBJECT_LEVEL_1
 
         self.reload_puzzle_display()
+        self.reload_puzzle_background()
         
         # Init stuff
         self.objs = []
@@ -139,7 +124,25 @@ class GUI_puzzle(GUI_element):
         self.iter = 0
 
         self.PUZZLE_VERIFIER_ITERATIONS = PUZZLE_VERIFIER_ITERATIONS
+        
 
+    def reload_puzzle_background(self):
+        # Draw strat
+        if BACKGROUNDS[self.game.manager.current_puzzle.background]['type'] == BACKGROUND_TYPE_COLOUR:
+            self.parent.draw_strategy = "primitive_square"
+            self.parent.draw_strategy_call_parent = False
+            self.parent.primitive_square_width = self.width
+            self.parent.primitive_square_height = self.height
+            self.parent.primitive_square_x = 0.0
+            self.parent.primitive_square_y = 0.0
+            self.parent.primitive_square_four_colours = True
+            self.parent.primitive_square_colour = (
+                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
+                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
+                (1.0,1.0,1.0,1.0),
+                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
+                )
+    
 
     def Execute(self):
         self.draw_strategy_camera_x = self.camera_pos[0]

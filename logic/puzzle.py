@@ -575,6 +575,12 @@ class Puzzle_manager(object):
         self.change_puzzle_object_size(self.current_puzzle, new_width, new_height)
 
 
+    def change_current_puzzle_background(self, background):
+        if not background in BACKGROUNDS:
+            raise Exception("This background was not found.")
+        self.current_puzzle.background = background
+        
+
     def change_puzzle_size(self, pack_directory, puzzle_filename, new_width, new_height):
         # Determine input is okay
         new_width = int(new_width)

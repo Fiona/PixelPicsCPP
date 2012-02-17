@@ -1593,6 +1593,98 @@ void Process::Draw_strategy_gui_designer_monochrome_puzzle_image()
 }
 
 
+void Process::Draw_strategy_designer_puzzle_background_item()
+{
+
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float draw_x = draw_pos.get<0>();
+    float draw_y = draw_pos.get<1>();
+
+    bool is_current = boost::python::extract<bool>(self_.attr("is_current"));
+    bool hover = boost::python::extract<bool>(self_.attr("hover"));
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    boost::python::tuple colour = boost::python::extract<boost::python::tuple>(self_.attr("draw_strategy_colour"))();
+
+    glPushMatrix();
+
+    if(clip[2] > 0 && clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
+    glDisable(GL_TEXTURE_2D);
+
+    glBegin(GL_QUADS);
+    if(is_current || hover)
+        glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+    else
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glVertex2f(draw_x - 1.0f, draw_y - 1.0f);
+    glVertex2f(draw_x + width + 1.0f, draw_y - 1.0f);
+    glVertex2f(draw_x + width + 1.0f, draw_y + height + 1.0f);
+    glVertex2f(draw_x - 1.0f, draw_y + height + 1.0f);
+    glEnd();
+
+    glBegin(GL_QUADS);
+
+    boost::python::tuple col_1 = boost::python::extract<boost::python::tuple>(colour[0]);
+    glColor4f(
+        boost::python::extract<float>(col_1[0]),
+        boost::python::extract<float>(col_1[1]),
+        boost::python::extract<float>(col_1[2]),
+        boost::python::extract<float>(col_1[3])
+        );
+
+    glVertex2f(draw_x, draw_y);
+
+    col_1 = boost::python::extract<boost::python::tuple>(colour[1]);
+    glColor4f(
+        boost::python::extract<float>(col_1[0]),
+        boost::python::extract<float>(col_1[1]),
+        boost::python::extract<float>(col_1[2]),
+        boost::python::extract<float>(col_1[3])
+        );
+
+    glVertex2f(draw_x + width, draw_y);
+
+    col_1 = boost::python::extract<boost::python::tuple>(colour[2]);
+    glColor4f(
+        boost::python::extract<float>(col_1[0]),
+        boost::python::extract<float>(col_1[1]),
+        boost::python::extract<float>(col_1[2]),
+        boost::python::extract<float>(col_1[3])
+        );
+
+    glVertex2f(draw_x + width, draw_y + height);
+
+    col_1 = boost::python::extract<boost::python::tuple>(colour[3]);
+    glColor4f(
+        boost::python::extract<float>(col_1[0]),
+        boost::python::extract<float>(col_1[1]),
+        boost::python::extract<float>(col_1[2]),
+        boost::python::extract<float>(col_1[3])
+        );
+
+    glVertex2f(draw_x, draw_y + height);
+    glEnd();
+                                          
+    glEnable(GL_TEXTURE_2D);
+
+    if(clip[2] > 0 && clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
+    glPopMatrix();
+
+}
+
+
 void Process::create_image_from_puzzle()
 {
 

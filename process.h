@@ -100,7 +100,7 @@ public:
     void Draw_strategy_gui_spinner();
     void Draw_strategy_gui_designer_designer_menu_bar();
     void Draw_strategy_gui_designer_monochrome_puzzle_image();
-
+    void Draw_strategy_designer_puzzle_background_item();
     void create_image_from_puzzle();
     void destroy_puzzle_image();
 
