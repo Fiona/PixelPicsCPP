@@ -76,7 +76,7 @@ void Process::Draw()
 
     // Clip the process if necessary
     // glScissor assumes origin as bottom-left rather than top-left which explains the fudging with the second param
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -133,7 +133,7 @@ void Process::Draw()
         glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
 
     // Stop clipping
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
     glPopMatrix();
@@ -231,7 +231,7 @@ void Process::Draw_strategy_gui_button()
     float height = boost::python::extract<float>(self_.attr("height"));
 
     // Clip the process if necessary
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -282,7 +282,7 @@ void Process::Draw_strategy_gui_button()
     glPopMatrix();
 
     // Stop clip
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
 }
@@ -301,7 +301,7 @@ void Process::Draw_strategy_gui_window_frame()
     float draw_y = draw_pos.get<1>();
 
     // Clip the process if necessary
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -367,7 +367,7 @@ void Process::Draw_strategy_gui_window_frame()
     glPopMatrix();
 
     // Stop clipping
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
 }
@@ -379,7 +379,7 @@ void Process::Draw_strategy_gui_text_input()
         return;
 
     // Clip the process if necessary
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -426,7 +426,7 @@ void Process::Draw_strategy_gui_text_input()
     glPopMatrix();
 
     // Stop clipping
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
 }
@@ -439,7 +439,7 @@ void Process::Draw_strategy_gui_spinner()
         return;
 
     // Clip the process if necessary
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -482,7 +482,7 @@ void Process::Draw_strategy_gui_spinner()
     glPopMatrix();
 
     // Stop clipping
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
 }
@@ -633,7 +633,7 @@ void Process::Draw_strategy_gui_scroll_window()
         return;
 
     // Clip the process if necessary
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -673,7 +673,7 @@ void Process::Draw_strategy_gui_scroll_window()
     glPopMatrix();
 
     // stop clipping
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
 }
@@ -702,7 +702,7 @@ void Process::Draw_strategy_primitive_square()
 
     glPushMatrix();
 
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -787,7 +787,7 @@ void Process::Draw_strategy_primitive_square()
                                           
     glEnable(GL_TEXTURE_2D);
 
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
     glPopMatrix();
@@ -1052,7 +1052,7 @@ void Process::Draw_strategy_puzzle()
     glVertexPointer(2, GL_FLOAT, 0, &number_gradient_squares[0]);
     glDrawArrays(GL_QUADS, 0, number_gradient_squares.size() / 2);
     glDisableClientState(GL_COLOR_ARRAY);
-
+	
     // ****************
     // Column / Row Hover
     // ****************
@@ -1106,7 +1106,6 @@ void Process::Draw_strategy_puzzle()
 
     }
 
-
     glLineWidth(1.0 / zoom_level);
     glColor4f(0.3, 0.3, 0.3, 1.0);
     glVertexPointer(2, GL_FLOAT, 0, &grid_lines[0]);
@@ -1140,10 +1139,15 @@ void Process::Draw_strategy_puzzle()
 
     }
 
-    glLineWidth(2.0 / zoom_level);
-    glColor4f(0.3, 0.7, 0.3, 1.0);
-    glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
-    glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
+    if(every_five_lines.size() > 0)
+    {
+
+		glLineWidth(2.0 / zoom_level);
+	    glColor4f(0.3, 0.7, 0.3, 1.0);
+		glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
+	    glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
+
+	}
 
     // ****************
     // Puzzle border
@@ -1171,7 +1175,7 @@ void Process::Draw_strategy_puzzle()
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), (float)(PUZZLE_CELL_HEIGHT + (PUZZLE_CELL_HEIGHT * hovered_row)));
         glEnd();
     }
-
+	
     // ****************
     // Set up for drawing markers
     // ****************
@@ -1251,7 +1255,7 @@ void Process::Draw_strategy_puzzle()
                 {
 
                     // If we're out of bounds then scoot out of here
-                    if(j >= boost::python::len(current_puzzle_state) or i >= boost::python::len(current_puzzle_state[j]))
+                    if(j >= boost::python::len(current_puzzle_state) || i >= boost::python::len(current_puzzle_state[j]))
                         break;
 
                     // Sometimes we want to not draw certain squares, if those squares are being represented by dynamic
@@ -1261,7 +1265,7 @@ void Process::Draw_strategy_puzzle()
                     {
                         for(int ign = 0; ign < boost::python::len(black_squares_to_ignore); ign++)
                         {
-                            if(boost::python::extract<int>(black_squares_to_ignore[ign][0]) == j and boost::python::extract<int>(black_squares_to_ignore[ign][1]) == i)
+                            if(boost::python::extract<int>(black_squares_to_ignore[ign][0]) == j && boost::python::extract<int>(black_squares_to_ignore[ign][1]) == i)
                             {
                                 do_ignore = True;
                                 break;
@@ -1395,7 +1399,7 @@ void Process::Draw_strategy_puzzle()
                 {
 
                     // If we're out of bounds then scoot out of here
-                    if(j >= boost::python::len(current_puzzle_state) or i >= boost::python::len(current_puzzle_state[j]))
+                    if(j >= boost::python::len(current_puzzle_state) || i >= boost::python::len(current_puzzle_state[j]))
                         break;
 
                     // Sometimes we want to not draw certain squares, if those squares are being represented by dynamic
@@ -1405,7 +1409,7 @@ void Process::Draw_strategy_puzzle()
                     {
                         for(int ign = 0; ign < boost::python::len(white_squares_to_ignore); ign++)
                         {
-                            if(boost::python::extract<int>(white_squares_to_ignore[ign][0]) == j and boost::python::extract<int>(white_squares_to_ignore[ign][1]) == i)
+                            if(boost::python::extract<int>(white_squares_to_ignore[ign][0]) == j && boost::python::extract<int>(white_squares_to_ignore[ign][1]) == i)
                             {
                                 do_ignore = True;
                                 break;
@@ -1470,7 +1474,7 @@ void Process::Draw_strategy_puzzle()
         }
 
     }
-
+	
     // ****************
     // Reset matrix
     // ****************
@@ -1495,7 +1499,7 @@ void Process::Draw_strategy_gui_designer_packs_pack_item()
     float draw_y = draw_pos.get<1>() + 1.0;
 
     // Clip the process if necessary
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -1530,7 +1534,7 @@ void Process::Draw_strategy_gui_designer_packs_pack_item()
     glPopMatrix();
 
     // stop clipping
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
 }
@@ -1550,7 +1554,7 @@ void Process::Draw_strategy_gui_designer_monochrome_puzzle_image()
     float draw_y = draw_pos.get<1>();
 
     // Clip the process if necessary
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -1581,7 +1585,7 @@ void Process::Draw_strategy_gui_designer_monochrome_puzzle_image()
     glPopMatrix();
 
     // stop clipping
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
     this->Draw();
@@ -1913,7 +1917,7 @@ void Text::Draw()
     tuple<float, float> draw_pos = get_screen_draw_position();
 
     // Clip the process if necessary
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
         glScissor(
@@ -1971,7 +1975,7 @@ void Text::Draw()
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     // Stop clipping
-    if(clip[2] > 0 and clip[3] > 0)
+    if(clip[2] > 0 && clip[3] > 0)
         glDisable(GL_SCISSOR_TEST);
 
     glPopMatrix();
