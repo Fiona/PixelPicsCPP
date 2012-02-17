@@ -35,7 +35,7 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_cursor_1", new Image("gfx/gui/cursor_tool_1.png")));
     gfx.insert(pair<string, Image*>("gui_cursor_2", new Image("gfx/gui/cursor_tool_2.png")));
     gfx.insert(pair<string, Image*>("gui_cursor_3", new Image("gfx/gui/cursor_tool_3.png")));
-    //gfx.insert(pair<string, Image*>("gui_cursor_4", new Image("gfx/gui/cursor_tool_4.png")));
+    gfx.insert(pair<string, Image*>("gui_cursor_4", new Image("gfx/gui/cursor_tool_4.png")));
     //gfx.insert(pair<string, Image*>("gui_cursor_5", new Image("gfx/gui/cursor_tool_5.png")));
     //gfx.insert(pair<string, Image*>("gui_cursor_6", new Image("gfx/gui/cursor_tool_6.png")));
 

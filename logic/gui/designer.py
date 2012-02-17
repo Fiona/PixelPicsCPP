@@ -1338,31 +1338,25 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
         GUI_designer_designer_change_puzzle_background_button(self.game, self)
         GUI_designer_designer_undo_button(self.game, self)
         GUI_designer_designer_redo_button(self.game, self)
-        GUI_designer_designer_flood_fill_button(self.game, self)
+
+        self.tool_buttons = []
+        self.tool_buttons.append(GUI_designer_designer_flood_fill_button(self.game, self))
+        self.tool_buttons.append(GUI_designer_designer_rectangle_button(self.game, self))
 
         self.tool_message = Text(self.game.core.media.fonts['menu_subtitles'], self.game.settings['screen_width'] / 2,  150, TEXT_ALIGN_CENTER, "Left click to fill squares. Right click to clear.")
         self.tool_message.colour = (.2,.2,.2)
         self.tool_message.z = Z_GUI_OBJECT_LEVEL_4
-
-        if BACKGROUNDS[self.game.manager.current_puzzle.background]['type'] == BACKGROUND_TYPE_COLOUR:
-            self.draw_strategy = "primitive_square"
-            self.draw_strategy_call_parent = False
-            self.primitive_square_width = self.width
-            self.primitive_square_height = self.height
-            self.primitive_square_x = 0.0
-            self.primitive_square_y = 0.0
-            self.primitive_square_four_colours = True
-            self.primitive_square_colour = (
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                (1.0,1.0,1.0,1.0),
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                )
-
+            
 
     def Execute(self):
         self.update()
         self.tool_message.alpha = 1.0 if self.tool_message_display else 0.0
+
+
+    def untoggle_tools(self, ignore):
+        for tool in self.tool_buttons:
+            if not tool == ignore:
+                tool.toggle_state = False
 
 
     def set_title(self, to):
@@ -1845,9 +1839,35 @@ class GUI_designer_designer_flood_fill_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        self.parent.untoggle_tools(self)
         self.mouse_left_up_toggle()
         if self.toggle_state:
             self.parent.tool = DRAWING_TOOL_STATE_FILL
+            self.parent.tool_message_display = True
+        else:
+            self.parent.tool = DRAWING_TOOL_STATE_DRAW
+            self.parent.tool_message_display = False
+
+
+class GUI_designer_designer_rectangle_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Rectangle"
+    toggle_button = True
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = 450
+        self.y = 90
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def mouse_left_up(self):
+        self.parent.untoggle_tools(self)
+        self.mouse_left_up_toggle()
+        if self.toggle_state:
+            self.parent.tool = DRAWING_TOOL_STATE_RECTANGLE
             self.parent.tool_message_display = True
         else:
             self.parent.tool = DRAWING_TOOL_STATE_DRAW

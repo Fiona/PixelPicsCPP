@@ -866,6 +866,10 @@ void Process::Draw_strategy_puzzle()
     boost::python::list current_puzzle_state;
     bool reset_vectors;
 
+    bool display_rectangle_marker;
+    boost::python::object rectangle_marker_top_left;
+    boost::python::object rectangle_marker_bottom_right;
+
     try
     {
 
@@ -887,6 +891,10 @@ void Process::Draw_strategy_puzzle()
              media = boost::python::extract<Media*>(core.attr("media"));
              current_puzzle_state = boost::python::extract<boost::python::list>(self_.attr("draw_strategy_current_puzzle_state"));
              reset_vectors = boost::python::extract<bool>(self_.attr("draw_strategy_reset_vectors"));
+
+             display_rectangle_marker = boost::python::extract<bool>(self_.attr("display_rectangle_marker"));
+             rectangle_marker_top_left = boost::python::extract<boost::python::object>(self_.attr("rectangle_marker_top_left"));
+             rectangle_marker_bottom_right = boost::python::extract<boost::python::object>(self_.attr("rectangle_marker_bottom_right"));
 
     }
     catch(boost::python::error_already_set const &)
@@ -1475,6 +1483,37 @@ void Process::Draw_strategy_puzzle()
 
     }
 	
+
+    // ****************
+    // Rectangle tool marker
+    // ****************
+    if(display_rectangle_marker)
+    {
+        int rect_a_x = boost::python::extract<int>(rectangle_marker_top_left[1]) * PUZZLE_CELL_WIDTH;
+        int rect_a_y = boost::python::extract<int>(rectangle_marker_top_left[0]) * PUZZLE_CELL_HEIGHT;
+        int rect_b_x = (boost::python::extract<int>(rectangle_marker_bottom_right[1]) + 1) * PUZZLE_CELL_WIDTH;
+        int rect_b_y = (boost::python::extract<int>(rectangle_marker_bottom_right[0]) + 1) * PUZZLE_CELL_HEIGHT;
+
+        //glVertex2f(top_left[0], top_left[1])
+        //glVertex2f(bottom_right[0], top_left[1])
+        //glVertex2f(bottom_right[0], bottom_right[1])
+        //glVertex2f(top_left[0], bottom_right[1])
+        
+        if(rect_a_x > 0 && rect_b_x > 0 && rect_a_y > 0 && rect_b_y > 0)
+        {
+            glDisable(GL_TEXTURE_2D);
+            glColor4f(0.0, 0.0, 0.0, .5);
+            glBegin(GL_QUADS);
+            glVertex2f((float)rect_a_x, (float)rect_a_y);
+            glVertex2f((float)rect_b_x, (float)rect_a_y);
+            glVertex2f((float)rect_b_x, (float)rect_b_y);
+            glVertex2f((float)rect_a_x, (float)rect_b_y);
+            glEnd();
+            glEnable(GL_TEXTURE_2D);
+        }
+
+    }
+
     // ****************
     // Reset matrix
     // ****************

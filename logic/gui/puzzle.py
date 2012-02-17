@@ -131,8 +131,8 @@ class GUI_puzzle(GUI_element):
         if BACKGROUNDS[self.game.manager.current_puzzle.background]['type'] == BACKGROUND_TYPE_COLOUR:
             self.parent.draw_strategy = "primitive_square"
             self.parent.draw_strategy_call_parent = False
-            self.parent.primitive_square_width = self.width
-            self.parent.primitive_square_height = self.height
+            self.parent.primitive_square_width = self.game.settings['screen_width']
+            self.parent.primitive_square_height = self.game.settings['screen_height']
             self.parent.primitive_square_x = 0.0
             self.parent.primitive_square_y = 0.0
             self.parent.primitive_square_four_colours = True
@@ -394,6 +394,10 @@ class GUI_puzzle(GUI_element):
         self.draw_strategy_current_puzzle_height = self.game.manager.current_puzzle.height
         self.draw_strategy_current_puzzle_state = self.game.manager.current_puzzle_state
 
+        self.display_rectangle_marker = False
+        self.rectangle_marker_top_left = (0, 0)
+        self.rectangle_marker_bottom_right = (0, 0)
+
 
     def zoom_out_fade_and_position(self, num):
         self.hint_alpha = lerp(num, 120, self.hint_alpha, 0.0)
@@ -481,10 +485,24 @@ class GUI_puzzle(GUI_element):
             self.hovered_row = -1
             self.last_state_set = "ignore"
 
+            if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
+                self.display_rectangle_marker = False
+
+        if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE and self.display_rectangle_marker:
+            if -1 in self.rectangle_marker_top_left or  -1 in self.rectangle_marker_bottom_right:
+                self.display_rectangle_marker = False
+            else:
+                self.rectangle_marker_bottom_right = (self.hovered_row, self.hovered_column)
+            
 
     def mouse_left_down(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
+
+        if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE and not self.display_rectangle_marker:
+            self.display_rectangle_marker = True
+            self.rectangle_marker_top_left = (self.hovered_row, self.hovered_column)
+            self.rectangle_marker_bottom_right = (self.hovered_row, self.hovered_column)
 
         if not self.parent.tool == DRAWING_TOOL_STATE_DRAW:
             return
@@ -496,11 +514,16 @@ class GUI_puzzle(GUI_element):
             # --- DESIGNER ONLY ---
             else:
                 self.mark_cell(False, (self.hovered_row, self.hovered_column))
-
+                
 
     def mouse_right_down(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
+
+        if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE and not self.display_rectangle_marker:
+            self.display_rectangle_marker = True
+            self.rectangle_marker_top_left = (self.hovered_row, self.hovered_column)
+            self.rectangle_marker_bottom_right = (self.hovered_row, self.hovered_column)
 
         if not self.parent.tool == DRAWING_TOOL_STATE_DRAW:
             return
@@ -522,6 +545,10 @@ class GUI_puzzle(GUI_element):
             if len(cell_list) > 0:
                 self.parent.need_to_save = True        
                 self.change_cells(cell_list, True)
+
+        elif self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
+            self.draw_rectangle(True, self.rectangle_marker_top_left, self.rectangle_marker_bottom_right)
+            self.display_rectangle_marker = False
         
         self.last_state_set = "ignore"
 
@@ -539,6 +566,10 @@ class GUI_puzzle(GUI_element):
             if len(cell_list) > 0:
                 self.parent.need_to_save = True        
                 self.change_cells(cell_list, None)
+
+        elif self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
+            self.draw_rectangle(None, self.rectangle_marker_top_left, self.rectangle_marker_bottom_right)
+            self.display_rectangle_marker = False
         
         self.last_state_set = "ignore"
 
@@ -590,6 +621,17 @@ class GUI_puzzle(GUI_element):
                 self.fill_stack.append(cell_check)
 
         return len(self.fill_stack) > 0
+
+
+    def draw_rectangle(self, value, top_left, bottom_right):
+        if -1 in top_left or -1 in bottom_right:
+            return
+        cell_list = []
+        for y in range(top_left[0], bottom_right[0] + 1):
+            for x in range(top_left[1], bottom_right[1] + 1):
+                cell_list.append((y, x))
+        if len(cell_list) > 0:
+            self.change_cells(cell_list, value)
         
 
     def adjust_camera_pos(self, x, y):
