@@ -224,7 +224,7 @@ tuple<float, float> Process::get_screen_draw_position()
 void Process::Draw_strategy_gui_button()
 {
 
-    if(alpha <= 0.0)
+    if(alpha <= 0.0f)
         return;
 
     float width = boost::python::extract<float>(self_.attr("width"));
@@ -261,21 +261,21 @@ void Process::Draw_strategy_gui_button()
 
     glVertexPointer(3, GL_FLOAT, 0, vertex_list);
 
-    glTranslatef(x, y, 0.0);
-    glColor4f(1.0, 1.0, 1.0, alpha);
+    glTranslatef(x, y, 0.0f);
+    glColor4f(1.0f, 1.0f, 1.0f, alpha);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
 
     // Draw the surrounding rectangle    
     glDisable(GL_TEXTURE_2D);
-    glLineWidth(2.0);
-    glColor4f(.5, .5, .5, alpha);
+    glLineWidth(2.0f);
+    glColor4f(.5f, .5f, .5f, alpha);
     glBegin(GL_LINE_LOOP);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(width, 0.0);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(width, 0.0f);
     glVertex2f(width, height);
-    glVertex2f(0.0, height);
+    glVertex2f(0.0f, height);
     glEnd();
     glEnable(GL_TEXTURE_2D);
 
@@ -291,7 +291,7 @@ void Process::Draw_strategy_gui_button()
 void Process::Draw_strategy_gui_window_frame()
 {
 
-    if(alpha <= 0.0)
+    if(alpha <= 0.0f)
         return;
 
     float width = boost::python::extract<float>(self_.attr("width"));
@@ -327,16 +327,16 @@ void Process::Draw_strategy_gui_window_frame()
 
     // Background of frame
     glBegin(GL_QUADS);
-    glColor4f(0.8, 1.0, 1.0, 1.0);
+    glColor4f(0.8, 1.0f, 1.0f, 1.0f);
     glVertex2f(draw_x + 8.0f,          draw_y + 8.0f);
     glVertex2f(draw_x + width - 8.0f,  draw_y + 8.0f);
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glVertex2f(draw_x + width - 8.0f,  draw_y + height - 8.0f);
     glVertex2f(draw_x + 8.0f,          draw_y + height - 8.0f);
     glEnd();
 
     // Frame border
-    glColor4f(0.7, 0.7, 0.7, 1.0);
+    glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(draw_x + 10.0f,          draw_y + 10.0f);
     glVertex2f(draw_x + width - 10.0f,  draw_y + 10.0f);
@@ -345,7 +345,7 @@ void Process::Draw_strategy_gui_window_frame()
     glEnd();
 
     // Title shadow
-    glColor4f(0.7, 0.7, 0.7, 0.7);
+    glColor4f(0.7f, 0.7f, 0.7f, 0.7f);
     glBegin(GL_QUADS);
     glVertex2f(draw_x + 16.0f,   draw_y + 6.0f);
     glVertex2f(draw_x + 250.0f,  draw_y + 6.0f);
@@ -354,7 +354,7 @@ void Process::Draw_strategy_gui_window_frame()
     glEnd();
 
     // Title 
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(draw_x + 10.0f,   draw_y);
     glVertex2f(draw_x + 244.0f,  draw_y);
@@ -375,7 +375,7 @@ void Process::Draw_strategy_gui_window_frame()
 void Process::Draw_strategy_gui_text_input()
 {
 
-    if(alpha <= 0.0)
+    if(alpha <= 0.0f)
         return;
 
     // Clip the process if necessary
@@ -401,7 +401,7 @@ void Process::Draw_strategy_gui_text_input()
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
@@ -410,10 +410,10 @@ void Process::Draw_strategy_gui_text_input()
     glEnd();
 
     if(active)
-        glColor4f(0.8, 0.8, 0.8, 1.0);
+        glColor4f(0.8f, 0.8f, 0.8f, 1.0f);
     else
-        glColor4f(0.5, 0.5, 0.5, 1.0);
-    glLineWidth(1.0);
+        glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+    glLineWidth(1.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
@@ -435,7 +435,7 @@ void Process::Draw_strategy_gui_text_input()
 void Process::Draw_strategy_gui_spinner()
 {
 
-    if(alpha <= 0.0)
+    if(alpha <= 0.0f)
         return;
 
     // Clip the process if necessary
@@ -460,7 +460,7 @@ void Process::Draw_strategy_gui_spinner()
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
@@ -468,8 +468,8 @@ void Process::Draw_strategy_gui_spinner()
     glVertex2f(draw_x, height + draw_y);
     glEnd();
 
-    glColor4f(0.5, 0.5, 0.5, 1.0);
-    glLineWidth(1.0);
+    glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+    glLineWidth(1.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
@@ -498,23 +498,23 @@ void Process::Draw_strategy_gui_designer_designer_menu_bar()
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.0, 0.0, 0.0, alpha);
+    glColor4f(0.0f, 0.0f, 0.0f, alpha);
     glBegin(GL_QUADS);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(width, 0.0);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(width, 0.0f);
     glVertex2f(width, height);
-    glVertex2f(0.0, height);
+    glVertex2f(0.0f, height);
     glEnd();
 
     glBegin(GL_QUADS);
-    glColor4f(0.0, 0.0, 0.0, alpha);
-    glVertex2f(0.0, height);
-    glColor4f(0.0, 0.0, 0.0, alpha);
+    glColor4f(0.0f, 0.0f, 0.0f, alpha);
+    glVertex2f(0.0f, height);
+    glColor4f(0.0f, 0.0f, 0.0f, alpha);
     glVertex2f(width, height);
-    glColor4f(0.0, 0.0, 0.0, 0.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 0.0f);
     glVertex2f(width, height + 10.0f);
-    glColor4f(0.0, 0.0, 0.0, 0.0);
-    glVertex2f(0.0, height + 10.0f);
+    glColor4f(0.0f, 0.0f, 0.0f, 0.0f);
+    glVertex2f(0.0f, height + 10.0f);
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
@@ -534,7 +534,7 @@ void Process::Draw_strategy_gui_dropdown_currently_selected()
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
@@ -542,8 +542,8 @@ void Process::Draw_strategy_gui_dropdown_currently_selected()
     glVertex2f(x, height + y);
     glEnd();
 
-    glColor4f(0.5, 0.5, 0.5, 1.0);
-    glLineWidth(1.0);
+    glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+    glLineWidth(1.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
@@ -552,8 +552,8 @@ void Process::Draw_strategy_gui_dropdown_currently_selected()
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-    glTranslatef(x + width - 25.0, y + 1.0, 0.0);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glTranslatef(x + width - 25.0f, y + 1.0f, 0.0f);
     glTexCoordPointer(2, GL_FLOAT, 0, &image->texture_coords[image_sequence-1][0]);
     glBindTexture(GL_TEXTURE_2D, image->texture);
     glVertexPointer(3, GL_FLOAT, 0, image->vertex_list);
@@ -582,7 +582,7 @@ void Process::Draw_strategy_gui_dropdown_options()
     glDisable(GL_TEXTURE_2D);
 
     // Background behind items
-    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
@@ -593,7 +593,7 @@ void Process::Draw_strategy_gui_dropdown_options()
     // highlight on hovered item
     if(hovered_item > -1)
     {
-        glColor4f(0.2, 0.2, 0.2, 1.0);
+        glColor4f(0.2f, 0.2f, 0.2f, 1.0f);
         glBegin(GL_QUADS);
         glVertex2f(x, y + (display_height * hovered_item));
         glVertex2f(width + x, y + (display_height * hovered_item));
@@ -606,8 +606,8 @@ void Process::Draw_strategy_gui_dropdown_options()
     int start_y = 0;
     for(int i = 0; i < num_dropdown_options; i++)
     {
-        glColor4f(0.4, 0.4, 0.4, 1.0);
-        glLineWidth(1.0);
+        glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
+        glLineWidth(1.0f);
         glBegin(GL_LINE_LOOP);
         glVertex2f(x, y + start_y);
         glVertex2f(width + x, y + start_y);
@@ -652,7 +652,7 @@ void Process::Draw_strategy_gui_scroll_window()
     //glVertex2f(bottom_right[0], bottom_right[1])
     //glVertex2f(top_left[0], bottom_right[1])
 
-    glColor4f(0.5, 0.5, 0.5, 0.5);
+    glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
     glBegin(GL_QUADS);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
@@ -660,8 +660,8 @@ void Process::Draw_strategy_gui_scroll_window()
     glVertex2f(x, height + y);
     glEnd();
 
-    glColor4f(0.0, 0.0, 0.0, 1.0);
-    glLineWidth(1.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+    glLineWidth(1.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
@@ -814,25 +814,25 @@ void Process::Draw_strategy_puzzle_pixel_message()
     glDisable(GL_TEXTURE_2D);
     
     glBegin(GL_QUADS);
-      glColor4f(0.6, 0.8, 0.8, 0.0);
-      glVertex2f(0.0, y - (float)(height / 2));
-      glColor4f(0.6, 0.8, 0.8, 0.0);
+      glColor4f(0.6f, 0.8f, 0.8f, 0.0f);
+      glVertex2f(0.0f, y - (float)(height / 2));
+      glColor4f(0.6f, 0.8f, 0.8f, 0.0f);
       glVertex2f(screen_width, y - (float)(height / 2));
-      glColor4f(0.6, 0.8, 0.8, alpha);
+      glColor4f(0.6f, 0.8f, 0.8f, alpha);
       glVertex2f(screen_width, y + (float)(height / 2));
-      glColor4f(0.6, 0.8, 0.8, alpha);
-      glVertex2f(0.0, y + (float)(height / 2));
+      glColor4f(0.6f, 0.8f, 0.8f, alpha);
+      glVertex2f(0.0f, y + (float)(height / 2));
     glEnd();
 
     glBegin(GL_QUADS);
-      glColor4f(0.6, 0.8, 0.8, alpha);
-      glVertex2f(0.0, y + (float)(height / 2));
-      glColor4f(0.6, 0.8, 0.8, alpha);
+      glColor4f(0.6f, 0.8f, 0.8f, alpha);
+      glVertex2f(0.0f, y + (float)(height / 2));
+      glColor4f(0.6f, 0.8f, 0.8f, alpha);
       glVertex2f(screen_width, y + (float)(height / 2));
-      glColor4f(0.6, 0.8, 0.8, 0.0);
+      glColor4f(0.6f, 0.8f, 0.8f, 0.0f);
       glVertex2f(screen_width, y + (float)(height / 2) + (float)height);
-      glColor4f(0.6, 0.8, 0.8, 0.0);
-      glVertex2f(0.0, y + (float)(height / 2) + (float)height);
+      glColor4f(0.6f, 0.8f, 0.8f, 0.0f);
+      glVertex2f(0.0f, y + (float)(height / 2) + (float)height);
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
@@ -928,18 +928,18 @@ void Process::Draw_strategy_puzzle()
         0.0
         );
 
-    glScalef(zoom_level, zoom_level, 1.0);
+    glScalef(zoom_level, zoom_level, 1.0f);
 
     // ****************
     // White puzzle background
     // ****************
     glDisable(GL_TEXTURE_2D);
-    glColor4f(1.0, 1.0, 1.0, 0.9);
+    glColor4f(1.0f, 1.0f, 1.0f, 0.9f);
     glBegin(GL_QUADS);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(grid_width, 0);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(grid_width, 0.0f);
     glVertex2f(grid_width, grid_height);
-    glVertex2f(0, grid_height);
+    glVertex2f(0.0f, grid_height);
     glEnd();
 
     // ****************
@@ -947,13 +947,13 @@ void Process::Draw_strategy_puzzle()
     // ****************
     float coords_x = grid_width / (PUZZLE_CELL_WIDTH * 2);
     float coords_y = grid_height / (PUZZLE_CELL_HEIGHT * 2);
-    float tex_coords_pointer[] = {coords_x, coords_y, 0.0, coords_y, coords_x, 0.0, 0.0, 0.0};
+    float tex_coords_pointer[] = {coords_x, coords_y, 0.0f, coords_y, coords_x, 0.0f, 0.0f, 0.0f};
     glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_pointer);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_grid_background"]->texture);
-    float vertex_pointer[] = {grid_width, grid_height, 0.0, 0.0, grid_height, 0.0, grid_width, 0.0, 0.0, 0.0, 0.0, 0.0};
+    float vertex_pointer[] = {grid_width, grid_height, 0.0f, 0.0f, grid_height, 0.0f, grid_width, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     glVertexPointer(3, GL_FLOAT, 0, vertex_pointer);
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
      
     // ****************
@@ -980,10 +980,10 @@ void Process::Draw_strategy_puzzle()
             number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
             number_gradient_squares.push_back(draw_start);
 
-            number_gradient_squares.push_back(0.0);
+            number_gradient_squares.push_back(0.0f);
             number_gradient_squares.push_back(draw_start);
 
-            number_gradient_squares.push_back(0.0);
+            number_gradient_squares.push_back(0.0f);
             number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
 
             number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
@@ -1010,10 +1010,10 @@ void Process::Draw_strategy_puzzle()
             number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
 
             number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
-            number_gradient_squares.push_back(0.0);
+            number_gradient_squares.push_back(0.0f);
 
             number_gradient_squares.push_back(draw_start);
-            number_gradient_squares.push_back(0.0);
+            number_gradient_squares.push_back(0.0f);
 
             draw_start += (float)PUZZLE_CELL_WIDTH;
 
@@ -1025,17 +1025,17 @@ void Process::Draw_strategy_puzzle()
     {
 
         float horisontal_colours[] = {
-            1.0, 1.0, 1.0, 0.0,
-            .5, .7, .8, 1.0,
-            .5, .7, .8, 1.0,
-            1.0, 1.0, 1.0, 0.0
+            1.0f, 1.0f, 1.0f, 0.0f,
+            .5f, .7f, .8f, 1.0f,
+            .5f, .7f, .8f, 1.0f,
+            1.0f, 1.0f, 1.0f, 0.0f
         };
 
         float vertical_colours[] = {
-            1.0, 1.0, 1.0, 0.0,
-            1.0, 1.0, 1.0, 0.0,
-            .5, .7, .8, 1.0,
-            .5, .7, .8, 1.0
+            1.0f, 1.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 1.0f, 0.0f,
+            .5f, .7f, .8f, 1.0f,
+            .5f, .7f, .8f, 1.0f
         };
 
         for(int y = 0; y < current_puzzle_height; y++)
@@ -1066,21 +1066,21 @@ void Process::Draw_strategy_puzzle()
     // ****************
     if(hovered_row > -1)
     {
-        glColor4f(.5, .5, 1.0, .2);
+        glColor4f(.5f, .5f, 1.0f, .2f);
         glBegin(GL_QUADS);
-        glVertex2f(0.0, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
+        glVertex2f(0.0f, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f(grid_width, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f(grid_width, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
-        glVertex2f(0.0, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
+        glVertex2f(0.0f, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
         glEnd();
     }
 
     if(hovered_column > -1)
     {
-        glColor4f(.5, .5, 1.0, .2);
+        glColor4f(.5f, .5f, 1.0f, .2f);
         glBegin(GL_QUADS);
-        glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), 0.0);
-        glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), 0.0);
+        glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), 0.0f);
+        glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), 0.0f);
         glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), grid_height);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), grid_height);
         glEnd();
@@ -1096,7 +1096,7 @@ void Process::Draw_strategy_puzzle()
         for(int y = 0; y < current_puzzle_width; y++)
         {
             grid_lines.push_back(draw_start);
-            grid_lines.push_back(0.0);
+            grid_lines.push_back(0.0f);
             grid_lines.push_back(draw_start);
             grid_lines.push_back(grid_height);
             draw_start += (float)PUZZLE_CELL_HEIGHT;
@@ -1105,7 +1105,7 @@ void Process::Draw_strategy_puzzle()
         draw_start = (float)PUZZLE_CELL_WIDTH;
         for(int x = 0; x < current_puzzle_height; x++)
         {
-            grid_lines.push_back(0.0);
+            grid_lines.push_back(0.0f);
             grid_lines.push_back(draw_start);
             grid_lines.push_back(grid_width);
             grid_lines.push_back(draw_start);
@@ -1114,8 +1114,8 @@ void Process::Draw_strategy_puzzle()
 
     }
 
-    glLineWidth(1.0 / zoom_level);
-    glColor4f(0.3, 0.3, 0.3, 1.0);
+    glLineWidth(1.0f / zoom_level);
+    glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
     glVertexPointer(2, GL_FLOAT, 0, &grid_lines[0]);
     glDrawArrays(GL_LINES, 0, (current_puzzle_width + current_puzzle_height) * 2);
     
@@ -1129,7 +1129,7 @@ void Process::Draw_strategy_puzzle()
         for(int y = 0; y < (int)ceil((float)current_puzzle_width / 5) - 1; y++)
         {
             every_five_lines.push_back(draw_start);
-            every_five_lines.push_back(0.0);
+            every_five_lines.push_back(0.0f);
             every_five_lines.push_back(draw_start);
             every_five_lines.push_back(grid_height);
             draw_start += (float)(PUZZLE_CELL_HEIGHT * 5);
@@ -1138,7 +1138,7 @@ void Process::Draw_strategy_puzzle()
         draw_start = (float)(PUZZLE_CELL_WIDTH * 5);
         for(int x = 0; x < (int)ceil((float)current_puzzle_height / 5) - 1; x++)
         {
-            every_five_lines.push_back(0.0);
+            every_five_lines.push_back(0.0f);
             every_five_lines.push_back(draw_start);
             every_five_lines.push_back(grid_width);
             every_five_lines.push_back(draw_start);
@@ -1150,8 +1150,8 @@ void Process::Draw_strategy_puzzle()
     if(every_five_lines.size() > 0)
     {
 
-		glLineWidth(2.0 / zoom_level);
-	    glColor4f(0.3, 0.7, 0.3, 1.0);
+		glLineWidth(2.0f / zoom_level);
+	    glColor4f(0.3f, 0.7f, 0.3f, 1.0f);
 		glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
 	    glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
 
@@ -1160,13 +1160,13 @@ void Process::Draw_strategy_puzzle()
     // ****************
     // Puzzle border
     // ****************
-    glColor4f(0.0, 0.0, 0.0, 1.0);
-    glLineWidth(2.0 / zoom_level);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+    glLineWidth(2.0f / zoom_level);
     glBegin(GL_LINE_LOOP);
-    glVertex2f(0.0, 0.0);
-    glVertex2f(grid_width, 0.0);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(grid_width, 0.0f);
     glVertex2f(grid_width, grid_height);
-    glVertex2f(0.0, grid_height);
+    glVertex2f(0.0f, grid_height);
     glEnd();
 
     // ****************
@@ -1174,9 +1174,9 @@ void Process::Draw_strategy_puzzle()
     // ****************
     if(hovered_row > -1 && hovered_column > -1)
     {
-        glColor4f(1.0, 0.0, 0.0, .8);
+        glColor4f(1.0f, 0.0f, 0.0f, .8f);
         glBegin(GL_LINE_LOOP);
-        glLineWidth(3.0 / zoom_level);
+        glLineWidth(3.0f / zoom_level);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT + (PUZZLE_CELL_HEIGHT * hovered_row)));
@@ -1188,7 +1188,7 @@ void Process::Draw_strategy_puzzle()
     // Set up for drawing markers
     // ****************
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
 
     // ****************
@@ -1299,10 +1299,10 @@ void Process::Draw_strategy_puzzle()
                         black_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
 
                         // Add the texture coordinates
-                        black_chunks_textures[h][w].push_back(1.0); black_chunks_textures[h][w].push_back(0.0);
-                        black_chunks_textures[h][w].push_back(0.0); black_chunks_textures[h][w].push_back(0.0);
-                        black_chunks_textures[h][w].push_back(0.0); black_chunks_textures[h][w].push_back(1.0);
-                        black_chunks_textures[h][w].push_back(1.0); black_chunks_textures[h][w].push_back(1.0);
+                        black_chunks_textures[h][w].push_back(1.0f); black_chunks_textures[h][w].push_back(0.0f);
+                        black_chunks_textures[h][w].push_back(0.0f); black_chunks_textures[h][w].push_back(0.0f);
+                        black_chunks_textures[h][w].push_back(0.0f); black_chunks_textures[h][w].push_back(1.0f);
+                        black_chunks_textures[h][w].push_back(1.0f); black_chunks_textures[h][w].push_back(1.0f);
 
                     }
 
@@ -1444,10 +1444,10 @@ void Process::Draw_strategy_puzzle()
                         white_chunks[h][w].push_back(draw_y + (float)PUZZLE_CELL_HEIGHT);
 
                         // Add the texture coordinates
-                        white_chunks_textures[h][w].push_back(1.0); white_chunks_textures[h][w].push_back(0.0);
-                        white_chunks_textures[h][w].push_back(0.0); white_chunks_textures[h][w].push_back(0.0);
-                        white_chunks_textures[h][w].push_back(0.0); white_chunks_textures[h][w].push_back(1.0);
-                        white_chunks_textures[h][w].push_back(1.0); white_chunks_textures[h][w].push_back(1.0);
+                        white_chunks_textures[h][w].push_back(1.0f); white_chunks_textures[h][w].push_back(0.0f);
+                        white_chunks_textures[h][w].push_back(0.0f); white_chunks_textures[h][w].push_back(0.0f);
+                        white_chunks_textures[h][w].push_back(0.0f); white_chunks_textures[h][w].push_back(1.0f);
+                        white_chunks_textures[h][w].push_back(1.0f); white_chunks_textures[h][w].push_back(1.0f);
 
                     }
 
@@ -1502,7 +1502,7 @@ void Process::Draw_strategy_puzzle()
         if(rect_a_x > 0 && rect_b_x > 0 && rect_a_y > 0 && rect_b_y > 0)
         {
             glDisable(GL_TEXTURE_2D);
-            glColor4f(0.0, 0.0, 0.0, .5);
+            glColor4f(0.0f, 0.0f, 0.0f, .5f);
             glBegin(GL_QUADS);
             glVertex2f((float)rect_a_x, (float)rect_a_y);
             glVertex2f((float)rect_b_x, (float)rect_a_y);
@@ -1534,8 +1534,8 @@ void Process::Draw_strategy_gui_designer_packs_pack_item()
         return;
 
     tuple<float, float> draw_pos = get_screen_draw_position();
-    float draw_x = draw_pos.get<0>() + 1.0;
-    float draw_y = draw_pos.get<1>() + 1.0;
+    float draw_x = draw_pos.get<0>() + 1.0f;
+    float draw_y = draw_pos.get<1>() + 1.0f;
 
     // Clip the process if necessary
     if(clip[2] > 0 && clip[3] > 0)
@@ -1552,7 +1552,7 @@ void Process::Draw_strategy_gui_designer_packs_pack_item()
     glPushMatrix();
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.5, 0.5, 0.5, alpha);
+    glColor4f(0.5f, 0.5f, 0.5f, alpha);
     glBegin(GL_QUADS);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
@@ -1560,8 +1560,8 @@ void Process::Draw_strategy_gui_designer_packs_pack_item()
     glVertex2f(draw_x, height + draw_y);
     glEnd();
 
-    glColor4f(0.0, 0.0, 0.0, 1.0);
-    glLineWidth(1.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+    glLineWidth(1.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
@@ -1612,7 +1612,7 @@ void Process::Draw_strategy_gui_designer_monochrome_puzzle_image()
     //glVertex2f(bottom_right[0], bottom_right[1])
     //glVertex2f(top_left[0], bottom_right[1])
 
-    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(draw_x - 1, draw_y - 1);
     glVertex2f((width * scale) + draw_x + 1, draw_y - 1);
