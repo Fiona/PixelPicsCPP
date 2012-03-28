@@ -575,8 +575,8 @@ class Pixel_message(Process):
     def __init__(self, game, x, y, z = Z_GUI_OBJECT_LEVEL_5, wait = 3):
         Process.__init__(self)
         self.game = game
-        self.width = self.game.core.media.gfx['gui_main_menu_title_pixel'].width * len(self.pattern[0])
-        self.height = self.game.core.media.gfx['gui_main_menu_title_pixel'].height * len(self.pattern)
+        self.width = (self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2) * len(self.pattern[0])
+        self.height = (self.game.core.media.gfx['gui_main_menu_title_pixel'].height/2) * len(self.pattern)
         self.x = x + (((self.game.settings['screen_width']/2) - (self.width/2)) - self.game.core.media.gfx['gui_main_menu_title_pixel'].width)
         self.y = y
         self.z = z
@@ -602,18 +602,18 @@ class Pixel_message(Process):
                 for i, row in enumerate(reversed(self.pattern)):
                     pixel_x = self.x
                     if not order:
-                        pixel_x = self.x + self.width + self.game.core.media.gfx['gui_main_menu_title_pixel'].width
+                        pixel_x = self.x + self.width + (self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2)
                         row = row[::-1]
-                    for char in row:
+                    for j, char in enumerate(row):
                         if order:
-                            pixel_x += self.game.core.media.gfx['gui_main_menu_title_pixel'].width
+                            pixel_x += self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2
                         else:
-                            pixel_x -= self.game.core.media.gfx['gui_main_menu_title_pixel'].width
+                            pixel_x -= self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2
                         if char == " ":
                             continue
-                        self.objs.append(Pixel_message_pixel(self.game, pixel_x, pixel_y, self.z, self.wait * wait_num))
+                        self.objs.append(Pixel_message_pixel(self.game, pixel_x, pixel_y, self.z - i + j, self.wait * wait_num, ))
                         wait_num += 1
-                    pixel_y -= self.game.core.media.gfx['gui_main_menu_title_pixel'].height
+                    pixel_y -= (self.game.core.media.gfx['gui_main_menu_title_pixel'].height/2)
                     order = not order
 
         # doing stuff
