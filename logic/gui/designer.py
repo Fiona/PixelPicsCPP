@@ -1341,7 +1341,7 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
 
         self.tool_buttons = []
         self.tool_buttons.append(GUI_designer_designer_flood_fill_button(self.game, self))
-        self.tool_buttons.append(GUI_designer_designer_rectangle_button(self.game, self))
+        #self.tool_buttons.append(GUI_designer_designer_rectangle_button(self.game, self))
 
         self.tool_message = Text(self.game.core.media.fonts['menu_subtitles'], self.game.settings['screen_width'] / 2,  150, TEXT_ALIGN_CENTER, "Left click to fill squares. Right click to clear.")
         self.tool_message.colour = (.2,.2,.2)
@@ -1423,7 +1423,7 @@ class GUI_verify_status(GUI_element):
         self.game = game
         self.parent = parent
         self.puzzle = puzzle
-        self.x = self.game.settings['screen_width'] - 150
+        self.x = self.game.settings['screen_width'] - 180
         self.y = 0.0
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.current_solver_state = None
@@ -1449,6 +1449,9 @@ class GUI_verify_status(GUI_element):
                 self.text.text = "Valid Puzzle"
                 self.objs.append(
                     GUI_designer_designer_save_puzzle_button(self.game, self)
+                    )
+                self.objs.append(
+                    GUI_designer_designer_colour_puzzle_button(self.game, self)
                     )
                 self.objs.append(
                     GUI_designer_designer_test_puzzle_button(self.game, self)
@@ -1481,7 +1484,7 @@ class GUI_designer_designer_invalid_puzzle_question_mark_button(GUI_element_butt
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 130
+        self.x = self.game.settings['screen_width'] - 160
         self.y = 90
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
@@ -1510,7 +1513,7 @@ class GUI_designer_designer_save_puzzle_button(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 180
+        self.x = self.game.settings['screen_width'] - 250
         self.y = 90
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
@@ -1529,6 +1532,29 @@ class GUI_designer_designer_save_puzzle_button(GUI_element_button):
             GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
         finally:
             self.game.manager.load_pack(self.game.manager.current_puzzle_pack)
+
+
+
+class GUI_designer_designer_colour_puzzle_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Colour"
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.game.settings['screen_width'] - 190
+        self.y = 90
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def Execute(self):
+        self.update()
+        self.disabled = self.parent.parent.need_to_save
+
+
+    def mouse_left_up(self):
+        self.game.gui.fade_toggle(lambda: self.game.gui.switch_gui_state_to(GUI_STATE_DESIGNER_COLOUR), speed = 10)
 
 
 
@@ -2043,3 +2069,246 @@ class GUI_designer_puzzle_change_puzzle_background_item(GUI_element):
         self.update()
         self.is_current = (self.parent.parent.selected_background == self.background)
     
+
+
+###############################################################
+######################## COLOURING ############################
+###############################################################
+
+
+
+class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
+    """
+    Container for all elements in the puzzle colouring in book
+    """
+    title = None
+    puzzle_object = None
+
+    need_to_save = False
+
+    tool = DRAWING_TOOL_STATE_DRAW
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+        self.z = Z_GUI_CONTAINERS
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+        self.alpha = 0.1
+
+        GUI_designer_colour_menu_bar(self.game, self)
+        self.title = GUI_designer_title(self.game, self, subtitle = str(self.game.manager.current_puzzle.name), no_background = True)
+        GUI_designer_designer_back(self.game, self)
+        self.puzzle_object = GUI_designer_colour_puzzle(self.game, self)
+        #GUI_designer_designer_change_puzzle_background_button(self.game, self)
+        #GUI_designer_designer_undo_button(self.game, self)
+        #GUI_designer_designer_redo_button(self.game, self)
+
+        GUI_designer_colour_save_puzzle_button(self.game, self)
+        GUI_designer_colour_puzzle_button(self.game, self)
+        GUI_designer_colour_test_puzzle_button(self.game, self)
+            
+        GUI_designer_colour_colour_picker(self.game, self)
+
+
+    def Execute(self):
+        self.update()
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.tool_message.Kill()
+
+
+
+class GUI_designer_colour_puzzle(GUI_element):
+    """
+    The colourable element
+    """
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent        
+        self.gui_init()
+        self.z = Z_GUI_OBJECT_LEVEL_1
+        self.reload_puzzle_display()
+        self.reload_puzzle_background()
+
+        # Init stuff
+        self.camera_pos = [0.0, 0.0]
+
+        self.x = 0
+        self.y = 0
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+        self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
+        self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
+
+        self.adjust_gui_coords()
+        self.camera_pos = [0.0, 0.0]
+
+
+    def Execute(self):
+        self.adjust_gui_coords()
+
+
+    def reload_puzzle_display(self):
+        self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
+        self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
+
+        self.grid_x = 0
+        self.grid_y = 0
+
+        # Determine optimum zoom level
+        self.game.current_zoom_level = min(
+            float(self.game.settings['screen_width']) / self.grid_width,
+            float(self.game.settings['screen_height']) / self.grid_height
+            )
+
+        if self.game.current_zoom_level > 1.0:
+            self.game.current_zoom_level = 1.0
+        self.game.minimum_zoom_level = self.game.current_zoom_level
+
+        # Work out initial placement of the grid
+        self.grid_x = int(self.grid_width / 2) - PUZZLE_CELL_WIDTH
+        self.grid_y = int(self.grid_height / 2) - PUZZLE_CELL_HEIGHT
+
+
+    def reload_puzzle_background(self):
+        # Draw strat
+        if BACKGROUNDS[self.game.manager.current_puzzle.background]['type'] == BACKGROUND_TYPE_COLOUR:
+            self.parent.draw_strategy = "primitive_square"
+            self.parent.draw_strategy_call_parent = False
+            self.parent.primitive_square_width = self.game.settings['screen_width']
+            self.parent.primitive_square_height = self.game.settings['screen_height']
+            self.parent.primitive_square_x = 0.0
+            self.parent.primitive_square_y = 0.0
+            self.parent.primitive_square_four_colours = True
+            self.parent.primitive_square_colour = (
+                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
+                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
+                (1.0,1.0,1.0,1.0),
+                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
+                )
+
+
+    def adjust_gui_coords(self):
+        # Adjust my x/y
+        self.grid_gui_x = ((self.grid_x - self.camera_pos[0]) * self.game.current_zoom_level) + (self.game.settings['screen_width'] / 2)
+        self.grid_gui_y = ((self.grid_y - self.camera_pos[1]) * self.game.current_zoom_level) + (self.game.settings['screen_height'] / 2)
+
+        # Adjust my size
+        self.grid_gui_width = self.grid_width * self.game.current_zoom_level
+        self.grid_gui_height = self.grid_height * self.game.current_zoom_level
+
+
+
+class GUI_designer_colour_menu_bar(GUI_element):
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+        self.z = Z_GUI_OBJECT_LEVEL_4
+        self.width = self.game.settings['screen_width']
+        self.height = 155
+        self.alpha = 0.3
+        self.draw_strategy = "gui_designer_designer_menu_bar"
+
+
+
+class GUI_designer_colour_save_puzzle_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Save"
+    disabled = True
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.game.settings['screen_width'] - 75
+        self.y = 15
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def Execute(self):
+        self.update()
+        self.disabled = not self.parent.need_to_save
+
+
+    def mouse_left_up(self):
+        return
+        try:
+            self.game.manager.save_puzzle(self.game.manager.current_puzzle_pack, self.game.manager.current_puzzle_file, self.game.manager.current_puzzle)
+            self.parent.parent.need_to_save = False
+        except Exception as e:
+            GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
+        finally:
+            self.game.manager.load_pack(self.game.manager.current_puzzle_pack)
+
+
+
+class GUI_designer_colour_puzzle_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Puzzle"
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.game.settings['screen_width'] - 80
+        self.y = 52
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def Execute(self):
+        self.update()
+        self.disabled = self.parent.need_to_save
+
+
+    def mouse_left_up(self):
+        self.game.gui.fade_toggle(lambda: self.game.gui.switch_gui_state_to(GUI_STATE_DESIGNER_DESIGNER), speed = 10)
+
+
+
+class GUI_designer_colour_test_puzzle_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Test"
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.game.settings['screen_width'] - 75
+        self.y = 90
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def Execute(self):
+        self.update()
+        self.disabled = self.parent.need_to_save
+
+
+    def mouse_left_up(self):
+        self.game.manager.reset_puzzle_state()
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TEST), speed = 20)
+
+
+
+class GUI_designer_colour_colour_picker(GUI_element):
+
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = 315
+        self.y = 15
+        self.z = Z_GUI_OBJECT_LEVEL_7
+        self.image = self.game.core.media.gfx['gui_colour_picker']
+        self.gui_init()
+
+
+    def Execute(self):
+        self.update()

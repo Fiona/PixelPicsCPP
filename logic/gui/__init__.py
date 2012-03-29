@@ -51,8 +51,9 @@ class GUI(Process):
         GUI_STATE_PUZZLE : {},
         GUI_STATE_DESIGNER_PACKS : {},
         GUI_STATE_DESIGNER_PUZZLES : {},
-        GUI_STATE_DESIGNER_DESIGNER : {}
-        }
+        GUI_STATE_DESIGNER_DESIGNER : {},
+        GUI_STATE_DESIGNER_COLOUR : {}
+    }
 
     # goes up every frame, resets when changing game state
     current_game_state_gui_ticks = 0
@@ -151,7 +152,7 @@ class GUI(Process):
             """
             IN DESINGER MODE
             """
-            if self.gui_state == GUI_STATE_DESIGNER_DESIGNER:
+            if self.gui_state in [GUI_STATE_DESIGNER_DESIGNER, GUI_STATE_DESIGNER_COLOUR]:
                 self.do_mouse_wheel_zooming()
         
         elif self.game.game_state == GAME_STATE_TEST:
@@ -244,6 +245,10 @@ class GUI(Process):
             self.current_visible_gui_elements[GUI_STATE_DESIGNER_DESIGNER]['designer_designer_container'] = GUI_designer_designer_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_DESIGNER_DESIGNER]['designer_designer_container']
             self.fade_toggle(speed = 20, colour = (1.0, 1.0, 1.0))
+        if self.gui_state == GUI_STATE_DESIGNER_COLOUR:
+            self.current_visible_gui_elements[GUI_STATE_DESIGNER_COLOUR]['designer_colour_container'] = GUI_designer_colour_container(self.game)
+            self.parent_window = self.current_visible_gui_elements[GUI_STATE_DESIGNER_COLOUR]['designer_colour_container']
+            self.fade_toggle(speed = 10, colour = (1.0, 1.0, 1.0))
 
 
     def destroy_current_gui_state(self):
