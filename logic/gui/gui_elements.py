@@ -222,7 +222,10 @@ class GUI_element_button(GUI_element):
 
     # Use this to change the initial toggle state, but try not to mess with it otherwise
     toggle_state = False
-    
+
+    # Set to True to disable. If not generic, image_seq 3 is used. Can be switched on and off at will.
+    disabled = False
+
     generic_button_text_object = None
     sequence_count = 0
 
@@ -271,6 +274,9 @@ class GUI_element_button(GUI_element):
     def update(self):
         self.image_sequence = 1
         GUI_element.update(self)
+        if self.disabled:
+            self.image_sequence = 4
+            return
         if self.toggle_button and self.toggle_state:
             self.image_sequence = 3 if self.sequence_count > 3 else 0
         elif self.toggle_button:
@@ -278,15 +284,21 @@ class GUI_element_button(GUI_element):
 
 
     def mouse_left_up_toggle(self):
+        if self.disabled:
+            return
         self.toggle_state = True if self.toggle_state == False else False
 
 
     def mouse_over(self):
+        if self.disabled:
+            return
         if self.sequence_count > 1:
             self.image_sequence = 2
 
 
     def mouse_left_down(self):
+        if self.disabled:
+            return
         if self.sequence_count > 2:
             self.image_sequence = 3
 
