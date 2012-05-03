@@ -89,6 +89,12 @@
 #include "game_objects.h"
 #include "python_interface.h"
 
+extern Uint32 SDL_RMASK;
+extern Uint32 SDL_GMASK;
+extern Uint32 SDL_BMASK;
+extern Uint32 SDL_AMASK;
+
+
 class Mouse;
 class Settings;
 
@@ -134,6 +140,8 @@ public:
     Mouse* mouse;
 
     static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
+    static void HSVtoRGB(float h, float s, float v, vector<int> *pixel);
+    tuple<int, int, int> PyHSVtoRGB(float h, float s, float v);
 
     Main_App();
     void Quit();

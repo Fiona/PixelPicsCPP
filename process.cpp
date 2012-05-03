@@ -1741,23 +1741,9 @@ void Process::create_image_from_puzzle()
     while(surf_width < puzzle_width)
         surf_width = surf_width * 2;
 
-    Uint32 rmask, gmask, bmask, amask;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
-#endif
-
     SDL_Surface *raw_surface = SDL_CreateRGBSurface(
         SDL_SWSURFACE, surf_width, surf_height, 32,
-        rmask, gmask, bmask, amask
+        SDL_RMASK, SDL_GMASK, SDL_BMASK, SDL_AMASK
         );
 
     SDL_LockSurface(raw_surface);
@@ -1792,11 +1778,8 @@ void Process::create_image_from_puzzle()
 
     }
 
-    SDL_SaveBMP(raw_surface, "blah.bmp");
     SDL_UnlockSurface(raw_surface);
-
     image = new Image(raw_surface, False);
-
     SDL_FreeSurface(raw_surface);
 
 }
@@ -1808,6 +1791,59 @@ void Process::destroy_puzzle_image()
         return;
     delete image;
     image = NULL;
+}
+
+
+void Process::create_image_as_pallete(int pallete_width, int pallete_height)
+{
+
+    int surf_height = 16;
+    while(surf_height < pallete_height)
+        surf_height = surf_height * 2;
+
+    int surf_width = 16;
+    while(surf_width < pallete_width)
+        surf_width = surf_width * 2;
+
+    SDL_Surface *raw_surface = SDL_CreateRGBSurface(
+        SDL_SWSURFACE, surf_width, surf_height, 32,
+        SDL_RMASK, SDL_GMASK, SDL_BMASK, SDL_AMASK
+        );
+
+    SDL_LockSurface(raw_surface);
+
+    vector<int> pixel_colour;
+    pixel_colour.resize(3);
+
+    for(int i = 0; i < pallete_height; i++)
+    {
+
+        for(int j = 0; j < pallete_width; j++)
+        {
+
+            Main_App::HSVtoRGB(
+                ((float)j / (float)pallete_width) * 1.0f,
+                ((float)i / (float)pallete_height) * 1.0f,
+                1.0f,
+                &pixel_colour
+                );
+
+            Main_App::putpixel(
+                raw_surface, j, i, 
+                SDL_MapRGBA(raw_surface -> format, pixel_colour[0], pixel_colour[1], pixel_colour[2], 255)
+                );
+
+        }
+
+    }
+
+    SDL_SaveBMP(raw_surface, "blah.bmp");
+    SDL_UnlockSurface(raw_surface);
+
+    image = new Image(raw_surface, False);
+
+    SDL_FreeSurface(raw_surface);
+
 }
 
 

@@ -62,8 +62,6 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_button_designer_move_down", new Image("gfx/gui/button_designer_move_down.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_designer_move_up", new Image("gfx/gui/button_designer_move_up.png", False, 3)));
 
-    gfx.insert(pair<string, Image*>("gui_colour_picker", new Image("gfx/gui/colour_picker.png")));
-
 }
 
 

@@ -103,6 +103,7 @@ public:
     void Draw_strategy_designer_puzzle_background_item();
     void create_image_from_puzzle();
     void destroy_puzzle_image();
+    void create_image_as_pallete(int pallete_width, int pallete_height);
 
 };
 

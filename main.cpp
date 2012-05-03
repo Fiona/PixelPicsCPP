@@ -13,6 +13,34 @@ using namespace std;
 #include "main.h"
 
 
+// Dear SDL,
+//
+// Good sir, when I was in the market for a multimedia library,
+// my main concern was that said library needed to be as obtuse as possible.
+// Of course, this is exactly what I wanted when I'm looking for something
+// cross-platform.
+//
+// Imagine my surprise when I came across this bit of majesty.
+// SDL, you have surpassed all my expectations, indeed I have absolutely no
+// reason at all to switch to SFML at the conclusion of this project.
+//
+// Keep up the good work!
+//
+// Kind regards,
+// Stompy Blondie
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+Uint32 SDL_RMASK = 0xff000000;
+Uint32 SDL_GMASK = 0x00ff0000;
+Uint32 SDL_BMASK = 0x0000ff00;
+Uint32 SDL_AMASK = 0x000000ff;
+#else
+Uint32 SDL_RMASK = 0x000000ff;
+Uint32 SDL_GMASK = 0x0000ff00;
+Uint32 SDL_BMASK = 0x00ff0000;
+Uint32 SDL_AMASK = 0xff000000;
+#endif
+
+
 map <string, Main_App::FuncGetter> Main_App::draw_strategies;
 float Main_App::screen_width;
 float Main_App::screen_height;
@@ -300,6 +328,44 @@ void Main_App::putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 
 }
+
+void Main_App::HSVtoRGB(float h, float s, float v, vector<int> *pixel)
+{
+
+    float r, g, b;
+
+    float i = floor(h * 6.0f);
+    float f = h * 6.0f - i;
+    float p = v * (1.0f - s);
+    float q = v * (1.0f - f * s);
+    float t = v * (1.0f - (1.0f - f) * s);
+
+    switch((int)i % 6){
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+
+    pixel -> clear();
+    pixel -> push_back((int)(r * 255.0f));
+    pixel -> push_back((int)(g * 255.0f));
+    pixel -> push_back((int)(b * 255.0f));
+
+}
+
+
+tuple<int, int, int> Main_App::PyHSVtoRGB(float h, float s, float v)
+{
+
+    vector<int> pixel_colour;
+    HSVtoRGB(h, s, v, &pixel_colour);
+    return tuple<int, int, int>(pixel_colour[0], pixel_colour[1], pixel_colour[2]);
+
+}
+
 
 
 Settings::Settings(){ }

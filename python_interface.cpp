@@ -48,6 +48,9 @@ BOOST_PYTHON_MODULE(core)
 
     typedef boost::tuples::tuple<float, float> screen_pos_tuple;
     to_python_converter<screen_pos_tuple, my::tupleconverter<screen_pos_tuple> >();
+
+    typedef boost::tuples::tuple<int, int, int> three_int_moon_shirt;
+    to_python_converter<three_int_moon_shirt, my::tupleconverter<three_int_moon_shirt> >();
     
     // Expose all media related objects
     class_<Image>("Image")
@@ -106,6 +109,7 @@ BOOST_PYTHON_MODULE(core)
         .def("Kill", &ProcessWrapper::Kill)
         .def("create_image_from_puzzle", &Process::create_image_from_puzzle)
         .def("destroy_puzzle_image", &Process::destroy_puzzle_image)
+        .def("create_image_as_pallete", &Process::create_image_as_pallete)
         ;
 
     // Expose Text object
@@ -165,6 +169,7 @@ BOOST_PYTHON_MODULE(core)
         .def("Keyboard_key_released", &Main_App::Keyboard_key_released)
         .def("Toggle_text_input", &Main_App::Toggle_text_input)
         .def("Quit", &Main_App::Quit)
+        .def("HSVtoRGB", &Main_App::PyHSVtoRGB)
         ;
 
     // Expose the framework constants
