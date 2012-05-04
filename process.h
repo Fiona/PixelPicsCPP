@@ -101,6 +101,8 @@ public:
     void Draw_strategy_gui_designer_designer_menu_bar();
     void Draw_strategy_gui_designer_monochrome_puzzle_image();
     void Draw_strategy_designer_puzzle_background_item();
+    void Draw_strategy_designer_colour_current_colour();
+    void Draw_strategy_designer_colour_value_slider();
     void create_image_from_puzzle();
     void destroy_puzzle_image();
     void create_image_as_pallete(int pallete_width, int pallete_height);

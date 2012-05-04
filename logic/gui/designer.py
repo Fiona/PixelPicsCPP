@@ -2112,6 +2112,7 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
             
         self.palette_object = GUI_designer_colour_colour_picker(self.game, self)
         self.value_slider_object = GUI_designer_colour_value_slider(self.game, self)        
+        self.current_colour_object = GUI_designer_colour_current_colour(self.game, self)
 
 
     def Execute(self):
@@ -2121,6 +2122,9 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
     def On_Exit(self):
         GUI_element.On_Exit(self)
         self.tool_message.Kill()
+        self.palette_object.Kill()
+        self.value_slider_object.Kill()
+        self.current_colour_object.Kill()
 
 
 
@@ -2307,16 +2311,22 @@ class GUI_designer_colour_colour_picker(GUI_element):
         self.x = 315
         self.y = 15
         self.z = Z_GUI_OBJECT_LEVEL_7
-        self.width = 256
+        self.width = 512
         self.height = 128
 
         self.selected_hsv_colour = [1.0, 1.0, 1.0]
         self.selected_rgb_colour = self.game.core.HSVtoRGB(*self.selected_hsv_colour)
-
-        self.current_colour_object = GUI_designer_colour_current_colour(self.game, self)
         
         self.create_image_as_pallete(self.width, self.height)
         self.gui_init()
+        self.cursor = GUI_designer_colour_colour_picker_cursor(self.game, self)
+        
+        self.draw_strategy = "primitive_square"
+        self.primitive_square_width = self.width + 2
+        self.primitive_square_height = self.height + 2
+        self.primitive_square_x = self.x - 1
+        self.primitive_square_y = self.y - 1
+        self.primitive_square_colour = (0.0,0.0,0.0,1.0)
 
 
     def mouse_left_down(self):
@@ -2327,12 +2337,29 @@ class GUI_designer_colour_colour_picker(GUI_element):
         
     def Execute(self):
         self.update()
+        self.cursor.x = self.x + (self.width * self.selected_hsv_colour[0])
+        self.cursor.y = self.y + (self.height * self.selected_hsv_colour[1])
 
 
     def On_Exit():
         GUI_element.On_Exit(self)
         self.destroy_puzzle_image()
+        self.cursor.Kill()
+        
     
+
+class GUI_designer_colour_colour_picker_cursor(Process):
+
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x
+        self.y = self.parent.y
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_palette_cursor']
+        self.clip = (self.parent.x, self.parent.y, self.parent.width, self.parent.height)
+
 
 
 class GUI_designer_colour_current_colour(GUI_element):
@@ -2341,31 +2368,26 @@ class GUI_designer_colour_current_colour(GUI_element):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 603
-        self.y = 31
-        self.z = Z_GUI_OBJECT_LEVEL_7        
         self.width = 64
         self.height = 64
+        self.x = self.parent.value_slider_object.x + self.parent.value_slider_object.width + 16
+        self.y = self.parent.value_slider_object.y + (self.parent.value_slider_object.height / 2) - (self.height / 2)
+        self.z = Z_GUI_OBJECT_LEVEL_7        
         
         self.gui_init()
 
-        self.draw_strategy = "primitive_square"
-        self.primitive_square_width = self.width
-        self.primitive_square_height = self.height
-        self.primitive_square_x = self.x
-        self.primitive_square_y = self.y
-        self.primitive_square_colour = (1.0,1.0,1.0,1.0)
+        self.draw_strategy = "designer_colour_current_colour"
 
 
     def Execute(self):
         self.update()
-        self.primitive_square_colour = (
-            (float(self.parent.selected_rgb_colour[0]) / 255) * 1.0,
-            (float(self.parent.selected_rgb_colour[1]) / 255) * 1.0,
-            (float(self.parent.selected_rgb_colour[2]) / 255) * 1.0,
-            1.0
+        self.colour = (
+            (float(self.parent.palette_object.selected_rgb_colour[0]) / 255) * 1.0,
+            (float(self.parent.palette_object.selected_rgb_colour[1]) / 255) * 1.0,
+            (float(self.parent.palette_object.selected_rgb_colour[2]) / 255) * 1.0,
             )
         
+
 
 class GUI_designer_colour_value_slider(GUI_element):
 
@@ -2373,44 +2395,58 @@ class GUI_designer_colour_value_slider(GUI_element):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 579
-        self.y = 15
+        self.x = self.parent.palette_object.x + self.parent.palette_object.width + 8
+        self.y = self.parent.palette_object.y
         self.z = Z_GUI_OBJECT_LEVEL_7        
         self.width = 16
         self.height = 128
         self.gui_init()
 
-        self.draw_strategy = "primitive_square"
-        self.primitive_square_width = self.width
-        self.primitive_square_height = self.height
-        self.primitive_square_x = self.x
-        self.primitive_square_y = self.y
-        self.primitive_square_four_colours = True
+        self.draw_strategy = "designer_colour_value_slider"
         self.primitive_square_colour = (
             (0.0,0.0,0.0,1.0),
             (0.0,0.0,0.0,1.0),
             (1.0,1.0,1.0,1.0),
             (1.0,1.0,1.0,1.0),
             )
+
+        self.slider_cursor = GUI_designer_colour_value_slider_cursor(self.game, self)
 
 
     def Execute(self):
         self.update()
         hsv_sans_v = self.game.core.HSVtoRGB(self.parent.palette_object.selected_hsv_colour[0], self.parent.palette_object.selected_hsv_colour[1], 1.0)
-        new_col = (
+        self.colour = (
             (float(hsv_sans_v[0]) / 255) * 1.0,
             (float(hsv_sans_v[1]) / 255) * 1.0,
             (float(hsv_sans_v[2]) / 255) * 1.0,
-            1.0
-            )        
-        self.primitive_square_colour = (
-            (0.0,0.0,0.0,1.0),
-            (0.0,0.0,0.0,1.0),
-            new_col,
-            new_col,
             )
+        self.slider_cursor.y = self.y + (self.height * self.parent.palette_object.selected_hsv_colour[2])
 
 
     def mouse_left_down(self):
         self.parent.palette_object.selected_hsv_colour[2] = ((self.game.gui.mouse.y - self.y) / self.height) * 1.0
         self.parent.palette_object.selected_rgb_colour = self.game.core.HSVtoRGB(*self.parent.palette_object.selected_hsv_colour)
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.slider_cursor.Kill()
+
+
+
+class GUI_designer_colour_value_slider_cursor(Process):
+
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x
+        self.y = self.parent.y
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_value_slider']
+        self.clip = (self.parent.x, self.parent.y, self.parent.width, self.parent.height)
+
+
+    def get_screen_draw_position(self):
+        return (self.x, self.y - (self.image.height / 2))

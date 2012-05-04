@@ -1724,6 +1724,71 @@ void Process::Draw_strategy_designer_puzzle_background_item()
 }
 
 
+void Process::Draw_strategy_designer_colour_current_colour()
+{
+
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_pos.get<0>() - 1.0f, draw_pos.get<1>() - 1.0f);
+    glVertex2f(draw_pos.get<0>() + width + 1.0f, draw_pos.get<1>() - 1.0f);
+    glVertex2f(draw_pos.get<0>() + width + 1.0f, draw_pos.get<1>() + height + 1.0f);
+    glVertex2f(draw_pos.get<0>() - 1.0f, draw_pos.get<1>() + height + 1.0f);
+    glEnd();
+
+    glColor4f(colour[0], colour[1], colour[2], 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_pos.get<0>(), draw_pos.get<1>());
+    glVertex2f(draw_pos.get<0>() + width, draw_pos.get<1>());
+    glVertex2f(draw_pos.get<0>() + width, draw_pos.get<1>() + height);
+    glVertex2f(draw_pos.get<0>(), draw_pos.get<1>() + height);
+    glEnd();
+                                          
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+}
+
+
+void Process::Draw_strategy_designer_colour_value_slider()
+{
+
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_pos.get<0>() - 1.0f, draw_pos.get<1>() - 1.0f);
+    glVertex2f(draw_pos.get<0>() + width + 1.0f, draw_pos.get<1>() - 1.0f);
+    glVertex2f(draw_pos.get<0>() + width + 1.0f, draw_pos.get<1>() + height + 1.0f);
+    glVertex2f(draw_pos.get<0>() - 1.0f, draw_pos.get<1>() + height + 1.0f);
+    glEnd();
+
+    glBegin(GL_QUADS);
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glVertex2f(draw_pos.get<0>(), draw_pos.get<1>());
+    glVertex2f(draw_pos.get<0>() + width, draw_pos.get<1>());
+    glColor4f(colour[0], colour[1], colour[2], 1.0);
+    glVertex2f(draw_pos.get<0>() + width, draw_pos.get<1>() + height);
+    glVertex2f(draw_pos.get<0>(), draw_pos.get<1>() + height);
+    glEnd();
+                                          
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+}
+
+
 void Process::create_image_from_puzzle()
 {
 
