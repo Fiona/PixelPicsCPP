@@ -687,7 +687,7 @@ class Puzzle_image(GUI_element):
         self.game = game
         self.parent = parent
         self.fade_in_time = fade_in_time
-        pos = (x, y)
+        self.pos = (x, y)
         self.gui_init()
         self.in_colour = in_colour
 
@@ -705,7 +705,7 @@ class Puzzle_image(GUI_element):
         self.height = self.puzzle.height
 
         self.create_image_from_puzzle()
-        self.set_position_z_scale(*pos)        
+        self.set_position_z_scale(*self.pos)
 
         if not self.fade_in_time is None:
             self.alpha = 0.0
@@ -714,6 +714,7 @@ class Puzzle_image(GUI_element):
 
     def Execute(self):
         self.update()
+        self.set_position_z_scale(*self.pos)
         # Fade in
         if not self.fade_in_time is None:
             self.iter += 1
@@ -725,6 +726,11 @@ class Puzzle_image(GUI_element):
     def On_Exit(self):
         GUI_element.On_Exit(self)
         self.destroy_puzzle_image()
+
+
+    def reload_image(self):
+        self.destroy_puzzle_image()
+        self.create_image_from_puzzle()
 
 
     def set_position_z_scale(self, x, y):

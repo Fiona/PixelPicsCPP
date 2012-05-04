@@ -332,6 +332,13 @@ void Main_App::putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 void Main_App::HSVtoRGB(float h, float s, float v, vector<int> *pixel)
 {
 
+    if(h > 1.0f)
+        h = 1.0f;
+    if(s > 1.0f)
+        s = 1.0f;
+    if(v > 1.0f)
+        v = 1.0f;
+
     float r, g, b;
 
     float i = floor(h * 6.0f);

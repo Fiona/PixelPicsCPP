@@ -214,7 +214,7 @@ class GUI(Process):
         
 
     def switch_gui_state_to(self, state):
-        if self.gui_state in [GUI_STATE_DESIGNER_PACKS, GUI_STATE_DESIGNER_PUZZLES, GUI_STATE_DESIGNER_DESIGNER]:
+        if self.gui_state in [GUI_STATE_DESIGNER_PACKS, GUI_STATE_DESIGNER_PUZZLES, GUI_STATE_DESIGNER_DESIGNER, GUI_STATE_DESIGNER_COLOUR]:
             self.destroy_current_gui_state()
         
         self.gui_state = state

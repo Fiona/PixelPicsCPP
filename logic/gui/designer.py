@@ -144,6 +144,7 @@ class GUI_designer_packs_back(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 20)
 
 
@@ -164,6 +165,7 @@ class GUI_designer_packs_create_pack(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         GUI_designer_packs_add_pack_dialog(self.game, self.parent)
 
 
@@ -317,6 +319,7 @@ class GUI_designer_packs_add_pack_pack_confirm_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.parent.add_new_pack()
 
 
@@ -338,6 +341,7 @@ class GUI_designer_packs_add_pack_pack_cancel_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.parent.Kill()
 
 
@@ -460,6 +464,7 @@ class GUI_designer_packs_button_edit_pack(GUI_element_button):
             
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         GUI_designer_packs_edit_pack_dialog(self.game, self.parent.parent, self.pack, self.pack_num)
 
         
@@ -490,6 +495,7 @@ class GUI_designer_packs_button_delete_pack(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.conf_box = GUI_element_confirmation_box(
             self.game,
             self,
@@ -768,7 +774,7 @@ class GUI_designer_puzzles_add_puzzle_dialog(GUI_element_window):
         y = 0
         for text in ["Enter a name for your new puzzle."]:
             txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
-            txt.z = self.z - 1
+            txt.z = self.z - 2
             txt.colour = (0, 0, 0)
             self.objs['text_' + str(y)] = txt
             y += 15
@@ -817,7 +823,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_name_text_input(GUI_element_text_in
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.z = self.parent.z - 1
+        self.z = self.parent.z - 2
         self.x = self.parent.x + 30
         self.y = self.parent.y + 60
         self.gui_init()
@@ -832,7 +838,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_confirm_button(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.z = self.parent.z - 1
+        self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
         self.y = self.parent.y + 100
@@ -853,7 +859,7 @@ class GUI_designer_puzzle_add_puzzle_puzzle_cancel_button(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.z = self.parent.z - 1
+        self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
         self.y = self.parent.y + 100
@@ -862,7 +868,7 @@ class GUI_designer_puzzle_add_puzzle_puzzle_cancel_button(GUI_element_button):
 
 
     def mouse_left_up(self):
-        self.parent.signal(S_KILL)
+        self.parent.Kill()
 
 
 
@@ -1525,6 +1531,9 @@ class GUI_designer_designer_save_puzzle_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        if self.disabled:
+            return
         try:
             self.game.manager.save_puzzle(self.game.manager.current_puzzle_pack, self.game.manager.current_puzzle_file, self.game.manager.current_puzzle)
             self.parent.parent.need_to_save = False
@@ -1554,6 +1563,9 @@ class GUI_designer_designer_colour_puzzle_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        if self.disabled:
+            return
         self.game.gui.fade_toggle(lambda: self.game.gui.switch_gui_state_to(GUI_STATE_DESIGNER_COLOUR), speed = 10)
 
 
@@ -1577,6 +1589,9 @@ class GUI_designer_designer_test_puzzle_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        if self.disabled:
+            return
         self.game.manager.reset_puzzle_state()
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TEST), speed = 20)
 
@@ -2121,7 +2136,7 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
-        self.tool_message.Kill()
+        self.puzzle_object.Kill()
         self.palette_object.Kill()
         self.value_slider_object.Kill()
         self.current_colour_object.Kill()
@@ -2143,6 +2158,11 @@ class GUI_designer_colour_puzzle(GUI_element):
 
         # Init stuff
         self.camera_pos = [0.0, 0.0]
+        self.remember_mouse_pos = (0, 0)
+        self.currently_panning = False        
+        self.last_hovered_cell = (-1, -1)
+        self.hovered_column = -1
+        self.hovered_row = -1
 
         self.x = 0
         self.y = 0
@@ -2150,26 +2170,28 @@ class GUI_designer_colour_puzzle(GUI_element):
         self.height = self.game.settings['screen_height']
         self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
         self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
-
+        
         self.adjust_gui_coords()
-        self.camera_pos = [0.0, 0.0]
+        self.camera_pos = [0.0, 64.0]
 
+        self.puzzle_display = GUI_designer_colour_puzzle_display(self.game, self, self.grid_x, self.grid_y)
+        
 
     def Execute(self):
         self.adjust_gui_coords()
-
+        
 
     def reload_puzzle_display(self):
         self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
         self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
 
-        self.grid_x = 0
-        self.grid_y = 0
+        self.grid_x = 0.0
+        self.grid_y = 0.0
 
         # Determine optimum zoom level
         self.game.current_zoom_level = min(
-            float(self.game.settings['screen_width']) / self.grid_width,
-            float(self.game.settings['screen_height']) / self.grid_height
+            (float(self.game.settings['screen_width']) / (self.grid_width)),
+            (float(self.game.settings['screen_height']) / (self.grid_height + 256))
             )
 
         if self.game.current_zoom_level > 1.0:
@@ -2177,8 +2199,11 @@ class GUI_designer_colour_puzzle(GUI_element):
         self.game.minimum_zoom_level = self.game.current_zoom_level
 
         # Work out initial placement of the grid
-        self.grid_x = int(self.grid_width / 2) - PUZZLE_CELL_WIDTH
-        self.grid_y = int(self.grid_height / 2) - PUZZLE_CELL_HEIGHT
+        self.grid_x = (-((self.grid_width) / 2))
+        self.grid_y = (-((self.grid_height - (256 if self.game.current_zoom_level < 1.0 else 0)) / 2))
+        
+        self.draw_strategy = "primitive_square"
+        self.primitive_square_colour = (0.0,0.0,0.0,1.0)
 
 
     def reload_puzzle_background(self):
@@ -2207,6 +2232,107 @@ class GUI_designer_colour_puzzle(GUI_element):
         # Adjust my size
         self.grid_gui_width = self.grid_width * self.game.current_zoom_level
         self.grid_gui_height = self.grid_height * self.game.current_zoom_level
+
+        self.primitive_square_x = self.grid_gui_x - 1.0
+        self.primitive_square_y = self.grid_gui_y - 1.0
+        self.primitive_square_width = self.grid_gui_width + 2.0
+        self.primitive_square_height = self.grid_gui_height + 2.0
+
+
+    def adjust_camera_pos(self, x, y):
+        self.camera_pos[0] -= x
+        self.camera_pos[1] -= y
+        
+        if self.camera_pos[0] < -((self.grid_width) / 2):
+            self.camera_pos[0] = -((self.grid_width) / 2)
+        if self.camera_pos[0] > (self.grid_width) / 2:
+            self.camera_pos[0] = (self.grid_width) / 2
+            
+        if self.camera_pos[1] < -((self.grid_height) / 2):
+            self.camera_pos[1] = -((self.grid_height) / 2)
+        if self.camera_pos[1] > (self.grid_height) / 2:
+            self.camera_pos[1] = (self.grid_height) / 2
+
+
+    def mouse_over(self):
+        if self.currently_panning:
+            return
+
+        self.remember_mouse_pos = (self.game.gui.mouse.x, self.game.gui.mouse.y)
+
+        if self.game.gui.mouse.x > self.grid_gui_x and \
+               self.game.gui.mouse.x < self.grid_gui_x + self.grid_gui_width and \
+               self.game.gui.mouse.y > self.grid_gui_y and \
+               self.game.gui.mouse.y < self.grid_gui_y + self.grid_gui_height:
+            self.last_hovered_cell = (self.hovered_row, self.hovered_column)
+            mouse_x = self.game.gui.mouse.x - self.grid_gui_x 
+            mouse_y = self.game.gui.mouse.y - self.grid_gui_y
+            self.hovered_column = int(mouse_x / (PUZZLE_CELL_WIDTH * self.game.current_zoom_level))
+            self.hovered_row = int(mouse_y / (PUZZLE_CELL_HEIGHT  * self.game.current_zoom_level))
+        else:
+            self.last_hovered_cell = (self.hovered_row, self.hovered_column)
+            self.hovered_column = -1
+            self.hovered_row = -1
+
+
+    def mouse_middle_down(self):
+        diff = (self.game.gui.mouse.x - self.remember_mouse_pos[0], self.game.gui.mouse.y - self.remember_mouse_pos[1])
+        self.adjust_camera_pos(diff[0], diff[1])
+
+        self.currently_panning = True
+        self.game.gui.mouse.alpha = 0.0
+        self.game.core.mouse.set_pos(int(self.remember_mouse_pos[0]), int(self.remember_mouse_pos[1]))
+        
+
+    def mouse_middle_up(self):
+        self.remember_mouse_pos = (0, 0)
+        self.currently_panning = False
+        self.game.gui.mouse.alpha = 1.0
+
+
+    def mouse_left_down(self):
+        if self.currently_panning:
+            return
+
+        self.colour_cell(list(self.parent.palette_object.selected_hsv_colour), (self.hovered_row, self.hovered_column))
+
+
+    def mouse_right_up(self):
+        if self.currently_panning:
+            return
+
+        if -1 in (self.hovered_row, self.hovered_column):
+            return
+
+        self.parent.palette_object.change_selected_colour(list(self.game.manager.current_puzzle.cells[self.hovered_row][self.hovered_column][1]))
+
+
+    def colour_cell(self, hsv_colour, cell):
+        if -1 in cell:
+            return
+
+        if self.game.manager.current_puzzle.cells[cell[0]][cell[1]][1] == hsv_colour:
+            return
+
+        self.parent.need_to_save = True
+
+        self.game.manager.set_puzzle_cell(
+            self.game.manager.current_puzzle,
+            cell[1], cell[0],
+            self.game.manager.current_puzzle.cells[cell[0]][cell[1]][0],
+            hsv_colour
+            )
+
+        self.puzzle_display.reload_image()
+
+
+
+class GUI_designer_colour_puzzle_display(Puzzle_image):
+    def set_position_z_scale(self, x, y):
+        self.x = ((x - self.parent.camera_pos[0]) * self.game.current_zoom_level) + (self.game.settings['screen_width'] / 2)
+        self.y = ((y - self.parent.camera_pos[1]) * self.game.current_zoom_level) + (self.game.settings['screen_height'] / 2)
+        self.z = self.parent.z - 1
+        self.scale = PUZZLE_CELL_WIDTH * self.game.current_zoom_level
 
 
 
@@ -2244,10 +2370,12 @@ class GUI_designer_colour_save_puzzle_button(GUI_element_button):
 
 
     def mouse_left_up(self):
-        return
+        GUI_element_button.mouse_left_up(self)
+        if self.disabled:
+            return
         try:
             self.game.manager.save_puzzle(self.game.manager.current_puzzle_pack, self.game.manager.current_puzzle_file, self.game.manager.current_puzzle)
-            self.parent.parent.need_to_save = False
+            self.parent.need_to_save = False
         except Exception as e:
             GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
         finally:
@@ -2274,6 +2402,9 @@ class GUI_designer_colour_puzzle_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        if self.disabled:
+            return
         self.game.gui.fade_toggle(lambda: self.game.gui.switch_gui_state_to(GUI_STATE_DESIGNER_DESIGNER), speed = 10)
 
 
@@ -2297,6 +2428,9 @@ class GUI_designer_colour_test_puzzle_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        if self.disabled:
+            return
         self.game.manager.reset_puzzle_state()
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TEST), speed = 20)
 
@@ -2314,7 +2448,7 @@ class GUI_designer_colour_colour_picker(GUI_element):
         self.width = 512
         self.height = 128
 
-        self.selected_hsv_colour = [1.0, 1.0, 1.0]
+        self.selected_hsv_colour = [0.0, 0.0, 1.0]
         self.selected_rgb_colour = self.game.core.HSVtoRGB(*self.selected_hsv_colour)
         
         self.create_image_as_pallete(self.width, self.height)
@@ -2329,6 +2463,11 @@ class GUI_designer_colour_colour_picker(GUI_element):
         self.primitive_square_colour = (0.0,0.0,0.0,1.0)
 
 
+    def change_selected_colour(self, col):
+        self.selected_hsv_colour = col
+        self.selected_rgb_colour = self.game.core.HSVtoRGB(*self.selected_hsv_colour)
+
+        
     def mouse_left_down(self):
         self.selected_hsv_colour[0] = ((self.game.gui.mouse.x - self.x) / self.width) * 1.0
         self.selected_hsv_colour[1] = ((self.game.gui.mouse.y - self.y) / self.height) * 1.0
@@ -2341,7 +2480,7 @@ class GUI_designer_colour_colour_picker(GUI_element):
         self.cursor.y = self.y + (self.height * self.selected_hsv_colour[1])
 
 
-    def On_Exit():
+    def On_Exit(self):
         GUI_element.On_Exit(self)
         self.destroy_puzzle_image()
         self.cursor.Kill()

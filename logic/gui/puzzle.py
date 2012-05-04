@@ -267,7 +267,7 @@ class GUI_puzzle(GUI_element):
                         self.zoom_out_fade_and_position(self.iter)
                         self.iter += 1
                 else:
-                    #Finished_puzzle_image(self.game, self, self.grid_x, self.grid_y)
+                    Finished_puzzle_image(self.game, self, self.grid_x, self.grid_y)
                     self.anim_state = 2
                     self.iter = 0
 

@@ -702,6 +702,9 @@ void Process::Draw_strategy_primitive_square()
 
     glPushMatrix();
 
+    glTranslatef(square_x, square_y, 0.0f);
+    glScalef(scale, scale, 1.0f);
+
     if(clip[2] > 0 && clip[3] > 0)
     {
         glEnable(GL_SCISSOR_TEST);
@@ -743,7 +746,7 @@ void Process::Draw_strategy_primitive_square()
         boost::python::extract<float>(col_1[3])
         );
 
-    glVertex2f(square_x, square_y);
+    glVertex2f(0.0f, 0.0f);
 
     if(four_colours)
     {
@@ -756,7 +759,7 @@ void Process::Draw_strategy_primitive_square()
             );
     }
 
-    glVertex2f(square_x + width, square_y);
+    glVertex2f(width, 0.0f);
 
     if(four_colours)
     {
@@ -769,7 +772,7 @@ void Process::Draw_strategy_primitive_square()
             );
     }
 
-    glVertex2f(square_x + width, square_y + height);
+    glVertex2f(width, height);
 
     if(four_colours)
     {
@@ -782,7 +785,7 @@ void Process::Draw_strategy_primitive_square()
             );
     }
 
-    glVertex2f(square_x, square_y + height);
+    glVertex2f(0.0f, height);
     glEnd();
                                           
     glEnable(GL_TEXTURE_2D);
@@ -1813,6 +1816,9 @@ void Process::create_image_from_puzzle()
 
     SDL_LockSurface(raw_surface);
 
+    vector<int> hsv_pixel_colour;
+    hsv_pixel_colour.resize(3);
+
     for(int i = 0; i < puzzle_height; i++)
     {
 
@@ -1823,11 +1829,15 @@ void Process::create_image_from_puzzle()
 
             if(in_colour)
             {
-/*
-                    colour = self.puzzle.cells[y][x][1]
-                    colour_arg = pygame.Color(colour[0], colour[1], colour[2], 255)
-                    surf.set_at((x, y), colour_arg)
-*/
+
+                Main_App::HSVtoRGB(
+                    boost::python::extract<float>(puzzle_cells[i][j][1][0]),
+                    boost::python::extract<float>(puzzle_cells[i][j][1][1]),
+                    boost::python::extract<float>(puzzle_cells[i][j][1][2]),
+                    &hsv_pixel_colour
+                    );
+                pixel_colour = SDL_MapRGBA(raw_surface -> format, hsv_pixel_colour[0], hsv_pixel_colour[1], hsv_pixel_colour[2], 255);
+
             }
             else
             {
@@ -1902,11 +1912,8 @@ void Process::create_image_as_pallete(int pallete_width, int pallete_height)
 
     }
 
-    SDL_SaveBMP(raw_surface, "blah.bmp");
     SDL_UnlockSurface(raw_surface);
-
     image = new Image(raw_surface, False);
-
     SDL_FreeSurface(raw_surface);
 
 }
