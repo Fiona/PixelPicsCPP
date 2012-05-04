@@ -2121,6 +2121,7 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
         #GUI_designer_designer_undo_button(self.game, self)
         #GUI_designer_designer_redo_button(self.game, self)
 
+        GUI_designer_colour_copy_from_puzzle_button(self.game, self)
         GUI_designer_colour_save_puzzle_button(self.game, self)
         GUI_designer_colour_puzzle_button(self.game, self)
         GUI_designer_colour_test_puzzle_button(self.game, self)
@@ -2350,6 +2351,44 @@ class GUI_designer_colour_menu_bar(GUI_element):
 
 
 
+class GUI_designer_colour_copy_from_puzzle_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Copy From Puzzle"
+
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = 128
+        self.y = 90
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def confirm(self):
+        try:
+            self.game.manager.set_cell_colours_to_values(self.game.manager.current_puzzle)
+            self.parent.need_to_save = True
+        except Exception as e:
+            GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
+        finally:
+            self.parent.puzzle_object.puzzle_display.reload_image()
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        if self.disabled:
+            return
+        self.conf_box = GUI_element_confirmation_box(
+            self.game,
+            self,
+            "Really Copy Colours?",
+            ["This will reset the colours to resemble the puzzle solution.", "This is useful to have a starting point for colouring.", "Are you sure you want to do this?"],
+            confirm_callback = self.confirm
+            )
+
+
+
 class GUI_designer_colour_save_puzzle_button(GUI_element_button):
     generic_button = True
     generic_button_text = "Save"
@@ -2445,7 +2484,7 @@ class GUI_designer_colour_colour_picker(GUI_element):
         self.x = 315
         self.y = 15
         self.z = Z_GUI_OBJECT_LEVEL_7
-        self.width = 512
+        self.width = 316 #austin
         self.height = 128
 
         self.selected_hsv_colour = [0.0, 0.0, 1.0]

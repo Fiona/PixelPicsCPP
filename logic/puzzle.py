@@ -169,6 +169,15 @@ class Puzzle_manager(object):
 
     def set_puzzle_cell(self, puzzle, x, y, value, colour = (0.0, 0.0, 1.0)):
         puzzle.cells[y][x] = (value, colour)
+
+        
+    def set_cell_colours_to_values(self, puzzle):
+        for y in range(puzzle.height):
+            for x in range(puzzle.width):
+                if puzzle.cells[y][x][0]:
+                    puzzle.cells[y][x] = (True, (0.0, 0.0, 0.0))
+                else:
+                    puzzle.cells[y][x] = (False, (0.0, 0.0, 1.0))
         
 
     def work_out_puzzle_hint_numbers(self, puzzle):
