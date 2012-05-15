@@ -2125,7 +2125,8 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
         GUI_designer_colour_save_puzzle_button(self.game, self)
         GUI_designer_colour_puzzle_button(self.game, self)
         GUI_designer_colour_test_puzzle_button(self.game, self)
-            
+        GUI_designer_colour_flood_fill_button(self.game, self)
+
         self.palette_object = GUI_designer_colour_colour_picker(self.game, self)
         self.value_slider_object = GUI_designer_colour_value_slider(self.game, self)        
         self.current_colour_object = GUI_designer_colour_current_colour(self.game, self)
@@ -2295,7 +2296,23 @@ class GUI_designer_colour_puzzle(GUI_element):
         if self.currently_panning:
             return
 
+        if not self.parent.tool == DRAWING_TOOL_STATE_DRAW:
+            return
+
         self.colour_cell(list(self.parent.palette_object.selected_hsv_colour), (self.hovered_row, self.hovered_column))
+
+
+    def mouse_left_up(self):
+        if self.parent.tool == DRAWING_TOOL_STATE_FILL:
+            cell_list = []
+            self.checked_fill_stack = []
+            self.fill_stack = [(self.hovered_row, self.hovered_column)]
+            start_colour = list(self.game.manager.current_puzzle.cells[self.hovered_row][self.hovered_column][1])
+            while self.fill_at(start_colour, list(self.parent.palette_object.selected_hsv_colour), cell_list):
+                pass
+            if len(cell_list) > 0:
+                self.parent.need_to_save = True        
+                self.change_cells(cell_list, list(self.parent.palette_object.selected_hsv_colour))
 
 
     def mouse_right_up(self):
@@ -2340,6 +2357,34 @@ class GUI_designer_colour_puzzle(GUI_element):
                 )
 
         self.puzzle_display.reload_image()
+
+
+    def fill_at(self, start_colour, value, cell_list):
+        cell = self.fill_stack.pop()
+
+        if -1 in cell or not self.game.manager.current_puzzle.cells[cell[0]][cell[1]][1] == start_colour or cell in self.checked_fill_stack:
+            return len(self.fill_stack) > 0
+        
+        self.checked_fill_stack.append(cell)
+        cell_list.append(cell)
+
+        surrounding_cells = [
+            (cell[0] - 1, cell[1]),
+            (cell[0] + 1, cell[1]),
+            (cell[0], cell[1] - 1),
+            (cell[0], cell[1] + 1)
+            ]
+
+        for cell_check in surrounding_cells:
+            if cell_check in self.checked_fill_stack:
+                continue
+            if cell_check[0] < 0 or cell_check[1] < 0:
+                self.checked_fill_stack.append(cell_check)
+                continue
+            if cell_check[0] < len(self.game.manager.current_puzzle.cells) and cell_check[1] < len(self.game.manager.current_puzzle.cells[cell_check[0]]):
+                self.fill_stack.append(cell_check)
+
+        return len(self.fill_stack) > 0
 
 
 
@@ -2689,3 +2734,28 @@ class GUI_designer_colour_redo_button(GUI_element_button):
 
     def mouse_left_up(self):
         self.parent.redo()
+
+
+
+class GUI_designer_colour_flood_fill_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Flood Fill"
+    toggle_button = True
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = 800
+        self.y = 90
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def mouse_left_up(self):
+        self.mouse_left_up_toggle()
+        if self.toggle_state:
+            self.parent.tool = DRAWING_TOOL_STATE_FILL
+            self.parent.tool_message_display = True
+        else:
+            self.parent.tool = DRAWING_TOOL_STATE_DRAW
+            self.parent.tool_message_display = False
