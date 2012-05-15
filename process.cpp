@@ -1117,7 +1117,8 @@ void Process::Draw_strategy_puzzle()
 
     }
 
-    glLineWidth(1.0f / zoom_level);
+    //glLineWidth(1.0f / zoom_level);
+    glLineWidth(1.0f);
     glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
     glVertexPointer(2, GL_FLOAT, 0, &grid_lines[0]);
     glDrawArrays(GL_LINES, 0, (current_puzzle_width + current_puzzle_height) * 2);
@@ -1153,7 +1154,8 @@ void Process::Draw_strategy_puzzle()
     if(every_five_lines.size() > 0)
     {
 
-		glLineWidth(2.0f / zoom_level);
+		//glLineWidth(2.0f / zoom_level);
+		glLineWidth(2.0f);
 	    glColor4f(0.3f, 0.7f, 0.3f, 1.0f);
 		glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
 	    glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
@@ -1164,7 +1166,8 @@ void Process::Draw_strategy_puzzle()
     // Puzzle border
     // ****************
     glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-    glLineWidth(2.0f / zoom_level);
+    //glLineWidth(2.0f / zoom_level);
+    glLineWidth(2.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(0.0f, 0.0f);
     glVertex2f(grid_width, 0.0f);
@@ -1179,7 +1182,8 @@ void Process::Draw_strategy_puzzle()
     {
         glColor4f(1.0f, 0.0f, 0.0f, .8f);
         glBegin(GL_LINE_LOOP);
-        glLineWidth(3.0f / zoom_level);
+        //glLineWidth(3.0f / zoom_level);
+        glLineWidth(3.0f);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT + (PUZZLE_CELL_HEIGHT * hovered_row)));
@@ -1815,7 +1819,6 @@ void Process::create_image_from_puzzle()
         );
 
     SDL_LockSurface(raw_surface);
-
     vector<int> hsv_pixel_colour;
     hsv_pixel_colour.resize(3);
 
@@ -1854,6 +1857,7 @@ void Process::create_image_from_puzzle()
     }
 
     SDL_UnlockSurface(raw_surface);
+
     image = new Image(raw_surface, False);
     SDL_FreeSurface(raw_surface);
 
