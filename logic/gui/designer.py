@@ -2118,8 +2118,8 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
         GUI_designer_designer_back(self.game, self)
         self.puzzle_object = GUI_designer_colour_puzzle(self.game, self)
         #GUI_designer_designer_change_puzzle_background_button(self.game, self)
-        #GUI_designer_designer_undo_button(self.game, self)
-        #GUI_designer_designer_redo_button(self.game, self)
+        GUI_designer_colour_undo_button(self.game, self)
+        GUI_designer_colour_redo_button(self.game, self)
 
         GUI_designer_colour_copy_from_puzzle_button(self.game, self)
         GUI_designer_colour_save_puzzle_button(self.game, self)
@@ -2317,12 +2317,27 @@ class GUI_designer_colour_puzzle(GUI_element):
 
         self.parent.need_to_save = True
 
-        self.game.manager.set_puzzle_cell(
-            self.game.manager.current_puzzle,
-            cell[1], cell[0],
-            self.game.manager.current_puzzle.cells[cell[0]][cell[1]][0],
-            hsv_colour
-            )
+        self.change_cells([(cell[0], cell[1])], hsv_colour)
+
+
+    def change_cells(self, cells, to):
+        undo_data = []
+        redo_data = []
+        for x in cells:
+            undo_data.append((x[0], x[1], self.game.manager.current_puzzle.cells[x[0]][x[1]][1]))
+            redo_data.append((x[0], x[1], to))
+        self.do_change_cells(redo_data)
+        self.parent.add_new_action((self.do_change_cells, undo_data, redo_data))
+
+
+    def do_change_cells(self, data):
+        for cell in data:
+            self.game.manager.set_puzzle_cell(
+                self.game.manager.current_puzzle,
+                cell[1], cell[0],
+                self.game.manager.current_puzzle.cells[cell[0]][cell[1]][0],
+                cell[2]
+                )
 
         self.puzzle_display.reload_image()
 
@@ -2628,3 +2643,49 @@ class GUI_designer_colour_value_slider_cursor(Process):
 
     def get_screen_draw_position(self):
         return (self.x, self.y - (self.image.height / 2))
+
+
+
+class GUI_designer_colour_undo_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Undo"
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = 800
+        self.y = 20
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def Execute(self):
+        self.disabled = not self.parent.can_undo()
+        self.update()
+
+
+    def mouse_left_up(self):
+        self.parent.undo()
+
+
+
+class GUI_designer_colour_redo_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Redo"
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = 800
+        self.y = 50
+        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.gui_init()
+
+
+    def Execute(self):
+        self.disabled = not self.parent.can_redo()
+        self.update()
+
+
+    def mouse_left_up(self):
+        self.parent.redo()
