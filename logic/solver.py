@@ -558,7 +558,7 @@ def verify_puzzle(puzzle,solver=solve):
             if x == (0,):
                 _list[i] = ()
     result = None
-    gen = solver(cols,rows)
+    gen = solver(cols,rows,guesses=0)
     while result is None:
         result = gen.next()
         yield

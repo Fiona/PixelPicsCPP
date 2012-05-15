@@ -681,6 +681,8 @@ class GUI_puzzle(GUI_element):
         elif self.game.game_state == GAME_STATE_DESIGNER:
             self.game.manager.work_out_puzzle_hint_numbers(self.game.manager.current_puzzle)
             self.puzzle_solver_state = None
+            if not self.puzzle_solver is None:
+                del(self.puzzle_solver)
             self.puzzle_solver = None
         # --- DESIGNER ONLY ---
 
