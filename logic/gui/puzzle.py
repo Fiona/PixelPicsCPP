@@ -1057,8 +1057,9 @@ class Puzzle_marker(Process):
 
 class Puzzle_pixel_message(Pixel_message):
 
-    def __init__(self, game, x, y, z = Z_GUI_OBJECT_LEVEL_7, wait = 3):
+    def __init__(self, game, x, y, z = Z_GUI_OBJECT_LEVEL_9, wait = 3):
         Pixel_message.__init__(self, game, x, y, z, wait)
+        
         self.draw_strategy = "puzzle_pixel_message"
         self.draw_strategy_screen_width = self.game.settings['screen_width']
 

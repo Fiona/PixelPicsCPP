@@ -79,7 +79,7 @@ class GUI_main_menu_title(GUI_element):
         self.title_state = 0
         self.wait = 0
         
-        self.title_message = Pixel_message(self.game, self.x, self.y)
+        self.title_message = Pixel_message(self.game, self.x, self.y, z = Z_GUI_OBJECT_LEVEL_3)
 
 
     def Execute(self):
@@ -139,7 +139,8 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
         self.main_menu_button_init(y_shift_to = -80, iter_wait = 50)
 
     def mouse_left_up(self):
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 120)
+        #self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 120)
+        GUI_main_menu_puzzle_type_selection(self.game, self.parent)
 
 
 
@@ -368,3 +369,114 @@ class GUI_main_menu_credits_close_button(GUI_element_button):
     def mouse_left_up(self):
         self.parent.Kill()
 
+
+        
+class GUI_main_menu_puzzle_type_selection(GUI_element):
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+        self.gui_init()
+
+        GUI_main_menu_puzzle_type_select_main(self.game, self)
+        GUI_main_menu_puzzle_type_select_downloaded(self.game, self)
+        GUI_main_menu_puzzle_type_select_go_back(self.game, self)
+        
+        # Draw strategy data
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_filled = True
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
+
+
+
+class GUI_main_menu_puzzle_type_select_main(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_button_puzzle_type_select_main']
+        self.gui_init()
+        self.x = -self.image.width
+        self.y = (self.game.settings['screen_height'] / 2) - (self.image.height / 2)
+        self.x_to = (self.game.settings['screen_width'] / 2) - self.image.width
+
+        self.button_state = 0
+        self.iter = 0
+        self.iter_wait = 20
+
+        
+    def Execute(self):
+        self.update()
+        if self.button_state == 0:
+            self.iter += 1
+            self.x = lerp(self.iter, self.iter_wait, self.x, self.x_to)
+            if self.iter > self.iter_wait:
+                self.button_state = 1
+
+
+    def mouse_left_up(self):
+        self.parent.Kill()
+
+
+
+class GUI_main_menu_puzzle_type_select_downloaded(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_button_puzzle_type_select_downloaded']
+        self.gui_init()
+        self.x = self.game.settings['screen_width']
+        self.y = (self.game.settings['screen_height'] / 2) - (self.image.height / 2)
+        self.x_to = (self.game.settings['screen_width'] / 2)
+
+        self.button_state = 0
+        self.iter = 0
+        self.iter_wait = 20
+
+        
+    def Execute(self):
+        self.update()
+        if self.button_state == 0:
+            self.iter += 1
+            self.x = lerp(self.iter, self.iter_wait, self.x, self.x_to)
+            if self.iter > self.iter_wait:
+                self.button_state = 1
+
+
+    def mouse_left_up(self):
+        self.parent.Kill()
+
+
+
+class GUI_main_menu_puzzle_type_select_go_back(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_button_go_back']
+        self.gui_init()
+        self.x = (self.game.settings['screen_width'] / 2) - 256
+        self.y = (self.game.settings['screen_height'] / 2) + 40
+
+
+    def mouse_left_up(self):
+        self.parent.Kill()
