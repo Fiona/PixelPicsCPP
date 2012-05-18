@@ -130,6 +130,12 @@ class Game(Process):
             #self.manager.load_puzzle("test0001", "seven0001.puz")
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
+        elif state == GAME_STATE_CATEGORY_SELECT:
+            self.gui.fade_toggle(speed = 60)
+            self.gui.switch_gui_state_to(GUI_STATE_CATEGORY_SELECT if gui_state is None else gui_state)
+        elif state == GAME_STATE_PUZZLE_SELECT:
+            self.gui.fade_toggle(speed = 60)           
+            self.gui.switch_gui_state_to(GUI_STATE_PUZZLE_SELECT if gui_state is None else gui_state)
         elif state == GAME_STATE_DESIGNER:
             self.gui.fade_toggle(speed = 20, colour = col)
             self.gui.switch_gui_state_to(GUI_STATE_DESIGNER_PACKS if gui_state is None else gui_state)

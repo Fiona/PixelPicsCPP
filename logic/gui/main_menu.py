@@ -427,7 +427,7 @@ class GUI_main_menu_puzzle_type_select_main(GUI_element_button):
 
 
     def mouse_left_up(self):
-        self.parent.Kill()
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
 
 
 

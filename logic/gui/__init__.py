@@ -14,6 +14,8 @@ from consts import *
 from helpers  import *
 from gui.logo import *
 from gui.main_menu import *
+from gui.category_select import *
+#from gui.puzzle_select import *
 from gui.puzzle import *
 from gui.designer import *
 
@@ -48,6 +50,8 @@ class GUI(Process):
     current_visible_gui_elements = {
         GUI_STATE_LOGO : {},
         GUI_STATE_MENU : {},
+        GUI_STATE_CATEGORY_SELECT : {},
+        GUI_STATE_PUZZLE_SELECT : {},
         GUI_STATE_PUZZLE : {},
         GUI_STATE_DESIGNER_PACKS : {},
         GUI_STATE_DESIGNER_PUZZLES : {},
@@ -137,6 +141,26 @@ class GUI(Process):
                 if self.game.core.Keyboard_key_released(key.ESCAPE):
                     self.game.quit_game()
                     
+        elif self.game.game_state == GAME_STATE_CATEGORY_SELECT:
+            """
+            SELECT CATEGORY
+            """
+            if not self.block_gui_keyboard_input:
+                # Quit on escape
+                if self.game.core.Keyboard_key_released(key.ESCAPE):
+                    self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU))
+
+
+        elif self.game.game_state == GAME_STATE_PUZZLE_SELECT:
+            """
+            SELECT PUZZLE
+            """
+            if not self.block_gui_keyboard_input:
+                # Quit on escape
+                if self.game.core.Keyboard_key_released(key.ESCAPE):
+                    self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT))
+
+
         elif self.game.game_state == GAME_STATE_PUZZLE:
             """
             IN A PUZZLE
@@ -231,6 +255,12 @@ class GUI(Process):
         if self.gui_state == GUI_STATE_MENU:
             self.current_visible_gui_elements[GUI_STATE_MENU]['main_menu_container'] = GUI_main_menu_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_MENU]['main_menu_container']
+        if self.gui_state == GUI_STATE_CATEGORY_SELECT:
+            self.current_visible_gui_elements[GUI_STATE_CATEGORY_SELECT]['category_select_container'] = GUI_category_select_container(self.game)
+            self.parent_window = self.current_visible_gui_elements[GUI_STATE_CATEGORY_SELECT]['category_select_container']
+        if self.gui_state == GUI_STATE_PUZZLE_SELECT:
+            self.current_visible_gui_elements[GUI_STATE_PUZZLE_SELECT]['puzzle_select_container'] = GUI_puzzle_select_container(self.game)
+            self.parent_window = self.current_visible_gui_elements[GUI_STATE_PUZZLE_SELECT]['puzzle_select_container']
         if self.gui_state == GUI_STATE_PUZZLE:
             self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container'] = GUI_puzzle_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container']
