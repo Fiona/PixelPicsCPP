@@ -35,6 +35,9 @@ bool Main_App::On_Init()
     if(surf_display == NULL)
         return False;
 
+	SDL_WM_SetIcon(IMG_Load("gfx/pixelpics.png"), NULL);
+	SDL_WM_SetCaption("PixelPics", "PixelPics"); 
+
     screen_width = settings -> screen_width;
     screen_height = settings -> screen_height;
 
