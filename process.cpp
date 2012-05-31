@@ -269,14 +269,23 @@ void Process::Draw_strategy_gui_button()
 
     // Draw the surrounding rectangle    
     glDisable(GL_TEXTURE_2D);
-    glLineWidth(2.0f);
+    glLineWidth(1.0f);
     glColor4f(.5f, .5f, .5f, alpha);
-    glBegin(GL_LINE_LOOP);
+
+    glBegin(GL_LINES);
     glVertex2f(0.0f, 0.0f);
     glVertex2f(width, 0.0f);
+
+    glVertex2f(width, 0.0f);
     glVertex2f(width, height);
+
+    glVertex2f(width, height);
+    glVertex2f(-1.0f, height);
+
     glVertex2f(0.0f, height);
+    glVertex2f(0.0f, 0.0f);
     glEnd();
+
     glEnable(GL_TEXTURE_2D);
 
     glPopMatrix();
@@ -1794,6 +1803,65 @@ void Process::Draw_strategy_designer_colour_value_slider()
     glPopMatrix();
 
 }
+
+
+
+void Process::Draw_strategy_category_select()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    boost::python::object game = boost::python::extract<boost::python::object>(self_.attr("game"));
+    boost::python::object core = boost::python::extract<boost::python::object>(game.attr("core"));
+    Media* media = boost::python::extract<Media*>(core.attr("media"));
+    float text_offset_x = boost::python::extract<float>(self_.attr("text_offset_x"));
+    float text_offset_y = boost::python::extract<float>(self_.attr("text_offset_y"));
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glBegin(GL_QUADS);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    glVertex2f(0.0f, 0.0f);
+    glColor4f(.7f,1.0f,1.0f,1.0f);
+    glVertex2f(width, 0.0f);
+    glColor4f(.7f,1.0f,1.0f,1.0f);
+    glVertex2f(width, height);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    glVertex2f(0.0f, height);
+    glEnd();
+                                          
+    float tex_coords_pointer[] = {width, height, 0.0f, height, width, 0.0f, 0.0f, 0.0f};
+    glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_pointer);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_polka"]->texture);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+    float text_coord_x = width / media->gfx["gui_polka"]->width;
+    float text_coord_y = height / media->gfx["gui_polka"]->height;
+    text_offset_x = (text_offset_x / media->gfx["gui_polka"]->width) * .1f;
+    text_offset_y = (text_offset_y / media->gfx["gui_polka"]->height) * .1f;
+                                
+    glBegin(GL_TRIANGLE_STRIP);
+    // top right
+    glTexCoord2f(text_coord_x + text_offset_x, text_coord_y + text_offset_y);
+    glVertex3f(width, height, 0.0f);
+    // top left
+    glTexCoord2f(text_offset_x, text_coord_y + text_offset_y);
+    glVertex3f(0.0f, height, 0.0f);
+    // bottom right
+    glTexCoord2f(text_coord_x + text_offset_x, text_offset_y);
+    glVertex3f(width, 0.0f, 0.0f);
+    // bottom left
+    glTexCoord2f(text_offset_x, text_offset_y);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glEnd();
+
+    glPopMatrix();
+
+}
+
 
 
 void Process::create_image_from_puzzle()

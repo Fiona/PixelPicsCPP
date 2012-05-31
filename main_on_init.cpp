@@ -22,6 +22,9 @@ bool Main_App::On_Init()
 
     SDL_ShowCursor(SDL_DISABLE);
 
+	SDL_WM_SetCaption("PixelPics", "PixelPics"); 
+	SDL_WM_SetIcon(IMG_Load("gfx/pixelpics.png"), NULL);
+
     // create window
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
@@ -36,7 +39,6 @@ bool Main_App::On_Init()
         return False;
 
 	SDL_WM_SetIcon(IMG_Load("gfx/pixelpics.png"), NULL);
-	SDL_WM_SetCaption("PixelPics", "PixelPics"); 
 
     screen_width = settings -> screen_width;
     screen_height = settings -> screen_height;
@@ -93,6 +95,7 @@ bool Main_App::On_Init()
     draw_strategies["designer_puzzle_background_item"] = &Process::Draw_strategy_designer_puzzle_background_item;
     draw_strategies["designer_colour_current_colour"] = &Process::Draw_strategy_designer_colour_current_colour;
     draw_strategies["designer_colour_value_slider"] = &Process::Draw_strategy_designer_colour_value_slider;
+    draw_strategies["category_select"] = &Process::Draw_strategy_category_select;
 
     return True;
 
