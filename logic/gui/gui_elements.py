@@ -604,29 +604,7 @@ class Pixel_message(Process):
             self.iter += 1
             if self.iter >= 30:
                 self.pixel_message_state = 1
-                self.iter = 0
-
-                pixel_y = self.y + self.height
-                order = True
-                self.objs = []
-
-                wait_num = 0
-                for i, row in enumerate(reversed(self.pattern)):
-                    pixel_x = self.x
-                    if not order:
-                        pixel_x = self.x + self.width + (self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2)
-                        row = row[::-1]
-                    for j, char in enumerate(row):
-                        if order:
-                            pixel_x += self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2
-                        else:
-                            pixel_x -= self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2
-                        if char == " ":
-                            continue
-                        self.objs.append(Pixel_message_pixel(self.game, pixel_x, pixel_y, self.z - i + j, self.wait * wait_num, ))
-                        wait_num += 1
-                    pixel_y -= (self.game.core.media.gfx['gui_main_menu_title_pixel'].height/2)
-                    order = not order
+                self.create_pixels()
 
         # doing stuff
         if self.pixel_message_state == 1:
@@ -640,6 +618,40 @@ class Pixel_message(Process):
                     self.Kill()
 
 
+    def finish(self):
+        if self.pixel_message_state == 0:
+            self.pixel_message_state = 1
+            self.create_pixels()
+        for x in self.objs:
+            x.finish()
+        
+
+    def create_pixels(self):
+        self.iter = 0
+
+        pixel_y = self.y + self.height
+        order = True
+        self.objs = []
+
+        wait_num = 0
+        for i, row in enumerate(reversed(self.pattern)):
+            pixel_x = self.x
+            if not order:
+                pixel_x = self.x + self.width + (self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2)
+                row = row[::-1]
+            for j, char in enumerate(row):
+                if order:
+                    pixel_x += self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2
+                else:
+                    pixel_x -= self.game.core.media.gfx['gui_main_menu_title_pixel'].width/2
+                if char == " ":
+                    continue
+                self.objs.append(Pixel_message_pixel(self.game, pixel_x, pixel_y, self.z - i + j, self.wait * wait_num, ))
+                wait_num += 1
+            pixel_y -= (self.game.core.media.gfx['gui_main_menu_title_pixel'].height/2)
+            order = not order
+
+        
     def die(self):
         self.dying = True
 
@@ -679,6 +691,11 @@ class Pixel_message_pixel(Process):
             if self.iter == 20:
                 self.pixel_message_pixel_state = 2
 
+
+    def finish(self):
+        self.y = self.y_to
+        self.pixel_message_pixel_state = 2
+        
 
 
 class Puzzle_image(GUI_element):

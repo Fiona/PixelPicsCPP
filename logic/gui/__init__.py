@@ -136,10 +136,11 @@ class GUI(Process):
             """
             MAIN MENU
             """
-            if not self.block_gui_keyboard_input:
+            #if not self.block_gui_keyboard_input:
                 # Quit on escape
-                if self.game.core.Keyboard_key_released(key.ESCAPE):
-                    self.game.quit_game()
+            #    if self.game.core.Keyboard_key_released(key.ESCAPE):
+            #        self.game.quit_game()
+            pass
                     
         elif self.game.game_state == GAME_STATE_CATEGORY_SELECT:
             """

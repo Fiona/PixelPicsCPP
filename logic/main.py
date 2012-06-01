@@ -56,6 +56,9 @@ class Game(Process):
     current_zoom_level = 1.0
     minimum_zoom_level = 1.0
 
+    # When is set to true, we wont get the main menu animation
+    no_button_anim = False
+    
 
     def __init__(self, core):
         Process.__init__(self)

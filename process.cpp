@@ -1821,13 +1821,13 @@ void Process::Draw_strategy_category_select()
     glDisable(GL_TEXTURE_2D);
 
     glBegin(GL_QUADS);
-    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    glColor4f(.4f,1.0f,1.0f,1.0f);
     glVertex2f(0.0f, 0.0f);
     glColor4f(.7f,1.0f,1.0f,1.0f);
     glVertex2f(width, 0.0f);
     glColor4f(.7f,1.0f,1.0f,1.0f);
     glVertex2f(width, height);
-    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    glColor4f(.4f,1.0f,1.0f,1.0f);
     glVertex2f(0.0f, height);
     glEnd();
                                           
@@ -1836,7 +1836,7 @@ void Process::Draw_strategy_category_select()
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, media->gfx["gui_polka"]->texture);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glColor4f(.8f, 1.0f, 1.0f, .8f);
 
     float text_coord_x = width / media->gfx["gui_polka"]->width;
     float text_coord_y = height / media->gfx["gui_polka"]->height;

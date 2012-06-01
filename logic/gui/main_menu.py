@@ -29,7 +29,8 @@ class GUI_main_menu_container(GUI_element):
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
         self.alpha = .1
-        GUI_main_menu_title(self.game, self)
+        GUI_main_menu_title(self.game, self, self.game.no_button_anim)
+        self.game.no_button_anim = True
         
         self.objs = []
         for x in range(10):
@@ -69,7 +70,7 @@ class GUI_main_menu_title(GUI_element):
     title_message = None
     title_state = 0
     
-    def __init__(self, game, parent = None):
+    def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
@@ -78,20 +79,31 @@ class GUI_main_menu_title(GUI_element):
         self.y = 100.0
         self.title_state = 0
         self.wait = 0
+        self.no_button_anim = no_button_anim
         
         self.title_message = Pixel_message(self.game, self.x, self.y, z = Z_GUI_OBJECT_LEVEL_3)
+        
+        if self.no_button_anim:
+            self.title_message.finish()
+            self.wait = 220
 
 
     def Execute(self):
         self.update()
 
         if self.title_state == 0:
+
+            if self.game.core.Keyboard_key_released(key.ESCAPE):
+                self.title_message.finish()
+                self.wait = 220
+                self.no_button_anim = True
+                
             self.wait += 1
             if self.wait >= 220:
-                GUI_main_menu_play_button(self.game, self)
-                GUI_main_menu_options_button(self.game, self)
-                GUI_main_menu_puzzle_designer_button(self.game, self)
-                GUI_main_menu_quit_button(self.game, self)
+                GUI_main_menu_play_button(self.game, self, self.no_button_anim)
+                GUI_main_menu_options_button(self.game, self, self.no_button_anim)
+                GUI_main_menu_puzzle_designer_button(self.game, self, self.no_button_anim)
+                GUI_main_menu_quit_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_credits_button(self.game, self)
                 self.title_state = 1
         
@@ -132,11 +144,17 @@ class GUI_main_menu_button(GUI_element_button):
 class GUI_main_menu_play_button(GUI_main_menu_button):
     generic_button_text = "Play!"
 
-    def __init__(self, game, parent = None):
+    def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
         self.main_menu_button_init(y_shift_to = -80, iter_wait = 50)
+
+        if no_button_anim:
+            self.y = self.y_to
+            self.generic_button_text_object.y = self.y + 4
+            self.main_menu_button_state = 1
+
 
     def mouse_left_up(self):
         #self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 120)
@@ -147,11 +165,17 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
 class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
     generic_button_text = "Puzzle Designer"
 
-    def __init__(self, game, parent = None):
+    def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
         self.main_menu_button_init(y_shift_to = -40, y_shift = 40, iter_wait = 100)
+
+        if no_button_anim:
+            self.y = self.y_to
+            self.generic_button_text_object.y = self.y + 4
+            self.main_menu_button_state = 1
+
 
     def mouse_left_up(self):
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_DESIGNER), speed = 20)
@@ -161,11 +185,17 @@ class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
 class GUI_main_menu_options_button(GUI_main_menu_button):
     generic_button_text = "Options"
 
-    def __init__(self, game, parent = None):
+    def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
         self.main_menu_button_init(y_shift = 80, iter_wait = 150)
+
+        if no_button_anim:
+            self.y = self.y_to
+            self.generic_button_text_object.y = self.y + 4
+            self.main_menu_button_state = 1
+
 
     def mouse_left_up(self):
         pass
@@ -175,11 +205,16 @@ class GUI_main_menu_options_button(GUI_main_menu_button):
 class GUI_main_menu_quit_button(GUI_main_menu_button):
     generic_button_text = "Quit"
 
-    def __init__(self, game, parent = None):
+    def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
         self.main_menu_button_init(y_shift_to = 40, y_shift = 120, iter_wait = 200)
+
+        if no_button_anim:
+            self.y = self.y_to
+            self.generic_button_text_object.y = self.y + 4
+            self.main_menu_button_state = 1
 
 
     def mouse_left_up(self):

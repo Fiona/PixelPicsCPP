@@ -31,6 +31,8 @@ class GUI_category_select_container(GUI_element):
         self.height = self.game.settings['screen_height']
         self.alpha = .1
 
+        GUI_category_go_back(self.game, self)
+
         category_names = OrderedDict([
             ("Tutorial", (.5, 1.0, .5)),
             ("Effortless", (1.0, .5, .5)),
@@ -182,3 +184,30 @@ class GUI_category_completed_tick(Process):
         self.game = game
         self.image = self.game.core.media.gfx['gui_category_complete_tick']
         self.z = Z_GUI_OBJECT_LEVEL_3
+
+
+class GUI_category_go_back(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_button_go_back']
+        self.gui_init()
+        self.x = 64
+        self.y = 64
+        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 46, TEXT_ALIGN_TOP_LEFT, "Back")
+        self.text.z = self.z - 1
+        self.text.colour = (1.0, 1.0, 1.0)
+        self.text.shadow = 2
+        self.text.shadow_colour = (.2, .2, .2)
+
+
+    def mouse_left_up(self):
+        self.parent.Kill()
+
+
+    def On_Exit(self):
+        self.text.Kill()
