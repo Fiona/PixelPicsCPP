@@ -178,12 +178,14 @@ class GUI_category_select_select_category_button(GUI_element_button):
             self.objs[x].Kill()
 
 
+
 class GUI_category_completed_tick(Process):
     def __init__(self, game):
         Process.__init__(self)
         self.game = game
         self.image = self.game.core.media.gfx['gui_category_complete_tick']
         self.z = Z_GUI_OBJECT_LEVEL_3
+
 
 
 class GUI_category_go_back(GUI_element_button):
@@ -196,9 +198,10 @@ class GUI_category_go_back(GUI_element_button):
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_go_back']
         self.gui_init()
-        self.x = 64
-        self.y = 64
-        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 46, TEXT_ALIGN_TOP_LEFT, "Back")
+        self.x = 16
+        self.y = 16
+        self.width = 128
+        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 16, TEXT_ALIGN_TOP_LEFT, "Back")
         self.text.z = self.z - 1
         self.text.colour = (1.0, 1.0, 1.0)
         self.text.shadow = 2
@@ -206,7 +209,8 @@ class GUI_category_go_back(GUI_element_button):
 
 
     def mouse_left_up(self):
-        self.parent.Kill()
+        GUI_element_button.mouse_left_up(self)
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 20)
 
 
     def On_Exit(self):

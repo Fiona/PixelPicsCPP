@@ -75,6 +75,8 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_category_complete_tick", new Image("gfx/gui/category_complete_tick.png")));
 
     gfx.insert(pair<string, Image*>("gui_polka", new Image("gfx/gui/polka.png", True)));
+
+    gfx.insert(pair<string, Image*>("gui_chips_happy", new Image("gfx/gui/chips_happy.png")));
  
 }
 
