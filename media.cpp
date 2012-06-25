@@ -29,6 +29,7 @@ Media::Media()
     fonts.insert(pair<string,Font*>("category_button_name", new Font("fnt/borisblackbloxx.ttf", 36)));
     fonts.insert(pair<string,Font*>("category_button_completed_count", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("category_button_total_count", new Font("fnt/borisblackbloxx.ttf", 12)));
+    fonts.insert(pair<string,Font*>("speech_bubble", new Font("fnt/cookies.ttf", 20)));
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/gui/stompyblondie_logo.png")));
@@ -77,6 +78,7 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_polka", new Image("gfx/gui/polka.png", True)));
 
     gfx.insert(pair<string, Image*>("gui_chips_happy", new Image("gfx/gui/chips_happy.png")));
+    gfx.insert(pair<string, Image*>("gui_speech_bubble", new Image("gfx/gui/speech_bubble.png")));
  
 }
 

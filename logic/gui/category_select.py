@@ -14,6 +14,7 @@ from core import *
 from consts import *
 from helpers  import *
 from gui.gui_elements import *
+from gui.mascot import *
 
 
 class GUI_category_select_container(GUI_element):
@@ -32,6 +33,7 @@ class GUI_category_select_container(GUI_element):
         self.alpha = .1
 
         GUI_category_go_back(self.game, self)
+        self.mascot_object = Mascot_Category_Select(self.game)
 
         category_names = OrderedDict([
             ("Tutorial", (.5, 1.0, .5)),
@@ -95,6 +97,11 @@ class GUI_category_select_container(GUI_element):
         self.text_offset_x -= 5.0
         self.text_offset_y += 5.0
 
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.mascot_object.Kill()
+        
 
 
 class GUI_category_select_select_category_button(GUI_element_button):
