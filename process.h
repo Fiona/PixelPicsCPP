@@ -104,6 +104,7 @@ public:
     void Draw_strategy_designer_colour_current_colour();
     void Draw_strategy_designer_colour_value_slider();
     void Draw_strategy_category_select();
+    void Draw_strategy_puzzle_select();
     void create_image_from_puzzle();
     void destroy_puzzle_image();
     void create_image_as_pallete(int pallete_width, int pallete_height);

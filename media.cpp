@@ -77,6 +77,7 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_category_locked", new Image("gfx/gui/category_locked.png")));
 
     gfx.insert(pair<string, Image*>("gui_polka", new Image("gfx/gui/polka.png", True)));
+    gfx.insert(pair<string, Image*>("gui_stars", new Image("gfx/gui/stars.png", True)));
 
     gfx.insert(pair<string, Image*>("gui_chips_happy", new Image("gfx/gui/chips_happy.png")));
     gfx.insert(pair<string, Image*>("gui_speech_bubble", new Image("gfx/gui/speech_bubble.png")));

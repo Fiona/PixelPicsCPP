@@ -96,6 +96,7 @@ bool Main_App::On_Init()
     draw_strategies["designer_colour_current_colour"] = &Process::Draw_strategy_designer_colour_current_colour;
     draw_strategies["designer_colour_value_slider"] = &Process::Draw_strategy_designer_colour_value_slider;
     draw_strategies["category_select"] = &Process::Draw_strategy_category_select;
+    draw_strategies["puzzle_select"] = &Process::Draw_strategy_puzzle_select;
 
     return True;
 

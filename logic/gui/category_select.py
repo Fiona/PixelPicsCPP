@@ -5,7 +5,6 @@ PixelPics - Nonogram game
 
 # python imports
 import random
-from collections import OrderedDict
 
 # Game engine imports
 from core import *
@@ -188,7 +187,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
 
 
     def mouse_left_up(self):
-        return
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
 
     
     def On_Exit(self):

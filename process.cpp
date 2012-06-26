@@ -1864,6 +1864,64 @@ void Process::Draw_strategy_category_select()
 
 
 
+void Process::Draw_strategy_puzzle_select()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    boost::python::object game = boost::python::extract<boost::python::object>(self_.attr("game"));
+    boost::python::object core = boost::python::extract<boost::python::object>(game.attr("core"));
+    Media* media = boost::python::extract<Media*>(core.attr("media"));
+    float text_offset_x = boost::python::extract<float>(self_.attr("text_offset_x"));
+    float text_offset_y = boost::python::extract<float>(self_.attr("text_offset_y"));
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glBegin(GL_QUADS);
+    glColor4f(colour[0], colour[1], colour[2],1.0f);
+    glVertex2f(0.0f, 0.0f);
+    glColor4f(colour[0] + .2f, colour[1] + .2f, colour[2] + .2f,1.0f);
+    glVertex2f(width, 0.0f);
+    glColor4f(colour[0] + .2f, colour[1] + .2f, colour[2] + .2f,1.0f);
+    glVertex2f(width, height);
+    glColor4f(colour[0], colour[1], colour[2],1.0f);
+    glVertex2f(0.0f, height);
+    glEnd();
+                                          
+    float tex_coords_pointer[] = {width, height, 0.0f, height, width, 0.0f, 0.0f, 0.0f};
+    glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_pointer);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_stars"]->texture);
+    glColor4f(1.0f, 1.0f, 1.0f, .7f);
+
+    float text_coord_x = width / media->gfx["gui_stars"]->width;
+    float text_coord_y = height / media->gfx["gui_stars"]->height;
+    text_offset_x = (text_offset_x / media->gfx["gui_stars"]->width) * .1f;
+    text_offset_y = (text_offset_y / media->gfx["gui_stars"]->height) * .1f;
+                                
+    glBegin(GL_TRIANGLE_STRIP);
+    // top right
+    glTexCoord2f(text_coord_x + text_offset_x, text_coord_y + text_offset_y);
+    glVertex3f(width, height, 0.0f);
+    // top left
+    glTexCoord2f(text_offset_x, text_coord_y + text_offset_y);
+    glVertex3f(0.0f, height, 0.0f);
+    // bottom right
+    glTexCoord2f(text_coord_x + text_offset_x, text_offset_y);
+    glVertex3f(width, 0.0f, 0.0f);
+    // bottom left
+    glTexCoord2f(text_offset_x, text_offset_y);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glEnd();
+
+    glPopMatrix();
+
+}
+
+
+
 void Process::create_image_from_puzzle()
 {
 
