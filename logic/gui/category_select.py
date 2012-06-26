@@ -149,7 +149,8 @@ class GUI_category_select_select_category_button(GUI_element_button):
         text.shadow_colour = (.2, .2, .2)
         self.objs['solved'] = text
 
-        self.objs['tick'] = GUI_category_completed_tick(self.game)
+        #self.objs['status_icon'] = GUI_category_completed_tick(self.game)
+        self.objs['status_icon'] = GUI_category_locked(self.game)
 
         self.update_obj_positions()
 
@@ -171,8 +172,8 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.objs['solved'].x = self.x + 437
         self.objs['solved'].y = self.y + 40
 
-        self.objs['tick'].x = self.x + 64
-        self.objs['tick'].y = self.y + 32
+        self.objs['status_icon'].x = self.x + 64
+        self.objs['status_icon'].y = self.y + 32
 
 
     def mouse_left_up(self):
@@ -191,6 +192,15 @@ class GUI_category_completed_tick(Process):
         Process.__init__(self)
         self.game = game
         self.image = self.game.core.media.gfx['gui_category_complete_tick']
+        self.z = Z_GUI_OBJECT_LEVEL_3
+
+
+
+class GUI_category_locked(Process):
+    def __init__(self, game):
+        Process.__init__(self)
+        self.game = game
+        self.image = self.game.core.media.gfx['gui_category_locked']
         self.z = Z_GUI_OBJECT_LEVEL_3
 
 

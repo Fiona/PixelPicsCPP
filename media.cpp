@@ -74,6 +74,7 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_button_go_back", new Image("gfx/gui/button_go_back.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category", new Image("gfx/gui/button_select_category.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_category_complete_tick", new Image("gfx/gui/category_complete_tick.png")));
+    gfx.insert(pair<string, Image*>("gui_category_locked", new Image("gfx/gui/category_locked.png")));
 
     gfx.insert(pair<string, Image*>("gui_polka", new Image("gfx/gui/polka.png", True)));
 
