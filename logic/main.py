@@ -184,7 +184,8 @@ class Player(object):
     This object is responsible for the saved state of the player and
     their progess through the game.
     """
-    unlocked_categories = ["tut"]
+    unlocked_categories = ["0001", "0002"]
+    cleared_categories = ["0001"]
     cleared_puzzles = {}
     saved_puzzles = {}
     puzzle_scores = {}

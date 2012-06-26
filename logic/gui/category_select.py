@@ -35,26 +35,26 @@ class GUI_category_select_container(GUI_element):
         GUI_category_go_back(self.game, self)
         self.mascot_object = Mascot_Category_Select(self.game)
 
-        category_names = OrderedDict([
-            ("Tutorial", (.5, 1.0, .5)),
-            ("Effortless", (1.0, .5, .5)),
-            ("Light", (1.0, .5, .5)),
-            ("Piece Of Cake", (.5, 1.0, 1.0)),
-            ("Uncomplicated", (1.0, .5, 1.0)),
-            ("Manageable", (1.0, 1.0, .5)),
-            ("Troublesome", (1.0, 1.0, .5)),
-            ("Formidable", (1.0, 1.0, .5)),
-            ("Demanding", (1.0, 1.0, .5)),
-            ("Heavy", (1.0, 1.0, .5)),
-            ("Challenging!", (1.0, 1.0, .5))
-            ])
+        categories = [
+            ("Tutorial",      "0001", (.5, 1.0, .5)),
+            ("Effortless",    "0002", (1.0, .5, .5)),
+            ("Light",         "0003", (1.0, .5, .5)),
+            ("Piece Of Cake", "0004", (.5, 1.0, 1.0)),
+            ("Uncomplicated", "0005", (1.0, .5, 1.0)),
+            ("Manageable",    "0006", (1.0, 1.0, .5)),
+            ("Troublesome",   "0007", (1.0, 1.0, .5)),
+            ("Formidable",    "0008", (1.0, 1.0, .5)),
+            ("Demanding",     "0009", (1.0, 1.0, .5)),
+            ("Heavy",         "0010", (1.0, 1.0, .5)),
+            ("Challenging!",  "0011", (1.0, 1.0, .5))
+            ]
         self.category_objs = []
 
         i = 0
         self.last_category = None
         self.first_category = None
-        for name,colour in category_names.items():
-            self.last_category = GUI_category_select_select_category_button(self.game, self, i, name, colour)
+        for name,pack_dir,colour in categories:
+            self.last_category = GUI_category_select_select_category_button(self.game, self, i, pack_dir, name, colour)
             self.category_objs.append(self.last_category)
             if self.first_category is None:
                 self.first_category = self.last_category
@@ -108,10 +108,11 @@ class GUI_category_select_select_category_button(GUI_element_button):
     generic_button = False
     objs = {}
     
-    def __init__(self, game, parent = None, num = 0, name = "? ? ? ? ?", colour = (1.0, 1.0, 1.0)):
+    def __init__(self, game, parent = None, num = 0, pack_dir = "", name = "? ? ? ? ?", colour = (1.0, 1.0, 1.0)):
         Process.__init__(self)
         self.game = game
         self.parent = parent
+        self.pack_dir = pack_dir
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_select_category']
         self.gui_init()
@@ -128,30 +129,36 @@ class GUI_category_select_select_category_button(GUI_element_button):
         text.shadow_colour = (.2, .2, .2)
         self.objs['cat_name'] = text
 
-        text = Text(self.game.core.media.fonts['category_button_completed_count'], 0, 0, TEXT_ALIGN_TOP_RIGHT, "10")
-        text.z = self.z - 1
-        text.colour = (1.0, 1.0, 1.0)
-        text.shadow = 2
-        text.shadow_colour = (.2, .2, .2)
-        self.objs['completed_count'] = text
+        if not self.pack_dir in self.game.player.unlocked_categories:
+            self.objs['status_icon'] = GUI_category_locked(self.game)
+            self.colour = (1.0, 1.0, 1.0)
+            self.disabled = True
+        else:
+            completed = len(self.game.player.cleared_puzzles[self.pack_dir]) if self.pack_dir in self.game.player.cleared_puzzles else 0
+            text = Text(self.game.core.media.fonts['category_button_completed_count'], 0, 0, TEXT_ALIGN_TOP_RIGHT, str(completed))
+            text.z = self.z - 1
+            text.colour = (1.0, 1.0, 1.0)
+            text.shadow = 2
+            text.shadow_colour = (.2, .2, .2)
+            self.objs['completed_count'] = text
 
-        text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, "15")
-        text.z = self.z - 1
-        text.colour = (1.0, 1.0, 1.0)
-        text.shadow = 2
-        text.shadow_colour = (.2, .2, .2)
-        self.objs['total_count'] = text
+            text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, str(len(self.game.manager.game_packs[self.pack_dir].puzzles)))
+            text.z = self.z - 1
+            text.colour = (1.0, 1.0, 1.0)
+            text.shadow = 2
+            text.shadow_colour = (.2, .2, .2)
+            self.objs['total_count'] = text
 
-        text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, "solved")
-        text.z = self.z - 1
-        text.colour = (1.0, 1.0, 1.0)
-        text.shadow = 1
-        text.shadow_colour = (.2, .2, .2)
-        self.objs['solved'] = text
+            text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, "solved")
+            text.z = self.z - 1
+            text.colour = (1.0, 1.0, 1.0)
+            text.shadow = 1
+            text.shadow_colour = (.2, .2, .2)
+            self.objs['solved'] = text
 
-        #self.objs['status_icon'] = GUI_category_completed_tick(self.game)
-        self.objs['status_icon'] = GUI_category_locked(self.game)
-
+            if self.pack_dir in self.game.player.cleared_categories:
+                self.objs['status_icon'] = GUI_category_completed_tick(self.game)
+            
         self.update_obj_positions()
 
 
@@ -163,17 +170,21 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.objs['cat_name'].x = self.x + (self.image.width/2) - 32
         self.objs['cat_name'].y = self.y + (self.image.height/2)
 
-        self.objs['completed_count'].x = self.x + 460
-        self.objs['completed_count'].y = self.y + 6
+        if 'completed_count' in self.objs:
+            self.objs['completed_count'].x = self.x + 460
+            self.objs['completed_count'].y = self.y + 6
 
-        self.objs['total_count'].x = self.x + 470
-        self.objs['total_count'].y = self.y + 27
+        if 'total_count' in self.objs:
+            self.objs['total_count'].x = self.x + 470
+            self.objs['total_count'].y = self.y + 27
 
-        self.objs['solved'].x = self.x + 437
-        self.objs['solved'].y = self.y + 40
+        if 'solved' in self.objs:
+            self.objs['solved'].x = self.x + 437
+            self.objs['solved'].y = self.y + 40
 
-        self.objs['status_icon'].x = self.x + 64
-        self.objs['status_icon'].y = self.y + 32
+        if 'status_icon' in self.objs:
+            self.objs['status_icon'].x = self.x + 64
+            self.objs['status_icon'].y = self.y + 32
 
 
     def mouse_left_up(self):

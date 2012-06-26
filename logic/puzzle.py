@@ -88,7 +88,7 @@ class Puzzle_manager(object):
     packs = []
     pack_directory_list = []
 
-    game_packs = []
+    game_packs = {}
     game_pack_directory_list = []
 
 
@@ -96,7 +96,7 @@ class Puzzle_manager(object):
         self.game = game
         self.load_packs()
         self.load_packs(user_created = False)
-
+        
 
     def load_packs(self, user_created = True):
         if user_created:
@@ -106,7 +106,7 @@ class Puzzle_manager(object):
             pack_directory_list = self.pack_directory_list
             pack_dir = self.game.core.path_user_pack_directory
         else:
-            self.game_packs = []
+            self.game_packs = {}
             self.game_pack_directory_list = []
             packs = self.game_packs
             pack_directory_list = self.game_pack_directory_list
@@ -116,23 +116,22 @@ class Puzzle_manager(object):
         cur_dir = os.getcwd()
         os.chdir(pack_dir)
         directories = glob.glob("*")
-
-        pack_directory_list = []
+        os.chdir(cur_dir)
         
         for dir in directories:
             if os.path.isdir(os.path.join(pack_dir, dir)) and os.path.exists(os.path.join(pack_dir, dir, FILE_PACK_INFO_FILE)):
                 pack_directory_list.append(dir)
 
-        os.chdir(cur_dir)
         # Load all packs
-        for pack in pack_directory_list:
-            f = open(os.path.join(pack_dir, pack, FILE_PACK_INFO_FILE), "rb")
+        for pack_dir_name in pack_directory_list:
+            f = open(os.path.join(pack_dir, pack_dir_name, FILE_PACK_INFO_FILE), "rb")
             pack = pickle.load(f)
             f.close()
-            packs.append(pack)
-
-        pack_directory_list = pack_directory_list
-
+            if user_created:
+                packs.append(pack)
+            else:
+                packs[pack_dir_name] = pack
+                
 
     def load_pack(self, pack_dir):
         try:
