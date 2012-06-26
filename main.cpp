@@ -97,6 +97,9 @@ Main_App::Main_App()
     if(!boost::filesystem::exists(path_user_pack_directory.c_str()) || !boost::filesystem::is_directory(path_user_pack_directory.c_str()))
         boost::filesystem::create_directory(path_user_pack_directory.c_str());
 
+    path_game_pack_directory = FILE_GAME_PACK_DIRECTORY;
+    path_player_progress = path_application_data + SEPARATOR + FILE_PLAYER_PROGRESS;
+
     // Generate and save new author id if file doesn't exist
     path_author_id_file = path_application_data + SEPARATOR + FILE_AUTHOR_ID_FILE;
     if(!boost::filesystem::exists(path_author_id_file.c_str()))

@@ -106,11 +106,33 @@ class GUI_main_menu_title(GUI_element):
                 GUI_main_menu_quit_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_credits_button(self.game, self)
                 self.title_state = 1
+                self.wait = 0
+
+        if self.title_state == 1:
+            self.wait += 1
+            if self.wait >= 30:
+                if self.game.player.first_run:
+                    self.conf_box = GUI_element_confirmation_box(
+                        self.game,
+                        self,
+                        "Play Tutorial?",
+                        ["This is your first time playing PixelPics.", "Would you like to learn how to play?"],
+                        confirm_callback = self.first_time
+                        )
+                    self.game.player.first_run = False
+                    self.game.save_player(self.game.player)
+                self.title_state = 2
+
         
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
         self.title_message.Kill()
+
+
+    def first_time(self):
+        pass
+    
 
 
 class GUI_main_menu_button(GUI_element_button):

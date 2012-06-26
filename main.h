@@ -46,7 +46,9 @@
 #define FILE_PACK_INFO_FILE "pack.dat"
 #define FILE_PUZZLE_EXTENSION ".puz"
 #define FILE_USER_PACK_DIRECTORY "packs"
+#define FILE_GAME_PACK_DIRECTORY "packs"
 #define FILE_AUTHOR_ID_FILE "author_id.dat"
+#define FILE_PLAYER_PROGRESS "player.dat"
 #define MAX_PUZZLES_PER_PACK 20
 #define MIN_PUZZLE_SIZE 5
 #define MAX_PUZZLE_SIZE 40
@@ -134,7 +136,9 @@ public:
     string path_application_data;
     string path_settings_file;
     string path_user_pack_directory;
+    string path_game_pack_directory;
     string path_author_id_file;
+    string path_player_progress;
     string author_id;
 
     Mouse* mouse;

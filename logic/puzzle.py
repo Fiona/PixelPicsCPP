@@ -88,35 +88,50 @@ class Puzzle_manager(object):
     packs = []
     pack_directory_list = []
 
+    game_packs = []
+    game_pack_directory_list = []
+
 
     def __init__(self, game):
         self.game = game
         self.load_packs()
+        self.load_packs(user_created = False)
 
 
-    def load_packs(self):
-        self.packs = []
-        
+    def load_packs(self, user_created = True):
+        if user_created:
+            self.packs = []
+            self.pack_directory_list = []
+            packs = self.packs
+            pack_directory_list = self.pack_directory_list
+            pack_dir = self.game.core.path_user_pack_directory
+        else:
+            self.game_packs = []
+            self.game_pack_directory_list = []
+            packs = self.game_packs
+            pack_directory_list = self.game_pack_directory_list
+            pack_dir = self.game.core.path_game_pack_directory
+            
         # Get all valid pack directories
         cur_dir = os.getcwd()
-        os.chdir(self.game.core.path_user_pack_directory)
+        os.chdir(pack_dir)
         directories = glob.glob("*")
 
         pack_directory_list = []
         
         for dir in directories:
-            if os.path.isdir(os.path.join(self.game.core.path_user_pack_directory, dir)) and os.path.exists(os.path.join(self.game.core.path_user_pack_directory, dir, FILE_PACK_INFO_FILE)):
+            if os.path.isdir(os.path.join(pack_dir, dir)) and os.path.exists(os.path.join(pack_dir, dir, FILE_PACK_INFO_FILE)):
                 pack_directory_list.append(dir)
 
         os.chdir(cur_dir)
         # Load all packs
         for pack in pack_directory_list:
-            f = open(os.path.join(self.game.core.path_user_pack_directory, pack, FILE_PACK_INFO_FILE), "rb")
+            f = open(os.path.join(pack_dir, pack, FILE_PACK_INFO_FILE), "rb")
             pack = pickle.load(f)
             f.close()
-            self.packs.append(pack)
+            packs.append(pack)
 
-        self.pack_directory_list = pack_directory_list
+        pack_directory_list = pack_directory_list
 
 
     def load_pack(self, pack_dir):
@@ -280,7 +295,7 @@ class Puzzle_manager(object):
              raise IOError("Please supply your author name.")
 
         try:
-            pack_directory_name = self.generate_unique_filename(pack_name, self.game.core.path_user_pack_directory, "pack")
+            pack_directory_name = self.generate_unique_filename(self.game.core.path_user_pack_directory)
             os.mkdir(os.path.join(self.game.core.path_user_pack_directory, pack_directory_name))
         except IOError as e:
             raise e
@@ -405,7 +420,7 @@ class Puzzle_manager(object):
         if puzzle_name == "":
              raise IOError("Please give your puzzle a name.")
 
-        puzzle_filename = self.generate_unique_filename(puzzle_name, os.path.join(self.game.core.path_user_pack_directory, pack_directory), default = "puzzle", extension = FILE_PUZZLE_EXTENSION)
+        puzzle_filename = self.generate_unique_filename(os.path.join(self.game.core.path_user_pack_directory, pack_directory), extension = FILE_PUZZLE_EXTENSION)
         
         puzzle = Puzzle()
         puzzle.name = puzzle_name
@@ -639,17 +654,11 @@ class Puzzle_manager(object):
         self.load_packs()
 
 
-    def generate_unique_filename(self, starting_name, path, default = "", extension = ""):
-        valid_chars = "-_.()%s%s" % (string.ascii_letters, string.digits)
-        initial_filename = ''.join(c for c in starting_name.strip() if c in valid_chars)
-
+    def generate_unique_filename(self, path, extension = ""):
         count = 1
         
-        if initial_filename.strip() == "":
-            initial_filename = default
-            
         while True:
-            filename = initial_filename + str(count).rjust(4, "0")            
+            filename = str(count).rjust(4, "0")            
             if not os.path.exists(os.path.join(path, filename + extension)):
                 break
             count += 1

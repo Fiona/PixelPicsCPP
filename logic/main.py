@@ -4,7 +4,7 @@ PixelPics - Nonogram game
 """
 
 # python imports
-import sys, os
+import sys, os, pickle
 
 # Game engine imports
 from core import *
@@ -75,6 +75,7 @@ class Game(Process):
         self.settings['screen_height'] = self.core.settings.screen_height
         self.settings['full_screen'] = self.core.settings.full_screen
         self.author_id = self.core.author_id
+        self.load_player()
 
         # Debug display
         if DEBUG_SHOW_FPS:
@@ -94,6 +95,32 @@ class Game(Process):
         """
         if DEBUG_SHOW_FPS:
             self.fps_text.text = "fps: " + str(self.core.current_fps)
+
+
+    def save_player(self, player):
+        """
+        Player progress is saved in player.dat.
+        It is all saved in a Player object. Pass the Player object into this to
+        save it.
+        """
+        f = open(self.core.path_player_progress, "w")
+        pickle.dump(player, f)
+        f.close()
+
+
+    def load_player(self):
+        """
+        Ran at the start of the game to load player progress.
+        If the player.dat file doesn't exist the default state will be
+        saved out instead.
+        """
+        try:
+            f = open(self.core.path_player_progress, "r")
+            self.player = pickle.load(f)
+            f.close()
+        except IOError:
+            self.player = Player()
+            self.save_player(self.player)
 
 
     def quit_game(self):
@@ -150,5 +177,19 @@ class Game(Process):
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
 
+
+
+class Player(object):
+    """
+    This object is responsible for the saved state of the player and
+    their progess through the game.
+    """
+    unlocked_categories = ["tut"]
+    cleared_puzzles = {}
+    saved_puzzles = {}
+    puzzle_scores = {}
+    first_run = True
+    auto_save = False
+    
 
 Game(core)

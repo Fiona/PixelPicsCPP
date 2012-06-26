@@ -165,6 +165,8 @@ BOOST_PYTHON_MODULE(core)
         .add_property("path_application_data", make_getter(&Main_App::path_application_data))
         .add_property("path_settings_file", make_getter(&Main_App::path_settings_file))
         .add_property("path_user_pack_directory", make_getter(&Main_App::path_user_pack_directory))
+        .add_property("path_game_pack_directory", make_getter(&Main_App::path_game_pack_directory))
+        .add_property("path_player_progress", make_getter(&Main_App::path_player_progress))
         .def("Keyboard_key_down", &Main_App::Keyboard_key_down)
         .def("Keyboard_key_released", &Main_App::Keyboard_key_released)
         .def("Toggle_text_input", &Main_App::Toggle_text_input)
@@ -186,6 +188,7 @@ BOOST_PYTHON_MODULE(core)
     // Expose some pixelpics constants
     scope().attr("FILE_PACK_INFO_FILE") = FILE_PACK_INFO_FILE;
     scope().attr("FILE_PUZZLE_EXTENSION") = FILE_PUZZLE_EXTENSION;
+    scope().attr("FILE_PLAYER_PROGRESS") = FILE_PLAYER_PROGRESS;
     scope().attr("MAX_PUZZLES_PER_PACK") = MAX_PUZZLES_PER_PACK;
     scope().attr("MIN_PUZZLE_SIZE") = MIN_PUZZLE_SIZE;
     scope().attr("MAX_PUZZLE_SIZE") = MAX_PUZZLE_SIZE;
