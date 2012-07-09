@@ -27,7 +27,7 @@ class Game(Process):
         'screen_height' : 1,
         'full_screen' : 1
         }
-
+    
     # UUID tying an author to puzzle packs
     author_id = ""
     
@@ -103,7 +103,7 @@ class Game(Process):
         It is all saved in a Player object. Pass the Player object into this to
         save it.
         """
-        f = open(self.core.path_player_progress, "w")
+        f = open(self.core.path_player_progress, "w+")
         pickle.dump(player, f)
         f.close()
 
@@ -121,7 +121,7 @@ class Game(Process):
         except IOError:
             self.player = Player()
             self.save_player(self.player)
-
+        
 
     def quit_game(self):
         """
@@ -155,18 +155,19 @@ class Game(Process):
             self.current_zoom_level = 1.0
             self.lives = INITIAL_LIVES
             self.timer = 0
-            self.manager.load_puzzle("MarksAmezzinPuzzles0001", "Cat0001.puz")
-            #self.manager.load_puzzle("testfree0001", "forty0001.puz")
-            #self.manager.load_puzzle("test0001", "seven0001.puz")
+            self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file, user_created = self.manager.user_created_puzzles)
+            #self.manager.load_puzzle("MarksAmezzinPuzzles0001", "Cat0001.puz")
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
         elif state == GAME_STATE_CATEGORY_SELECT:
+            self.manager.user_created_puzzles = False
             self.gui.fade_toggle(speed = 60)
             self.gui.switch_gui_state_to(GUI_STATE_CATEGORY_SELECT if gui_state is None else gui_state)
         elif state == GAME_STATE_PUZZLE_SELECT:
             self.gui.fade_toggle(speed = 60)           
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE_SELECT if gui_state is None else gui_state)
         elif state == GAME_STATE_DESIGNER:
+            self.manager.user_created_puzzles = True
             self.gui.fade_toggle(speed = 20, colour = col)
             self.gui.switch_gui_state_to(GUI_STATE_DESIGNER_PACKS if gui_state is None else gui_state)
         elif state == GAME_STATE_TEST:
@@ -178,19 +179,37 @@ class Game(Process):
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
 
 
+    def player_action_cleared_game_puzzle(self, category, puzzle):
+        if not category in self.player.cleared_puzzles:
+            self.player.cleared_puzzles[category] = []
+        if not category in self.player.puzzle_scores:
+            self.player.puzzle_scores[category] = {}
+
+        if not puzzle in self.player.cleared_puzzles[category]:
+            self.player.cleared_puzzles[category].append(puzzle)
+        if not puzzle in self.player.puzzle_scores[category]:
+            self.player.puzzle_scores[category][puzzle] = [self.timer, self.lives]
+
+        if self.timer < self.player.puzzle_scores[category][puzzle][0]:
+            self.player.puzzle_scores[category][puzzle] = [self.timer, self.lives]
+
+        self.save_player(self.player)
+
+
 
 class Player(object):
     """
     This object is responsible for the saved state of the player and
     their progess through the game.
     """
-    unlocked_categories = ["0001", "0002"]
-    cleared_categories = ["0001"]
-    cleared_puzzles = {}
-    saved_puzzles = {}
-    puzzle_scores = {}
-    first_run = True
-    auto_save = False
+    def __init__(self):
+        self.unlocked_categories = ["0001", "0002"]
+        self.cleared_categories = ["0001"]
+        self.cleared_puzzles = {}
+        self.saved_puzzles = {}
+        self.puzzle_scores = {}
+        self.first_run = True
+        self.auto_save = False    
     
 
 Game(core)

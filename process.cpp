@@ -1601,7 +1601,7 @@ void Process::Draw_strategy_gui_designer_monochrome_puzzle_image()
     float width = boost::python::extract<float>(self_.attr("width"));
     float height = boost::python::extract<float>(self_.attr("height"));
 
-    if(width == 0 || height == 0)
+    if(width == 0 || height == 0 || alpha <= 0.0f)
         return;
 
     tuple<float, float> draw_pos = get_screen_draw_position();
@@ -1916,6 +1916,47 @@ void Process::Draw_strategy_puzzle_select()
     glVertex3f(0.0f, 0.0f, 0.0f);
     glEnd();
 
+    glPopMatrix();
+
+}
+
+
+
+void Process::Draw_strategy_puzzle_select_puzzle_item()
+{
+
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+
+    if(width == 0 || height == 0)
+        return;
+
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float draw_x = draw_pos.get<0>() + 1.0f;
+    float draw_y = draw_pos.get<1>() + 1.0f;
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.5f, 0.5f, 0.5f, alpha);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+    glLineWidth(1.0f);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
     glPopMatrix();
 
 }

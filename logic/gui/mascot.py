@@ -59,7 +59,7 @@ class Mascot_Category_Select(Mascot):
                 
         
     def set_location(self):
-        self.x = (self.image.width / 2) - 25
+        self.x = (self.game.settings['screen_width'] / 2) - (self.image.width / 2) - 25
         self.y = self.game.settings['screen_height'] / 2
         self.z = Z_MASCOT
         self.initial_position = self.x, self.y

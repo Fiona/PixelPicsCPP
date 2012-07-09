@@ -91,6 +91,7 @@ class Puzzle_manager(object):
     game_packs = {}
     game_pack_directory_list = []
 
+    user_created_puzzles = False
 
     def __init__(self, game):
         self.game = game
@@ -133,9 +134,10 @@ class Puzzle_manager(object):
                 packs[pack_dir_name] = pack
                 
 
-    def load_pack(self, pack_dir):
+    def load_pack(self, pack_dir, user_created = True):
         try:
-            f = open(os.path.join(self.game.core.path_user_pack_directory, pack_dir, FILE_PACK_INFO_FILE), "rb")
+            main_dir = self.game.core.path_user_pack_directory if user_created else self.game.core.path_game_pack_directory
+            f = open(os.path.join(main_dir, pack_dir, FILE_PACK_INFO_FILE), "rb")
             self.current_pack = pickle.load(f)
             self.game.freemode = self.current_pack.freemode
             self.current_puzzle_pack = pack_dir
@@ -144,11 +146,13 @@ class Puzzle_manager(object):
             raise e
 
 
-    def load_puzzle(self, pack_dir, puzzle_filename, set_state = False):
+    def load_puzzle(self, pack_dir, puzzle_filename, set_state = False, user_created = True):
         try:
-            self.load_pack(pack_dir)
+            self.load_pack(pack_dir, user_created = user_created)
+
+            main_dir = self.game.core.path_user_pack_directory if user_created else self.game.core.path_game_pack_directory
             
-            f = open(os.path.join(self.game.core.path_user_pack_directory, pack_dir, puzzle_filename), "rb")
+            f = open(os.path.join(main_dir, pack_dir, puzzle_filename), "rb")
             puzzle = pickle.load(f)
             self.current_puzzle = puzzle
             self.current_puzzle_file = puzzle_filename

@@ -115,7 +115,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_select_category']
         self.gui_init()
-        self.x = (self.game.settings['screen_width']) - self.image.width - 64
+        self.x = (self.game.settings['screen_width'] / 2) - 25
         self.y = self.image.height + (self.image.height * num) + (32 * num)
         self.colour = colour
 
@@ -187,6 +187,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        self.game.manager.load_pack(self.pack_dir, user_created = False)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
 
     

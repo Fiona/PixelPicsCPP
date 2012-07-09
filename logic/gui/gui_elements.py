@@ -194,7 +194,7 @@ class GUI_element(Process):
         else:
             self.clip = (0, 0, 0, 0)
             return (self.x, self.y)
-    
+        
 
     def On_Exit(self):
         kids = list(self.children)

@@ -79,6 +79,10 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_polka", new Image("gfx/gui/polka.png", True)));
     gfx.insert(pair<string, Image*>("gui_stars", new Image("gfx/gui/stars.png", True)));
 
+    gfx.insert(pair<string, Image*>("gui_puzzle_image_unsolved", new Image("gfx/gui/puzzle_image_unsolved.png")));
+    gfx.insert(pair<string, Image*>("gui_puzzle_select_solved_icon", new Image("gfx/gui/puzzle_select_solved_icon.png")));
+    gfx.insert(pair<string, Image*>("gui_puzzle_select_saved_icon", new Image("gfx/gui/puzzle_select_saved_icon.png")));
+
     gfx.insert(pair<string, Image*>("gui_chips_happy", new Image("gfx/gui/chips_happy.png")));
     gfx.insert(pair<string, Image*>("gui_speech_bubble", new Image("gfx/gui/speech_bubble.png")));
  
