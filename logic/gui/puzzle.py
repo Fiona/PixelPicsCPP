@@ -1291,7 +1291,7 @@ class Puzzle_nameplate_text(Process):
         self.game = game
         self.x = x
         self.y = y
-        self.z = Z_GUI_OBJECT_LEVEL_5
+        self.z = Z_GUI_OBJECT_LEVEL_7
         self.text = Text(
             self.game.core.media.fonts['puzzle_message'],
             self.x,

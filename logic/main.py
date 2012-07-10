@@ -186,19 +186,25 @@ class Game(Process):
 
 
     def player_action_cleared_game_puzzle(self, category, puzzle):
+        # create empty lists if not set
         if not category in self.player.cleared_puzzles:
             self.player.cleared_puzzles[category] = []
         if not category in self.player.puzzle_scores:
             self.player.puzzle_scores[category] = {}
 
+        # Add to cleared lists and scores lists if necessary
         if not puzzle in self.player.cleared_puzzles[category]:
             self.player.cleared_puzzles[category].append(puzzle)
+
         if not puzzle in self.player.puzzle_scores[category]:
             self.player.puzzle_scores[category][puzzle] = [self.timer, self.lives]
-
         if self.timer < self.player.puzzle_scores[category][puzzle][0]:
             self.player.puzzle_scores[category][puzzle] = [self.timer, self.lives]
 
+        # Add category as being cleared if true
+        if len(self.player.cleared_puzzles[category]) >= len(self.manager.current_pack.puzzles) and not category in self.player.cleared_categories:
+            self.player.cleared_categories.append(category)
+            
         self.save_player(self.player)
 
 
