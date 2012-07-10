@@ -200,7 +200,7 @@ class Puzzle_manager(object):
                 self.current_puzzle_state[y][x] = None
         
 
-    def set_puzzle_cell(self, puzzle, x, y, value, colour = (0.0, 0.0, 1.0)):
+    def set_puzzle_cell(self, puzzle, x, y, value, colour = [0.0, 0.0, 1.0]):
         puzzle.cells[y][x] = (value, colour)
 
         
@@ -208,9 +208,9 @@ class Puzzle_manager(object):
         for y in range(puzzle.height):
             for x in range(puzzle.width):
                 if puzzle.cells[y][x][0]:
-                    puzzle.cells[y][x] = (True, (0.0, 0.0, 0.0))
+                    puzzle.cells[y][x] = (True, [0.0, 0.0, 0.0])
                 else:
-                    puzzle.cells[y][x] = (False, (0.0, 0.0, 1.0))
+                    puzzle.cells[y][x] = (False, [0.0, 0.0, 1.0])
         
 
     def work_out_puzzle_hint_numbers(self, puzzle):
@@ -503,7 +503,7 @@ class Puzzle_manager(object):
         for y in range(puzzle.height):
             puzzle.cells.append([])
             for x in range(puzzle.width):
-                puzzle.cells[y].append((False, (0.0, 0.0, 1.0)))
+                puzzle.cells[y].append((False, [0.0, 0.0, 1.0]))
         puzzle.row_numbers = [(0,)] * puzzle.height
         puzzle.column_numbers = [(0,)] * puzzle.width
         puzzle.background = "blue"
@@ -632,10 +632,10 @@ class Puzzle_manager(object):
     def change_puzzle_object_size(self, puzzle, new_width, new_height):
         for y in range(new_height):
             if y >= puzzle.height: 
-                puzzle.cells.append([(False, (0.0, 0.0, 1.0))] * new_width)
+                puzzle.cells.append([(False, [0.0, 0.0, 1.0])] * new_width)
             for x in range(new_width):
                 if x >= puzzle.width: 
-                    puzzle.cells[y].append((False, (0.0, 0.0, 1.0)))
+                    puzzle.cells[y].append((False, [0.0, 0.0, 1.0]))
             puzzle.cells[y] = puzzle.cells[y][:new_width]
         puzzle.cells = puzzle.cells[:new_height]
 
