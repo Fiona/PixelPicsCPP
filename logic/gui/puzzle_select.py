@@ -36,6 +36,7 @@ class GUI_puzzle_select_container(GUI_element):
         GUI_category_go_back(self.game, self)
         self.puzzle_name = Hover_text(self.game, self.game.settings['screen_width'] / 2, 50)
         self.puzzle_best_time = Hover_text(self.game, self.game.settings['screen_width'] / 2, 95)
+        self.puzzle_size = Hover_text(self.game, (self.game.settings['screen_width'] / 2) - 225, 95, "puzzle_select_size", 2.0)
 
         self.text_offset_x = 0.0
         self.text_offset_y = 0.0
@@ -53,6 +54,7 @@ class GUI_puzzle_select_container(GUI_element):
         self.update()
         self.puzzle_name.set_text("")
         self.puzzle_best_time.set_text("")
+        self.puzzle_size.set_text("")
         
         self.text_offset_x += 5.0
         self.text_offset_y -= 5.0
@@ -62,6 +64,7 @@ class GUI_puzzle_select_container(GUI_element):
         GUI_element.On_Exit(self)
         self.puzzle_name.Kill()
         self.puzzle_best_time.Kill()
+        self.puzzle_size.Kill()
 
         
 
@@ -96,16 +99,17 @@ class GUI_category_go_back(GUI_element_button):
 
 
 class Hover_text(Process):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, font = "puzzle_message", x_pad = 20.0):
         Process.__init__(self)
         self.game = game
         self.x = x
         self.y = y
         self.z = Z_GUI_OBJECT_LEVEL_5
+        self.x_pad = x_pad
         self.current_text = ""
         
         self.text = Text(
-            self.game.core.media.fonts['puzzle_message'],
+            self.game.core.media.fonts[font],
             self.x,
             self.y,
             TEXT_ALIGN_CENTER,
@@ -130,9 +134,9 @@ class Hover_text(Process):
 
         if not text == "":
             self.draw_strategy = "primitive_square"
-            self.primitive_square_width = self.text.text_width + 40.0
+            self.primitive_square_width = self.text.text_width + (self.x_pad * 2)
             self.primitive_square_height = self.text.text_height + 4.0
-            self.primitive_square_x = self.x - (self.text.text_width/2) - 20.0
+            self.primitive_square_x = self.x - (self.text.text_width/2) - self.x_pad
             self.primitive_square_y = self.y - (self.text.text_height/2) - 2.0
         else:
             self.draw_strategy = ""
@@ -168,10 +172,23 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
             
         self.z = Z_GUI_OBJECT_LEVEL_4
 
+
         if self.game.manager.current_puzzle_pack in self.game.player.cleared_puzzles and self.puzzle_filename in self.game.player.cleared_puzzles[self.game.manager.current_puzzle_pack]:
             self.cleared = True
         else:
             self.cleared = False
+
+        self.number_text = Text(
+            self.game.core.media.fonts['puzzle_select_number'],
+            self.x - 5,
+            self.y,
+            TEXT_ALIGN_TOP_RIGHT,
+            str(self.puzzle_num + 1)
+            )
+        self.number_text.z = self.z
+        self.number_text.colour = (0.0, 0.0, 0.0) if self.cleared else (0.3, 0.3, 0.3)
+        self.number_text.shadow = 2
+        self.number_text.shadow_colour = (.5, .5, .5, .5)
 
         if self.cleared:
             self.monochrome_picture = GUI_puzzle_puzzle_item_picture(
@@ -199,12 +216,16 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
             
         #self.saved_icon = GUI_puzzle_puzzle_item_saved_icon(self.game, self)
         self.saved_icon = None
-
+        self.solved_icon = None
+        self.star_icon = None
+        
         if self.cleared:
             self.solved_icon = GUI_puzzle_puzzle_item_solved_icon(self.game, self)
-        else:
-            self.solved_icon = None
-
+            if self.game.manager.current_puzzle_pack in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack]:
+                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack][self.puzzle_filename][0] / 60)
+                if int(seconds / 60) <= 30:
+                    self.star_icon = GUI_puzzle_puzzle_item_star_icon(self.game, self)
+                    
         # draw strategy
         self.draw_strategy = "puzzle_select_puzzle_item"
 
@@ -243,16 +264,21 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         else:
             self.parent.puzzle_name.set_text("? ? ? ?")
             self.parent.puzzle_best_time.set_text("Best time: 00:00:00")
+
+        self.parent.puzzle_size.set_text(str(self.puzzle_info[1]) + "x" + str(self.puzzle_info[2]))
             
 
     def On_Exit(self):
         GUI_element_button.On_Exit(self)
+        self.number_text.Kill()
         self.monochrome_picture.Kill()
         if self.saved_icon:
             self.saved_icon.Kill()
         if self.cleared:
             self.coloured_picture.Kill()
             self.solved_icon.Kill()       
+            if self.star_icon:
+                self.star_icon.Kill()
 
 
 
@@ -283,7 +309,7 @@ class GUI_puzzle_puzzle_item_picture(Puzzle_image):
     def set_position_z_scale(self, x, y):        
         self.z = Z_GUI_OBJECT_LEVEL_5
         scale_start = self.height if self.height > self.width else self.width
-        self.scale = .01 * ((64 / scale_start) * 100)
+        self.scale = .01 * ((76.0 / scale_start) * 100)
         self.x = x - ((self.width * self.scale) / 2)
         self.y = y - ((self.height * self.scale) / 2)
 
@@ -311,3 +337,17 @@ class GUI_puzzle_puzzle_item_solved_icon(Process):
         self.y = self.parent.y + 40 + (self.parent.height / 2)
         self.z = Z_GUI_OBJECT_LEVEL_6
         self.image = self.game.core.media.gfx['gui_puzzle_select_solved_icon']
+
+
+
+class GUI_puzzle_puzzle_item_star_icon(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x - 40 + (self.parent.width / 2)
+        self.y = self.parent.y - 40 + (self.parent.height / 2)
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.image = self.game.core.media.gfx['gui_puzzle_select_star_icon']
+
+

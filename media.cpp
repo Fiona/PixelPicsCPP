@@ -30,6 +30,8 @@ Media::Media()
     fonts.insert(pair<string,Font*>("category_button_completed_count", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("category_button_total_count", new Font("fnt/borisblackbloxx.ttf", 12)));
     fonts.insert(pair<string,Font*>("speech_bubble", new Font("fnt/cookies.ttf", 20)));
+    fonts.insert(pair<string,Font*>("puzzle_select_number", new Font("fnt/cookies.ttf", 30)));
+    fonts.insert(pair<string,Font*>("puzzle_select_size", new Font("fnt/bitmap1.ttf", 12)));
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/gui/stompyblondie_logo.png")));
@@ -82,6 +84,7 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_puzzle_image_unsolved", new Image("gfx/gui/puzzle_image_unsolved.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_solved_icon", new Image("gfx/gui/puzzle_select_solved_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_saved_icon", new Image("gfx/gui/puzzle_select_saved_icon.png")));
+    gfx.insert(pair<string, Image*>("gui_puzzle_select_star_icon", new Image("gfx/gui/puzzle_select_star_icon.png")));
 
     gfx.insert(pair<string, Image*>("gui_chips_happy", new Image("gfx/gui/chips_happy.png")));
     gfx.insert(pair<string, Image*>("gui_speech_bubble", new Image("gfx/gui/speech_bubble.png")));
