@@ -837,7 +837,11 @@ class GUI_puzzle(GUI_element):
             self.game.manager.current_puzzle_state[cell[0]][cell[1]] = cell[2]
             # --- DESIGNER ONLY ---
             if self.game.game_state == GAME_STATE_DESIGNER:
-                self.game.manager.set_puzzle_cell(self.game.manager.current_puzzle, cell[1], cell[0], self.game.manager.current_puzzle_state[cell[0]][cell[1]])
+                self.game.manager.set_puzzle_cell(
+                    self.game.manager.current_puzzle,
+                    cell[1], cell[0],
+                    self.game.manager.current_puzzle_state[cell[0]][cell[1]],
+                    colour = (0.0, 0.0, 0.0) if self.game.manager.current_puzzle_state[cell[0]][cell[1]] else (0.0, 0.0, 1.0))
             # --- DESIGNER ONLY ---
                 
             self.reset_drawing_blacks((cell[0], cell[1]))
