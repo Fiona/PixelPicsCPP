@@ -152,6 +152,7 @@ class Game(Process):
         if state == GAME_STATE_LOGO:
             self.gui.switch_gui_state_to(GUI_STATE_LOGO if gui_state is None else gui_state)
         elif state == GAME_STATE_MENU:
+            self.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
             self.gui.fade_toggle(speed = 120, colour = col)
             self.gui.switch_gui_state_to(GUI_STATE_MENU if gui_state is None else gui_state)
         elif state == GAME_STATE_PUZZLE:
@@ -163,10 +164,12 @@ class Game(Process):
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
         elif state == GAME_STATE_CATEGORY_SELECT:
+            self.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
             self.manager.user_created_puzzles = False
             self.gui.fade_toggle(speed = 60)
             self.gui.switch_gui_state_to(GUI_STATE_CATEGORY_SELECT if gui_state is None else gui_state)
         elif state == GAME_STATE_PUZZLE_SELECT:
+            self.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
             self.gui.fade_toggle(speed = 60)           
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE_SELECT if gui_state is None else gui_state)
         elif state == GAME_STATE_DESIGNER:
