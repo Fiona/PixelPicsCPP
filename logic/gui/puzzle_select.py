@@ -214,10 +214,12 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         else:
             self.monochrome_picture = GUI_puzzle_puzzle_item_picture_unsolved(self.game, self)
             
-        #self.saved_icon = GUI_puzzle_puzzle_item_saved_icon(self.game, self)
         self.saved_icon = None
         self.solved_icon = None
         self.star_icon = None
+
+        if os.path.exists(os.path.join(self.game.core.path_saves_game_directory, self.game.manager.current_puzzle_pack + "_" + self.puzzle_filename + FILE_SAVES_EXTENSION)):
+            self.saved_icon = GUI_puzzle_puzzle_item_saved_icon(self.game, self)
         
         if self.cleared:
             self.solved_icon = GUI_puzzle_puzzle_item_solved_icon(self.game, self)
@@ -232,6 +234,8 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
 
     def mouse_left_up(self):
         self.game.manager.current_puzzle_file = self.puzzle_filename
+        if self.saved_icon:
+            self.game.manager.load_puzzle_state_from = self.game.manager.current_puzzle_pack + "_" + self.puzzle_filename + FILE_SAVES_EXTENSION
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 40)
 
         

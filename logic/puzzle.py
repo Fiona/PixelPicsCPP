@@ -73,6 +73,15 @@ class Puzzle(object):
 
 
 
+class Puzzle_save(object):
+    pack_dir = ""
+    puzzle_filename = ""
+    puzzle_state = []
+    timer = 0
+    lives = 0
+    
+
+
 class Puzzle_manager(object):
 
     current_puzzle_file = "001"
@@ -90,6 +99,8 @@ class Puzzle_manager(object):
 
     game_packs = {}
     game_pack_directory_list = []
+
+    load_puzzle_state_from = ""
 
     user_created_puzzles = False
 
@@ -177,6 +188,10 @@ class Puzzle_manager(object):
             f.close()
         except IOError as e:
             raise e
+
+        if self.load_puzzle_state_from:
+            self.load_puzzle_state(self.load_puzzle_state_from)
+            self.load_puzzle_state_from = ""
 
 
     def reset_puzzle_state(self):
@@ -281,6 +296,61 @@ class Puzzle_manager(object):
         if False in self.current_puzzle_row_completion or False in self.current_puzzle_column_completion:
             return False
         return True
+
+
+    ############################################
+    ## SAVE GAME STUFF
+    ############################################
+
+
+    def save_current_puzzle_state(self):
+        # create save object
+        save = Puzzle_save()
+
+        # Plop save values in it
+        save.pack_dir = self.current_puzzle_pack
+        save.puzzle_filename = self.current_puzzle_file
+        save.puzzle_state = self.current_puzzle_state
+        save.timer = self.game.timer
+        save.lives = self.game.lives
+
+        # get filename we want
+        save_filename = os.path.join(
+            self.game.core.path_saves_user_directory if self.user_created_puzzles else self.game.core.path_saves_game_directory,
+            self.current_puzzle_pack + "_" + self.current_puzzle_file + FILE_SAVES_EXTENSION
+            )
+
+        try:
+            f = open(save_filename, "wb")
+            pickle.dump(save, f)
+            f.close()             
+        except IOError as e:
+            raise e
+
+
+
+    def load_puzzle_state(self, state_filename):
+        try:
+            path = os.path.join(self.game.core.path_saves_game_directory, state_filename)
+            f = open(path, "rb")
+            save = pickle.load(f)
+            
+            if save.pack_dir == self.current_puzzle_pack and save.puzzle_filename == self.current_puzzle_file:
+                self.current_puzzle_state = save.puzzle_state
+                self.game.lives = save.lives
+                self.game.timer = save.timer
+
+                for y in range(self.current_puzzle.height):
+                    self.check_row_completion(y)
+                for x in range(self.current_puzzle.width):
+                    self.check_column_completion(x)
+                
+            f.close()
+
+            os.remove(path)
+        except IOError as e:
+            raise e
+        
 
 
     ############################################

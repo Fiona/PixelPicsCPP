@@ -23,6 +23,7 @@ class GUI_puzzle_container(GUI_element):
     """
     objs = []
     tool = DRAWING_TOOL_STATE_DRAW
+    paused = False
     
     def __init__(self, game, parent = None):
         Process.__init__(self)
@@ -33,17 +34,176 @@ class GUI_puzzle_container(GUI_element):
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
         self.objs = []
+        self.game.paused = False
         
-        GUI_puzzle(self.game, self)
+        self.puzzle = GUI_puzzle(self.game, self)
         if not self.game.freemode:
             self.objs.append(Player_lives(self.game))
         self.objs.append(Timer(self.game))
+
+        GUI_puzzle_pause_button(self.game, self)
+
+
+    def show_menu(self):
+        self.game.paused = True
+        self.menu = GUI_puzzle_pause_menu(self.game, self)        
 
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
         for x in self.objs:
             x.Kill()
+
+
+
+class GUI_puzzle_pause_button(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = Z_GUI_OBJECT_LEVEL_7
+        self.image = self.game.core.media.gfx['gui_button_go_back']
+        self.gui_init()
+        self.x = 8
+        self.y = 8
+        self.width = 128
+        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 8, TEXT_ALIGN_TOP_LEFT, "Pause")
+        self.text.z = self.z - 1
+        self.text.colour = (1.0, 1.0, 1.0)
+        self.text.shadow = 2
+        self.text.shadow_colour = (.2, .2, .2)
+
+        # Draw strategy data
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = True
+        self.primitive_square_filled = True
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_width = 200.0
+        self.primitive_square_height = 45
+        self.primitive_square_four_colours = True
+        self.primitive_square_colour = (
+            (.5, .7, .8, 1.0),
+            (1.0, 1.0, 1.0, 0.0),
+            (1.0, 1.0, 1.0, 0.0),
+            (.5, .7, .8, 1.0)
+            )
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.show_menu()
+
+
+    def On_Exit(self):
+        self.text.Kill()
+
+
+
+class GUI_puzzle_pause_menu(GUI_element):
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+        self.z = Z_GUI_OBJECT_LEVEL_8
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+
+        GUI_puzzle_pause_menu_resume_button(self.game, self)
+        GUI_puzzle_pause_menu_options_button(self.game, self)
+        GUI_puzzle_pause_menu_stop_button(self.game, self)
+        
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
+
+
+    def Get_rid(self):
+        self.game.paused = False
+        self.Kill()
+        
+        
+    def Stop_playing(self):
+        if self.game.game_state == GAME_STATE_TEST:
+            self.game.gui.fade_toggle(self.parent.puzzle.back_to_designer, speed = 60)
+        else:
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
+            self.game.manager.save_current_puzzle_state()
+        self.Kill()
+
+
+
+class GUI_puzzle_pause_menu_resume_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Resume Game"
+    width = 150
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = (self.game.settings['screen_width'] / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - 30
+        self.gui_init()
+        self.x -= self.width / 2
+        self.generic_button_text_object.x -= (self.width / 2)
+
+
+    def mouse_left_up(self):
+        self.parent.Get_rid()
+
+
+
+class GUI_puzzle_pause_menu_options_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Options"
+    width = 150
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = (self.game.settings['screen_width'] / 2)
+        self.y = (self.game.settings['screen_height'] / 2)
+        self.gui_init()
+        self.x -= self.width / 2
+        self.generic_button_text_object.x -= (self.width / 2)
+
+
+    def mouse_left_up(self):
+        self.parent.Get_rid()
+
+
+
+class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Stop Playing"
+    width = 150
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = (self.game.settings['screen_width'] / 2)
+        self.y = (self.game.settings['screen_height'] / 2) + 30
+        self.gui_init()
+        self.x -= self.width / 2
+        self.generic_button_text_object.x -= (self.width / 2)
+
+
+    def mouse_left_up(self):
+        self.parent.Stop_playing()
 
 
 
@@ -177,7 +337,8 @@ class GUI_puzzle(GUI_element):
         # PUZZLE_STATE - Actually solving the puzzle, marking cells
         # ****************
         if self.state == PUZZLE_STATE_SOLVING:
-            self.game.timer += 1
+            if not self.game.paused:
+                self.game.timer+= 1
 
             # --- DESIGNER ONLY ---            
             if self.game.game_state == GAME_STATE_DESIGNER:
@@ -360,6 +521,12 @@ class GUI_puzzle(GUI_element):
                 text.z = Z_GUI_OBJECT_LEVEL_5
                 self.text['cols'][col_num].append(text)
 
+        # Brute force checking line completion because lazy
+        if not self.game.game_state == GAME_STATE_DESIGNER:
+            for i in range(self.game.manager.current_puzzle.width):
+                for j in range(self.game.manager.current_puzzle.height):
+                    self.check_line_completion(j, i)
+       
         # Determine optimum zoom level
         self.hint_number_lengths_row = max(map(len, self.game.manager.current_puzzle.row_numbers)) + 2
         self.row_number_width = self.hint_number_lengths_row * PUZZLE_CELL_WIDTH
@@ -437,6 +604,7 @@ class GUI_puzzle(GUI_element):
                         grid_x = self.grid_gui_x
                             
             for index, text in enumerate(number_list):
+                text.alpha = 1.0 if not self.game.paused else 0.0
                 text.x = grid_x - (((PUZZLE_CELL_WIDTH * index) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = self.grid_gui_y + (((PUZZLE_CELL_HEIGHT * row_num) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level
@@ -454,6 +622,7 @@ class GUI_puzzle(GUI_element):
                         grid_y = self.grid_gui_y
                             
             for index, text in enumerate(number_list):
+                text.alpha = 1.0 if not self.game.paused else 0.0
                 text.x = self.grid_gui_x + (((PUZZLE_CELL_WIDTH * col_num) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = grid_y - (((PUZZLE_CELL_HEIGHT * index) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level

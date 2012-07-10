@@ -46,6 +46,9 @@ class Game(Process):
 
     # Counts frames to keep track of how long has passed while playing a puzzle
     timer = 0
+
+    # If true during puzzles it implies we're in a menu of some kind
+    paused = False
     
     # Self explanitory object pointers and lists
     fps_text = None

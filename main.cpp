@@ -85,18 +85,33 @@ Main_App::Main_App()
     path_application_data += "\\PixelPics";
 #endif
 
+    // Create main directory
     if(!boost::filesystem::exists(path_application_data.c_str()) || !boost::filesystem::is_directory(path_application_data.c_str()))
         boost::filesystem::create_directory(path_application_data.c_str());
+
+    // Create save game directories
+    path_saves_directory = path_application_data + SEPARATOR + FILE_SAVES_DIRECTORY;
+    if(!boost::filesystem::exists(path_saves_directory.c_str()) || !boost::filesystem::is_directory(path_saves_directory.c_str()))
+        boost::filesystem::create_directory(path_saves_directory.c_str());
+
+    path_saves_game_directory = path_application_data + SEPARATOR + FILE_SAVES_DIRECTORY + SEPARATOR + FILE_SAVES_GAME_DIRECTORY;
+    if(!boost::filesystem::exists(path_saves_game_directory.c_str()) || !boost::filesystem::is_directory(path_saves_game_directory.c_str()))
+        boost::filesystem::create_directory(path_saves_game_directory.c_str());
+
+    path_saves_user_directory = path_application_data + SEPARATOR + FILE_SAVES_DIRECTORY + SEPARATOR + FILE_SAVES_USER_DIRECTORY;
+    if(!boost::filesystem::exists(path_saves_user_directory.c_str()) || !boost::filesystem::is_directory(path_saves_user_directory.c_str()))
+        boost::filesystem::create_directory(path_saves_user_directory.c_str());
+
+    // Create pack directory
+    path_user_pack_directory = path_application_data + SEPARATOR + FILE_USER_PACK_DIRECTORY;
+    if(!boost::filesystem::exists(path_user_pack_directory.c_str()) || !boost::filesystem::is_directory(path_user_pack_directory.c_str()))
+        boost::filesystem::create_directory(path_user_pack_directory.c_str());
 
     // Deal with loading default settings etc
     path_settings_file = path_application_data + SEPARATOR + FILE_SETTINGS;
     settings = new Settings(path_settings_file);
 
     // Other settings
-    path_user_pack_directory = path_application_data + SEPARATOR + FILE_USER_PACK_DIRECTORY;
-    if(!boost::filesystem::exists(path_user_pack_directory.c_str()) || !boost::filesystem::is_directory(path_user_pack_directory.c_str()))
-        boost::filesystem::create_directory(path_user_pack_directory.c_str());
-
     path_game_pack_directory = FILE_GAME_PACK_DIRECTORY;
     path_player_progress = path_application_data + SEPARATOR + FILE_PLAYER_PROGRESS;
 
