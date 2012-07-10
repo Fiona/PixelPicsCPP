@@ -460,7 +460,7 @@ class GUI_puzzle(GUI_element):
                     else:
                         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
                         self.game.player_action_cleared_game_puzzle(self.game.manager.current_puzzle_pack, self.game.manager.current_puzzle_file)
-                        self.game.gui.block_gui_mouse_input = False
+                    self.game.gui.block_gui_mouse_input = False
                     self.game.gui.block_gui_keyboard_input = False
                     
             
