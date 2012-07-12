@@ -43,7 +43,7 @@ class GUI_category_select_container(GUI_element):
         categories = [
             ("Tutorial",      "0001", (.5, 1.0, .5)),
             ("Effortless",    "0002", (1.0, .5, .5)),
-            ("Light",         "0003", (1.0, .5, .5)),
+            ("Light",         "0003", (.5, .5, 1.0)),
             ("Piece Of Cake", "0004", (.5, 1.0, 1.0)),
             ("Uncomplicated", "0005", (1.0, .5, 1.0)),
             ("Manageable",    "0006", (1.0, 1.0, .5)),
