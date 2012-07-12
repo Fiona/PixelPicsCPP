@@ -1098,7 +1098,7 @@ class GUI_designer_puzzles_edit_puzzle_dialog(GUI_element_window):
         y = 0
         for text in ["Using this dialog you can edit the name for this puzzle."]:
             txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
-            txt.z = self.z - 1
+            txt.z = self.z - 2
             txt.colour = (0, 0, 0)
             self.objs['text_' + str(y)] = txt
             y += 15
