@@ -60,7 +60,7 @@
 #define PUZZLE_CELL_HEIGHT 64
 #define PUZZLE_HINT_GRADIENT_WIDTH 300.0
 #define PUZZLE_RENDER_CHUNK_SIZE 10
-#define PUZZLE_UNLOCK_THRESHOLD 2
+#define PUZZLE_UNLOCK_THRESHOLD 15
 
 // STD and boost includes
 #include <vector>
