@@ -69,7 +69,7 @@ class GUI_puzzle_pause_button(GUI_element_button):
         self.x = 8
         self.y = 8
         self.width = 128
-        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 8, TEXT_ALIGN_TOP_LEFT, "Pause")
+        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 8, TEXT_ALIGN_TOP_LEFT, "Menu")
         self.text.z = self.z - 1
         self.text.colour = (1.0, 1.0, 1.0)
         self.text.shadow = 2
