@@ -49,6 +49,12 @@ class Game(Process):
 
     # If true during puzzles it implies we're in a menu of some kind
     paused = False
+
+    # list of categories in order that they are to be unlocked
+    game_categories = ["0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011"]
+    
+    # Name of a category that we're going to do the unlock animation on if appropriate
+    category_to_unlock = None    
     
     # Self explanitory object pointers and lists
     fps_text = None
@@ -186,6 +192,9 @@ class Game(Process):
 
 
     def player_action_cleared_game_puzzle(self, category, puzzle):
+        # -----------
+        # Save cleared puzzle and scores
+        # -----------
         # create empty lists if not set
         if not category in self.player.cleared_puzzles:
             self.player.cleared_puzzles[category] = []
@@ -204,7 +213,33 @@ class Game(Process):
         # Add category as being cleared if true
         if len(self.player.cleared_puzzles[category]) >= len(self.manager.current_pack.puzzles) and not category in self.player.cleared_categories:
             self.player.cleared_categories.append(category)
+
+        # -----------
+        # Handle category unlocking
+        # -----------
+        # Gather together how many puzzles we've finished
+        num_puzzles_cleared = 0
+        for cat_name in self.player.cleared_puzzles:
+            # ignore the tutorial
+            if cat_name == "0001":
+                continue
+            for puzzle_name in self.player.cleared_puzzles[cat_name]:
+                num_puzzles_cleared += 1
+
+        # If we determine we should have more categories unlocked that we do
+        # then we determine which category in the sequence we haven't unlocked and
+        # tell the game to unlock it (this is for animation purposes only)
+        # the + 2 is to take into account the default unlocks (tutorial and first category)
+        if ((num_puzzles_cleared / PUZZLE_UNLOCK_THRESHOLD) + 2) > len(self.player.unlocked_categories):
+            for puzzle_cat in self.game_categories:
+                if not puzzle_cat in self.player.unlocked_categories:
+                    self.player.unlocked_categories.append(puzzle_cat)
+                    self.category_to_unlock = puzzle_cat
+                    break
             
+        # -----------
+        # finalise
+        # -----------
         self.save_player(self.player)
 
 
@@ -216,7 +251,7 @@ class Player(object):
     """
     def __init__(self):
         self.unlocked_categories = ["0001", "0002"]
-        self.cleared_categories = ["0001"]
+        self.cleared_categories = []
         self.cleared_puzzles = {}
         self.saved_puzzles = {}
         self.puzzle_scores = {}
