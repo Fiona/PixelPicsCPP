@@ -607,7 +607,8 @@ class GUI_puzzle(GUI_element):
                         grid_x = self.grid_gui_x
                             
             for index, text in enumerate(number_list):
-                text.alpha = 1.0 if not self.game.paused else 0.0
+                if self.state == PUZZLE_STATE_SOLVING:
+                    text.alpha = 1.0 if not self.game.paused else 0.0
                 text.x = grid_x - (((PUZZLE_CELL_WIDTH * index) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = self.grid_gui_y + (((PUZZLE_CELL_HEIGHT * row_num) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level
@@ -625,7 +626,8 @@ class GUI_puzzle(GUI_element):
                         grid_y = self.grid_gui_y
                             
             for index, text in enumerate(number_list):
-                text.alpha = 1.0 if not self.game.paused else 0.0
+                if self.state == PUZZLE_STATE_SOLVING:
+                    text.alpha = 1.0 if not self.game.paused else 0.0
                 text.x = self.grid_gui_x + (((PUZZLE_CELL_WIDTH * col_num) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = grid_y - (((PUZZLE_CELL_HEIGHT * index) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level
