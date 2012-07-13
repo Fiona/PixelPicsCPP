@@ -35,7 +35,10 @@ class Mascot(Process):
     def set_speech(self, to_say):
         if self.speech_bubble:
             self.speech_bubble.Kill()
-        self.speech_bubble = Speech_Bubble(self.game, self, to_say)
+        if not to_say == "":
+            self.speech_bubble = Speech_Bubble(self.game, self, to_say)
+        else:
+            self.speech_bubble = None
 
         
 

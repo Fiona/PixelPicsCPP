@@ -34,10 +34,16 @@ class GUI_category_select_container(GUI_element):
         GUI_category_go_back(self.game, self)
         self.mascot_object = Mascot_Category_Select(self.game)
 
+        if not self.game.category_to_unlock == None:
+            self.mascot_object.set_speech("Wow, you unlocked a new category!")
+            self.game.gui.block_gui_keyboard_input = True
+            self.game.gui.block_gui_mouse_input = True
+            self.game.gui.mouse.alpha = 0.0
+
         categories = [
             ("Tutorial",      "0001", (.5, 1.0, .5)),
             ("Effortless",    "0002", (1.0, .5, .5)),
-            ("Light",         "0003", (1.0, .5, .5)),
+            ("Light",         "0003", (.5, .5, 1.0)),
             ("Piece Of Cake", "0004", (.5, 1.0, 1.0)),
             ("Uncomplicated", "0005", (1.0, .5, 1.0)),
             ("Manageable",    "0006", (1.0, 1.0, .5)),
@@ -71,16 +77,17 @@ class GUI_category_select_container(GUI_element):
     def Execute(self):
         self.update()
 
-        if self.game.gui.mouse.x > (self.game.settings['screen_width'] - 512) and self.game.gui.mouse.y < 50:
-            if self.first_category.y > self.first_category.image.height:
-                self.scroll_speed = 0.0
-            else:
-                self.scroll_speed -= .2
-        if self.game.gui.mouse.x > (self.game.settings['screen_width'] - 512) and self.game.gui.mouse.y > (self.game.settings['screen_height'] - 50):
-            if self.last_category.y < self.game.settings['screen_height'] - (self.last_category.image.height * 2):
-                self.scroll_speed = 0.0
-            else:
-                self.scroll_speed += .2
+        if not self.game.gui.block_gui_mouse_input:
+            if self.game.gui.mouse.x > (self.game.settings['screen_width'] - 512) and self.game.gui.mouse.y < 50:
+                if self.first_category.y > self.first_category.image.height:
+                    self.scroll_speed = 0.0
+                else:
+                    self.scroll_speed -= .2
+            if self.game.gui.mouse.x > (self.game.settings['screen_width'] - 512) and self.game.gui.mouse.y > (self.game.settings['screen_height'] - 50):
+                if self.last_category.y < self.game.settings['screen_height'] - (self.last_category.image.height * 2):
+                    self.scroll_speed = 0.0
+                else:
+                    self.scroll_speed += .2
 
         self.scroll_speed *= .95
 
@@ -117,52 +124,109 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.gui_init()
         self.x = (self.game.settings['screen_width'] / 2) - 25
         self.y = self.image.height + (self.image.height * num) + (32 * num)
-        self.colour = colour
+        self.normal_colour = colour
 
         self.objs = {}
 
         text = Text(self.game.core.media.fonts['category_button_name'], 0, 0, TEXT_ALIGN_CENTER, name)
-        text.z = self.z - 1
+        text.z = self.z - 3
         text.colour = (1.0, 1.0, 1.0)
         text.shadow = 2
         text.shadow_colour = (.2, .2, .2)
         self.objs['cat_name'] = text
 
-        if not self.pack_dir in self.game.player.unlocked_categories:
+        if self.game.category_to_unlock == self.pack_dir or not self.pack_dir in self.game.player.unlocked_categories:
             self.objs['status_icon'] = GUI_category_locked(self.game)
             self.colour = (1.0, 1.0, 1.0)
             self.disabled = True
         else:
-            completed = len(self.game.player.cleared_puzzles[self.pack_dir]) if self.pack_dir in self.game.player.cleared_puzzles else 0
-            text = Text(self.game.core.media.fonts['category_button_completed_count'], 0, 0, TEXT_ALIGN_TOP_RIGHT, str(completed))
-            text.z = self.z - 1
-            text.colour = (1.0, 1.0, 1.0)
-            text.shadow = 2
-            text.shadow_colour = (.2, .2, .2)
-            self.objs['completed_count'] = text
+            self.colour = self.normal_colour
+            self.create_unlocked_objects()
 
-            text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, str(len(self.game.manager.game_packs[self.pack_dir].puzzles)))
-            text.z = self.z - 1
-            text.colour = (1.0, 1.0, 1.0)
-            text.shadow = 2
-            text.shadow_colour = (.2, .2, .2)
-            self.objs['total_count'] = text
+        self.iter = 0
 
-            text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, "solved")
-            text.z = self.z - 1
-            text.colour = (1.0, 1.0, 1.0)
-            text.shadow = 1
-            text.shadow_colour = (.2, .2, .2)
-            self.objs['solved'] = text
-
-            if self.pack_dir in self.game.player.cleared_categories:
-                self.objs['status_icon'] = GUI_category_completed_tick(self.game)
+        self.lock_icon = None
+        self.unlock_mask = None
+        if self.game.category_to_unlock == self.pack_dir:
+            self.anim_state = 0
+        else:
+            self.anim_state = -1            
             
         self.update_obj_positions()
 
 
     def Execute(self):
         GUI_element_button.update(self)
+
+        self.iter += 1
+        if self.anim_state == 0:
+            if self.y > self.game.settings['screen_height'] - (self.image.height * 2):
+                self.parent.scroll_speed += .5
+            else:
+                self.anim_state = 1
+        if self.anim_state == 1:
+            if self.iter > 60:
+                self.iter = 0
+                self.anim_state = 2
+                self.unlock_mask = GUI_category_select_select_category_button_unlock_overlay(self.game, self)
+        elif self.anim_state == 2:
+            self.unlock_mask.alpha = lerp(self.iter, 120, 0.0, 1.0)
+            #self.objs['status_icon'].alpha = lerp(self.iter, 60, self.objs['status_icon'].alpha, 0.0)
+            #self.objs['status_icon'].scale = lerp(self.iter, 60, self.objs['status_icon'].scale, 0.0)
+            if self.iter > 120:
+                self.iter = 0
+                self.objs['status_icon'].image_sequence = 2
+                self.anim_state = 3
+        elif self.anim_state == 3:
+            if self.iter > 5:
+                self.iter = 0
+                self.anim_state = 4
+                self.iter = 0
+                self.game.category_to_unlock = None
+                self.game.gui.block_gui_keyboard_input = False
+                self.game.gui.block_gui_mouse_input = False
+                self.game.gui.mouse.alpha = 1.0
+                self.disabled = False
+                self.colour = self.normal_colour
+                self.lock_icon = self.objs['status_icon']
+                del(self.objs['status_icon'])
+                self.create_unlocked_objects()
+        elif self.anim_state == 4:
+            self.lock_icon.alpha = lerp(self.iter, 120, 1.0, 0.0)
+            self.unlock_mask.alpha = lerp(self.iter, 120, 1.0, 0.0)
+            if self.iter > 120:
+                self.lock_icon.Kill()
+                self.unlock_mask.Kill()
+                self.lock_icon = None
+                self.unlock_mask = None
+                self.anim_state = 5
+                
+
+    def create_unlocked_objects(self):
+        completed = len(self.game.player.cleared_puzzles[self.pack_dir]) if self.pack_dir in self.game.player.cleared_puzzles else 0
+        text = Text(self.game.core.media.fonts['category_button_completed_count'], 0, 0, TEXT_ALIGN_TOP_RIGHT, str(completed))
+        text.z = self.z - 1
+        text.colour = (1.0, 1.0, 1.0)
+        text.shadow = 2
+        text.shadow_colour = (.2, .2, .2)
+        self.objs['completed_count'] = text
+
+        text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, str(len(self.game.manager.game_packs[self.pack_dir].puzzles)))
+        text.z = self.z - 1
+        text.colour = (1.0, 1.0, 1.0)
+        text.shadow = 2
+        text.shadow_colour = (.2, .2, .2)
+        self.objs['total_count'] = text
+
+        text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, "solved")
+        text.z = self.z - 1
+        text.colour = (1.0, 1.0, 1.0)
+        text.shadow = 1
+        text.shadow_colour = (.2, .2, .2)
+        self.objs['solved'] = text
+
+        if self.pack_dir in self.game.player.cleared_categories:
+            self.objs['status_icon'] = GUI_category_completed_tick(self.game)
         
 
     def update_obj_positions(self):
@@ -185,16 +249,47 @@ class GUI_category_select_select_category_button(GUI_element_button):
             self.objs['status_icon'].x = self.x + 64
             self.objs['status_icon'].y = self.y + 32
 
+        if not self.lock_icon is None:
+            self.lock_icon.x = self.x + 64
+            self.lock_icon.y = self.y + 32
+
+        if not self.unlock_mask is None:
+            self.unlock_mask.x = self.x
+            self.unlock_mask.y = self.y
+
 
     def mouse_left_up(self):
+        if self.disabled:
+            return
         self.game.manager.load_pack(self.pack_dir, user_created = False)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
 
     
     def On_Exit(self):
         GUI_element_button.On_Exit(self)
+        if not self.lock_icon is None:
+            self.lock_icon.Kill()
+        if not self.unlock_mask is None:
+            self.unlock_mask.Kill()
         for x in self.objs:
             self.objs[x].Kill()
+
+
+
+class GUI_category_select_select_category_button_unlock_overlay(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.x = self.parent.x
+        self.y = self.parent.y
+        self.alpha = 0.0
+        self.image = self.game.core.media.gfx['gui_button_select_category_unlock_mask']
+
+
+    def get_screen_draw_position(self):
+        return (self.x, self.y)
 
 
 

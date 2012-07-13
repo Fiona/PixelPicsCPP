@@ -69,7 +69,7 @@ class GUI_puzzle_pause_button(GUI_element_button):
         self.x = 8
         self.y = 8
         self.width = 128
-        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 8, TEXT_ALIGN_TOP_LEFT, "Pause")
+        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 8, TEXT_ALIGN_TOP_LEFT, "Menu")
         self.text.z = self.z - 1
         self.text.colour = (1.0, 1.0, 1.0)
         self.text.shadow = 2
@@ -458,8 +458,11 @@ class GUI_puzzle(GUI_element):
                     if self.game.game_state == GAME_STATE_TEST:
                         self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
                     else:
-                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
                         self.game.player_action_cleared_game_puzzle(self.game.manager.current_puzzle_pack, self.game.manager.current_puzzle_file)
+                        if self.game.category_to_unlock is None:
+                            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
+                        else:
+                            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
                     self.game.gui.block_gui_mouse_input = False
                     self.game.gui.block_gui_keyboard_input = False
                     
@@ -604,7 +607,8 @@ class GUI_puzzle(GUI_element):
                         grid_x = self.grid_gui_x
                             
             for index, text in enumerate(number_list):
-                text.alpha = 1.0 if not self.game.paused else 0.0
+                if self.state == PUZZLE_STATE_SOLVING:
+                    text.alpha = 1.0 if not self.game.paused else 0.0
                 text.x = grid_x - (((PUZZLE_CELL_WIDTH * index) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = self.grid_gui_y + (((PUZZLE_CELL_HEIGHT * row_num) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level
@@ -622,7 +626,8 @@ class GUI_puzzle(GUI_element):
                         grid_y = self.grid_gui_y
                             
             for index, text in enumerate(number_list):
-                text.alpha = 1.0 if not self.game.paused else 0.0
+                if self.state == PUZZLE_STATE_SOLVING:
+                    text.alpha = 1.0 if not self.game.paused else 0.0
                 text.x = self.grid_gui_x + (((PUZZLE_CELL_WIDTH * col_num) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = grid_y - (((PUZZLE_CELL_HEIGHT * index) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level
