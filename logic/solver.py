@@ -1608,6 +1608,11 @@ if __name__ == "__main__":
             self.assertGreater(s.call_args_list.count( (([None,None,None,None,None],(4,)),{}) ),1)
             self.assertGreater(s.call_args_list.count( (([None,None,None,True,None],(5,)),{}) ),1)
 
+        def test_clears_sequence_cache_between_sequence_processors(self):
+            # TODO
+            self.assertTrue(False)
+
+
         def test_throws_guesses_exceeded_exception(self):
             # test that the solver throws GuessesExceededException if
             # it cannot solve the puzzle after making the specified
@@ -1718,7 +1723,8 @@ if __name__ == "__main__":
             # test that the wrapper extracts the puzzle hints and passes them
             # to the solver correctly
             
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processor=None,
+			seq_priority_stgy=None):
                 yield
                 yield
                 yield [[None]*5]*5,False
@@ -1733,13 +1739,14 @@ if __name__ == "__main__":
                 res = proc.next()
             
             self.assertEquals(1,len(s.call_args_list))
-            self.assertEquals( (([(2,),(4,),(4,),(4,),(2,)],[(1,1),(5,),(5,),(3,),(1,)]),{}),
-                s.call_args_list[0] )
+            self.assertEquals( ([(2,),(4,),(4,),(4,),(2,)],[(1,1),(5,),(5,),(3,),(1,)]),
+                s.call_args_list[0][0] )
         
         def test_solved_returned(self):
             # test that the wrapper correctly yields the board's solved status
             
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processors=None,
+        		seq_priority_stgy=None):
                 yield
                 yield HEART_SOL,True
                 
@@ -1756,7 +1763,8 @@ if __name__ == "__main__":
         def test_contradiction_exception_raised(self):
             # test that wrapper allows ContradictionException to bubble up
             
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processor=None,
+			seq_priority_stgy=None):
                 yield
                 raise ContradictionException()
                 
@@ -1774,7 +1782,8 @@ if __name__ == "__main__":
         def test_ambiguous_exception_raised(self):
             # test that the wrapper allows AmbiguousException to bubble up
                         
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processor=None,
+			seq_priority_stgy=None):
                 yield
                 raise AmbiguousException()
                 
@@ -1792,7 +1801,8 @@ if __name__ == "__main__":
         def test_guesses_exceeded_exception_raised(self):
             # test that the wrapper allows GuessesExceededException to bubble up
             
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processor=None,
+			seq_priority_stgy=None):
                 yield
                 raise GuessesExceededException()
                 
