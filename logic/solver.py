@@ -1,4 +1,4 @@
-"""
+""" 
 PixelPics - Nonogram game
 (c) Stompy Blondie 2011/2012 http://stompyblondie.com
 """
@@ -444,6 +444,7 @@ def solve_state(cols,rows,board,processfirst,seq_processors,seq_priority_stgy,
     # attempt to line-solve the board, using available line-solvers
     for processor in seq_processors:
         solved = None
+        if cache is not None: cache = {}
         proc = seq_solve(cols,rows,board,processfirst,processor,seq_priority_stgy,
                 cache)
         while solved is None:
@@ -1608,6 +1609,26 @@ if __name__ == "__main__":
             self.assertGreater(s.call_args_list.count( (([None,None,None,None,None],(4,)),{}) ),1)
             self.assertGreater(s.call_args_list.count( (([None,None,None,True,None],(5,)),{}) ),1)
 
+        def test_clears_sequence_cache_between_sequence_processors(self):
+            
+            def processor_gen(cells,hints):
+                yield []
+            
+            s1 = mock.Mock(side_effect=processor_gen)
+            s2 = mock.Mock(side_effect=processor_gen)
+            
+            res = None
+            proc = solve(HEART[0],HEART[1],None,True,[s1,s2],self.seqpri)
+            while res is None:
+                res = proc.next()
+            
+            self.assertTrue( (([None,None,None,None,None],(4,)),{}) in s1.call_args_list)
+            self.assertTrue( (([None,None,None,None,None],(5,)),{}) in s1.call_args_list)
+            # Same queries should be made on the second processor, because results of 
+            # the first are not cached
+            self.assertTrue( (([None,None,None,None,None],(4,)),{}) in s2.call_args_list)
+            self.assertTrue( (([None,None,None,None,None],(5,)),{}) in s2.call_args_list)
+
         def test_throws_guesses_exceeded_exception(self):
             # test that the solver throws GuessesExceededException if
             # it cannot solve the puzzle after making the specified
@@ -1718,7 +1739,8 @@ if __name__ == "__main__":
             # test that the wrapper extracts the puzzle hints and passes them
             # to the solver correctly
             
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processor=None,
+			seq_priority_stgy=None):
                 yield
                 yield
                 yield [[None]*5]*5,False
@@ -1733,13 +1755,14 @@ if __name__ == "__main__":
                 res = proc.next()
             
             self.assertEquals(1,len(s.call_args_list))
-            self.assertEquals( (([(2,),(4,),(4,),(4,),(2,)],[(1,1),(5,),(5,),(3,),(1,)]),{}),
-                s.call_args_list[0] )
+            self.assertEquals( ([(2,),(4,),(4,),(4,),(2,)],[(1,1),(5,),(5,),(3,),(1,)]),
+                s.call_args_list[0][0] )
         
         def test_solved_returned(self):
             # test that the wrapper correctly yields the board's solved status
             
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processors=None,
+        		seq_priority_stgy=None):
                 yield
                 yield HEART_SOL,True
                 
@@ -1756,7 +1779,8 @@ if __name__ == "__main__":
         def test_contradiction_exception_raised(self):
             # test that wrapper allows ContradictionException to bubble up
             
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processor=None,
+			seq_priority_stgy=None):
                 yield
                 raise ContradictionException()
                 
@@ -1774,7 +1798,8 @@ if __name__ == "__main__":
         def test_ambiguous_exception_raised(self):
             # test that the wrapper allows AmbiguousException to bubble up
                         
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processor=None,
+			seq_priority_stgy=None):
                 yield
                 raise AmbiguousException()
                 
@@ -1792,7 +1817,8 @@ if __name__ == "__main__":
         def test_guesses_exceeded_exception_raised(self):
             # test that the wrapper allows GuessesExceededException to bubble up
             
-            def svr_gen(cols,rows):
+            def svr_gen(cols,rows,guesses=0,caching=False,seq_processor=None,
+			seq_priority_stgy=None):
                 yield
                 raise GuessesExceededException()
                 
