@@ -1,4 +1,4 @@
-"""
+""" 
 PixelPics - Nonogram game
 (c) Stompy Blondie 2011/2012 http://stompyblondie.com
 """
@@ -444,6 +444,7 @@ def solve_state(cols,rows,board,processfirst,seq_processors,seq_priority_stgy,
     # attempt to line-solve the board, using available line-solvers
     for processor in seq_processors:
         solved = None
+        if cache is not None: cache = {}
         proc = seq_solve(cols,rows,board,processfirst,processor,seq_priority_stgy,
                 cache)
         while solved is None:
@@ -1609,9 +1610,24 @@ if __name__ == "__main__":
             self.assertGreater(s.call_args_list.count( (([None,None,None,True,None],(5,)),{}) ),1)
 
         def test_clears_sequence_cache_between_sequence_processors(self):
-            # TODO
-            self.assertTrue(False)
-
+            
+            def processor_gen(cells,hints):
+                yield []
+            
+            s1 = mock.Mock(side_effect=processor_gen)
+            s2 = mock.Mock(side_effect=processor_gen)
+            
+            res = None
+            proc = solve(HEART[0],HEART[1],None,True,[s1,s2],self.seqpri)
+            while res is None:
+                res = proc.next()
+            
+            self.assertTrue( (([None,None,None,None,None],(4,)),{}) in s1.call_args_list)
+            self.assertTrue( (([None,None,None,None,None],(5,)),{}) in s1.call_args_list)
+            # Same queries should be made on the second processor, because results of 
+            # the first are not cached
+            self.assertTrue( (([None,None,None,None,None],(4,)),{}) in s2.call_args_list)
+            self.assertTrue( (([None,None,None,None,None],(5,)),{}) in s2.call_args_list)
 
         def test_throws_guesses_exceeded_exception(self):
             # test that the solver throws GuessesExceededException if
