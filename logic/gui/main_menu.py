@@ -13,6 +13,7 @@ from core import *
 from consts import *
 from helpers  import *
 from gui.gui_elements import *
+from gui.options import *
 
 
 class GUI_main_menu_container(GUI_element):
@@ -220,7 +221,7 @@ class GUI_main_menu_options_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
-        pass
+        GUI_options(self.game, self.parent)
 
 
 

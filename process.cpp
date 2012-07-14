@@ -816,6 +816,62 @@ void Process::Draw_strategy_primitive_square()
 }
 
 
+
+void Process::Draw_strategy_primitive_line()
+{
+
+    glPushMatrix();
+
+    boost::python::tuple colour = boost::python::extract<boost::python::tuple>(self_.attr("primitive_line_colour"))();
+    boost::python::tuple col_1 = boost::python::extract<boost::python::tuple>(colour[0]);
+    boost::python::tuple col_2 = boost::python::extract<boost::python::tuple>(colour[1]);
+    boost::python::tuple position = boost::python::extract<boost::python::tuple>(self_.attr("primitive_line_position"))();
+    boost::python::tuple vertex_1 = boost::python::extract<boost::python::tuple>(position[0]);
+    boost::python::tuple vertex_2 = boost::python::extract<boost::python::tuple>(position[1]);
+
+    float line_width;
+    if(hasattr(self_, "primitive_line_width"))
+        line_width = boost::python::extract<float>(self_.attr("primitive_line_width"));
+    else
+        line_width = 1.0;
+
+    glDisable(GL_TEXTURE_2D);
+
+    glLineWidth(line_width);                
+    glBegin(GL_LINES);
+    glColor4f(
+        boost::python::extract<float>(col_1[0]),
+        boost::python::extract<float>(col_1[1]),
+        boost::python::extract<float>(col_1[2]),
+        boost::python::extract<float>(col_1[3])
+        );
+    glVertex2f(boost::python::extract<float>(vertex_1[0]), boost::python::extract<float>(vertex_1[1]));
+    glColor4f(
+        boost::python::extract<float>(col_2[0]),
+        boost::python::extract<float>(col_2[1]),
+        boost::python::extract<float>(col_2[2]),
+        boost::python::extract<float>(col_2[3])
+        );
+    glVertex2f(boost::python::extract<float>(vertex_2[0]), boost::python::extract<float>(vertex_2[1]));
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+
+    glPopMatrix();
+
+    bool call_parent;
+    if(hasattr(self_, "draw_strategy_call_parent"))
+        call_parent = boost::python::extract<bool>(self_.attr("draw_strategy_call_parent"));
+    else
+        call_parent = True;
+
+    if(call_parent)
+        this->Draw();
+
+}
+
+
+
 void Process::Draw_strategy_puzzle_pixel_message()
 {
 

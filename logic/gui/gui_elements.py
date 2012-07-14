@@ -292,7 +292,7 @@ class GUI_element_button(GUI_element):
     def mouse_over(self):
         if self.disabled:
             return
-        if self.sequence_count > 1:
+        if self.sequence_count > 1 and not (self.toggle_button and self.toggle_state):
             self.image_sequence = 2
 
 
@@ -1329,3 +1329,93 @@ class GUI_element_spinner_button_up(GUI_element_button):
         GUI_element_button.mouse_left_up(self)
         self.spinner_wait = 0
         self.parent.increase_current_value()
+
+
+
+class GUI_element_yes_no_radios(GUI_element):
+    current_value = True
+    yes_text = "Yes"
+    no_text = "No"
+    text = []
+    buttons = []
+
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+
+    def gui_init(self):
+        GUI_element.gui_init(self)
+        self.width = 200
+        self.height = 25
+        self.buttons = {}
+        self.text = []
+    
+        self.buttons['yes'] = GUI_element_single_radio_button(self.game, self, self.press_yes)
+        self.buttons['yes'].x = self.x
+        self.buttons['yes'].y = self.y
+        self.buttons['yes'].on_press = self.press_yes
+        text = Text(self.game.core.media.fonts["basic"], self.x + 30.0, self.y, TEXT_ALIGN_TOP_LEFT, self.yes_text)
+        text.z = self.z - 1
+        text.colour = (0.0,0.0,0.0)
+        self.text.append(text)
+
+        self.buttons['no'] = GUI_element_single_radio_button(self.game, self, self.press_no)
+        self.buttons['no'].x = self.x + 65
+        self.buttons['no'].y = self.y
+        self.buttons['no'].on_press = self.press_no
+        text = Text(self.game.core.media.fonts["basic"], self.x + 95.0, self.y, TEXT_ALIGN_TOP_LEFT, self.no_text)
+        text.z = self.z - 1
+        text.colour = (0.0,0.0,0.0)
+        self.text.append(text)
+
+        if self.current_value == True:
+            self.buttons['yes'].toggle_state = True
+        else:
+            self.buttons['no'].toggle_state = True
+        
+
+    def press_yes(self):
+        self.current_value = True
+        self.buttons['yes'].toggle_state = True
+        self.buttons['no'].toggle_state = False
+    
+
+    def press_no(self):
+        self.current_value = False
+        self.buttons['no'].toggle_state = True
+        self.buttons['yes'].toggle_state = False
+    
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        for x in self.text:
+            x.Kill()
+
+
+
+class GUI_element_single_radio_button(GUI_element_button):
+    generic_button = False
+    toggle_button = True
+    width = 60
+    height = 22
+
+    def __init__(self, game, parent, action = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.action = action
+        self.gui_init()
+
+        
+    def gui_init(self):
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_radio_button']
+        GUI_element_button.gui_init(self)
+
+
+    def mouse_left_up(self):
+        if not self.action is None:
+            self.action()

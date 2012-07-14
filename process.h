@@ -88,6 +88,7 @@ public:
 
     // Draw strategies
     void Draw_strategy_primitive_square();
+    void Draw_strategy_primitive_line();
     void Draw_strategy_gui_button();
     void Draw_strategy_gui_window_frame();
     void Draw_strategy_gui_text_input();

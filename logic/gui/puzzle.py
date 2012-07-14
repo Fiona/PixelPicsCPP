@@ -13,6 +13,7 @@ from core import *
 from consts import *
 from helpers  import *
 from gui.gui_elements import *
+from gui.options import *
 from solver import verify_puzzle, ContradictionException, AmbiguousException, GuessesExceededException
 
 
@@ -181,6 +182,7 @@ class GUI_puzzle_pause_menu_options_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_options(self.game)
         self.parent.Get_rid()
 
 
