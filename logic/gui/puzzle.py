@@ -996,10 +996,16 @@ class GUI_puzzle(GUI_element):
             # If the total cells filled is more than the total number of cells in this row then something is very wrong and we reset the colours
             # of every hint
             total_num = 0
+            row_is_messed_up = True
             for cell in self.game.manager.current_puzzle_state[row_index]:
                 if cell:
                     total_num += 1
-            if total_num > sum(self.game.manager.current_puzzle.row_numbers[row_index]):
+                # If we've filled the entire line and the "check_row_completion" was inconclusive
+                # then we can assume that something royally messed up and so the entire row will be marked as unsolved.
+                if cell is None:
+                    row_is_messed_up = False
+                    
+            if row_is_messed_up or total_num > sum(self.game.manager.current_puzzle.row_numbers[row_index]):
                 for text in self.text['rows'][row_index]:
                     text.colour = PUZZLE_HINT_COLOUR
 
@@ -1082,10 +1088,16 @@ class GUI_puzzle(GUI_element):
             # If the total cells filled is more than the total number of cells in this column then something is very wrong and we reset the colours
             # of every hint
             total_num = 0
+            column_is_messed_up = True
             for row, cell in enumerate(column_cells):
                 if self.game.manager.current_puzzle_state[row][column_index]:
                     total_num += 1
-            if total_num > sum(self.game.manager.current_puzzle.column_numbers[column_index]):
+                # If we've filled the entire line and the "check_row_completion" was inconclusive
+                # then we can assume that something royally messed up and so the entire col will be marked as unsolved.
+                if self.game.manager.current_puzzle_state[row][column_index] is None:
+                    column_is_messed_up = False
+                    
+            if column_is_messed_up or total_num > sum(self.game.manager.current_puzzle.column_numbers[column_index]):
                 for text in self.text['cols'][column_index]:
                     text.colour = PUZZLE_HINT_COLOUR
 
