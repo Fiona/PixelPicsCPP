@@ -30,13 +30,33 @@ bool Main_App::On_Init()
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
     Uint32 flags = SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL;
 
+    // Get all the allowed screen modes
+    SDL_Rect** modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+    for(int i = 0; modes[i]; ++i)
+    {
+        if(modes[i]->w < DEFAULT_SETTING_SCREEN_WIDTH || modes[i]->h < DEFAULT_SETTING_SCREEN_HEIGHT)
+            continue;
+        vector<float> size;
+        size.push_back(modes[i]->w); size.push_back(modes[i]->h);
+        allowed_screen_sizes.push_back(size);
+    }
+
     if(settings->full_screen)
         flags |= SDL_FULLSCREEN;
 
     surf_display = SDL_SetVideoMode(settings->screen_width, settings->screen_height, 32, flags);
 
     if(surf_display == NULL)
-        return False;
+    {
+
+        settings->screen_width = DEFAULT_SETTING_SCREEN_WIDTH;
+        settings->screen_height = DEFAULT_SETTING_SCREEN_HEIGHT;
+
+        surf_display = SDL_SetVideoMode(settings->screen_width, settings->screen_height, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
+        if(surf_display == NULL)
+            return False;
+
+    }
 
 	SDL_WM_SetIcon(IMG_Load("gfx/pixelpics.png"), NULL);
 
@@ -91,6 +111,7 @@ bool Main_App::On_Init()
     draw_strategies["puzzle_pixel_message"] = &Process::Draw_strategy_puzzle_pixel_message;
     draw_strategies["gui_designer_packs_pack_item"] = &Process::Draw_strategy_gui_designer_packs_pack_item;
     draw_strategies["gui_spinner"] = &Process::Draw_strategy_gui_spinner;
+    draw_strategies["gui_slider"] = &Process::Draw_strategy_gui_slider;
     draw_strategies["gui_designer_designer_menu_bar"] = &Process::Draw_strategy_gui_designer_designer_menu_bar;
     draw_strategies["gui_designer_monochrome_puzzle_image"] = &Process::Draw_strategy_gui_designer_monochrome_puzzle_image;
     draw_strategies["designer_puzzle_background_item"] = &Process::Draw_strategy_designer_puzzle_background_item;

@@ -168,8 +168,8 @@ class GUI(Process):
             """
             if not self.block_gui_keyboard_input:
                 # Back to menu on escape
-                if self.game.core.Keyboard_key_released(key.ESCAPE):
-                    self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 120)
+                if not self.game.paused and self.game.core.Keyboard_key_released(key.ESCAPE):
+                    self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container'].show_menu()
 
             if not self.block_gui_mouse_input:
                 self.do_mouse_wheel_zooming()

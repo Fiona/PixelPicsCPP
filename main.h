@@ -40,6 +40,10 @@
 #define DEFAULT_SETTING_SCREEN_WIDTH 1024
 #define DEFAULT_SETTING_SCREEN_HEIGHT 768
 #define DEFAULT_SETTING_FULL_SCREEN "0"
+#define DEFAULT_SETTING_SOUND_EFFECTS_ON "1"
+#define DEFAULT_SETTING_MUSIC_ON "1"
+#define DEFAULT_SETTING_SOUND_EFFECTS_VOL "100"
+#define DEFAULT_SETTING_MUSIC_VOL "100"
 
 // Misc defines
 #define FILE_SETTINGS "settings.json"
@@ -151,6 +155,8 @@ public:
 
     Mouse* mouse;
 
+    vector< vector<float> > allowed_screen_sizes;
+
     static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
     static void HSVtoRGB(float h, float s, float v, vector<int> *pixel);
     tuple<int, int, int> PyHSVtoRGB(float h, float s, float v);
@@ -205,6 +211,10 @@ public:
     float screen_width;
     float screen_height;
     bool full_screen;
+    bool sound_effects_on;
+    bool music_on;
+    int sound_effects_vol;
+    int music_vol;
 
     bool save();
 };

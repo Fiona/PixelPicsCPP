@@ -51,6 +51,7 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_button_spinner_up", new Image("gfx/gui/button_spinner_up.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_dropdown_arrow", new Image("gfx/gui/dropdown_arrow.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_radio_button", new Image("gfx/gui/radio_button.png", True, 4)));
+    gfx.insert(pair<string, Image*>("gui_slider_handle", new Image("gfx/gui/slider_handle.png", True, 2)));
 
     gfx.insert(pair<string, Image*>("gui_main_menu_title_pixel", new Image("gfx/gui/main_menu_title_pixel.png")));
     gfx.insert(pair<string, Image*>("gui_main_menu_background", new Image("gfx/gui/main_menu_background.png")));

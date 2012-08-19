@@ -25,7 +25,11 @@ class Game(Process):
     settings = {
         'screen_width' : 1,
         'screen_height' : 1,
-        'full_screen' : 1
+        'full_screen' : 1,
+        'music_on' : 1,
+        'sound_effects_on' : 1,
+        'music_vol' : 100,
+        'sound_effects_vol' : 100
         }
     
     # UUID tying an author to puzzle packs
@@ -83,6 +87,10 @@ class Game(Process):
         self.settings['screen_width'] = self.core.settings.screen_width
         self.settings['screen_height'] = self.core.settings.screen_height
         self.settings['full_screen'] = self.core.settings.full_screen
+        self.settings['music_on'] = self.core.settings.music_on
+        self.settings['sound_effects_on'] = self.core.settings.sound_effects_on
+        self.settings['music_vol'] = self.core.settings.music_vol
+        self.settings['sound_effects_vol'] = self.core.settings.sound_effects_vol
         self.author_id = self.core.author_id
         self.load_player()
 

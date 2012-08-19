@@ -418,12 +418,21 @@ Settings::Settings(string _filename)
         pt.put("screen_width", DEFAULT_SETTING_SCREEN_WIDTH);
         pt.put("screen_height", DEFAULT_SETTING_SCREEN_HEIGHT);
         pt.put("full_screen", DEFAULT_SETTING_FULL_SCREEN);
+        pt.put("sound_effects_on", DEFAULT_SETTING_SOUND_EFFECTS_ON);
+        pt.put("music_on", DEFAULT_SETTING_MUSIC_ON);
+        pt.put("sound_effects_vol", DEFAULT_SETTING_SOUND_EFFECTS_VOL);
+        pt.put("music_vol", DEFAULT_SETTING_MUSIC_VOL);
+
 		write_json(filename, pt);
     }
 
     screen_width = pt.get<float>("screen_width");
     screen_height = pt.get<float>("screen_height");
     full_screen = pt.get<bool>("full_screen");
+    sound_effects_on = pt.get<bool>("sound_effects_on");
+    music_on = pt.get<bool>("music_on");
+    sound_effects_vol = pt.get<int>("sound_effects_vol");
+    music_vol = pt.get<int>("music_vol");
 
 }
 
@@ -436,6 +445,10 @@ bool Settings::save()
     pt.put("screen_width", screen_width);
     pt.put("screen_height", screen_height);
     pt.put("full_screen", full_screen);
+    pt.put("music_on", music_on);
+    pt.put("sound_effects_on", sound_effects_on);
+    pt.put("sound_effects_vol", sound_effects_vol);
+    pt.put("music_vol", music_vol);
     try
     {
         write_json(filename, pt);

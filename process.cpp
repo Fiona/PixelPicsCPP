@@ -497,6 +497,63 @@ void Process::Draw_strategy_gui_spinner()
 }
 
 
+
+void Process::Draw_strategy_gui_slider()
+{
+
+    if(alpha <= 0.0f)
+        return;
+
+    // Clip the process if necessary
+    if(clip[2] > 0 && clip[3] > 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(
+            clip[0],
+            Main_App::screen_height - clip[1] - clip[3],
+            clip[2],
+            clip[3]
+            );
+    }
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    tuple<float, float> draw_pos = get_screen_draw_position();
+    float draw_x = draw_pos.get<0>();
+    float draw_y = draw_pos.get<1>();
+
+    glPushMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
+    glBegin(GL_QUADS);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glColor4f(0.2f, 0.2f, 0.2f, 1.0f);
+    glLineWidth(1.0f);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+
+    glPopMatrix();
+
+    // Stop clipping
+    if(clip[2] > 0 && clip[3] > 0)
+        glDisable(GL_SCISSOR_TEST);
+
+}
+
+
 void Process::Draw_strategy_gui_designer_designer_menu_bar()
 {
 

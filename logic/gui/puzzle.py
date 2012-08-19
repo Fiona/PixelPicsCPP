@@ -182,8 +182,7 @@ class GUI_puzzle_pause_menu_options_button(GUI_element_button):
 
 
     def mouse_left_up(self):
-        GUI_options(self.game)
-        self.parent.Get_rid()
+        GUI_options(self.game, self.parent)
 
 
 

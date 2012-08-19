@@ -979,7 +979,7 @@ class GUI_element_dropdown(GUI_element):
     def gui_init(self):
         GUI_element.gui_init(self)
 
-        self.z = Z_GUI_OBJECT_LEVEL_9
+        self.z = Z_GUI_OBJECT_LEVEL_11
         
         self.currently_selected_object = GUI_element_dropdown_currently_selected(self.game, self)
         self.currently_selected_object.width = self.display_width
@@ -991,7 +991,7 @@ class GUI_element_dropdown(GUI_element):
         self.options_object.width = self.display_width
         self.options_object.x = self.display_x
         self.options_object.y = self.display_y + self.display_height
-        self.options_object.z = Z_GUI_OBJECT_LEVEL_9 - 1
+        self.options_object.z = Z_GUI_OBJECT_LEVEL_11 - 1
 
         self.set_visible_selected_text()
 
@@ -1419,3 +1419,88 @@ class GUI_element_single_radio_button(GUI_element_button):
     def mouse_left_up(self):
         if not self.action is None:
             self.action()
+
+
+
+class GUI_element_slider(GUI_element):
+    width = 300
+    height = 16
+
+    min_value = 0
+    max_value = 100
+
+    current_value = 50
+    current_value_percentage = 50
+
+    slider_handle = None
+    
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+        
+    def gui_init(self):
+        GUI_element.gui_init(self)
+        self.slider_handle = GUI_element_slider_handle(self.game, self)
+        #self.draw_strategy = "gui_slider"
+        self.set_value(self.current_value)
+
+        self.draw_strategy = "gui_slider"
+
+
+    def mouse_over(self):
+        self.slider_handle.highlight = True
+
+
+    def mouse_out(self):
+        self.slider_handle.highlight = False
+
+
+    def mouse_left_down(self):
+        self.current_value_percentage = int((float(self.game.gui.mouse.x - self.x) / self.width) * 100)
+        if self.current_value_percentage < 0:
+            self.current_value_percentage = 0
+        elif self.current_value_percentage > 100:
+            self.current_value_percentage = 100
+        self.set_value(int(((self.max_value - self.min_value) * (float(self.current_value_percentage) / 100)) + self.min_value))
+
+
+    def set_value(self, new_value):
+        self.current_value = new_value
+        if self.current_value < self.min_value:
+            self.current_value = self.min_value
+        if self.current_value > self.max_value:
+            self.current_value = self.max_value
+        self.current_value_percentage = (float(self.current_value - self.min_value) / (self.max_value - self.min_value)) * 100
+
+
+    def slider_dragged(self):
+        """
+        Called when the slider is dragged. Designed to be
+        overridden to add custom behaviour.
+        """
+        pass
+
+
+    def On_Exit(self):
+        self.slider_handle.Kill()
+
+
+
+class GUI_element_slider_handle(Process):
+    
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.y = self.parent.y + (self.parent.height / 2)
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_slider_handle']
+        self.highlight = False
+
+
+    def Execute(self):
+        self.image_sequence = 2 if self.highlight else 1
+        self.x = self.parent.x + ((self.parent.width + 2) * (float(self.parent.current_value_percentage) / 100))

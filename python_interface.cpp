@@ -72,6 +72,11 @@ BOOST_PYTHON_MODULE(core)
         .add_property("screen_width", make_getter(&Settings::screen_width), make_setter(&Settings::screen_width))
         .add_property("screen_height", make_getter(&Settings::screen_height), make_setter(&Settings::screen_height))
         .add_property("full_screen", make_getter(&Settings::full_screen), make_setter(&Settings::full_screen))
+        .add_property("music_on", make_getter(&Settings::music_on), make_setter(&Settings::music_on))
+        .add_property("sound_effects_on", make_getter(&Settings::sound_effects_on), make_setter(&Settings::sound_effects_on))
+        .add_property("music_vol", make_getter(&Settings::music_vol), make_setter(&Settings::music_vol))
+        .add_property("sound_effects_vol", make_getter(&Settings::sound_effects_vol), make_setter(&Settings::sound_effects_vol))
+        .def("save", &Settings::save)
         ;
 
     // Expose common vectors
@@ -79,6 +84,8 @@ BOOST_PYTHON_MODULE(core)
         .def(boost::python::vector_indexing_suite<std::vector<float> >());
     boost::python::class_<std::vector<int> >("IntVector")
         .def(boost::python::vector_indexing_suite<std::vector<int> >());
+    boost::python::class_<std::vector< std::vector<float> > >("FloatVectorVector")
+        .def(boost::python::vector_indexing_suite<std::vector< std::vector<float> > >());
 
     // Expose Process object
     class_<Process, ProcessWrapper, boost::noncopyable, boost::shared_ptr<ProcessWrapper> >("Process", init<>())
@@ -170,6 +177,7 @@ BOOST_PYTHON_MODULE(core)
         .add_property("path_saves_directory", make_getter(&Main_App::path_saves_directory))
         .add_property("path_saves_game_directory", make_getter(&Main_App::path_saves_game_directory))
         .add_property("path_saves_user_directory", make_getter(&Main_App::path_saves_user_directory))
+        .add_property("allowed_screen_sizes", make_getter(&Main_App::allowed_screen_sizes))
         .def("Keyboard_key_down", &Main_App::Keyboard_key_down)
         .def("Keyboard_key_released", &Main_App::Keyboard_key_released)
         .def("Toggle_text_input", &Main_App::Toggle_text_input)

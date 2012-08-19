@@ -99,6 +99,7 @@ public:
     void Draw_strategy_gui_scroll_window();
     void Draw_strategy_gui_designer_packs_pack_item();
     void Draw_strategy_gui_spinner();
+    void Draw_strategy_gui_slider();
     void Draw_strategy_gui_designer_designer_menu_bar();
     void Draw_strategy_gui_designer_monochrome_puzzle_image();
     void Draw_strategy_designer_puzzle_background_item();
