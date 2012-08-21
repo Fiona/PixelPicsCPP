@@ -285,8 +285,8 @@ class GUI_designer_packs_edit_pack_puzzle_type_dropdown(GUI_element_dropdown):
     display_height = 25
 
     dropdown_options = [
-        {'text' : "Normal Mode (lives)", 'data' : 'normal'},
-        {'text' : "Freemode (no lives)", 'data' : 'freemode'}
+        {'text' : "Lives on (Easy)", 'data' : 'normal'},
+        {'text' : "Lives off (Hard)", 'data' : 'freemode'}
         ]
 
     selected_item = 0
