@@ -745,7 +745,7 @@ class GUI_designer_puzzles_create_puzzle(GUI_element_button):
 
 class GUI_designer_puzzles_add_puzzle_dialog(GUI_element_window):
     title = "Create Puzzle"
-    height = 150
+    height = 185
     width = 450
     objs = {}
 
@@ -772,14 +772,16 @@ class GUI_designer_puzzles_add_puzzle_dialog(GUI_element_window):
 
         self.objs = {}
         y = 0
-        for text in ["Enter a name for your new puzzle."]:
+        for text in ["Which size puzzle would you like to create?", "You can alter this later."]:
             txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
             txt.z = self.z - 2
             txt.colour = (0, 0, 0)
             self.objs['text_' + str(y)] = txt
             y += 15
 
-        self.puzzle_name_text = GUI_designer_puzzles_add_puzzle_puzzle_name_text_input(self.game, self)
+        #self.puzzle_name_text = GUI_designer_puzzles_add_puzzle_puzzle_name_text_input(self.game, self)
+        self.puzzle_width = GUI_designer_puzzles_add_puzzle_puzzle_width_input(self.game, self)
+        self.puzzle_height = GUI_designer_puzzles_add_puzzle_puzzle_height_input(self.game, self)
         GUI_designer_puzzles_add_puzzle_puzzle_confirm_button(self.game, self)
         GUI_designer_puzzle_add_puzzle_puzzle_cancel_button(self.game, self)
         self.game.gui.block_gui_keyboard_input = True
@@ -793,7 +795,7 @@ class GUI_designer_puzzles_add_puzzle_dialog(GUI_element_window):
         dont_kill = False
         
         try:
-            self.game.manager.add_new_puzzle(self.puzzle_name_text.current_text, self.game.manager.current_puzzle_pack, width = 5, height = 5)
+            self.game.manager.add_new_puzzle("New Puzzle", self.game.manager.current_puzzle_pack, width = self.puzzle_width.current_value, height = self.puzzle_height.current_value)
         except IOError as e:
             GUI_element_dialog_box(self.game, self.parent, "Input error", [str(e)])
             dont_kill = True
@@ -830,6 +832,40 @@ class GUI_designer_puzzles_add_puzzle_puzzle_name_text_input(GUI_element_text_in
 
 
 
+class GUI_designer_puzzles_add_puzzle_puzzle_width_input(GUI_element_spinner):
+    label = "Width:  "
+    min_value = 5
+    max_value = 40
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = self.parent.x + 30
+        self.y = self.parent.y + 70
+        self.current_value = 5
+        self.gui_init()
+
+
+
+class GUI_designer_puzzles_add_puzzle_puzzle_height_input(GUI_element_spinner):
+    label = "Height: "
+    min_value = 5
+    max_value = 40
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = self.parent.x + 30
+        self.y = self.parent.y + 100
+        self.current_value = 5
+        self.gui_init()
+
+
+
 class GUI_designer_puzzles_add_puzzle_puzzle_confirm_button(GUI_element_button):
     generic_button = True
     generic_button_text = "Add Puzzle"
@@ -841,7 +877,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_confirm_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
-        self.y = self.parent.y + 100
+        self.y = self.parent.y + 135
         self.generic_button_text_object.x = self.x + 9
         self.generic_button_text_object.y = self.y + 4
 
@@ -862,7 +898,7 @@ class GUI_designer_puzzle_add_puzzle_puzzle_cancel_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
-        self.y = self.parent.y + 100
+        self.y = self.parent.y + 135
         self.generic_button_text_object.x = self.x + 9
         self.generic_button_text_object.y = self.y + 4
 
@@ -1030,7 +1066,10 @@ class GUI_designer_puzzles_button_edit_puzzle(GUI_element_button):
             
 
     def mouse_left_up(self):
-        GUI_designer_puzzles_edit_puzzle_dialog(self.game, self.parent.parent, self.puzzle_filename, self.puzzle_info)
+        self.game.manager.load_puzzle(self.game.manager.current_puzzle_pack, self.puzzle_filename, set_state = True)
+        self.game.freemode = True
+        self.game.gui.fade_toggle(lambda: self.game.gui.switch_gui_state_to(GUI_STATE_DESIGNER_DESIGNER), speed = 20)
+        #GUI_designer_puzzles_edit_puzzle_dialog(self.game, self.parent.parent, self.puzzle_filename, self.puzzle_info)
 
 
 
