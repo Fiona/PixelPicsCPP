@@ -229,6 +229,8 @@ class GUI_puzzle(GUI_element):
     text = None
     state = PUZZLE_STATE_READY_MESSAGE
 
+    made_mistake = False
+    
     puzzle_solver = None
     puzzle_solver_state = None
 
@@ -283,6 +285,8 @@ class GUI_puzzle(GUI_element):
 
         self.anim_state = 0
         self.iter = 0
+
+        self.made_mistake = False
 
         self.PUZZLE_VERIFIER_ITERATIONS = PUZZLE_VERIFIER_ITERATIONS
         
@@ -660,6 +664,7 @@ class GUI_puzzle(GUI_element):
             self.hovered_column = -1
             self.hovered_row = -1
             self.last_state_set = "ignore"
+            self.made_mistake = False
 
             if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
                 self.display_rectangle_marker = False
@@ -682,7 +687,10 @@ class GUI_puzzle(GUI_element):
 
         if not self.parent.tool == DRAWING_TOOL_STATE_DRAW:
             return
-        
+
+        if self.made_mistake:
+            return
+
         if self.last_state_set == "ignore" or not self.last_hovered_cell == (self.hovered_row, self.hovered_column):
             # --- DESIGNER ONLY ---
             if self.game.game_state == GAME_STATE_DESIGNER:
@@ -694,6 +702,9 @@ class GUI_puzzle(GUI_element):
 
     def mouse_right_down(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
+            return
+
+        if self.made_mistake:
             return
 
         if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE and not self.display_rectangle_marker:
@@ -712,6 +723,8 @@ class GUI_puzzle(GUI_element):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
+        self.made_mistake = False
+        
         if self.parent.tool == DRAWING_TOOL_STATE_FILL:
             cell_list = []
             self.checked_fill_stack = []
@@ -732,6 +745,8 @@ class GUI_puzzle(GUI_element):
     def mouse_right_up(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
+
+        self.made_mistake = False
 
         if self.parent.tool == DRAWING_TOOL_STATE_FILL:
             cell_list = []
@@ -911,6 +926,7 @@ class GUI_puzzle(GUI_element):
             self.change_cells([(cell[0], cell[1])], False)
             self.cell_marker_objs[cell] = Puzzle_marker(self.game, self, cell[0], cell[1], False, skip_animation)
             self.game.lives -= 1
+            self.made_mistake = True
             if self.game.lives <= 0:
                 self.state = PUZZLE_STATE_FAILED
             return
