@@ -1279,7 +1279,7 @@ class GUI_element_spinner_button_down(GUI_element_button):
         self.width = 19
         self.height = 12
         self.x = self.parent.x + self.parent.width - self.width - 1
-        self.y = self.parent.y + 12
+        self.y = self.parent.y + 13
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_spinner_down']
         self.gui_init()
@@ -1311,7 +1311,7 @@ class GUI_element_spinner_button_up(GUI_element_button):
         self.width = 19
         self.height = 12
         self.x = self.parent.x + self.parent.width - self.width - 1
-        self.y = self.parent.y
+        self.y = self.parent.y + 1
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_spinner_up']
         self.gui_init()
