@@ -1191,24 +1191,49 @@ void Process::Draw_strategy_puzzle()
     // ****************
     if(hovered_row > -1)
     {
+
         glColor4f(.5f, .5f, 1.0f, .2f);
+
         glBegin(GL_QUADS);
+
         glVertex2f(0.0f, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f(grid_width, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f(grid_width, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
         glVertex2f(0.0f, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
+
+        glColor4f(.5f, .5f, .5f, .4f);
+        glVertex2f(0.0f, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
+        glColor4f(.5f, .5f, .5f, 0.0f);
+        glVertex2f(-500.0f, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
+        glVertex2f(-500.0f, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
+        glColor4f(.5f, .5f, .5f, .4f);
+        glVertex2f(0.0f, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
+
         glEnd();
+
     }
 
     if(hovered_column > -1)
     {
+
         glColor4f(.5f, .5f, 1.0f, .2f);
+
         glBegin(GL_QUADS);
+
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), 0.0f);
         glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), 0.0f);
         glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), grid_height);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), grid_height);
+
+        glColor4f(.5f, .5f, .5f, .4f);
+        glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), 0.0f);
+        glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), 0.0f);
+        glColor4f(.5f, .5f, .5f, 0.0f);
+        glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), -500.0f);
+        glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), -500.0f);
+
         glEnd();
+
     }
 
     // ****************
