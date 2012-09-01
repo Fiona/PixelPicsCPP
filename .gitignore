@@ -3,3 +3,6 @@ pixelpics
 *.pyc
 *.pyo
 a.out
+*~
+*.orig
+*.save
