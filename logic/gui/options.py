@@ -17,7 +17,7 @@ from gui.gui_elements import *
 
 class GUI_options(GUI_element_window):
     title = "Options"
-    height = 400
+    height = 520
     width = 400
     objs = {}
     widgets = {}
@@ -44,6 +44,7 @@ class GUI_options(GUI_element_window):
         self.objs['title_graphics'] = GUI_options_title(self.game, self, "Graphics", 30)
         self.objs['title_sound'] = GUI_options_title(self.game, self, "Audio", 120)
         self.objs['title_gameplay'] = GUI_options_title(self.game, self, "Gameplay", 275)
+        self.objs['mouse_image'] = GUI_options_mouse_image(self.game, self)
 
         self.widgets['resolution'] = GUI_options_resolution(self.game, self)
         self.widgets['full_screen'] = GUI_options_full_screen(self.game, self)
@@ -103,7 +104,6 @@ class GUI_options(GUI_element_window):
         self.game.gui.block_gui_keyboard_input = False
         for x in self.objs:
             self.objs[x].Kill()
-
 
 
 class GUI_options_title(Process):
@@ -323,3 +323,16 @@ class GUI_options_sound_effects_volume(GUI_element_slider):
     def On_Exit(self):
         GUI_element_slider.On_Exit(self)
         self.name_text.Kill()
+
+
+
+class GUI_options_mouse_image(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x + (self.parent.width / 2)
+        self.y = self.parent.y + 375
+        self.z = self.parent.z - 2
+        self.image = self.game.core.media.gfx['gui_mouse']
+
