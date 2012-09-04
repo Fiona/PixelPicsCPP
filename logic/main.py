@@ -91,6 +91,9 @@ class Game(Process):
         self.settings['sound_effects_on'] = self.core.settings.sound_effects_on
         self.settings['music_vol'] = self.core.settings.music_vol
         self.settings['sound_effects_vol'] = self.core.settings.sound_effects_vol
+        self.settings['mouse_left_empty'] = self.core.settings.mouse_left_empty
+        self.settings['bump_scroll'] = self.core.settings.bump_scroll
+        self.settings['lock_drawing'] = self.core.settings.lock_drawing
         self.author_id = self.core.author_id
         self.load_player()
 

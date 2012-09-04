@@ -44,6 +44,9 @@
 #define DEFAULT_SETTING_MUSIC_ON "1"
 #define DEFAULT_SETTING_SOUND_EFFECTS_VOL "100"
 #define DEFAULT_SETTING_MUSIC_VOL "100"
+#define DEFAULT_SETTING_MOUSE_LEFT_EMPTY "1"
+#define DEFAULT_SETTING_BUMP_SCROLL "1"
+#define DEFAULT_SETTING_LOCK_DRAWING "1"
 
 // Misc defines
 #define FILE_SETTINGS "settings.json"
@@ -215,6 +218,9 @@ public:
     bool music_on;
     int sound_effects_vol;
     int music_vol;
+    bool mouse_left_empty;
+    bool bump_scroll;
+    bool lock_drawing;
 
     bool save();
 };

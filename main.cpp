@@ -422,6 +422,9 @@ Settings::Settings(string _filename)
         pt.put("music_on", DEFAULT_SETTING_MUSIC_ON);
         pt.put("sound_effects_vol", DEFAULT_SETTING_SOUND_EFFECTS_VOL);
         pt.put("music_vol", DEFAULT_SETTING_MUSIC_VOL);
+        pt.put("mouse_left_empty", DEFAULT_SETTING_MOUSE_LEFT_EMPTY);
+        pt.put("bump_scroll", DEFAULT_SETTING_BUMP_SCROLL);
+        pt.put("lock_drawing", DEFAULT_SETTING_LOCK_DRAWING);
 
 		write_json(filename, pt);
     }
@@ -433,6 +436,9 @@ Settings::Settings(string _filename)
     music_on = pt.get<bool>("music_on");
     sound_effects_vol = pt.get<int>("sound_effects_vol");
     music_vol = pt.get<int>("music_vol");
+    mouse_left_empty = pt.get<bool>("mouse_left_empty");
+    bump_scroll = pt.get<bool>("bump_scroll");
+    lock_drawing = pt.get<bool>("lock_drawing");
 
 }
 
@@ -449,6 +455,9 @@ bool Settings::save()
     pt.put("sound_effects_on", sound_effects_on);
     pt.put("sound_effects_vol", sound_effects_vol);
     pt.put("music_vol", music_vol);
+    pt.put("mouse_left_empty", mouse_left_empty);
+    pt.put("bump_scroll", bump_scroll);
+    pt.put("lock_drawing", lock_drawing);
     try
     {
         write_json(filename, pt);

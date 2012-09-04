@@ -76,6 +76,9 @@ BOOST_PYTHON_MODULE(core)
         .add_property("sound_effects_on", make_getter(&Settings::sound_effects_on), make_setter(&Settings::sound_effects_on))
         .add_property("music_vol", make_getter(&Settings::music_vol), make_setter(&Settings::music_vol))
         .add_property("sound_effects_vol", make_getter(&Settings::sound_effects_vol), make_setter(&Settings::sound_effects_vol))
+        .add_property("mouse_left_empty", make_getter(&Settings::mouse_left_empty), make_setter(&Settings::mouse_left_empty))
+        .add_property("bump_scroll", make_getter(&Settings::bump_scroll), make_setter(&Settings::bump_scroll))
+        .add_property("lock_drawing", make_getter(&Settings::lock_drawing), make_setter(&Settings::lock_drawing))
         .def("save", &Settings::save)
         ;
 

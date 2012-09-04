@@ -676,10 +676,17 @@ class GUI_puzzle(GUI_element):
                 self.rectangle_marker_bottom_right = (self.hovered_row, self.hovered_column)
             
 
-    def mouse_left_down(self):
+    def mouse_left_down(self):       
+        if self.game.settings['mouse_left_empty']:
+            self.default_mouse_left_down()
+        else:
+            self.default_mouse_right_down()
+
+
+    def default_mouse_left_down(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
-
+        
         if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE and not self.display_rectangle_marker:
             self.display_rectangle_marker = True
             self.rectangle_marker_top_left = (self.hovered_row, self.hovered_column)
@@ -701,6 +708,13 @@ class GUI_puzzle(GUI_element):
                 
 
     def mouse_right_down(self):
+        if self.game.settings['mouse_left_empty']:
+            self.default_mouse_right_down()
+        else:
+            self.default_mouse_left_down()
+
+
+    def default_mouse_right_down(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
@@ -720,6 +734,13 @@ class GUI_puzzle(GUI_element):
 
 
     def mouse_left_up(self):
+        if self.game.settings['mouse_left_empty']:
+            self.default_mouse_left_up()
+        else:
+            self.default_mouse_right_up()
+
+
+    def default_mouse_left_up(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
@@ -743,6 +764,13 @@ class GUI_puzzle(GUI_element):
 
 
     def mouse_right_up(self):
+        if self.game.settings['mouse_left_empty']:
+            self.default_mouse_right_up()
+        else:
+            self.default_mouse_left_up()
+
+
+    def default_mouse_right_up(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
