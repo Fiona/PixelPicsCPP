@@ -17,7 +17,7 @@ from gui.gui_elements import *
 
 class GUI_options(GUI_element_window):
     title = "Options"
-    height = 520
+    height = 565
     width = 400
     objs = {}
     widgets = {}
@@ -54,6 +54,8 @@ class GUI_options(GUI_element_window):
         self.widgets['sound_effects_vol'] = GUI_options_sound_effects_volume(self.game, self)
         self.widgets['cancel_button'] = GUI_options_cancel_button(self.game, self)
         self.widgets['apply_button'] = GUI_options_apply_button(self.game, self)
+        self.widgets['bump_scroll'] = GUI_options_bump_scroll(self.game, self)
+        self.widgets['lock_drawing'] = GUI_options_lock_drawing(self.game, self)
         
         self.game.gui.block_gui_keyboard_input = True
         self.x = 0
@@ -87,9 +89,13 @@ class GUI_options(GUI_element_window):
         self.game.core.settings.music_vol = int(self.widgets['music_vol'].current_value)
         self.game.core.settings.sound_effects_vol = int(self.widgets['sound_effects_vol'].current_value)
         self.game.core.settings.mouse_left_empty = bool(self.objs['mouse_image'].current_value)
+        self.game.core.settings.bump_scroll = bool(self.widgets['bump_scroll'].current_value)
+        self.game.core.settings.lock_drawing = bool(self.widgets['lock_drawing'].current_value)
         self.game.core.settings.save()
 
         self.game.settings['mouse_left_empty'] = self.game.core.settings.mouse_left_empty
+        self.game.settings['bump_scroll'] = self.game.core.settings.bump_scroll
+        self.game.settings['lock_drawing'] = self.game.core.settings.lock_drawing
 
         if res_or_full_screen_changed:
             GUI_element_dialog_box(
@@ -481,3 +487,47 @@ class GUI_options_mouse_setting_button(GUI_element_button):
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.parent.current_value = True if not self.parent.current_value else False
+
+
+
+class GUI_options_bump_scroll(GUI_element_yes_no_radios):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x + 240
+        self.y = self.parent.y + 450
+        self.z = self.parent.z - 3
+        self.current_value = bool(self.game.core.settings.bump_scroll)
+        self.gui_init()
+
+        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Enable bump scrolling")
+        self.name_text.z = self.z - 1
+        self.name_text.colour = (0.0, 0.0, 0.0)
+
+
+    def On_Exit(self):
+        GUI_element_yes_no_radios.On_Exit(self)
+        self.name_text.Kill()
+
+
+
+class GUI_options_lock_drawing(GUI_element_yes_no_radios):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x + 240
+        self.y = self.parent.y + 480
+        self.z = self.parent.z - 3
+        self.current_value = bool(self.game.core.settings.lock_drawing)
+        self.gui_init()
+
+        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Lock drawing to row/column")
+        self.name_text.z = self.z - 1
+        self.name_text.colour = (0.0, 0.0, 0.0)
+
+
+    def On_Exit(self):
+        GUI_element_yes_no_radios.On_Exit(self)
+        self.name_text.Kill()
