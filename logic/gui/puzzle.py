@@ -344,7 +344,7 @@ class GUI_puzzle(GUI_element):
         if self.state == PUZZLE_STATE_SOLVING:
             if not self.game.paused:
                 self.game.timer+= 1
-
+                self.do_bump_scrolling()
             # --- DESIGNER ONLY ---            
             if self.game.game_state == GAME_STATE_DESIGNER:
                  if self.puzzle_solver_state is None:
@@ -641,6 +641,24 @@ class GUI_puzzle(GUI_element):
                 else:
                     text.z = Z_GUI_OBJECT_LEVEL_7
 
+
+    def do_bump_scrolling(self):
+        if self.currently_panning or not self.game.settings['bump_scroll']:
+            return
+
+        diff = [0, 0]
+        
+        if self.game.gui.mouse.x < BUMP_SCROLL_BORDER_WIDTH:
+            diff[0] += BUMP_SCROLL_SPEED
+        if self.game.gui.mouse.x > self.game.settings['screen_width'] - BUMP_SCROLL_BORDER_WIDTH:
+            diff[0] -= BUMP_SCROLL_SPEED
+        if self.game.gui.mouse.y < BUMP_SCROLL_BORDER_WIDTH:
+            diff[1] += BUMP_SCROLL_SPEED
+        if self.game.gui.mouse.y > self.game.settings['screen_height'] - BUMP_SCROLL_BORDER_WIDTH:
+            diff[1] -= BUMP_SCROLL_SPEED
+            
+        self.adjust_camera_pos(diff[0], diff[1])
+        
 
     def mouse_over(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:

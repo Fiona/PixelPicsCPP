@@ -212,6 +212,8 @@ BOOST_PYTHON_MODULE(core)
     scope().attr("PUZZLE_HINT_GRADIENT_WIDTH") = PUZZLE_HINT_GRADIENT_WIDTH;
     scope().attr("PUZZLE_RENDER_CHUNK_SIZE") = PUZZLE_RENDER_CHUNK_SIZE;
     scope().attr("PUZZLE_UNLOCK_THRESHOLD") = PUZZLE_UNLOCK_THRESHOLD;
+    scope().attr("BUMP_SCROLL_BORDER_WIDTH") = BUMP_SCROLL_BORDER_WIDTH;
+    scope().attr("BUMP_SCROLL_SPEED") = BUMP_SCROLL_SPEED;
 
     // Expose all the SDL Keybinding constants
     enum_<SDLKey>("key")

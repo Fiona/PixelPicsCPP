@@ -68,6 +68,8 @@
 #define PUZZLE_HINT_GRADIENT_WIDTH 300.0
 #define PUZZLE_RENDER_CHUNK_SIZE 10
 #define PUZZLE_UNLOCK_THRESHOLD 15
+#define BUMP_SCROLL_BORDER_WIDTH 20
+#define BUMP_SCROLL_SPEED 8
 
 // STD and boost includes
 #include <vector>
