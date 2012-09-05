@@ -104,6 +104,7 @@ class GUI_main_menu_title(GUI_element):
                 GUI_main_menu_play_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_options_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_puzzle_designer_button(self.game, self, self.no_button_anim)
+                GUI_main_menu_sharing_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_quit_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_credits_button(self.game, self)
                 self.title_state = 1
@@ -205,6 +206,26 @@ class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
 
 
 
+class GUI_main_menu_sharing_button(GUI_main_menu_button):
+    generic_button_text = "Download Puzzles"
+
+    def __init__(self, game, parent = None, no_button_anim = False):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.main_menu_button_init(y_shift = 80, iter_wait = 150)
+
+        if no_button_anim:
+            self.y = self.y_to
+            self.generic_button_text_object.y = self.y + 4
+            self.main_menu_button_state = 1
+
+
+    def mouse_left_up(self):
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING), speed = 20)
+
+
+
 class GUI_main_menu_options_button(GUI_main_menu_button):
     generic_button_text = "Options"
 
@@ -212,7 +233,7 @@ class GUI_main_menu_options_button(GUI_main_menu_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift = 80, iter_wait = 150)
+        self.main_menu_button_init(y_shift_to = 40, y_shift = 120, iter_wait = 200)
 
         if no_button_anim:
             self.y = self.y_to
@@ -232,7 +253,7 @@ class GUI_main_menu_quit_button(GUI_main_menu_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = 40, y_shift = 120, iter_wait = 200)
+        self.main_menu_button_init(y_shift_to = 80, y_shift = 140, iter_wait = 250)
 
         if no_button_anim:
             self.y = self.y_to
