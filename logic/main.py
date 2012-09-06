@@ -200,6 +200,9 @@ class Game(Process):
             self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file)
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
+        elif state == GAME_STATE_SHARING:
+            self.gui.fade_toggle(speed = 20)
+            self.gui.switch_gui_state_to(GUI_STATE_SHARING if gui_state is None else gui_state)
 
 
     def player_action_cleared_game_puzzle(self, category, puzzle):

@@ -188,6 +188,15 @@ BOOST_PYTHON_MODULE(core)
         .def("HSVtoRGB", &Main_App::PyHSVtoRGB)
         ;
 
+    // Used for outputting debugging
+#ifdef DEBUG
+    scope().attr("DEBUG") = true;
+    scope().attr("SHARING_ADDRESS") = LOCAL_SHARING_ADDRESS;
+#else
+    scope().attr("DEBUG") = false;
+    scope().attr("SHARING_ADDRESS") = REMOTE_SHARING_ADDRESS;
+#endif
+
     // Expose the framework constants
     scope().attr("TEXT_ALIGN_TOP_LEFT") = TEXT_ALIGN_TOP_LEFT;
     scope().attr("TEXT_ALIGN_TOP") = TEXT_ALIGN_TOP;

@@ -18,6 +18,7 @@ from gui.category_select import *
 from gui.puzzle_select import *
 from gui.puzzle import *
 from gui.designer import *
+from gui.sharing import *
 
 
 
@@ -56,7 +57,8 @@ class GUI(Process):
         GUI_STATE_DESIGNER_PACKS : {},
         GUI_STATE_DESIGNER_PUZZLES : {},
         GUI_STATE_DESIGNER_DESIGNER : {},
-        GUI_STATE_DESIGNER_COLOUR : {}
+        GUI_STATE_DESIGNER_COLOUR : {},
+        GUI_STATE_SHARING : {},
     }
 
     # goes up every frame, resets when changing game state
@@ -186,6 +188,15 @@ class GUI(Process):
             """
             if not self.block_gui_mouse_input:
                 self.do_mouse_wheel_zooming()
+                
+        elif self.game.game_state == GAME_STATE_SHARING:
+            """
+            SHARING PUZZLES
+            """
+            if not self.block_gui_keyboard_input:
+                # Quit on escape
+                if self.game.core.Keyboard_key_released(key.ESCAPE):
+                    self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU))
 
         # sort out the current mouse image
         if not self.mouse.image is None:
@@ -280,6 +291,9 @@ class GUI(Process):
             self.current_visible_gui_elements[GUI_STATE_DESIGNER_COLOUR]['designer_colour_container'] = GUI_designer_colour_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_DESIGNER_COLOUR]['designer_colour_container']
             self.fade_toggle(speed = 10, colour = (1.0, 1.0, 1.0))
+        if self.gui_state == GUI_STATE_SHARING:
+            self.current_visible_gui_elements[GUI_STATE_SHARING]['sharing_container'] = GUI_sharing_container(self.game)
+            self.parent_window = self.current_visible_gui_elements[GUI_STATE_SHARING]['sharing_container']
 
 
     def destroy_current_gui_state(self):
