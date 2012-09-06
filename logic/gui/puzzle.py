@@ -288,6 +288,9 @@ class GUI_puzzle(GUI_element):
 
         self.made_mistake = False
 
+        self.current_locked_row = None
+        self.current_locked_col = None
+
         self.PUZZLE_VERIFIER_ITERATIONS = PUZZLE_VERIFIER_ITERATIONS
         
 
@@ -683,6 +686,8 @@ class GUI_puzzle(GUI_element):
             self.hovered_row = -1
             self.last_state_set = "ignore"
             self.made_mistake = False
+            self.current_locked_row = None
+            self.current_locked_col = None
 
             if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
                 self.display_rectangle_marker = False
@@ -746,6 +751,18 @@ class GUI_puzzle(GUI_element):
 
         if not self.parent.tool == DRAWING_TOOL_STATE_DRAW:
             return
+
+        if self.game.settings['lock_drawing']:
+            if self.current_locked_row is None and self.current_locked_col is None:
+                if self.last_hovered_cell[0] != self.hovered_row:
+                    self.current_locked_col = self.hovered_column
+                elif self.last_hovered_cell[1] != self.hovered_column:
+                    self.current_locked_row = self.hovered_row
+            else:
+                if not self.current_locked_row is None and not self.hovered_row == self.current_locked_row:
+                    return
+                if not self.current_locked_col is None and not self.hovered_column == self.current_locked_col:
+                    return
         
         if self.last_state_set == "ignore" or not self.last_hovered_cell == (self.hovered_row, self.hovered_column):
             self.mark_cell(True, (self.hovered_row, self.hovered_column))
@@ -792,6 +809,8 @@ class GUI_puzzle(GUI_element):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
+        self.current_locked_row = None
+        self.current_locked_col = None
         self.made_mistake = False
 
         if self.parent.tool == DRAWING_TOOL_STATE_FILL:
