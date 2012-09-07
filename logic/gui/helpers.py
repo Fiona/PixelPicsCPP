@@ -70,7 +70,7 @@ class Net_Process_POST(object):
             return True
         self.finished = not self.process.is_alive()
         if self.finished and self.running:
-            self.response = self.data_queue.get()
+            self.response = json.loads(self.data_queue.get())
             self.process.terminate()
             self.process = None
             self.running = False
