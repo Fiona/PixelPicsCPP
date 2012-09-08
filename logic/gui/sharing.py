@@ -43,6 +43,7 @@ class GUI_sharing_container(GUI_element):
 
         if self.game.gui.gui_state == GUI_STATE_SHARING_NEWEST:
             GUI_sharing_title(self.game, self, "Newest Puzzles")
+            GUI_sharing_newest_puzzles_scroll_window(self.game, self)
         elif self.game.gui.gui_state == GUI_STATE_SHARING_TOP:
             GUI_sharing_title(self.game, self, "Top Rated Puzzles")
         elif self.game.gui.gui_state == GUI_STATE_SHARING_TOP_WEEK:
@@ -604,4 +605,148 @@ class GUI_sharing_packs_button_upload(GUI_element_button):
         GUI_element_button.mouse_left_up(self)
         self.parent.parent.pack_num_to_be_uploaded = self.pack_num
         Attempt_Upload_Pack(self.game, self.game.manager.pack_directory_list[self.pack_num], self.pack, self.parent.parent, self.parent.finished_upload)
+
+
+
+class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
+    pack_items = []
+    url = ""
+    task_text = None
+    current_page = 1
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = Z_GUI_OBJECT_LEVEL_4
+        self.x = 50
+        self.y = 175
+        self.width = self.game.settings['screen_width'] - 100
+        self.height = self.game.settings['screen_height'] - 250
+        self.text_num_pages = None
+        self.gui_init()
+        self.current_page = 1
+        self.go_to_page(self.current_page)
+
+
+    def go_to_page(self, page):
+        self.parent.make_request_to_server(self.url, {'page' : 1}, self.display_loaded_packs, task_text = self.task_text)
+
+
+    def display_loaded_packs(self, response):
+        # kill, reset etc
+        for x in self.pack_items:
+            x.Kill()
+        self.contents_scroll_location = 0.0
+        self.pack_items = []
+        last_item = None
+        count = 0
+        
+        # Make sure we got everything
+        for i in ['num_pages', 'success', 'packs']:
+            if not i in response:
+                GUI_element_dialog_box(
+                    self.game,
+                    self,
+                    "Error",
+                    ["Not all expected data was returned by the server."]
+                    )
+                return
+            
+        self.num_pages = response['num_pages']
+        self.raw_pack_data = response['packs']
+
+        # Create objects for each pack
+        for i,pack in enumerate(self.raw_pack_data):
+            last_item = GUI_sharing_load_puzzles_pack_item(self.game, self, pack, i, count)
+            self.pack_items.append(last_item)
+            count += 1
+            
+        if last_item is None:
+            self.contents_height = 0
+        else:
+            self.contents_height = last_item.y + last_item.height + 10
+
+        # page number
+        self.text_num_pages = Text(self.game.core.media.fonts['designer_pack_name'], self.x + (self.width / 2), self.y + self.contents_height + 10, TEXT_ALIGN_TOP, "Page " + str(self.current_page) + "/" + str(self.num_pages))
+        self.text_num_pages.z = self.z - 2
+        self.text_num_pages.colour = (1.0, 1.0, 1.0)
+        self.contents_height += 32
+
+        self.adjust_text_positions()
+                    
+
+    def Execute(self):
+        self.update()
+        self.adjust_text_positions()
+
+
+    def adjust_text_positions(self):
+        if not self.text_num_pages is None:
+            height = self.contents_height if self.contents_height > self.height else self.height
+            self.text_num_pages.y = self.y + height - 50 - self.contents_scroll_location
+            self.text_num_pages.clip = self.clip
+            
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        if not self.text_num_pages is None:
+            self.text_num_pages.Kill()
+
+
+
+class GUI_sharing_load_puzzles_pack_item(GUI_element):
+    def __init__(self, game, parent = None, pack = None, pack_num = 0, display_count = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent
+        self.pack = pack
+        self.pack_num = pack_num
+        self.z = Z_GUI_OBJECT_LEVEL_5 - 1
+        self.x = 10
+        self.y = (50 * display_count) + 10 + (10 * display_count)
+        self.width = self.parent.width - 64
+        self.height = 50
+        self.alpha = .1
+        self.gui_init()
+
+        self.text_pack_name = Text(self.game.core.media.fonts['designer_pack_name'], self.x + self.scroll_element.x + 5, 0.0, TEXT_ALIGN_TOP_LEFT, str(self.pack['name']))
+        self.text_pack_name.z = self.z - 2
+        self.text_pack_name.colour = (1.0, 1.0, 1.0)
+        self.text_pack_name.shadow = 2
+        self.text_pack_name.shadow_colour = (.1, .1, .1)
+
+        self.text_pack_author = Text(self.game.core.media.fonts['designer_pack_author'], self.x + self.scroll_element.x + 15, 0.0, TEXT_ALIGN_TOP_LEFT, str("by " + self.pack['author']))
+        self.text_pack_author.z = self.z - 2
+        self.text_pack_author.colour = (1.0, 1.0, 1.0)
+
+        self.adjust_text_positions()
+        
+        self.draw_strategy = "gui_designer_packs_pack_item"
+
+
+    def Execute(self):
+        self.update()
+        self.adjust_text_positions()
+
+
+    def adjust_text_positions(self):
+        self.text_pack_name.y = self.y + self.scroll_element.y + 2 - self.scroll_element.contents_scroll_location
+        self.text_pack_name.clip = self.clip
+        self.text_pack_author.y = self.y + self.scroll_element.y + 25 - self.scroll_element.contents_scroll_location
+        self.text_pack_author.clip = self.clip
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.text_pack_name.Kill()
+        self.text_pack_author.Kill()
+
+
+
+class GUI_sharing_newest_puzzles_scroll_window(GUI_sharing_load_puzzles_scroll_window):
+    url = "newest/"
+    task_text = "Downloading pack info"
 
