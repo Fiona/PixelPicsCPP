@@ -102,13 +102,13 @@ class GUI_sharing_container(GUI_element):
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 20)
         
 
-    def make_request_to_server(self, url, data = {}, callback = None):
+    def make_request_to_server(self, url, data = {}, callback = None, task_text = None):
         if not self.net_process is None:
             return
 
         self.net_process = Net_Process_POST(SHARING_ADDRESS + url, data)
         self.net_callback = callback
-        self.loading_indicator = GUI_sharing_loading_indicator(self.game, self)
+        self.loading_indicator = GUI_sharing_loading_indicator(self.game, self, task_text)
 
 
 
@@ -148,7 +148,7 @@ class Attempt_Upload_Pack(object):
             'freemode' : self.pack.freemode,
             'num_puzzles' : len(self.pack.puzzles)
             }
-        self.container.make_request_to_server("new_pack/", pack_info, self.upload_puzzle)
+        self.container.make_request_to_server("new_pack/", pack_info, self.upload_puzzle, task_text = "Transfering pack data")
 
 
     def upload_puzzle(self, response):
@@ -183,17 +183,16 @@ class Attempt_Upload_Pack(object):
             "background" : puzzle.background,
             "cells" : puzzle.cells
             }
-        self.container.make_request_to_server("new_puzzle/", puzzle_info, self.upload_puzzle)
+        self.container.make_request_to_server("new_puzzle/", puzzle_info, self.upload_puzzle, task_text = "Transfering puzzle " + str(len(self.puzzles_processed)) + " out of " + str(len(self.pack.puzzles)))
 
 
     def finalise_pack(self):
-        self.container.make_request_to_server("finalise_pack/", {'pack' : self.pack.uuid}, self.successful_callback)
+        self.container.make_request_to_server("finalise_pack/", {'pack' : self.pack.uuid}, self.successful_callback, task_text = "Finalising pack")
         
         
         
-
 class GUI_sharing_loading_indicator(GUI_element):
-    def __init__(self, game, parent):
+    def __init__(self, game, parent, task_text):
         Process.__init__(self)
         self.game = game
         self.parent = parent
@@ -202,12 +201,20 @@ class GUI_sharing_loading_indicator(GUI_element):
         self.z = Z_GUI_OBJECT_LEVEL_11
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
-        self.text = Text(self.game.core.media.fonts['puzzle_hint_numbers'], self.width / 2, self.height / 2, TEXT_ALIGN_CENTER, "Loading . . . ")
+        self.text = Text(self.game.core.media.fonts['puzzle_hint_numbers'], self.width / 2, (self.height / 2) - 16, TEXT_ALIGN_CENTER, "Loading . . . ")
         self.text.z = self.z - 1
         self.text.colour = (1.0, 1.0, 1.0, 1.0)
         self.text.shadow = 2
         self.text.shadow_colour = (.3, .3, .3, 1.0)
-        
+
+        self.task_text = None
+        if not task_text is None:
+            self.task_text = Text(self.game.core.media.fonts['menu_subtitles'], self.width / 2, (self.height / 2) + 20, TEXT_ALIGN_CENTER, str(task_text))
+            self.task_text.z = self.z - 1
+            self.task_text.colour = (.7, .7, .7, 1.0)
+            self.task_text.shadow = 2
+            self.task_text.shadow_colour = (.3, .3, .3, 1.0)
+            
         # Draw strategy data
         self.draw_strategy = "primitive_square"
         self.primitive_square_width = self.width
@@ -220,6 +227,8 @@ class GUI_sharing_loading_indicator(GUI_element):
     def On_Exit(self):
         GUI_element.On_Exit(self)
         self.text.Kill()
+        if not self.task_text is None:
+            self.task_text.Kill()
         
 
 
@@ -541,7 +550,7 @@ class GUI_sharing_upload_pack_item(GUI_element):
 
         self.text_pack_shared = None
         if pack.shared:
-            self.text_pack_shared = Text(self.game.core.media.fonts['designer_pack_name'], self.x + self.width + self.scroll_element.x - 100, 0.0, TEXT_ALIGN_CENTER, "Shared!")
+            self.text_pack_shared = Text(self.game.core.media.fonts['designer_pack_name'], self.x + self.width + self.scroll_element.x - 85, 0.0, TEXT_ALIGN_CENTER, "Shared!")
             self.text_pack_shared.z = self.z - 2
             self.text_pack_shared.colour = (1.0, 1.0, 1.0)
             self.text_pack_shared.shadow = 2
