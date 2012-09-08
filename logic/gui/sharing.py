@@ -4,7 +4,7 @@ PixelPics - Nonogram game
 """
 
 # python imports
-import random
+import random, pickle, os
 
 # Game engine imports
 from core import *
@@ -29,7 +29,8 @@ class GUI_sharing_container(GUI_element):
         self.z = Z_GUI_CONTAINERS
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
-
+        self.pack_num_to_be_uploaded = None
+        
         self.net_process = None
         self.net_callback = None
         self.loading_indicator = None
@@ -71,6 +72,8 @@ class GUI_sharing_container(GUI_element):
     def Execute(self):
         if not self.net_process is None:
             if self.net_process.is_complete():
+                self.loading_indicator.Kill()
+                self.loading_indicator = None                                
                 if self.net_process.got_error:
                     GUI_element_dialog_box(
                         self.game,
@@ -79,6 +82,7 @@ class GUI_sharing_container(GUI_element):
                         ["A network error occured!", "Please check your internet connection is functioning properly."],
                         callback = self.return_to_menu
                         )
+                    self.net_process = None
                     return
                 if 'error' in self.net_process.response:
                     GUI_element_dialog_box(
@@ -87,11 +91,11 @@ class GUI_sharing_container(GUI_element):
                         "Error",
                         ["The server returned an error:", str(self.net_process.response['error'])]
                         )
+                    self.net_process = None
                 elif not self.net_callback is None:
-                    self.net_callback(self.net_process.response)
-                self.net_process = None
-                self.loading_indicator.Kill()
-                self.loading_indicator = None                
+                    response = self.net_process.response
+                    self.net_process = None
+                    self.net_callback(response)
 
 
     def return_to_menu(self):
@@ -110,11 +114,80 @@ class GUI_sharing_container(GUI_element):
 
 class Attempt_Upload_Pack(object):
 
-    def __init__(self, path, pack):
+    def __init__(self, game, path, pack, container, successful_callback):
+        self.game = game
         self.path = path
         self.pack = pack
-        print self.path
-        print self.pack.name
+        self.container = container
+        self.successful_callback = successful_callback
+        self.puzzles_processed = []
+
+        if self.pack.shared:
+            GUI_element_dialog_box(
+                self.game,
+                self.container,
+                "Very Unexpected Error",
+                ["This pack has already been shared!"]
+                )
+            return
+
+        if not self.game.author_id == self.pack.author_id:
+            GUI_element_dialog_box(
+                self.game,
+                self.container,
+                "Very Unexpected Error",
+                ["You are not authorised to share this pack!"]
+                )
+            return
+            
+        pack_info = {
+            'name' : self.pack.name,
+            'author_name' : self.pack.author_name,
+            'author_id' : self.pack.author_id,
+            'uuid' : self.pack.uuid,
+            'freemode' : self.pack.freemode,
+            'num_puzzles' : len(self.pack.puzzles)
+            }
+        self.container.make_request_to_server("new_pack/", pack_info, self.upload_puzzle)
+
+
+    def upload_puzzle(self, response):
+        puzzle_to_do = None
+        for i in self.pack.puzzles:
+            if not i in self.puzzles_processed:
+                puzzle_to_do = i
+                break
+        if puzzle_to_do is None:
+            self.finalise_pack()
+            return
+
+        try:
+            f = open(os.path.join(self.game.core.path_user_pack_directory, self.path, puzzle_to_do), "rb")
+            puzzle = pickle.load(f)
+            f.close()
+        except IOError as e:
+            GUI_element_dialog_box(
+                self.game,
+                self.container,
+                "Unexpected Error",
+                ["There was an error loading the puzzle", str(puzzle_to_do)]
+                )
+            return
+
+        self.puzzles_processed.append(puzzle_to_do)
+        puzzle_info = {
+            "name" : puzzle.name,
+            "pack" : self.pack.uuid,
+            "width" : puzzle.width,
+            "height" : puzzle.height,
+            "background" : puzzle.background,
+            "cells" : puzzle.cells
+            }
+        self.container.make_request_to_server("new_puzzle/", puzzle_info, self.upload_puzzle)
+
+
+    def finalise_pack(self):
+        self.container.make_request_to_server("finalise_pack/", {'pack' : self.pack.uuid}, self.successful_callback)
         
         
         
@@ -418,9 +491,10 @@ class GUI_sharing_upload_scroll_window(GUI_element_scroll_window):
                 continue
             last_item = GUI_sharing_upload_pack_item(self.game, self, pack, i, count)
             self.pack_items.append(last_item)
-            self.pack_items.append(
-                GUI_sharing_packs_button_upload(self.game, self, pack, i, count)
-            )
+            if not pack.shared:
+                self.pack_items.append(
+                    GUI_sharing_packs_button_upload(self.game, self, pack, i, count)
+                    )
             count += 1
             
         if last_item is None:
@@ -428,6 +502,15 @@ class GUI_sharing_upload_scroll_window(GUI_element_scroll_window):
         else:
             self.contents_height = last_item.y + last_item.height + 10
 
+
+    def finished_upload(self, response):
+        if self.parent.pack_num_to_be_uploaded is None:
+            return
+
+        self.game.manager.set_as_shared(self.parent.pack_num_to_be_uploaded)
+        self.reread_pack_items()
+        self.parent.pack_num_to_be_uploaded = None
+        
 
 
 class GUI_sharing_upload_pack_item(GUI_element):
@@ -456,22 +539,41 @@ class GUI_sharing_upload_pack_item(GUI_element):
         self.text_pack_author.z = self.z - 2
         self.text_pack_author.colour = (1.0, 1.0, 1.0)
 
+        self.text_pack_shared = None
+        if pack.shared:
+            self.text_pack_shared = Text(self.game.core.media.fonts['designer_pack_name'], self.x + self.width + self.scroll_element.x - 100, 0.0, TEXT_ALIGN_CENTER, "Shared!")
+            self.text_pack_shared.z = self.z - 2
+            self.text_pack_shared.colour = (1.0, 1.0, 1.0)
+            self.text_pack_shared.shadow = 2
+            self.text_pack_shared.shadow_colour = (.1, .1, .1)
+
+        self.adjust_text_positions()
+
         self.draw_strategy = "gui_designer_packs_pack_item"
 
 
     def Execute(self):
         self.update()
+        self.adjust_text_positions()
+
+
+    def adjust_text_positions(self):
         self.text_pack_name.y = self.y + self.scroll_element.y + 2 - self.scroll_element.contents_scroll_location
         self.text_pack_name.clip = self.clip
         self.text_pack_author.y = self.y + self.scroll_element.y + 25 - self.scroll_element.contents_scroll_location
         self.text_pack_author.clip = self.clip
+        if not self.text_pack_shared is None:
+            self.text_pack_shared.y = self.y + self.scroll_element.y + 24 - self.scroll_element.contents_scroll_location
+            self.text_pack_shared.clip = self.clip
 
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
         self.text_pack_name.Kill()
         self.text_pack_author.Kill()
-
+        if not self.text_pack_shared is None:
+            self.text_pack_shared.Kill()
+            
 
 
 class GUI_sharing_packs_button_upload(GUI_element_button):
@@ -491,4 +593,6 @@ class GUI_sharing_packs_button_upload(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
-        Attempt_Upload_Pack(self.game.manager.pack_directory_list[self.pack_num], self.pack)
+        self.parent.parent.pack_num_to_be_uploaded = self.pack_num
+        Attempt_Upload_Pack(self.game, self.game.manager.pack_directory_list[self.pack_num], self.pack, self.parent.parent, self.parent.finished_upload)
+

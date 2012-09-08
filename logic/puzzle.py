@@ -482,6 +482,20 @@ class Puzzle_manager(object):
         self.load_packs()        
 
 
+    def set_as_shared(self, pack_num):
+        self.packs[pack_num].shared = True
+
+        try:
+            f = open(os.path.join(self.game.core.path_user_pack_directory, self.pack_directory_list[pack_num], FILE_PACK_INFO_FILE), "wb")
+            pickle.dump(self.packs[pack_num], f)
+            f.close()             
+        except IOError as e:
+            raise e
+
+        self.load_packs()
+    
+        
+
     ############################################
     ## PUZZLE MANAGEMENT
     ############################################

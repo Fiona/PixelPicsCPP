@@ -58,7 +58,7 @@ class Net_Process_POST(object):
         except Exception, e:
             if DEBUG:            
                 print "Got exception %s" % e
-            self.got_error = True
+            queue.put(None)                
         if DEBUG:
             print "Request complete response was: ", response
             print "----------------"
@@ -68,10 +68,18 @@ class Net_Process_POST(object):
     def is_complete(self):
         if self.process is None:
             return True
+        
         self.finished = not self.process.is_alive()
+        
         if self.finished and self.running:
-            self.response = json.loads(self.data_queue.get())
+            self.response = self.data_queue.get()
             self.process.terminate()
             self.process = None
             self.running = False
+
+            if self.response is None:
+                self.got_error = True
+            else:
+                self.response = json.loads(self.response)
+            
         return self.finished
