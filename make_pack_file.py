@@ -31,7 +31,7 @@ def create_pack_file_for(path):
 
     print "generating new pack object"
     new_pack = Pack()
-    new_pack.uud = str(uuid.uuid4())
+    new_pack.uuid = str(uuid.uuid4())
     new_pack.author_id = AUTHOR_ID
     new_pack.author_name = AUTHOR_NAME
     new_pack.name = PACK_NAME
