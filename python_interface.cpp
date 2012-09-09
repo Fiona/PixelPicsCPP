@@ -76,6 +76,9 @@ BOOST_PYTHON_MODULE(core)
         .add_property("sound_effects_on", make_getter(&Settings::sound_effects_on), make_setter(&Settings::sound_effects_on))
         .add_property("music_vol", make_getter(&Settings::music_vol), make_setter(&Settings::music_vol))
         .add_property("sound_effects_vol", make_getter(&Settings::sound_effects_vol), make_setter(&Settings::sound_effects_vol))
+        .add_property("mouse_left_empty", make_getter(&Settings::mouse_left_empty), make_setter(&Settings::mouse_left_empty))
+        .add_property("bump_scroll", make_getter(&Settings::bump_scroll), make_setter(&Settings::bump_scroll))
+        .add_property("lock_drawing", make_getter(&Settings::lock_drawing), make_setter(&Settings::lock_drawing))
         .def("save", &Settings::save)
         ;
 
@@ -185,6 +188,15 @@ BOOST_PYTHON_MODULE(core)
         .def("HSVtoRGB", &Main_App::PyHSVtoRGB)
         ;
 
+    // Used for outputting debugging
+#ifdef DEBUG
+    scope().attr("DEBUG") = true;
+    scope().attr("SHARING_ADDRESS") = LOCAL_SHARING_ADDRESS;
+#else
+    scope().attr("DEBUG") = false;
+    scope().attr("SHARING_ADDRESS") = REMOTE_SHARING_ADDRESS;
+#endif
+
     // Expose the framework constants
     scope().attr("TEXT_ALIGN_TOP_LEFT") = TEXT_ALIGN_TOP_LEFT;
     scope().attr("TEXT_ALIGN_TOP") = TEXT_ALIGN_TOP;
@@ -209,6 +221,8 @@ BOOST_PYTHON_MODULE(core)
     scope().attr("PUZZLE_HINT_GRADIENT_WIDTH") = PUZZLE_HINT_GRADIENT_WIDTH;
     scope().attr("PUZZLE_RENDER_CHUNK_SIZE") = PUZZLE_RENDER_CHUNK_SIZE;
     scope().attr("PUZZLE_UNLOCK_THRESHOLD") = PUZZLE_UNLOCK_THRESHOLD;
+    scope().attr("BUMP_SCROLL_BORDER_WIDTH") = BUMP_SCROLL_BORDER_WIDTH;
+    scope().attr("BUMP_SCROLL_SPEED") = BUMP_SCROLL_SPEED;
 
     // Expose all the SDL Keybinding constants
     enum_<SDLKey>("key")

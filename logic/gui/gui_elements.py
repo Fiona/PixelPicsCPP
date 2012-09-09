@@ -373,13 +373,14 @@ class GUI_element_dialog_box(GUI_element):
     min_box_height = 95
     min_box_width = 300    
        
-    def __init__(self, game, parent = None, title = "test", message = ["test message"], caption_image = None):
+    def __init__(self, game, parent = None, title = "test", message = ["test message"], caption_image = None, callback = None):
         Process.__init__(self)
         self.game = game
         self.parent = parent
         self.title = title
         self.message = message
         self.caption_image = caption_image
+        self.callback = callback
         self.gui_init()
         
 
@@ -472,7 +473,7 @@ class GUI_element_dialog_box(GUI_element):
         for msg_obj in self.message_text:
             msg_obj.Kill()
         self.game.gui.block_gui_keyboard_input = False
-
+            
 
 
 class GUI_button_dialog_box_confirm(GUI_element_button):
@@ -492,6 +493,8 @@ class GUI_button_dialog_box_confirm(GUI_element_button):
     
     def mouse_left_up(self):
         self.parent.Kill()
+        if not self.parent.callback is None:
+            self.parent.callback()
 
 
 

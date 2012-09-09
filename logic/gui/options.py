@@ -17,7 +17,7 @@ from gui.gui_elements import *
 
 class GUI_options(GUI_element_window):
     title = "Options"
-    height = 520
+    height = 565
     width = 400
     objs = {}
     widgets = {}
@@ -54,6 +54,8 @@ class GUI_options(GUI_element_window):
         self.widgets['sound_effects_vol'] = GUI_options_sound_effects_volume(self.game, self)
         self.widgets['cancel_button'] = GUI_options_cancel_button(self.game, self)
         self.widgets['apply_button'] = GUI_options_apply_button(self.game, self)
+        self.widgets['bump_scroll'] = GUI_options_bump_scroll(self.game, self)
+        self.widgets['lock_drawing'] = GUI_options_lock_drawing(self.game, self)
         
         self.game.gui.block_gui_keyboard_input = True
         self.x = 0
@@ -86,7 +88,14 @@ class GUI_options(GUI_element_window):
         self.game.core.settings.sound_effects_on = bool(self.widgets['sound_effects_on'].current_value)
         self.game.core.settings.music_vol = int(self.widgets['music_vol'].current_value)
         self.game.core.settings.sound_effects_vol = int(self.widgets['sound_effects_vol'].current_value)
+        self.game.core.settings.mouse_left_empty = bool(self.objs['mouse_image'].current_value)
+        self.game.core.settings.bump_scroll = bool(self.widgets['bump_scroll'].current_value)
+        self.game.core.settings.lock_drawing = bool(self.widgets['lock_drawing'].current_value)
         self.game.core.settings.save()
+
+        self.game.settings['mouse_left_empty'] = self.game.core.settings.mouse_left_empty
+        self.game.settings['bump_scroll'] = self.game.core.settings.bump_scroll
+        self.game.settings['lock_drawing'] = self.game.core.settings.lock_drawing
 
         if res_or_full_screen_changed:
             GUI_element_dialog_box(
@@ -326,13 +335,199 @@ class GUI_options_sound_effects_volume(GUI_element_slider):
 
 
 
-class GUI_options_mouse_image(Process):
+class GUI_options_mouse_image(GUI_element):
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
+        self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2)
         self.y = self.parent.y + 375
         self.z = self.parent.z - 2
         self.image = self.game.core.media.gfx['gui_mouse']
+        self.mouse_key_left = GUI_options_mouse_key_left(self.game, self)
+        self.mouse_key_right = GUI_options_mouse_key_right(self.game, self)
+        self.current_value = self.game.core.settings.mouse_left_empty
+        self.setting_button = GUI_options_mouse_setting_button(self.game, self)
 
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.mouse_key_left.Kill()
+        self.mouse_key_right.Kill()
+
+
+    def get_screen_draw_position(self):
+        return (self.x - (self.image.width/2), self.y - (self.image.height/2))
+
+
+
+class GUI_options_mouse_key_left(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x - 20
+        self.y = self.parent.y - 20
+        self.z = self.parent.z - 1
+        self.text = Text(self.game.core.media.fonts['options_mouse_button'], self.x - 60, self.y - 20, TEXT_ALIGN_BOTTOM_RIGHT, "wub wub")
+        self.text.z = self.z
+        self.text.colour = (0.0, 0.0, 0.0)
+        self.tile_image = None
+
+        self.draw_strategy = "primitive_line"
+        self.primitive_line_colour = ((.6, .6, .6, 1.0), (1.0, 1.0, 1.0, 0.3))
+        self.primitive_line_position = ((self.x, self.y), ((self.x - 100, self.y - 20)))
+
+
+    def Execute(self):
+        if not self.tile_image is None:
+            self.tile_image.Kill()
+        
+        if self.parent.current_value:
+            self.text.text = "Mark empty"
+            self.tile_image = GUI_options_mouse_tile_image_left(self.game, self, "gui_puzzle_cell_white")
+        else:
+            self.text.text = "Mark filled"
+            self.tile_image = GUI_options_mouse_tile_image_left(self.game, self, "gui_puzzle_cell_black")
+
+
+    def On_Exit(self):
+        if not self.tile_image is None:
+            self.tile_image.Kill()
+        self.text.Kill()
+
+
+
+class GUI_options_mouse_key_right(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x - 20
+        self.y = self.parent.y - 20
+        self.z = self.parent.z - 1
+        self.text = Text(self.game.core.media.fonts['options_mouse_button'], self.x + 94, self.y - 20, TEXT_ALIGN_BOTTOM_LEFT, "boom boom tish")
+        self.text.z = self.z
+        self.text.colour = (0.0, 0.0, 0.0)
+        self.tile_image = None
+
+        self.draw_strategy = "primitive_line"
+        self.primitive_line_colour = ((.6, .6, .6, 1.0), (1.0, 1.0, 1.0, 0.3))
+        self.primitive_line_position = ((self.x + 32, self.y), ((self.x + 132, self.y - 20)))
+
+
+    def Execute(self):
+        if not self.tile_image is None:
+            self.tile_image.Kill()
+        
+        if self.parent.current_value:
+            self.text.text = "Mark filled"
+            self.tile_image = GUI_options_mouse_tile_image_right(self.game, self, "gui_puzzle_cell_black")
+        else:
+            self.text.text = "Mark empty"
+            self.tile_image = GUI_options_mouse_tile_image_right(self.game, self, "gui_puzzle_cell_white")
+
+
+    def On_Exit(self):
+        if not self.tile_image is None:
+            self.tile_image.Kill()        
+        self.text.Kill()
+
+
+
+class GUI_options_mouse_tile_image_left(Process):
+    def __init__(self, game, parent, image):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x - 100
+        self.y = self.parent.y
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx[image]
+        self.scale = .75 if image == "gui_puzzle_cell_white" else .5
+
+
+    def get_screen_draw_position(self):
+        return (self.x - ((self.image.width/2) * self.scale), self.y - ((self.image.height/2) * self.scale))
+
+
+
+class GUI_options_mouse_tile_image_right(Process):
+    def __init__(self, game, parent, image):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x + 130
+        self.y = self.parent.y
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx[image]
+        self.scale = .75 if image == "gui_puzzle_cell_white" else .5
+
+
+    def get_screen_draw_position(self):
+        return (self.x - ((self.image.width/2) * self.scale), self.y - ((self.image.height/2) * self.scale))
+
+
+
+class GUI_options_mouse_setting_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Swap Buttons"
+
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x + 50
+        self.y = self.parent.y + 16
+        self.z = self.parent.z - 2
+        self.gui_init()
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.current_value = True if not self.parent.current_value else False
+
+
+
+class GUI_options_bump_scroll(GUI_element_yes_no_radios):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x + 240
+        self.y = self.parent.y + 450
+        self.z = self.parent.z - 3
+        self.current_value = bool(self.game.core.settings.bump_scroll)
+        self.gui_init()
+
+        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Enable bump scrolling")
+        self.name_text.z = self.z - 1
+        self.name_text.colour = (0.0, 0.0, 0.0)
+
+
+    def On_Exit(self):
+        GUI_element_yes_no_radios.On_Exit(self)
+        self.name_text.Kill()
+
+
+
+class GUI_options_lock_drawing(GUI_element_yes_no_radios):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x + 240
+        self.y = self.parent.y + 480
+        self.z = self.parent.z - 3
+        self.current_value = bool(self.game.core.settings.lock_drawing)
+        self.gui_init()
+
+        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Lock drawing to row/column")
+        self.name_text.z = self.z - 1
+        self.name_text.colour = (0.0, 0.0, 0.0)
+
+
+    def On_Exit(self):
+        GUI_element_yes_no_radios.On_Exit(self)
+        self.name_text.Kill()

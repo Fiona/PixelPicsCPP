@@ -288,6 +288,9 @@ class GUI_puzzle(GUI_element):
 
         self.made_mistake = False
 
+        self.current_locked_row = None
+        self.current_locked_col = None
+
         self.PUZZLE_VERIFIER_ITERATIONS = PUZZLE_VERIFIER_ITERATIONS
         
 
@@ -344,7 +347,7 @@ class GUI_puzzle(GUI_element):
         if self.state == PUZZLE_STATE_SOLVING:
             if not self.game.paused:
                 self.game.timer+= 1
-
+                self.do_bump_scrolling()
             # --- DESIGNER ONLY ---            
             if self.game.game_state == GAME_STATE_DESIGNER:
                  if self.puzzle_solver_state is None:
@@ -642,6 +645,24 @@ class GUI_puzzle(GUI_element):
                     text.z = Z_GUI_OBJECT_LEVEL_7
 
 
+    def do_bump_scrolling(self):
+        if self.currently_panning or not self.game.settings['bump_scroll']:
+            return
+
+        diff = [0, 0]
+        
+        if self.game.gui.mouse.x < BUMP_SCROLL_BORDER_WIDTH:
+            diff[0] += BUMP_SCROLL_SPEED
+        if self.game.gui.mouse.x > self.game.settings['screen_width'] - BUMP_SCROLL_BORDER_WIDTH:
+            diff[0] -= BUMP_SCROLL_SPEED
+        if self.game.gui.mouse.y < BUMP_SCROLL_BORDER_WIDTH:
+            diff[1] += BUMP_SCROLL_SPEED
+        if self.game.gui.mouse.y > self.game.settings['screen_height'] - BUMP_SCROLL_BORDER_WIDTH:
+            diff[1] -= BUMP_SCROLL_SPEED
+            
+        self.adjust_camera_pos(diff[0], diff[1])
+        
+
     def mouse_over(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
@@ -665,6 +686,8 @@ class GUI_puzzle(GUI_element):
             self.hovered_row = -1
             self.last_state_set = "ignore"
             self.made_mistake = False
+            self.current_locked_row = None
+            self.current_locked_col = None
 
             if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
                 self.display_rectangle_marker = False
@@ -676,10 +699,17 @@ class GUI_puzzle(GUI_element):
                 self.rectangle_marker_bottom_right = (self.hovered_row, self.hovered_column)
             
 
-    def mouse_left_down(self):
+    def mouse_left_down(self):       
+        if self.game.settings['mouse_left_empty']:
+            self.default_mouse_left_down()
+        else:
+            self.default_mouse_right_down()
+
+
+    def default_mouse_left_down(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
-
+        
         if self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE and not self.display_rectangle_marker:
             self.display_rectangle_marker = True
             self.rectangle_marker_top_left = (self.hovered_row, self.hovered_column)
@@ -701,6 +731,13 @@ class GUI_puzzle(GUI_element):
                 
 
     def mouse_right_down(self):
+        if self.game.settings['mouse_left_empty']:
+            self.default_mouse_right_down()
+        else:
+            self.default_mouse_left_down()
+
+
+    def default_mouse_right_down(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
@@ -714,12 +751,31 @@ class GUI_puzzle(GUI_element):
 
         if not self.parent.tool == DRAWING_TOOL_STATE_DRAW:
             return
+
+        if self.game.settings['lock_drawing']:
+            if self.current_locked_row is None and self.current_locked_col is None:
+                if self.last_hovered_cell[0] != self.hovered_row:
+                    self.current_locked_col = self.hovered_column
+                elif self.last_hovered_cell[1] != self.hovered_column:
+                    self.current_locked_row = self.hovered_row
+            else:
+                if not self.current_locked_row is None and not self.hovered_row == self.current_locked_row:
+                    return
+                if not self.current_locked_col is None and not self.hovered_column == self.current_locked_col:
+                    return
         
         if self.last_state_set == "ignore" or not self.last_hovered_cell == (self.hovered_row, self.hovered_column):
             self.mark_cell(True, (self.hovered_row, self.hovered_column))
 
 
     def mouse_left_up(self):
+        if self.game.settings['mouse_left_empty']:
+            self.default_mouse_left_up()
+        else:
+            self.default_mouse_right_up()
+
+
+    def default_mouse_left_up(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
@@ -743,9 +799,18 @@ class GUI_puzzle(GUI_element):
 
 
     def mouse_right_up(self):
+        if self.game.settings['mouse_left_empty']:
+            self.default_mouse_right_up()
+        else:
+            self.default_mouse_left_up()
+
+
+    def default_mouse_right_up(self):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
+        self.current_locked_row = None
+        self.current_locked_col = None
         self.made_mistake = False
 
         if self.parent.tool == DRAWING_TOOL_STATE_FILL:
