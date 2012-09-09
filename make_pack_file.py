@@ -19,7 +19,7 @@ FREEMODE = False
 
 def create_pack_file_for(path):
     os.chdir(path)
-    puzzle_files = glob.glob("*.puz");
+    puzzle_files = sorted(glob.glob("*.puz"));
     
     if len(puzzle_files) == 0:
         print "no puzzle files there"
