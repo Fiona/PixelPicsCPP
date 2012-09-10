@@ -98,6 +98,8 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_button_sharing_upload", new Image("gfx/gui/button_sharing_upload.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_download", new Image("gfx/gui/button_sharing_download.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_play", new Image("gfx/gui/button_sharing_play.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_next", new Image("gfx/gui/button_sharing_next.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_prev", new Image("gfx/gui/button_sharing_prev.png", False, 3)));
  
 }
 

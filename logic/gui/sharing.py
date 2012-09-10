@@ -828,7 +828,7 @@ class GUI_sharing_packs_button_upload(GUI_element_button):
         self.pack = pack
         self.pack_num = pack_num
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.width - 200
+        self.x = self.parent.width - 200 
         self.y = (50 * display_count) + 10 + (10 * display_count) + 12
         self.image = self.game.core.media.gfx['gui_button_sharing_upload']
         self.gui_init()
@@ -859,17 +859,26 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
         self.text_num_pages = None
         self.gui_init()
         self.current_page = 1
+        self.next_button = None
+        self.prev_button = None
         self.go_to_page(self.current_page)
 
 
     def go_to_page(self, page):
-        self.parent.make_request_to_server(self.url, {'page' : 1}, self.display_loaded_packs, task_text = self.task_text)
+        self.current_page = page
+        self.parent.make_request_to_server(self.url, {'page' : page}, self.display_loaded_packs, task_text = self.task_text)
 
 
     def display_loaded_packs(self, response):
         # kill, reset etc
         for x in self.pack_items:
             x.Kill()
+        if not self.next_button is None:
+            self.next_button.Kill()
+            self.next_button = None
+        if not self.prev_button is None:
+            self.prev_button.Kill()
+            self.prev_button = None
         self.contents_scroll_location = 0.0
         self.pack_items = []
         
@@ -891,10 +900,18 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
         self.create_pack_objects()
 
         # page number
+        if not self.text_num_pages is None:
+            self.text_num_pages.Kill()
         self.text_num_pages = Text(self.game.core.media.fonts['designer_pack_name'], self.x + (self.width / 2), self.y + self.contents_height + 10, TEXT_ALIGN_TOP, "Page " + str(self.current_page) + "/" + str(self.num_pages))
         self.text_num_pages.z = self.z - 2
         self.text_num_pages.colour = (1.0, 1.0, 1.0)
         self.contents_height += 32
+
+        # prev/next page buttons
+        if self.current_page < self.num_pages:
+            self.next_button = GUI_sharing_packs_button_next(self.game, self)
+        if self.current_page > 1:
+            self.prev_button = GUI_sharing_packs_button_prev(self.game, self)
 
         self.adjust_text_positions()
                     
@@ -919,7 +936,7 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
         if last_item is None:
             self.contents_height = 0
         else:
-            self.contents_height = last_item.y + last_item.height + 10
+            self.contents_height = last_item.y + last_item.height + 35
         
 
     def finished_download(self):
@@ -930,7 +947,7 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
         if not self.text_num_pages is None:
             height = self.contents_height if self.contents_height > self.height else self.height
             self.text_num_pages.y = self.y + height - 50 - self.contents_scroll_location
-            self.text_num_pages.clip = self.clip
+            self.text_num_pages.clip = (self.x, self.y, self.width, self.height)
             
 
     def On_Exit(self):
@@ -1054,6 +1071,46 @@ class GUI_sharing_packs_button_play(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
+
+
+
+class GUI_sharing_packs_button_next(GUI_element_button):
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.x = (self.parent.width / 2) + 130
+        height = self.parent.contents_height if self.parent.contents_height > self.parent.height else self.parent.height        
+        self.y = height - 50 - self.parent.contents_scroll_location
+        self.image = self.game.core.media.gfx['gui_button_sharing_next']
+        self.gui_init()
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.go_to_page(self.parent.current_page + 1)
+        
+
+
+class GUI_sharing_packs_button_prev(GUI_element_button):
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.x = (self.parent.width / 2) - 200
+        height = self.parent.contents_height if self.parent.contents_height > self.parent.height else self.parent.height        
+        self.y = height - 50 - self.parent.contents_scroll_location
+        self.image = self.game.core.media.gfx['gui_button_sharing_prev']
+        self.gui_init()
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.go_to_page(self.parent.current_page - 1)
         
 
 
