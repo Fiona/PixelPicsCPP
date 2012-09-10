@@ -12,7 +12,7 @@ from core import *
 # Game imports
 from consts import *
 from gui.gui_elements import *
-from gui.puzzle import GUI_puzzle
+from gui.puzzle_view import GUI_puzzle
 
 
 

@@ -13,6 +13,7 @@ from core import *
 from consts import *
 from helpers import Net_Process_POST
 from gui.gui_elements import *
+from puzzle import Puzzle, Pack
 
 
 
@@ -110,6 +111,238 @@ class GUI_sharing_container(GUI_element):
         self.net_process = Net_Process_POST(SHARING_ADDRESS + url, data)
         self.net_callback = callback
         self.loading_indicator = GUI_sharing_loading_indicator(self.game, self, task_text)
+
+
+
+class Attempt_Download_Pack(object):
+    def __init__(self, game, pack, container, successful_callback):
+        self.game = game
+        self.pack = pack
+        self.container = container
+        self.successful_callback = successful_callback
+        self.puzzle_downloading  = 1
+
+        # Check pack hasn't already been downloaded
+        if self.pack['uuid'] in self.game.manager.pack_uuids:
+            GUI_element_dialog_box(
+                self.game,
+                self.container,
+                "Very Unexpected Error",
+                ["This pack has already been downloaded."]
+                )
+            return
+
+        # check the pack doesn't belong to us already
+        if self.pack['author_id'] == self.game.author_id:
+            GUI_element_dialog_box(
+                self.game,
+                self.container,
+                "Very Unexpected Error",
+                ["This pack belongs to you anyway!"]
+                )
+            return
+
+        # Make sure we have all the info we need to construct it
+        for i in ['size', 'uuid', 'author', 'name', 'size', 'freemode']:
+            if not i in self.pack:
+                GUI_element_dialog_box(
+                    self.game,
+                    self,
+                    "Error",
+                    ["We don't have all the expected data on this pack."]
+                    )
+                return
+
+        # Make directory for this pack
+        try:
+            self.pack_directory = self.game.manager.generate_unique_filename(self.game.core.path_user_pack_directory)
+            os.mkdir(os.path.join(self.game.core.path_user_pack_directory, self.pack_directory))
+        except IOError as e:
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Error",
+                ["There was an error making the directory for this pack."]
+                )
+            return
+
+        # Make pack object
+        self.new_pack = Pack()
+        self.new_pack.uuid = self.pack['uuid']
+        self.new_pack.author_id = self.pack['author_id']
+        self.new_pack.author_name = self.pack['author']
+        self.new_pack.name = self.pack['name']
+        self.new_pack.freemode = self.pack['freemode']
+        self.new_pack.puzzles = {}
+        self.new_pack.order = []        
+
+        # Download first puzzle
+        self.make_puzzle_dowwnload_request()
+
+
+    def make_puzzle_dowwnload_request(self):
+        self.container.make_request_to_server(
+            "download_puzzle/",
+            {'pack' : self.pack['uuid'], 'puzzle_num' : self.puzzle_downloading},
+            self.download_puzzle,
+            task_text = "Downloading puzzle " + str(self.puzzle_downloading) + "/" + str(self.pack['size'])
+            )
+
+
+    def download_puzzle(self, response):
+        # make sure that everything that should be here is here
+        for i in ['name', 'width', 'height', 'background', 'cells']:
+            if not i in response:
+                GUI_element_dialog_box(
+                    self.game,
+                    self,
+                    "Error",
+                    ["Missing expected data for puzzle."]
+                    )
+                return
+
+        for i in ['name', 'pack', 'background']:
+            if response[i].strip() == "":
+                GUI_element_dialog_box(
+                    self.game,
+                    self,
+                    "Error",
+                    ["Missing expected data for puzzle."]
+                    )
+                return
+            
+        if len(response['cells']) == 0:
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Error",
+                ["Cells data for puzzle is empty."]
+                )
+            return
+
+        # make sure it's the right pack!
+        if not self.new_pack.uuid == response['pack']:
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Error",
+                ["Puzzle recieved is not for pack we are attempting to download."]
+                )
+            return
+        
+        # make sure pack doesn't need any more puzzles
+        if len(self.new_pack.puzzles) >= self.pack['size']:
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Error",
+                ["Pack has too many puzzles already."]
+                )
+            return
+        
+        # ensure sizes aren't out of bounds
+        if response['width'] < MIN_PUZZLE_SIZE or response['height'] < MIN_PUZZLE_SIZE \
+               or response['width'] > MAX_PUZZLE_SIZE or response['height'] > MAX_PUZZLE_SIZE:
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Error",
+                ["Puzzle with out of bound sizes submitted."]
+                )
+            return
+
+        # make sure each row and column isn't a crazy size
+        if len(response['cells']) < response['height'] or len(response['cells']) > response['height']:
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Error",
+                ["Puzzle row count is inconsistent."]
+                )
+            return
+
+        for col in response['cells']:
+            if len(col) < response['width'] or len(col) > response['width']:
+                GUI_element_dialog_box(
+                    self.game,
+                    self,
+                    "Error",
+                    ["Puzzle column count is inconsistent."]
+                    )
+                return
+            # make sure each cell is correct
+            for cell in col:
+                if len(cell) != 2 or len(cell[1]) != 3:
+                    GUI_element_dialog_box(
+                        self.game,
+                        self,
+                        "Error",
+                        ["Puzzle has a malformed cell."]
+                        )
+                    return
+
+        # Get name for puzzle file
+        puzzle_filename = self.game.manager.generate_unique_filename(os.path.join(self.game.core.path_user_pack_directory, self.pack_directory), extension = FILE_PUZZLE_EXTENSION)
+        
+        # create new puzzle object
+        puzzle = Puzzle()
+        puzzle.name = response['name']
+        puzzle.width = response['width']
+        puzzle.height = response['height']
+        puzzle.cells = response['cells']
+        puzzle.background = response['background']
+
+        puzzle.row_numbers = [(0,)] * puzzle.height
+        puzzle.column_numbers = [(0,)] * puzzle.width
+        self.game.manager.work_out_puzzle_hint_numbers(puzzle)
+        
+        # write it to a file
+        try:
+            f = open(os.path.join(self.game.core.path_user_pack_directory, self.pack_directory, puzzle_filename), "wb")
+            pickle.dump(puzzle, f)
+            f.close()             
+        except IOError as e:
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Error",
+                ["There was an error writing this puzzle to a file."]
+                )
+            return
+
+        # add to current pack
+        self.new_pack.order.append(puzzle_filename)
+        self.new_pack.puzzles[puzzle_filename] = [puzzle.name, puzzle.width, puzzle.height]
+
+        # Either complete the pack or request the next puzzle
+        if self.puzzle_downloading == self.pack['size']:
+            self.container.make_request_to_server(
+                "finish_pack_download/",
+                {'pack' : self.new_pack.uuid},
+                self.complete_pack,
+                task_text = "Finishing pack download"
+                )
+        else:
+            self.puzzle_downloading += 1
+            self.make_puzzle_dowwnload_request()
+            
+
+    def complete_pack(self, response):
+        try:
+            f = open(os.path.join(self.game.core.path_user_pack_directory, self.pack_directory, FILE_PACK_INFO_FILE), "wb")
+            pickle.dump(self.new_pack, f)
+            f.close()             
+        except IOError as e:
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Error",
+                ["There was an error writing this pack to a file."]
+                )
+            return
+
+        self.game.manager.load_packs()
+        self.successful_callback()
 
 
 
@@ -639,8 +872,6 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
             x.Kill()
         self.contents_scroll_location = 0.0
         self.pack_items = []
-        last_item = None
-        count = 0
         
         # Make sure we got everything
         for i in ['num_pages', 'success', 'packs']:
@@ -657,15 +888,7 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
         self.raw_pack_data = response['packs']
 
         # Create objects for each pack
-        for i,pack in enumerate(self.raw_pack_data):
-            last_item = GUI_sharing_load_puzzles_pack_item(self.game, self, pack, i, count)
-            self.pack_items.append(last_item)
-            count += 1
-            
-        if last_item is None:
-            self.contents_height = 0
-        else:
-            self.contents_height = last_item.y + last_item.height + 10
+        self.create_pack_objects()
 
         # page number
         self.text_num_pages = Text(self.game.core.media.fonts['designer_pack_name'], self.x + (self.width / 2), self.y + self.contents_height + 10, TEXT_ALIGN_TOP, "Page " + str(self.current_page) + "/" + str(self.num_pages))
@@ -681,13 +904,34 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
         self.adjust_text_positions()
 
 
+    def create_pack_objects(self):
+        if len(self.pack_items):
+            for i in self.pack_items:
+                i.Kill()
+        self.pack_items = []
+        last_item = None
+        count = 0
+        for i,pack in enumerate(self.raw_pack_data):
+            last_item = GUI_sharing_load_puzzles_pack_item(self.game, self, pack, i, count)
+            self.pack_items.append(last_item)
+            count += 1
+            
+        if last_item is None:
+            self.contents_height = 0
+        else:
+            self.contents_height = last_item.y + last_item.height + 10
+        
+
+    def finished_download(self):
+        self.create_pack_objects()
+        
+
     def adjust_text_positions(self):
         if not self.text_num_pages is None:
             height = self.contents_height if self.contents_height > self.height else self.height
             self.text_num_pages.y = self.y + height - 50 - self.contents_scroll_location
             self.text_num_pages.clip = self.clip
             
-
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
@@ -722,6 +966,24 @@ class GUI_sharing_load_puzzles_pack_item(GUI_element):
         self.text_pack_author.z = self.z - 2
         self.text_pack_author.colour = (1.0, 1.0, 1.0)
 
+        self.text_pack_puzzle_count = Text(self.game.core.media.fonts['designer_pack_author'], self.x + self.scroll_element.x + self.text_pack_name.text_width + 15, 0.0, TEXT_ALIGN_TOP_LEFT, str("(" + str(self.pack['size']) + " puzzles)"))
+        self.text_pack_puzzle_count.z = self.z - 2
+        self.text_pack_puzzle_count.colour = (1.0, 1.0, 1.0)
+
+        self.text_pack_yours = None
+        
+        if self.pack['uuid'] in self.game.manager.pack_uuids:
+            if self.pack['author_id'] == self.game.author_id:
+                self.text_pack_yours = Text(self.game.core.media.fonts['designer_pack_name'], self.x + self.width + self.scroll_element.x - 85, 0.0, TEXT_ALIGN_CENTER, "Yours!")
+                self.text_pack_yours.z = self.z - 2
+                self.text_pack_yours.colour = (1.0, 1.0, 1.0)
+                self.text_pack_yours.shadow = 2
+                self.text_pack_yours.shadow_colour = (.1, .1, .1)                
+            else:
+                GUI_sharing_packs_button_play(self.game, self, self.pack, self.pack_num, display_count)
+        else:
+            GUI_sharing_packs_button_download(self.game, self, self.pack, self.pack_num, display_count)
+            
         self.adjust_text_positions()
         
         self.draw_strategy = "gui_designer_packs_pack_item"
@@ -737,13 +999,62 @@ class GUI_sharing_load_puzzles_pack_item(GUI_element):
         self.text_pack_name.clip = self.clip
         self.text_pack_author.y = self.y + self.scroll_element.y + 25 - self.scroll_element.contents_scroll_location
         self.text_pack_author.clip = self.clip
+        self.text_pack_puzzle_count.y = self.y + self.scroll_element.y + 7 - self.scroll_element.contents_scroll_location
+        self.text_pack_puzzle_count.clip = self.clip
+        if not self.text_pack_yours is None:
+            self.text_pack_yours.y = self.y + self.scroll_element.y + 24 - self.scroll_element.contents_scroll_location
+            self.text_pack_yours.clip = self.clip
 
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
         self.text_pack_name.Kill()
         self.text_pack_author.Kill()
+        self.text_pack_puzzle_count.Kill()
+        if not self.text_pack_yours is None:
+            self.text_pack_yours.Kill()
+            
 
+
+class GUI_sharing_packs_button_download(GUI_element_button):
+    def __init__(self, game, parent = None, pack = None, pack_num = 0, display_count = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent.parent
+        self.pack = pack
+        self.pack_num = pack_num
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.x = self.parent.width - 140
+        self.y = (50 * display_count) + 10 + (10 * display_count) + 12
+        self.image = self.game.core.media.gfx['gui_button_sharing_download']
+        self.gui_init()
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        Attempt_Download_Pack(self.game, self.pack, self.parent.parent.parent, self.parent.parent.finished_download)
+
+
+
+class GUI_sharing_packs_button_play(GUI_element_button):
+    def __init__(self, game, parent = None, pack = None, pack_num = 0, display_count = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent.parent
+        self.pack = pack
+        self.pack_num = pack_num
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.x = self.parent.width - 140
+        self.y = (50 * display_count) + 10 + (10 * display_count) + 12
+        self.image = self.game.core.media.gfx['gui_button_sharing_play']
+        self.gui_init()
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        
 
 
 class GUI_sharing_newest_puzzles_scroll_window(GUI_sharing_load_puzzles_scroll_window):

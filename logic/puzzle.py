@@ -96,6 +96,7 @@ class Puzzle_manager(object):
 
     packs = []
     pack_directory_list = []
+    pack_uuids = []
 
     game_packs = {}
     game_pack_directory_list = []
@@ -114,6 +115,7 @@ class Puzzle_manager(object):
         if user_created:
             self.packs = []
             self.pack_directory_list = []
+            self.pack_uuids = []            
             packs = self.packs
             pack_directory_list = self.pack_directory_list
             pack_dir = self.game.core.path_user_pack_directory
@@ -141,6 +143,7 @@ class Puzzle_manager(object):
             f.close()
             if user_created:
                 packs.append(pack)
+                self.pack_uuids.append(pack.uuid)
             else:
                 packs[pack_dir_name] = pack
                 
@@ -374,7 +377,7 @@ class Puzzle_manager(object):
             raise e
          
         new_pack = Pack()
-        new_pack.uud = str(uuid.uuid4())
+        new_pack.uuid = str(uuid.uuid4())
         new_pack.author_id = self.game.core.author_id
         new_pack.author_name = author
         new_pack.name = pack_name

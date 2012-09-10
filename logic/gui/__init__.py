@@ -16,7 +16,7 @@ from gui.logo import *
 from gui.main_menu import *
 from gui.category_select import *
 from gui.puzzle_select import *
-from gui.puzzle import *
+from gui.puzzle_view import *
 from gui.designer import *
 from gui.sharing import *
 
