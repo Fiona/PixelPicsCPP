@@ -504,6 +504,12 @@ bool Python_Interface::initialise_python_interpreter()
     try
     {
 
+#if __WIN32__
+        PyRun_SimpleString("import cStringIO");
+        PyRun_SimpleString("import sys");
+        PyRun_SimpleString("sys.stderr = cStringIO.StringIO()");
+#endif
+
         object main_module = import("__main__");
         object main_namespace = main_module.attr("__dict__");
 
@@ -524,6 +530,16 @@ bool Python_Interface::initialise_python_interpreter()
     {
 
         PyErr_Print();
+
+#if __WIN32__
+        boost::python::object sys(
+            boost::python::handle<>(PyImport_ImportModule("sys"))
+        );
+        boost::python::object err = sys.attr("stderr");
+        std::string err_text = boost::python::extract<std::string>(err.attr("getvalue")());
+        MessageBox(0, err_text.c_str(), "Python Error", MB_OK);
+#endif
+
         return False;
 
     }

@@ -712,7 +712,7 @@ class Puzzle_image(GUI_element):
         self.in_colour = in_colour
 
         if not puzzle_path == "":
-            f = open(puzzle_path, "rb")
+            f = open(puzzle_path, "r")
             self.puzzle = pickle.load(f)
             f.close()
         else:

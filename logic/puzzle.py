@@ -4,7 +4,8 @@ PixelPics - Nonogram game
 """
 
 # Python imports
-import os, sys, pickle, string, glob, uuid
+import os, sys, string, glob, uuid
+import cPickle as pickle
 
 # Game engine imports
 from core import *
@@ -138,7 +139,7 @@ class Puzzle_manager(object):
 
         # Load all packs
         for pack_dir_name in pack_directory_list:
-            f = open(os.path.join(pack_dir, pack_dir_name, FILE_PACK_INFO_FILE), "rb")
+            f = open(os.path.join(pack_dir, pack_dir_name, FILE_PACK_INFO_FILE), "r")
             pack = pickle.load(f)
             f.close()
             if user_created:
@@ -151,7 +152,7 @@ class Puzzle_manager(object):
     def load_pack(self, pack_dir, user_created = True):
         try:
             main_dir = self.game.core.path_user_pack_directory if user_created else self.game.core.path_game_pack_directory
-            f = open(os.path.join(main_dir, pack_dir, FILE_PACK_INFO_FILE), "rb")
+            f = open(os.path.join(main_dir, pack_dir, FILE_PACK_INFO_FILE), "r")
             self.current_pack = pickle.load(f)
             self.game.freemode = self.current_pack.freemode
             self.current_puzzle_pack = pack_dir
@@ -166,7 +167,7 @@ class Puzzle_manager(object):
 
             main_dir = self.game.core.path_user_pack_directory if user_created else self.game.core.path_game_pack_directory
             
-            f = open(os.path.join(main_dir, pack_dir, puzzle_filename), "rb")
+            f = open(os.path.join(main_dir, pack_dir, puzzle_filename), "r")
             puzzle = pickle.load(f)
             self.current_puzzle = puzzle
             self.current_puzzle_file = puzzle_filename
@@ -335,7 +336,7 @@ class Puzzle_manager(object):
     def load_puzzle_state(self, state_filename):
         try:
             path = os.path.join(self.game.core.path_saves_game_directory, state_filename)
-            f = open(path, "rb")
+            f = open(path, "r")
             save = pickle.load(f)
             
             if save.pack_dir == self.current_puzzle_pack and save.puzzle_filename == self.current_puzzle_file:
@@ -537,7 +538,7 @@ class Puzzle_manager(object):
 
     def add_puzzle_to_pack(self, puzzle_object, puzzle_filename, pack_directory):
         try:
-            f = open(os.path.join(self.game.core.path_user_pack_directory, pack_directory, FILE_PACK_INFO_FILE), "rb")
+            f = open(os.path.join(self.game.core.path_user_pack_directory, pack_directory, FILE_PACK_INFO_FILE), "r")
             pack_object = pickle.load(f)
             f.close()
         except IOError:
