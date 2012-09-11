@@ -3,6 +3,8 @@ PixelPics - Nonogram game
 (c) Stompy Blondie 2011/2012 http://stompyblondie.com
 """
 
+print "test test test"
+
 # python imports
 import sys, os, pickle
 
@@ -123,7 +125,7 @@ class Game(Process):
         It is all saved in a Player object. Pass the Player object into this to
         save it.
         """
-        f = open(self.core.path_player_progress, "w+")
+        f = open(self.core.path_player_progress, "w+b")
         pickle.dump(player, f)
         f.close()
 
