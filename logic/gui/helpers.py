@@ -16,6 +16,7 @@ else:
 from core import *
 
 
+
 def lerp(i, speed, start, end, smooth = True):
     speed -= 1
     p = 1.0/speed*i
@@ -37,16 +38,16 @@ if os.name == 'nt':
         def put(self, item):
             self.items.append(item)
         def get(self):
-            self.items.pop()
+            return self.items.pop()
 
 
 
     class ThreadForNT(threading.Thread):
         def __init__(self, url, data, queue):
-            threading.Thread.__init__(self)
             self.url = url
             self.data = data
             self.queue = queue
+            threading.Thread.__init__(self)
 
         def run(self):
             url = self.url
