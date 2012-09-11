@@ -124,7 +124,7 @@ class Net_Process_POST(object):
         return self.finished
 
 
-    def run(url, data, queue):
+    def run(self, url, data, queue):
         if DEBUG:
             print "Opening request"
         data = json.dumps(data)
