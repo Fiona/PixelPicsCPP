@@ -3,8 +3,6 @@ PixelPics - Nonogram game
 (c) Stompy Blondie 2011/2012 http://stompyblondie.com
 """
 
-print "test test test"
-
 # python imports
 import sys, os, pickle
 

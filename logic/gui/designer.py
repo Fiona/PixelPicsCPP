@@ -1429,6 +1429,10 @@ class GUI_designer_designer_menu_bar(GUI_element):
         self.draw_strategy = "gui_designer_designer_menu_bar"
 
 
+    def mouse_over(self):
+        self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
+
+
 
 class GUI_designer_designer_back(GUI_element_button):
     generic_button = True
@@ -2447,6 +2451,10 @@ class GUI_designer_colour_menu_bar(GUI_element):
         self.height = 155
         self.alpha = 0.3
         self.draw_strategy = "gui_designer_designer_menu_bar"
+
+
+    def mouse_over(self):
+        self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
 
 
 
