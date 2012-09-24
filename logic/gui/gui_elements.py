@@ -982,6 +982,8 @@ class GUI_element_dropdown(GUI_element):
     def gui_init(self):
         GUI_element.gui_init(self)
 
+        self.options_displayed = False
+
         self.z = Z_GUI_OBJECT_LEVEL_11
         
         self.currently_selected_object = GUI_element_dropdown_currently_selected(self.game, self)
@@ -1007,12 +1009,14 @@ class GUI_element_dropdown(GUI_element):
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
         self.options_object.show()
+        self.options_displayed = True
 
         
     def hide_all_options(self):
         self.width = 0
         self.height = 0
         self.options_object.hide()        
+        self.options_displayed = False
         
 
     
@@ -1056,7 +1060,10 @@ class GUI_element_dropdown_currently_selected(GUI_element):
 
 
     def mouse_left_up(self):
-        self.parent.display_all_options()
+        if self.parent.options_displayed:
+            self.parent.hide_all_options()
+        else:
+            self.parent.display_all_options()
 
 
     def On_Exit(self):
