@@ -40,6 +40,7 @@ class GUI_sharing_container(GUI_element):
         GUI_sharing_tab_top(self.game, self)
         GUI_sharing_tab_top_week(self.game, self)
         GUI_sharing_tab_upload(self.game, self)
+        GUI_sharing_tab_downloaded(self.game, self)
         GUI_sharing_back(self.game, self)
 
         if self.game.gui.gui_state == GUI_STATE_SHARING_NEWEST:
@@ -52,6 +53,9 @@ class GUI_sharing_container(GUI_element):
         elif self.game.gui.gui_state == GUI_STATE_SHARING_UPLOAD:
             GUI_sharing_title(self.game, self, "My Puzzles")
             GUI_sharing_upload_scroll_window(self.game, self)
+        elif self.game.gui.gui_state == GUI_STATE_SHARING_DOWNLOADED:
+            GUI_sharing_title(self.game, self, "Downloaded Puzzles")
+            GUI_sharing_downloaded_scroll_window(self.game, self)
 
         #GUI_sharing_test_button(self.game, self)
         
@@ -628,6 +632,36 @@ class GUI_sharing_tab_upload(GUI_element_button):
 
 
 
+class GUI_sharing_tab_downloaded(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Downloaded Puzzles"
+    toggle_button = True
+    
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.game.settings['screen_width'] - 210
+        self.y = 100
+        self.z = Z_GUI_OBJECT_LEVEL_2
+        self.gui_init()
+
+
+    def update(self):
+        if self.game.gui.gui_state == GUI_STATE_SHARING_DOWNLOADED:
+            self.toggle_state = True
+        else:
+            self.toggle_state = False
+        GUI_element_button.update(self)
+        
+
+    def mouse_left_up(self):
+        if self.game.gui.gui_state == GUI_STATE_SHARING_DOWNLOADED:
+            return
+        self.game.gui.switch_gui_state_to(GUI_STATE_SHARING_DOWNLOADED)
+
+
+
 class GUI_sharing_title(GUI_element):
     def __init__(self, game, parent, subtitle = None):
         Process.__init__(self)
@@ -1118,3 +1152,141 @@ class GUI_sharing_newest_puzzles_scroll_window(GUI_sharing_load_puzzles_scroll_w
     url = "newest/"
     task_text = "Downloading pack info"
 
+
+
+class GUI_sharing_downloaded_scroll_window(GUI_element_scroll_window):
+    pack_items = []
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = Z_GUI_OBJECT_LEVEL_4
+        self.x = 50
+        self.y = 175
+        self.width = self.game.settings['screen_width'] - 100
+        self.height = self.game.settings['screen_height'] - 250
+        self.gui_init()
+        self.reread_pack_items()
+
+
+    def reread_pack_items(self):
+        for x in self.pack_items:
+            x.Kill()
+        self.contents_scroll_location = 0.0
+        self.pack_items = []
+        last_item = None
+        count = 0
+
+        for i,pack in reversed(list(enumerate(self.game.manager.packs))):
+            if pack.author_id == self.game.author_id:
+                continue
+            last_item = GUI_sharing_downloaded_pack_item(self.game, self, pack, i, count)
+            self.pack_items.append(last_item)
+            self.pack_items.append(
+                GUI_sharing_packs_downloaded_button_play(self.game, self, pack, i, count)
+                )
+            count += 1
+            
+        if last_item is None:
+            self.contents_height = 0
+        else:
+            self.contents_height = last_item.y + last_item.height + 10
+
+
+
+class GUI_sharing_downloaded_pack_item(GUI_element):
+    def __init__(self, game, parent = None, pack = None, pack_num = 0, display_count = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent
+        self.pack = pack
+        self.pack_num = pack_num
+        self.pack_dir = self.game.manager.pack_directory_list[self.pack_num]
+        self.z = Z_GUI_OBJECT_LEVEL_5 - 1
+        self.x = 10
+        self.y = (50 * display_count) + 10 + (10 * display_count)
+        self.width = self.parent.width - 64
+        self.height = 50
+        self.alpha = .1
+        self.gui_init()
+
+        self.text_pack_name = Text(self.game.core.media.fonts['designer_pack_name'], self.x + self.scroll_element.x + 5, 0.0, TEXT_ALIGN_TOP_LEFT, str(self.pack.name))
+        self.text_pack_name.z = self.z - 2
+        self.text_pack_name.colour = (1.0, 1.0, 1.0)
+        self.text_pack_name.shadow = 2
+        self.text_pack_name.shadow_colour = (.1, .1, .1)
+
+        self.text_pack_author = Text(self.game.core.media.fonts['designer_pack_author'], self.x + self.scroll_element.x + 15, 0.0, TEXT_ALIGN_TOP_LEFT, str("by " + self.pack.author_name))
+        self.text_pack_author.z = self.z - 2
+        self.text_pack_author.colour = (1.0, 1.0, 1.0)
+
+        completed = len(self.game.player.cleared_puzzles[self.pack.uuid]) if self.pack.uuid in self.game.player.cleared_puzzles else 0
+        text = Text(self.game.core.media.fonts['category_button_total_count'], self.x + self.width - 140, 0, TEXT_ALIGN_TOP, str(completed) + "of " + str(len(self.pack.puzzles)))
+        text.z = self.z - 1
+        text.colour = (1.0, 1.0, 1.0)
+        text.shadow = 2
+        text.shadow_colour = (.2, .2, .2)
+        self.text_total_count = text
+
+        text = Text(self.game.core.media.fonts['category_button_total_count'], self.x + self.width - 140, 0, TEXT_ALIGN_TOP, "solved")
+        text.z = self.z - 1
+        text.colour = (1.0, 1.0, 1.0)
+        text.shadow = 1
+        text.shadow_colour = (.2, .2, .2)
+        self.text_solved = text
+
+        self.adjust_text_positions()
+
+        self.draw_strategy = "gui_designer_packs_pack_item"
+
+
+    def Execute(self):
+        self.update()
+        self.adjust_text_positions()
+
+
+    def adjust_text_positions(self):
+        self.text_pack_name.y = self.y + self.scroll_element.y + 2 - self.scroll_element.contents_scroll_location
+        self.text_pack_name.clip = self.clip
+
+        self.text_pack_author.y = self.y + self.scroll_element.y + 25 - self.scroll_element.contents_scroll_location
+        self.text_pack_author.clip = self.clip
+
+        self.text_total_count.y = self.y + self.scroll_element.y + 10 - self.scroll_element.contents_scroll_location
+        self.text_total_count.clip = self.clip
+
+        self.text_solved.y = self.y + self.scroll_element.y + 25 - self.scroll_element.contents_scroll_location
+        self.text_solved.clip = self.clip
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.text_pack_name.Kill()
+        self.text_pack_author.Kill()
+        self.text_total_count.Kill()
+        self.text_solved.Kill()
+
+
+        
+class GUI_sharing_packs_downloaded_button_play(GUI_element_button):
+    def __init__(self, game, parent = None, pack = None, pack_num = 0, display_count = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent
+        self.pack = pack
+        self.pack_num = pack_num
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.x = self.parent.width - 195
+        self.y = (50 * display_count) + 10 + (10 * display_count) + 12
+        self.image = self.game.core.media.gfx['gui_button_sharing_play']
+        self.gui_init()
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.game.manager.user_created_puzzles = True
+        self.game.manager.load_pack(self.game.manager.pack_directory_list[self.pack_num], user_created = True)
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)

@@ -90,7 +90,10 @@ class GUI_category_go_back(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 20)
+        if self.game.manager.user_created_puzzles:
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING, gui_state = GUI_STATE_SHARING_DOWNLOADED), speed = 20)
+        else:
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 20)
 
 
     def On_Exit(self):
@@ -172,8 +175,7 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
             
         self.z = Z_GUI_OBJECT_LEVEL_4
 
-
-        if self.game.manager.current_puzzle_pack in self.game.player.cleared_puzzles and self.puzzle_filename in self.game.player.cleared_puzzles[self.game.manager.current_puzzle_pack]:
+        if self.game.manager.current_pack.uuid in self.game.player.cleared_puzzles and self.puzzle_filename in self.game.player.cleared_puzzles[self.game.manager.current_pack.uuid]:
             self.cleared = True
         else:
             self.cleared = False
@@ -191,12 +193,14 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         self.number_text.shadow_colour = (.5, .5, .5, .5)
 
         if self.cleared:
+            path_dir = self.game.core.path_user_pack_directory if self.game.manager.user_created_puzzles else self.game.core.path_game_pack_directory
+
             self.monochrome_picture = GUI_puzzle_puzzle_item_picture(
                 self.game,
                 self,
                 self.x + (self.width / 2),
                 self.y + (self.height / 2),
-                puzzle_path = os.path.join(self.game.core.path_game_pack_directory, self.game.manager.current_puzzle_pack, self.puzzle_filename),
+                puzzle_path = os.path.join(path_dir, self.game.manager.current_puzzle_pack, self.puzzle_filename),
                 in_colour = False,
                 fade_in_time = None
                 )
@@ -205,7 +209,7 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
                 self,
                 self.x + (self.width / 2),
                 self.y + (self.height / 2),
-                puzzle_path = os.path.join(self.game.core.path_game_pack_directory, self.game.manager.current_puzzle_pack, self.puzzle_filename),
+                puzzle_path = os.path.join(path_dir, self.game.manager.current_puzzle_pack, self.puzzle_filename),
                 in_colour = True,
                 fade_in_time = None
                 )
@@ -218,13 +222,18 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         self.solved_icon = None
         self.star_icon = None
 
-        if os.path.exists(os.path.join(self.game.core.path_saves_game_directory, self.game.manager.current_puzzle_pack + "_" + self.puzzle_filename + FILE_SAVES_EXTENSION)):
+        if self.game.manager.user_created_puzzles:
+            save_path = self.game.core.path_saves_user_directory
+        else:
+            save_path = self.game.core.path_saves_game_directory
+
+        if os.path.exists(os.path.join(save_path, self.game.manager.current_puzzle_pack + "_" + self.puzzle_filename + FILE_SAVES_EXTENSION)):
             self.saved_icon = GUI_puzzle_puzzle_item_saved_icon(self.game, self)
         
         if self.cleared:
             self.solved_icon = GUI_puzzle_puzzle_item_solved_icon(self.game, self)
-            if self.game.manager.current_puzzle_pack in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack]:
-                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack][self.puzzle_filename][0] / 60)
+            if self.game.manager.current_pack.uuid in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_pack.uuid]:
+                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][0] / 60)
                 if int(seconds / 60) <= 30:
                     self.star_icon = GUI_puzzle_puzzle_item_star_icon(self.game, self)
                     
@@ -255,8 +264,8 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
             
             self.parent.puzzle_name.set_text(str(self.puzzle_info[0]))
 
-            if self.game.manager.current_puzzle_pack in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack]:
-                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack][self.puzzle_filename][0] / 60)
+            if self.game.manager.current_pack.uuid in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_pack.uuid]:
+                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][0] / 60)
                 minutes = int(seconds / 60)
                 hours = int(minutes / 60)
                 seconds = seconds - (minutes * 60)

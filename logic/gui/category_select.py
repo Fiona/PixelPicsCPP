@@ -49,9 +49,9 @@ class GUI_category_select_container(GUI_element):
             ("Manageable",    "0006", (1.0, 1.0, .5)),
             ("Troublesome",   "0007", (1.0, 1.0, .5)),
             ("Formidable",    "0008", (1.0, 1.0, .5)),
-            ("Demanding",     "0009", (1.0, 1.0, .5)),
-            ("Heavy",         "0010", (1.0, 1.0, .5)),
-            ("Challenging!",  "0011", (1.0, 1.0, .5))
+            ("Demanding",     "0008", (1.0, 1.0, .5)),
+            ("Heavy",         "0008", (1.0, 1.0, .5)),
+            ("Challenging!",  "0008", (1.0, 1.0, .5))
             ]
         self.category_objs = []
 
@@ -119,6 +119,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.game = game
         self.parent = parent
         self.pack_dir = pack_dir
+        self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_select_category']
         self.gui_init()
@@ -203,7 +204,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
                 
 
     def create_unlocked_objects(self):
-        completed = len(self.game.player.cleared_puzzles[self.pack_dir]) if self.pack_dir in self.game.player.cleared_puzzles else 0
+        completed = len(self.game.player.cleared_puzzles[self.pack_uuid]) if self.pack_uuid in self.game.player.cleared_puzzles else 0
         text = Text(self.game.core.media.fonts['category_button_completed_count'], 0, 0, TEXT_ALIGN_TOP_RIGHT, str(completed))
         text.z = self.z - 1
         text.colour = (1.0, 1.0, 1.0)
@@ -225,7 +226,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
         text.shadow_colour = (.2, .2, .2)
         self.objs['solved'] = text
 
-        if self.pack_dir in self.game.player.cleared_categories:
+        if self.pack_uuid in self.game.player.cleared_categories:
             self.objs['status_icon'] = GUI_category_completed_tick(self.game)
         
 

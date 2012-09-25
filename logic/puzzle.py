@@ -198,6 +198,19 @@ class Puzzle_manager(object):
             self.load_puzzle_state_from = ""
 
 
+    def extract_pack_uuid(self, pack_dir, user_created = True):
+        try:
+            main_dir = self.game.core.path_user_pack_directory if user_created else self.game.core.path_game_pack_directory
+            f = open(os.path.join(main_dir, pack_dir, FILE_PACK_INFO_FILE), "r")
+            pack = pickle.load(f)
+            uuid = pack.uuid
+            f.close()
+        except IOError as e:
+            raise e
+
+        return uuid
+
+
     def reset_puzzle_state(self):
         for y in range(len(self.current_puzzle_state)):
             for x in range(len(self.current_puzzle_state[y])):
@@ -335,7 +348,12 @@ class Puzzle_manager(object):
 
     def load_puzzle_state(self, state_filename):
         try:
-            path = os.path.join(self.game.core.path_saves_game_directory, state_filename)
+            if self.game.manager.user_created_puzzles:
+                save_path = self.game.core.path_saves_user_directory
+            else:
+                save_path = self.game.core.path_saves_game_directory
+            
+            path = os.path.join(save_path, state_filename)
             f = open(path, "r")
             save = pickle.load(f)
             

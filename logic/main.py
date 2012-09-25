@@ -141,6 +141,7 @@ class Game(Process):
         except IOError:
             self.player = Player()
             self.save_player(self.player)
+        print self.player.unlocked_categories
         
 
     def quit_game(self):
@@ -205,39 +206,39 @@ class Game(Process):
             self.gui.switch_gui_state_to(GUI_STATE_SHARING_NEWEST if gui_state is None else gui_state)
 
 
-    def player_action_cleared_game_puzzle(self, category, puzzle):
+    def player_action_cleared_puzzle(self, category_uuid, puzzle):
         # -----------
         # Save cleared puzzle and scores
         # -----------
         # create empty lists if not set
-        if not category in self.player.cleared_puzzles:
-            self.player.cleared_puzzles[category] = []
-        if not category in self.player.puzzle_scores:
-            self.player.puzzle_scores[category] = {}
+        if not category_uuid in self.player.cleared_puzzles:
+            self.player.cleared_puzzles[category_uuid] = []
+        if not category_uuid in self.player.puzzle_scores:
+            self.player.puzzle_scores[category_uuid] = {}
 
         # Add to cleared lists and scores lists if necessary
-        if not puzzle in self.player.cleared_puzzles[category]:
-            self.player.cleared_puzzles[category].append(puzzle)
+        if not puzzle in self.player.cleared_puzzles[category_uuid]:
+            self.player.cleared_puzzles[category_uuid].append(puzzle)
 
-        if not puzzle in self.player.puzzle_scores[category]:
-            self.player.puzzle_scores[category][puzzle] = [self.timer, self.lives]
-        if self.timer < self.player.puzzle_scores[category][puzzle][0]:
-            self.player.puzzle_scores[category][puzzle] = [self.timer, self.lives]
+        if not puzzle in self.player.puzzle_scores[category_uuid]:
+            self.player.puzzle_scores[category_uuid][puzzle] = [self.timer, self.lives]
+        if self.timer < self.player.puzzle_scores[category_uuid][puzzle][0]:
+            self.player.puzzle_scores[category_uuid][puzzle] = [self.timer, self.lives]
 
         # Add category as being cleared if true
-        if len(self.player.cleared_puzzles[category]) >= len(self.manager.current_pack.puzzles) and not category in self.player.cleared_categories:
-            self.player.cleared_categories.append(category)
+        if len(self.player.cleared_puzzles[category_uuid]) >= len(self.manager.current_pack.puzzles) and not category_uuid in self.player.cleared_categories:
+            self.player.cleared_categories.append(category_uuid)
 
         # -----------
         # Handle category unlocking
         # -----------
         # Gather together how many puzzles we've finished
         num_puzzles_cleared = 0
-        for cat_name in self.player.cleared_puzzles:
+        for cat_uuid in self.player.cleared_puzzles:
             # ignore the tutorial
-            if cat_name == "0001":
+            if cat_uuid == TUTORIAL_UUID:
                 continue
-            for puzzle_name in self.player.cleared_puzzles[cat_name]:
+            for puzzle_name in self.player.cleared_puzzles[cat_uuid]:
                 num_puzzles_cleared += 1
 
         # If we determine we should have more categories unlocked that we do
