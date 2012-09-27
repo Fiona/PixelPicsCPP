@@ -47,7 +47,9 @@ class GUI_puzzle_select_container(GUI_element_network_container):
             i += 1
 
         if self.game.manager.user_created_puzzles:
-            GUI_puzzle_select_rating_star_container(self.game, self)        
+            GUI_puzzle_select_rating_star_container(self.game, self)
+            if not self.game.manager.current_pack.uuid in self.game.player.packs_reported:
+                self.report_button = GUI_puzzle_select_report(self.game, self)
             
         # Draw strategy data
         self.draw_strategy = "puzzle_select"
@@ -457,7 +459,7 @@ class GUI_puzzle_select_rating_star_star(GUI_element):
             self.parent.stars[i].image_sequence = 2 if i <= self.num else 1
 
 
-    def rate(self, responsee):
+    def rate(self, response):
         self.game.rate_pack(self.game.manager.current_pack.uuid, self.num + 1)
 
 
@@ -470,3 +472,161 @@ class GUI_puzzle_select_rating_star_star(GUI_element):
         self.parent.parent.make_request_to_server("rate_pack/", data, self.rate, task_text = "Rating pack")
         
 
+
+class GUI_puzzle_select_report(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Report Pack as Inappropriate"
+    
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.game.settings['screen_width'] - 260
+        self.y = self.game.settings['screen_height'] - 35
+        self.z = Z_GUI_OBJECT_LEVEL_2
+        self.gui_init()
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        GUI_puzzle_select_report_dialog(self.game, self.parent)
+
+
+
+class GUI_puzzle_select_report_dialog(GUI_element_window):
+    title = "Report Puzzle"
+    height = 170
+    width = 490
+    objs = {}
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+    
+    def gui_init(self):
+        self.z = Z_GUI_OBJECT_LEVEL_8
+        self.x = (self.game.settings['screen_width'] / 2) - (self.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - (self.height / 2)
+        GUI_element_window.gui_init(self)
+
+        self.objs = {}
+        y = 0
+        for text in ["Using this box you can report a puzzle as inappropriate.", "Select the reason for the report and submit it.", "It will be dealt with as soon as possible."]:
+            txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
+            txt.z = self.z - 2
+            txt.colour = (0.0, 0.0, 0.0)
+            self.objs['text_' + str(y)] = txt
+            y += 15
+
+        GUI_puzzle_select_report_dialog_submit_button(self.game, self)
+        GUI_puzzle_select_report_dialog_cancel_button(self.game, self)
+
+        txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 90, TEXT_ALIGN_TOP_LEFT, "Report type: ")
+        txt.z = self.z - 2
+        txt.colour = (0.0, 0.0, 0.0)
+        self.objs['text_dropdown'] = txt        
+        self.report_type = GUI_puzzle_select_report_type_dropdown(self.game, self)
+        
+        self.game.gui.block_gui_keyboard_input = True
+        self.x = 0
+        self.y = 0
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_width = self.x + self.width
+        self.primitive_square_height = self.y + self.height
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
+
+
+    def report_pack(self, response):
+        self.parent.report_button.Kill()
+        self.parent.report_button = None
+        GUI_element_dialog_box(self.game, self.parent, "Pack reported", ["This pack has been reported to Stompy Blondie", "and will be investigated as soon as possible.", "Thank you for helping make PixelPics better!"])
+        self.Kill()
+        
+
+    def On_Exit(self):
+        GUI_element_window.On_Exit(self)
+        self.game.gui.block_gui_keyboard_input = False
+        for x in self.objs:
+            self.objs[x].Kill()
+
+
+
+class GUI_puzzle_select_report_type_dropdown(GUI_element_dropdown):
+    display_width = 300
+    display_height = 25
+
+    dropdown_options = [
+        {'text' : "Inappropriate or offensive content", 'data' : 'offensive'},
+        {'text' : "Pack is broken in some way", 'data' : 'broken'},
+        {'text' : "Misleading pack name", 'data' : 'wrong'},
+        {'text' : "Other", 'data' : 'other'}
+        ]
+
+    selected_item = 0
+        
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.display_x = self.parent.x + 140
+        self.display_y = self.parent.y + 85
+        self.display_z = self.parent.z - 2
+        self.gui_init()
+
+
+
+class GUI_puzzle_select_report_dialog_submit_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Send"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.gui_init()
+        self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
+        self.y = self.parent.y + 120
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        data = {
+            'pack' : self.game.manager.current_pack.uuid,
+            'reporter' : self.game.author_id,
+            'report_type' : self.parent.report_type.dropdown_options[self.parent.report_type.selected_item]['data']            
+            }
+        self.parent.parent.make_request_to_server("report_pack/", data, self.parent.report_pack, task_text = "Reporting pack")
+
+
+
+class GUI_puzzle_select_report_dialog_cancel_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Cancel"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.gui_init()
+        self.x = self.parent.x + (self.parent.width / 2) + 10
+        self.y = self.parent.y + 120
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.Kill()

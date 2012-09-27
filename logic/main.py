@@ -264,6 +264,13 @@ class Game(Process):
         # finalise
         self.save_player(self.player)
 
+
+    def report_pack(self, pack_uuid):
+        # Remember
+        self.player.packs_reported.append(pack_uuid)
+        
+        # finalise
+        self.save_player(self.player)
         
 
 
@@ -279,6 +286,7 @@ class Player(object):
         self.saved_puzzles = {}
         self.puzzle_scores = {}
         self.pack_ratings = {}
+        self.packs_reported = []
         self.first_run = True
         self.auto_save = False    
         
