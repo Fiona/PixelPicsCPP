@@ -1514,3 +1514,98 @@ class GUI_element_slider_handle(Process):
     def Execute(self):
         self.image_sequence = 2 if self.highlight else 1
         self.x = self.parent.x + ((self.parent.width + 2) * (float(self.parent.current_value_percentage) / 100))
+
+
+
+class GUI_element_network_container(GUI_element):
+
+    def gui_init(self):
+        GUI_element.gui_init(self)
+        self.net_process = None
+        self.net_callback = None
+        self.loading_indicator = None
+
+
+    def update(self):
+        GUI_element.update(self)
+        if not self.net_process is None:
+            if self.net_process.is_complete():
+                self.loading_indicator.Kill()
+                self.loading_indicator = None                                
+                if self.net_process.got_error:
+                    GUI_element_dialog_box(
+                        self.game,
+                        self,
+                        "Network error",
+                        ["A network error occured!", "Please check your internet connection is functioning properly."],
+                        callback = self.return_to_menu
+                        )
+                    self.net_process = None
+                    return
+                if 'error' in self.net_process.response:
+                    GUI_element_dialog_box(
+                        self.game,
+                        self,
+                        "Error",
+                        ["The server returned an error:", str(self.net_process.response['error'])]
+                        )
+                    self.net_process = None
+                elif not self.net_callback is None:
+                    response = self.net_process.response
+                    self.net_process = None
+                    self.net_callback(response)
+        
+
+
+    def make_request_to_server(self, url, data = {}, callback = None, task_text = None):
+        if not self.net_process is None:
+            return
+
+        self.net_process = Net_Process_POST(SHARING_ADDRESS + url, data)
+        self.net_callback = callback
+        self.loading_indicator = GUI_network_loading_indicator(self.game, self, task_text)
+
+
+    def return_to_menu(self):
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 20)
+
+
+
+class GUI_network_loading_indicator(GUI_element):
+    def __init__(self, game, parent, task_text):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+        self.z = Z_GUI_OBJECT_LEVEL_11
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+        self.text = Text(self.game.core.media.fonts['puzzle_hint_numbers'], self.width / 2, (self.height / 2) - 16, TEXT_ALIGN_CENTER, "Loading . . . ")
+        self.text.z = self.z - 1
+        self.text.colour = (1.0, 1.0, 1.0, 1.0)
+        self.text.shadow = 2
+        self.text.shadow_colour = (.3, .3, .3, 1.0)
+
+        self.task_text = None
+        if not task_text is None:
+            self.task_text = Text(self.game.core.media.fonts['menu_subtitles'], self.width / 2, (self.height / 2) + 20, TEXT_ALIGN_CENTER, str(task_text))
+            self.task_text.z = self.z - 1
+            self.task_text.colour = (.7, .7, .7, 1.0)
+            self.task_text.shadow = 2
+            self.task_text.shadow_colour = (.3, .3, .3, 1.0)
+            
+        # Draw strategy data
+        self.draw_strategy = "primitive_square"
+        self.primitive_square_width = self.width
+        self.primitive_square_height = 100
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = (self.height / 2) - 50
+        self.primitive_square_colour = (0.0,0.0,0.0,.3)
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.text.Kill()
+        if not self.task_text is None:
+            self.task_text.Kill()

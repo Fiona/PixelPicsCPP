@@ -16,7 +16,7 @@ from gui.gui_elements import *
 from gui.mascot import *
 
 
-class GUI_puzzle_select_container(GUI_element):
+class GUI_puzzle_select_container(GUI_element_network_container):
     """
     All elements in puzzle selection screen live inside this thing.
     """
@@ -45,6 +45,9 @@ class GUI_puzzle_select_container(GUI_element):
         for puzzle_filename in self.game.manager.current_pack.order:
             GUI_puzzle_puzzle_item(self.game, self, puzzle_filename, self.game.manager.current_pack.puzzles[puzzle_filename], i)
             i += 1
+
+        if self.game.manager.user_created_puzzles:
+            GUI_puzzle_select_rating_star_container(self.game, self)        
             
         # Draw strategy data
         self.draw_strategy = "puzzle_select"
@@ -363,4 +366,107 @@ class GUI_puzzle_puzzle_item_star_icon(Process):
         self.z = Z_GUI_OBJECT_LEVEL_6
         self.image = self.game.core.media.gfx['gui_puzzle_select_star_icon']
 
+
+
+
+class GUI_puzzle_select_rating_star_container(GUI_element):
+    
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+
+        self.y = self.game.settings['screen_height'] - 40
+        self.z = Z_GUI_OBJECT_LEVEL_5
+
+        self.text = Text(
+            self.game.core.media.fonts["puzzle_message"],
+            10,
+            self.y,
+            TEXT_ALIGN_TOP_LEFT,
+            "Rate this pack!"
+            )
+        self.text.z = Z_GUI_OBJECT_LEVEL_6
+        self.text.colour = (1.0, 1.0, 1.0)
+        self.text.shadow = 2
+        self.text.shadow_colour = (.3, .3, .3, .5)
+        
+        self.width = 32 * 5
+        self.height = 32
+        self.x = self.text.text_width + 32
+        self.gui_init()
+
+        self.hovering = False
+
+        self.stars = []
+        for i in range(5):
+            self.stars.append(GUI_puzzle_select_rating_star_star(self.game, self, i))
+       
+        self.draw_strategy = "primitive_square"
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = self.x
+        self.primitive_square_y = self.y
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .2)
+
+
+    def mouse_over(self):
+        self.hovering = True
+
+
+    def mouse_out(self):
+        self.hovering = False
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.text.Kill()
+        
+
+
+class GUI_puzzle_select_rating_star_star(GUI_element):
+    
+    def __init__(self, game, parent, num):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.num = num
+        self.image = self.game.core.media.gfx['gui_puzzle_select_rating_star']
+        self.x = self.parent.x + (self.image.width * num)
+        self.y = self.parent.y
+        self.width = 32
+        self.height = 32
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.gui_init()
+
+
+    def update(self):
+        if self.parent.hovering:
+            return
+
+        self.image_sequence = 1
+       
+        if self.game.manager.current_pack.uuid in self.game.player.pack_ratings:
+            if self.num < self.game.player.pack_ratings[self.game.manager.current_pack.uuid]:
+                self.image_sequence = 2
+
+
+    def mouse_over(self):
+        self.image_sequence = 2
+        for i in range(5):
+            self.parent.stars[i].image_sequence = 2 if i <= self.num else 1
+
+
+    def rate(self, responsee):
+        self.game.rate_pack(self.game.manager.current_pack.uuid, self.num + 1)
+
+
+    def mouse_left_up(self):
+        data = {
+            'pack' : self.game.manager.current_pack.uuid,
+            'rater' : self.game.author_id,
+            'rating' : self.num + 1
+            }
+        self.parent.parent.make_request_to_server("rate_pack/", data, self.rate, task_text = "Rating pack")
+        
 

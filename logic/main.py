@@ -141,7 +141,6 @@ class Game(Process):
         except IOError:
             self.player = Player()
             self.save_player(self.player)
-        print self.player.unlocked_categories
         
 
     def quit_game(self):
@@ -258,6 +257,15 @@ class Game(Process):
         self.save_player(self.player)
 
 
+    def rate_pack(self, pack_uuid, rating):
+        # Set rating
+        self.player.pack_ratings[pack_uuid] = int(rating)
+        
+        # finalise
+        self.save_player(self.player)
+
+        
+
 
 class Player(object):
     """
@@ -270,8 +278,9 @@ class Player(object):
         self.cleared_puzzles = {}
         self.saved_puzzles = {}
         self.puzzle_scores = {}
+        self.pack_ratings = {}
         self.first_run = True
         self.auto_save = False    
-    
+        
 
 Game(core)

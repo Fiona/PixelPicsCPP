@@ -11,13 +11,12 @@ from core import *
 
 # Game imports
 from consts import *
-from helpers import Net_Process_POST
 from gui.gui_elements import *
 from puzzle import Puzzle, Pack
 
 
 
-class GUI_sharing_container(GUI_element):
+class GUI_sharing_container(GUI_element_network_container):
     """
     All elements in the sharing screen live inside this thing.
     """
@@ -32,10 +31,6 @@ class GUI_sharing_container(GUI_element):
         self.height = self.game.settings['screen_height']
         self.pack_num_to_be_uploaded = None
         
-        self.net_process = None
-        self.net_callback = None
-        self.loading_indicator = None
-
         GUI_sharing_tab_newest(self.game, self)
         GUI_sharing_tab_top(self.game, self)
         GUI_sharing_tab_top_week(self.game, self)
@@ -73,49 +68,7 @@ class GUI_sharing_container(GUI_element):
               (.5,.4,.6,1.0),
               (.7,.65,.8,1.0),
             )
-
-
-    def Execute(self):
-        if not self.net_process is None:
-            if self.net_process.is_complete():
-                self.loading_indicator.Kill()
-                self.loading_indicator = None                                
-                if self.net_process.got_error:
-                    GUI_element_dialog_box(
-                        self.game,
-                        self,
-                        "Network error",
-                        ["A network error occured!", "Please check your internet connection is functioning properly."],
-                        callback = self.return_to_menu
-                        )
-                    self.net_process = None
-                    return
-                if 'error' in self.net_process.response:
-                    GUI_element_dialog_box(
-                        self.game,
-                        self,
-                        "Error",
-                        ["The server returned an error:", str(self.net_process.response['error'])]
-                        )
-                    self.net_process = None
-                elif not self.net_callback is None:
-                    response = self.net_process.response
-                    self.net_process = None
-                    self.net_callback(response)
-
-
-    def return_to_menu(self):
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 20)
         
-
-    def make_request_to_server(self, url, data = {}, callback = None, task_text = None):
-        if not self.net_process is None:
-            return
-
-        self.net_process = Net_Process_POST(SHARING_ADDRESS + url, data)
-        self.net_callback = callback
-        self.loading_indicator = GUI_sharing_loading_indicator(self.game, self, task_text)
-
 
 
 class Attempt_Download_Pack(object):
@@ -427,48 +380,7 @@ class Attempt_Upload_Pack(object):
     def finalise_pack(self):
         self.container.make_request_to_server("finalise_pack/", {'pack' : self.pack.uuid}, self.successful_callback, task_text = "Finalising pack")
         
-        
-        
-class GUI_sharing_loading_indicator(GUI_element):
-    def __init__(self, game, parent, task_text):
-        Process.__init__(self)
-        self.game = game
-        self.parent = parent
-        self.gui_init()
-
-        self.z = Z_GUI_OBJECT_LEVEL_11
-        self.width = self.game.settings['screen_width']
-        self.height = self.game.settings['screen_height']
-        self.text = Text(self.game.core.media.fonts['puzzle_hint_numbers'], self.width / 2, (self.height / 2) - 16, TEXT_ALIGN_CENTER, "Loading . . . ")
-        self.text.z = self.z - 1
-        self.text.colour = (1.0, 1.0, 1.0, 1.0)
-        self.text.shadow = 2
-        self.text.shadow_colour = (.3, .3, .3, 1.0)
-
-        self.task_text = None
-        if not task_text is None:
-            self.task_text = Text(self.game.core.media.fonts['menu_subtitles'], self.width / 2, (self.height / 2) + 20, TEXT_ALIGN_CENTER, str(task_text))
-            self.task_text.z = self.z - 1
-            self.task_text.colour = (.7, .7, .7, 1.0)
-            self.task_text.shadow = 2
-            self.task_text.shadow_colour = (.3, .3, .3, 1.0)
-            
-        # Draw strategy data
-        self.draw_strategy = "primitive_square"
-        self.primitive_square_width = self.width
-        self.primitive_square_height = 100
-        self.primitive_square_x = 0.0
-        self.primitive_square_y = (self.height / 2) - 50
-        self.primitive_square_colour = (0.0,0.0,0.0,.3)
-
-
-    def On_Exit(self):
-        GUI_element.On_Exit(self)
-        self.text.Kill()
-        if not self.task_text is None:
-            self.task_text.Kill()
-        
-
+     
 
 class GUI_sharing_test_button(GUI_element_button):
     generic_button = True
@@ -1034,6 +946,8 @@ class GUI_sharing_load_puzzles_pack_item(GUI_element):
                 GUI_sharing_packs_button_play(self.game, self, self.pack, self.pack_num, display_count)
         else:
             GUI_sharing_packs_button_download(self.game, self, self.pack, self.pack_num, display_count)
+
+        GUI_sharing_packs_rating_stars(self.game, self, int(self.pack['rating_average']), display_count)
             
         self.adjust_text_positions()
         
@@ -1065,6 +979,22 @@ class GUI_sharing_load_puzzles_pack_item(GUI_element):
         if not self.text_pack_yours is None:
             self.text_pack_yours.Kill()
             
+
+class GUI_sharing_packs_rating_stars(GUI_element):
+    def __init__(self, game, parent, rating, display_count):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        if rating < 0 or rating > 5:
+            rating = 0
+        self.scroll_element = self.parent.parent
+        self.x = 10
+        self.y = (50 * display_count) + 3 + (10 * display_count)
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.image = self.game.core.media.gfx['gui_sharing_rating_stars']
+        self.image_sequence = rating + 1
+        self.gui_init()
+        
 
 
 class GUI_sharing_packs_button_download(GUI_element_button):
@@ -1105,6 +1035,9 @@ class GUI_sharing_packs_button_play(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
+        self.game.manager.user_created_puzzles = True
+        self.game.manager.load_pack(self.game.manager.pack_directory_list[self.pack_num], user_created = True)
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
 
 
 
