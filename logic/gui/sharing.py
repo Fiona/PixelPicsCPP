@@ -54,6 +54,16 @@ class GUI_sharing_container(GUI_element_network_container):
             GUI_sharing_title(self.game, self, "Downloaded Puzzles")
             GUI_sharing_downloaded_scroll_window(self.game, self)
 
+        if not self.game.player.sharing_content_warning_seen:
+            self.game.player.sharing_content_warning_seen = True
+            self.game.save_player(self.game.player)
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Content Warning",
+                ["Please note that packs downloaded through this", "service are entirely user created.", "", "Stompy Blondie Games are not responsible for", "any inappropriate or offensive content encountered."]
+                )
+            
         #GUI_sharing_test_button(self.game, self)
         
         # Draw strategy data
