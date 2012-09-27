@@ -43,8 +43,10 @@ class GUI_sharing_container(GUI_element_network_container):
             GUI_sharing_newest_puzzles_scroll_window(self.game, self)
         elif self.game.gui.gui_state == GUI_STATE_SHARING_TOP:
             GUI_sharing_title(self.game, self, "Top Rated Puzzles")
+            GUI_sharing_top_puzzles_scroll_window(self.game, self)
         elif self.game.gui.gui_state == GUI_STATE_SHARING_TOP_WEEK:
             GUI_sharing_title(self.game, self, "Top Rated Puzzles This Week")
+            GUI_sharing_top_week_puzzles_scroll_window(self.game, self)
         elif self.game.gui.gui_state == GUI_STATE_SHARING_UPLOAD:
             GUI_sharing_title(self.game, self, "My Puzzles")
             GUI_sharing_upload_scroll_window(self.game, self)
@@ -1036,7 +1038,10 @@ class GUI_sharing_packs_button_play(GUI_element_button):
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.game.manager.user_created_puzzles = True
-        self.game.manager.load_pack(self.game.manager.pack_directory_list[self.pack_num], user_created = True)
+        self.game.manager.load_pack(
+            self.game.manager.pack_directory_list[self.game.manager.pack_uuids.index(self.pack['uuid'])],
+            user_created = True
+            )
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
 
 
@@ -1083,6 +1088,16 @@ class GUI_sharing_packs_button_prev(GUI_element_button):
 
 class GUI_sharing_newest_puzzles_scroll_window(GUI_sharing_load_puzzles_scroll_window):
     url = "newest/"
+    task_text = "Downloading pack info"
+
+
+class GUI_sharing_top_puzzles_scroll_window(GUI_sharing_load_puzzles_scroll_window):
+    url = "top/"
+    task_text = "Downloading pack info"
+
+
+class GUI_sharing_top_week_puzzles_scroll_window(GUI_sharing_load_puzzles_scroll_window):
+    url = "top_week/"
     task_text = "Downloading pack info"
 
 
