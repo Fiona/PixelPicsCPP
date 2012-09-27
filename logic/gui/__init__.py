@@ -62,6 +62,7 @@ class GUI(Process):
         GUI_STATE_SHARING_TOP_WEEK: {},
         GUI_STATE_SHARING_NEWEST: {},
         GUI_STATE_SHARING_UPLOAD: {},
+        GUI_STATE_SHARING_DOWNLOADED: {},
     }
 
     # goes up every frame, resets when changing game state
@@ -253,7 +254,7 @@ class GUI(Process):
         
 
     def switch_gui_state_to(self, state):
-        if self.gui_state in [GUI_STATE_DESIGNER_PACKS, GUI_STATE_DESIGNER_PUZZLES, GUI_STATE_DESIGNER_DESIGNER, GUI_STATE_DESIGNER_COLOUR, GUI_STATE_SHARING_NEWEST, GUI_STATE_SHARING_TOP, GUI_STATE_SHARING_TOP_WEEK, GUI_STATE_SHARING_UPLOAD]:
+        if self.gui_state in [GUI_STATE_DESIGNER_PACKS, GUI_STATE_DESIGNER_PUZZLES, GUI_STATE_DESIGNER_DESIGNER, GUI_STATE_DESIGNER_COLOUR, GUI_STATE_SHARING_NEWEST, GUI_STATE_SHARING_TOP, GUI_STATE_SHARING_TOP_WEEK, GUI_STATE_SHARING_UPLOAD, GUI_STATE_SHARING_DOWNLOADED]:
             self.destroy_current_gui_state()
         
         self.gui_state = state
@@ -294,7 +295,7 @@ class GUI(Process):
             self.current_visible_gui_elements[GUI_STATE_DESIGNER_COLOUR]['designer_colour_container'] = GUI_designer_colour_container(self.game)
             self.parent_window = self.current_visible_gui_elements[GUI_STATE_DESIGNER_COLOUR]['designer_colour_container']
             self.fade_toggle(speed = 10, colour = (1.0, 1.0, 1.0))
-        if self.gui_state in [GUI_STATE_SHARING_NEWEST, GUI_STATE_SHARING_TOP, GUI_STATE_SHARING_TOP_WEEK, GUI_STATE_SHARING_UPLOAD]:
+        if self.gui_state in [GUI_STATE_SHARING_NEWEST, GUI_STATE_SHARING_TOP, GUI_STATE_SHARING_TOP_WEEK, GUI_STATE_SHARING_UPLOAD, GUI_STATE_SHARING_DOWNLOADED]:
             self.current_visible_gui_elements[self.gui_state]['sharing_container'] = GUI_sharing_container(self.game)
             self.parent_window = self.current_visible_gui_elements[self.gui_state]['sharing_container']
 

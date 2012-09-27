@@ -10,36 +10,36 @@ p2
 Ntp3
 Rp4
 (dp5
-S'name'
+S'uuid'
 p6
-VTutorial
+S'd42f1f29-d679-4aee-a6bc-4de633f71a1b'
 p7
 sS'author_name'
 p8
-VStompy Blondie
+S'Stompy Blondie'
 p9
-sS'puzzles'
+sS'name'
 p10
-(dp11
-S'0001.puz'
+S'Puzzles'
+p11
+sS'puzzles'
 p12
-(lp13
-VTutorial 1
+(dp13
+S'0001.puz'
 p14
-aI5
-aI5
-assS'uud'
-p15
-S'40d522b9-ac3a-4e7b-9346-e3042442b679'
+(lp15
+VTutorial 1
 p16
-sS'author_id'
+aI5
+aI5
+assS'author_id'
 p17
-S'eedbf8fb-cb1d-4268-bef7-9118bf5054df'
+S'7a59ed8e-65ce-41d6-ae00-92389e651ad0'
 p18
 sS'order'
 p19
 (lp20
-g12
+g14
 asS'freemode'
 p21
 I00

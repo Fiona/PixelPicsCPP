@@ -181,8 +181,18 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
-        #self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 120)
-        GUI_main_menu_puzzle_type_selection(self.game, self.parent)
+        no_download_items = True
+        for pack in self.game.manager.packs:
+            if pack.author_id == self.game.author_id:
+                continue
+            no_download_items = False
+            break
+
+        if no_download_items:
+            self.game.manager.user_created_puzzles = False
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30)
+        else:
+            GUI_main_menu_puzzle_type_selection(self.game, self.parent)
 
 
 
@@ -506,7 +516,8 @@ class GUI_main_menu_puzzle_type_select_main(GUI_element_button):
 
 
     def mouse_left_up(self):
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
+        self.game.manager.user_created_puzzles = False
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30)
 
 
 
@@ -539,7 +550,7 @@ class GUI_main_menu_puzzle_type_select_downloaded(GUI_element_button):
 
 
     def mouse_left_up(self):
-        self.parent.Kill()
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING, gui_state = GUI_STATE_SHARING_DOWNLOADED), speed = 30)
 
 
 

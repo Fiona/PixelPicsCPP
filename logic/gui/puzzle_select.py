@@ -16,7 +16,7 @@ from gui.gui_elements import *
 from gui.mascot import *
 
 
-class GUI_puzzle_select_container(GUI_element):
+class GUI_puzzle_select_container(GUI_element_network_container):
     """
     All elements in puzzle selection screen live inside this thing.
     """
@@ -45,6 +45,11 @@ class GUI_puzzle_select_container(GUI_element):
         for puzzle_filename in self.game.manager.current_pack.order:
             GUI_puzzle_puzzle_item(self.game, self, puzzle_filename, self.game.manager.current_pack.puzzles[puzzle_filename], i)
             i += 1
+
+        if self.game.manager.user_created_puzzles:
+            GUI_puzzle_select_rating_star_container(self.game, self)
+            if not self.game.manager.current_pack.uuid in self.game.player.packs_reported:
+                self.report_button = GUI_puzzle_select_report(self.game, self)
             
         # Draw strategy data
         self.draw_strategy = "puzzle_select"
@@ -90,7 +95,10 @@ class GUI_category_go_back(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 20)
+        if self.game.manager.user_created_puzzles:
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING, gui_state = GUI_STATE_SHARING_DOWNLOADED), speed = 20)
+        else:
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 20)
 
 
     def On_Exit(self):
@@ -172,8 +180,7 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
             
         self.z = Z_GUI_OBJECT_LEVEL_4
 
-
-        if self.game.manager.current_puzzle_pack in self.game.player.cleared_puzzles and self.puzzle_filename in self.game.player.cleared_puzzles[self.game.manager.current_puzzle_pack]:
+        if self.game.manager.current_pack.uuid in self.game.player.cleared_puzzles and self.puzzle_filename in self.game.player.cleared_puzzles[self.game.manager.current_pack.uuid]:
             self.cleared = True
         else:
             self.cleared = False
@@ -191,12 +198,14 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         self.number_text.shadow_colour = (.5, .5, .5, .5)
 
         if self.cleared:
+            path_dir = self.game.core.path_user_pack_directory if self.game.manager.user_created_puzzles else self.game.core.path_game_pack_directory
+
             self.monochrome_picture = GUI_puzzle_puzzle_item_picture(
                 self.game,
                 self,
                 self.x + (self.width / 2),
                 self.y + (self.height / 2),
-                puzzle_path = os.path.join(self.game.core.path_game_pack_directory, self.game.manager.current_puzzle_pack, self.puzzle_filename),
+                puzzle_path = os.path.join(path_dir, self.game.manager.current_puzzle_pack, self.puzzle_filename),
                 in_colour = False,
                 fade_in_time = None
                 )
@@ -205,7 +214,7 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
                 self,
                 self.x + (self.width / 2),
                 self.y + (self.height / 2),
-                puzzle_path = os.path.join(self.game.core.path_game_pack_directory, self.game.manager.current_puzzle_pack, self.puzzle_filename),
+                puzzle_path = os.path.join(path_dir, self.game.manager.current_puzzle_pack, self.puzzle_filename),
                 in_colour = True,
                 fade_in_time = None
                 )
@@ -218,13 +227,18 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         self.solved_icon = None
         self.star_icon = None
 
-        if os.path.exists(os.path.join(self.game.core.path_saves_game_directory, self.game.manager.current_puzzle_pack + "_" + self.puzzle_filename + FILE_SAVES_EXTENSION)):
+        if self.game.manager.user_created_puzzles:
+            save_path = self.game.core.path_saves_user_directory
+        else:
+            save_path = self.game.core.path_saves_game_directory
+
+        if os.path.exists(os.path.join(save_path, self.game.manager.current_puzzle_pack + "_" + self.puzzle_filename + FILE_SAVES_EXTENSION)):
             self.saved_icon = GUI_puzzle_puzzle_item_saved_icon(self.game, self)
         
         if self.cleared:
             self.solved_icon = GUI_puzzle_puzzle_item_solved_icon(self.game, self)
-            if self.game.manager.current_puzzle_pack in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack]:
-                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack][self.puzzle_filename][0] / 60)
+            if self.game.manager.current_pack.uuid in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_pack.uuid]:
+                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][0] / 60)
                 if int(seconds / 60) <= 30:
                     self.star_icon = GUI_puzzle_puzzle_item_star_icon(self.game, self)
                     
@@ -255,8 +269,8 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
             
             self.parent.puzzle_name.set_text(str(self.puzzle_info[0]))
 
-            if self.game.manager.current_puzzle_pack in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack]:
-                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_puzzle_pack][self.puzzle_filename][0] / 60)
+            if self.game.manager.current_pack.uuid in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_pack.uuid]:
+                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][0] / 60)
                 minutes = int(seconds / 60)
                 hours = int(minutes / 60)
                 seconds = seconds - (minutes * 60)
@@ -355,3 +369,264 @@ class GUI_puzzle_puzzle_item_star_icon(Process):
         self.image = self.game.core.media.gfx['gui_puzzle_select_star_icon']
 
 
+
+
+class GUI_puzzle_select_rating_star_container(GUI_element):
+    
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+
+        self.y = self.game.settings['screen_height'] - 40
+        self.z = Z_GUI_OBJECT_LEVEL_5
+
+        self.text = Text(
+            self.game.core.media.fonts["puzzle_message"],
+            10,
+            self.y,
+            TEXT_ALIGN_TOP_LEFT,
+            "Rate this pack!"
+            )
+        self.text.z = Z_GUI_OBJECT_LEVEL_6
+        self.text.colour = (1.0, 1.0, 1.0)
+        self.text.shadow = 2
+        self.text.shadow_colour = (.3, .3, .3, .5)
+        
+        self.width = 32 * 5
+        self.height = 32
+        self.x = self.text.text_width + 32
+        self.gui_init()
+
+        self.hovering = False
+
+        self.stars = []
+        for i in range(5):
+            self.stars.append(GUI_puzzle_select_rating_star_star(self.game, self, i))
+       
+        self.draw_strategy = "primitive_square"
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = self.x
+        self.primitive_square_y = self.y
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .2)
+
+
+    def mouse_over(self):
+        self.hovering = True
+
+
+    def mouse_out(self):
+        self.hovering = False
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        self.text.Kill()
+        
+
+
+class GUI_puzzle_select_rating_star_star(GUI_element):
+    
+    def __init__(self, game, parent, num):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.num = num
+        self.image = self.game.core.media.gfx['gui_puzzle_select_rating_star']
+        self.x = self.parent.x + (self.image.width * num)
+        self.y = self.parent.y
+        self.width = 32
+        self.height = 32
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.gui_init()
+
+
+    def update(self):
+        if self.parent.hovering:
+            return
+
+        self.image_sequence = 1
+       
+        if self.game.manager.current_pack.uuid in self.game.player.pack_ratings:
+            if self.num < self.game.player.pack_ratings[self.game.manager.current_pack.uuid]:
+                self.image_sequence = 2
+
+
+    def mouse_over(self):
+        self.image_sequence = 2
+        for i in range(5):
+            self.parent.stars[i].image_sequence = 2 if i <= self.num else 1
+
+
+    def rate(self, response):
+        self.game.rate_pack(self.game.manager.current_pack.uuid, self.num + 1)
+
+
+    def mouse_left_up(self):
+        data = {
+            'pack' : self.game.manager.current_pack.uuid,
+            'rater' : self.game.author_id,
+            'rating' : self.num + 1
+            }
+        self.parent.parent.make_request_to_server("rate_pack/", data, self.rate, task_text = "Rating pack")
+        
+
+
+class GUI_puzzle_select_report(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Report Pack as Inappropriate"
+    
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.game.settings['screen_width'] - 260
+        self.y = self.game.settings['screen_height'] - 35
+        self.z = Z_GUI_OBJECT_LEVEL_2
+        self.gui_init()
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        GUI_puzzle_select_report_dialog(self.game, self.parent)
+
+
+
+class GUI_puzzle_select_report_dialog(GUI_element_window):
+    title = "Report Puzzle"
+    height = 170
+    width = 490
+    objs = {}
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+
+    
+    def gui_init(self):
+        self.z = Z_GUI_OBJECT_LEVEL_8
+        self.x = (self.game.settings['screen_width'] / 2) - (self.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - (self.height / 2)
+        GUI_element_window.gui_init(self)
+
+        self.objs = {}
+        y = 0
+        for text in ["Using this box you can report a puzzle as inappropriate.", "Select the reason for the report and submit it.", "It will be dealt with as soon as possible."]:
+            txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
+            txt.z = self.z - 2
+            txt.colour = (0.0, 0.0, 0.0)
+            self.objs['text_' + str(y)] = txt
+            y += 15
+
+        GUI_puzzle_select_report_dialog_submit_button(self.game, self)
+        GUI_puzzle_select_report_dialog_cancel_button(self.game, self)
+
+        txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 90, TEXT_ALIGN_TOP_LEFT, "Report type: ")
+        txt.z = self.z - 2
+        txt.colour = (0.0, 0.0, 0.0)
+        self.objs['text_dropdown'] = txt        
+        self.report_type = GUI_puzzle_select_report_type_dropdown(self.game, self)
+        
+        self.game.gui.block_gui_keyboard_input = True
+        self.x = 0
+        self.y = 0
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_width = self.x + self.width
+        self.primitive_square_height = self.y + self.height
+        self.primitive_square_x = 0.0
+        self.primitive_square_y = 0.0
+        self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
+
+
+    def report_pack(self, response):
+        self.parent.report_button.Kill()
+        self.parent.report_button = None
+        GUI_element_dialog_box(self.game, self.parent, "Pack reported", ["This pack has been reported to Stompy Blondie", "and will be investigated as soon as possible.", "Thank you for helping make PixelPics better!"])
+        self.Kill()
+        
+
+    def On_Exit(self):
+        GUI_element_window.On_Exit(self)
+        self.game.gui.block_gui_keyboard_input = False
+        for x in self.objs:
+            self.objs[x].Kill()
+
+
+
+class GUI_puzzle_select_report_type_dropdown(GUI_element_dropdown):
+    display_width = 300
+    display_height = 25
+
+    dropdown_options = [
+        {'text' : "Inappropriate or offensive content", 'data' : 'offensive'},
+        {'text' : "Pack is broken in some way", 'data' : 'broken'},
+        {'text' : "Misleading pack name", 'data' : 'wrong'},
+        {'text' : "Other", 'data' : 'other'}
+        ]
+
+    selected_item = 0
+        
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.display_x = self.parent.x + 140
+        self.display_y = self.parent.y + 85
+        self.display_z = self.parent.z - 2
+        self.gui_init()
+
+
+
+class GUI_puzzle_select_report_dialog_submit_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Send"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.gui_init()
+        self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
+        self.y = self.parent.y + 120
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        data = {
+            'pack' : self.game.manager.current_pack.uuid,
+            'reporter' : self.game.author_id,
+            'report_type' : self.parent.report_type.dropdown_options[self.parent.report_type.selected_item]['data']            
+            }
+        self.parent.parent.make_request_to_server("report_pack/", data, self.parent.report_pack, task_text = "Reporting pack")
+
+
+
+class GUI_puzzle_select_report_dialog_cancel_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Cancel"
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.gui_init()
+        self.x = self.parent.x + (self.parent.width / 2) + 10
+        self.y = self.parent.y + 120
+        self.generic_button_text_object.x = self.x + 9
+        self.generic_button_text_object.y = self.y + 4
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.Kill()

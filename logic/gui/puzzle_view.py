@@ -466,7 +466,7 @@ class GUI_puzzle(GUI_element):
                     if self.game.game_state == GAME_STATE_TEST:
                         self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
                     else:
-                        self.game.player_action_cleared_game_puzzle(self.game.manager.current_puzzle_pack, self.game.manager.current_puzzle_file)
+                        self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
                         if self.game.category_to_unlock is None:
                             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
                         else:
