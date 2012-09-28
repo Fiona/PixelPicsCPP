@@ -19,6 +19,7 @@ from gui.puzzle_select import *
 from gui.puzzle_view import *
 from gui.designer import *
 from gui.sharing import *
+from gui.tutorial import *
 
 
 
@@ -63,6 +64,7 @@ class GUI(Process):
         GUI_STATE_SHARING_NEWEST: {},
         GUI_STATE_SHARING_UPLOAD: {},
         GUI_STATE_SHARING_DOWNLOADED: {},
+        GUI_STATE_TUTORIAL : {},
     }
 
     # goes up every frame, resets when changing game state
@@ -157,7 +159,6 @@ class GUI(Process):
                 if self.game.core.Keyboard_key_released(key.ESCAPE):
                     self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU))
 
-
         elif self.game.game_state == GAME_STATE_PUZZLE_SELECT:
             """
             SELECT PUZZLE
@@ -167,8 +168,7 @@ class GUI(Process):
                 if self.game.core.Keyboard_key_released(key.ESCAPE):
                     self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT))
 
-
-        elif self.game.game_state == GAME_STATE_PUZZLE:
+        elif self.game.game_state in [GAME_STATE_PUZZLE, GAME_STATE_TUTORIAL, GAME_STATE_TEST]:
             """
             IN A PUZZLE
             """
@@ -179,20 +179,14 @@ class GUI(Process):
 
             if not self.block_gui_mouse_input:
                 self.do_mouse_wheel_zooming()
+
         elif self.game.game_state == GAME_STATE_DESIGNER:
             """
             IN DESINGER MODE
             """
             if self.gui_state in [GUI_STATE_DESIGNER_DESIGNER, GUI_STATE_DESIGNER_COLOUR]:
                 self.do_mouse_wheel_zooming()
-        
-        elif self.game.game_state == GAME_STATE_TEST:
-            """
-            TESTING A PUZZLE
-            """
-            if not self.block_gui_mouse_input:
-                self.do_mouse_wheel_zooming()
-                
+               
         elif self.game.game_state == GAME_STATE_SHARING:
             """
             SHARING PUZZLES
@@ -298,6 +292,9 @@ class GUI(Process):
         if self.gui_state in [GUI_STATE_SHARING_NEWEST, GUI_STATE_SHARING_TOP, GUI_STATE_SHARING_TOP_WEEK, GUI_STATE_SHARING_UPLOAD, GUI_STATE_SHARING_DOWNLOADED]:
             self.current_visible_gui_elements[self.gui_state]['sharing_container'] = GUI_sharing_container(self.game)
             self.parent_window = self.current_visible_gui_elements[self.gui_state]['sharing_container']
+        if self.gui_state == GUI_STATE_TUTORIAL:
+            self.current_visible_gui_elements[GUI_STATE_TUTORIAL]['puzzle_container'] = GUI_tutorial_container(self.game)
+            self.parent_window = self.current_visible_gui_elements[GUI_STATE_TUTORIAL]['puzzle_container']
 
 
     def destroy_current_gui_state(self):

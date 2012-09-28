@@ -36,13 +36,16 @@ class GUI_puzzle_container(GUI_element):
         self.height = self.game.settings['screen_height']
         self.objs = []
         self.game.paused = False
-        
-        self.puzzle = GUI_puzzle(self.game, self)
+        self.create_puzzle_element()
         if not self.game.freemode:
             self.objs.append(Player_lives(self.game))
         self.objs.append(Timer(self.game))
 
         GUI_puzzle_pause_button(self.game, self)
+
+
+    def create_puzzle_element(self):
+        self.puzzle = GUI_puzzle(self.game, self)
 
 
     def show_menu(self):
@@ -135,7 +138,9 @@ class GUI_puzzle_pause_menu(GUI_element):
     def Stop_playing(self):
         if self.game.game_state == GAME_STATE_TEST:
             self.game.gui.fade_toggle(self.parent.puzzle.back_to_designer, speed = 60)
-        else:
+        elif self.game.game_state == GAME_STATE_TUTORIAL:
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
+        else:            
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
             self.game.manager.save_current_puzzle_state()
         self.Kill()
@@ -271,6 +276,8 @@ class GUI_puzzle(GUI_element):
         if self.game.game_state == GAME_STATE_DESIGNER:
             self.state = PUZZLE_STATE_SOLVING
         # --- DESIGNER ONLY ---
+        if self.game.game_state == GAME_STATE_TUTORIAL:
+            self.state = PUZZLE_STATE_SOLVING
 
         self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
         self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
@@ -408,6 +415,8 @@ class GUI_puzzle(GUI_element):
                 if self.title_text is None and self.game.core.mouse.left_up:
                     if self.game.game_state == GAME_STATE_TEST:
                         self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
+                    elif self.game.game_state == GAME_STATE_TUTORIAL:
+                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
                     else:
                         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
                     self.game.gui.block_gui_mouse_input = False
@@ -465,6 +474,9 @@ class GUI_puzzle(GUI_element):
                 if self.title_text is None and self.game.core.mouse.left_up:
                     if self.game.game_state == GAME_STATE_TEST:
                         self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
+                    elif self.game.game_state == GAME_STATE_TUTORIAL:
+                        self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
+                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
                     else:
                         self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
                         if self.game.category_to_unlock is None:
@@ -933,7 +945,7 @@ class GUI_puzzle(GUI_element):
             self.reset_drawing_blacks((cell[0], cell[1]))
             self.reset_drawing_whites((cell[0], cell[1]))
 
-        if self.game.game_state in [GAME_STATE_PUZZLE, GAME_STATE_TEST]:
+        if self.game.game_state in [GAME_STATE_PUZZLE, GAME_STATE_TEST, GAME_STATE_TUTORIAL]:
             self.check_line_completion(cell[0], cell[1])
             if self.game.manager.is_current_puzzle_complete():
                 self.state = PUZZLE_STATE_CLEARED

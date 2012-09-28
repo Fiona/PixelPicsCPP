@@ -34,6 +34,8 @@ Media::Media()
     fonts.insert(pair<string,Font*>("puzzle_select_size", new Font("fnt/bitmap1.ttf", 12)));
     fonts.insert(pair<string,Font*>("options_title", new Font("fnt/arulent.ttf", 15)));
     fonts.insert(pair<string,Font*>("options_mouse_button", new Font("fnt/arulent.ttf", 12)));
+    fonts.insert(pair<string,Font*>("tutorial_instructions", new Font("fnt/basiccomical.ttf", 25)));
+    fonts.insert(pair<string,Font*>("tutorial_click_to_continue", new Font("fnt/borisblackbloxx.ttf", 20)));
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/gui/stompyblondie_logo.png")));
@@ -79,6 +81,7 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_button_puzzle_type_select_downloaded", new Image("gfx/gui/button_puzzle_type_select_downloaded.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_go_back", new Image("gfx/gui/button_go_back.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category", new Image("gfx/gui/button_select_category.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_select_category_tutorial", new Image("gfx/gui/button_select_category_tutorial.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category_unlock_mask", new Image("gfx/gui/button_select_category_unlock_mask.png")));
     gfx.insert(pair<string, Image*>("gui_category_complete_tick", new Image("gfx/gui/category_complete_tick.png")));
     gfx.insert(pair<string, Image*>("gui_category_locked", new Image("gfx/gui/category_locked.png", False, 2)));

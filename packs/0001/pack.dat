@@ -1,14 +1,13 @@
 ccopy_reg
 _reconstructor
-p0
+p1
 (cpuzzle
 Pack
-p1
+p2
 c__builtin__
 object
-p2
-Ntp3
-Rp4
+p3
+NtRp4
 (dp5
 S'uuid'
 p6
@@ -20,7 +19,7 @@ S'Stompy Blondie'
 p9
 sS'name'
 p10
-S'Puzzles'
+S'Tutorial'
 p11
 sS'puzzles'
 p12
@@ -28,13 +27,13 @@ p12
 S'0001.puz'
 p14
 (lp15
-VTutorial 1
+VGarden Faucet
 p16
 aI5
 aI5
 assS'author_id'
 p17
-S'7a59ed8e-65ce-41d6-ae00-92389e651ad0'
+S'dc4d7a02-662f-404d-9bc5-d6dda5513a63'
 p18
 sS'order'
 p19
