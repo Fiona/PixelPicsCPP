@@ -54,6 +54,16 @@ class GUI_sharing_container(GUI_element_network_container):
             GUI_sharing_title(self.game, self, "Downloaded Puzzles")
             GUI_sharing_downloaded_scroll_window(self.game, self)
 
+        if not self.game.player.sharing_content_warning_seen:
+            self.game.player.sharing_content_warning_seen = True
+            self.game.save_player(self.game.player)
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Content Warning",
+                ["Please note that packs downloaded through this", "service are entirely user created.", "Stompy Blondie Games are not responsible for", "any inappropriate or offensive content encountered."]
+                )
+            
         #GUI_sharing_test_button(self.game, self)
         
         # Draw strategy data
@@ -785,6 +795,34 @@ class GUI_sharing_packs_button_upload(GUI_element_button):
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.parent.parent.pack_num_to_be_uploaded = self.pack_num
+
+        if not self.game.player.sharing_upload_content_agreed:
+            GUI_element_confirmation_box(
+                self.game,
+                self,
+                "Upload Terms",
+                [
+                  "To upload a pack to the PixelPics server you must agree to the following terms:",
+                  "* You will not upload a pack containing inappropriate or offensive content. This",
+                  "  includes but is not limited to nudity, excessive violence, sexism, racism",
+                  "  and homophobia.",
+                  "* Pack names must accurately describe the containing puzzles and not be misleading.",
+                  "* Packs must not be intentionally harmful.",
+                  "* Packs can be be removed from the service by Stompy Blondie at any time and for any",
+                  "  reason.",
+                  "* Your access to the service can be terminated at any time if you violate any of",
+                  "  these terms.",
+                  "Do you agree?"
+                ],
+                confirm_callback = self.Agreed_to_terms
+                )
+        else:
+            self.Agreed_to_terms()
+
+
+    def Agreed_to_terms(self):
+        self.game.player.sharing_upload_content_agreed = True
+        self.game.save_player(self.game.player)
         Attempt_Upload_Pack(self.game, self.game.manager.pack_directory_list[self.pack_num], self.pack, self.parent.parent, self.parent.finished_upload)
 
 

@@ -289,6 +289,8 @@ class Player(object):
         self.packs_reported = []
         self.first_run = True
         self.auto_save = False    
+        self.sharing_content_warning_seen = False
+        self.sharing_upload_content_agreed = False
         
 
 Game(core)
