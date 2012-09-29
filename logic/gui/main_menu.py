@@ -133,7 +133,9 @@ class GUI_main_menu_title(GUI_element):
 
 
     def first_time(self):
-        pass
+        self.game.manager.load_pack("0001", user_created = False)
+        self.game.manager.current_puzzle_file = "0001.puz"
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40)
     
 
 

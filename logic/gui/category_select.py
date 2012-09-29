@@ -121,7 +121,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.pack_dir = pack_dir
         self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
         self.z = self.parent.z - 1
-        self.image = self.game.core.media.gfx['gui_button_select_category']
+        self.image = self.game.core.media.gfx['gui_button_select_category_tutorial' if self.pack_dir == "0001" else 'gui_button_select_category']
         self.gui_init()
         self.x = (self.game.settings['screen_width'] / 2) - 25
         self.y = self.image.height + (self.image.height * num) + (32 * num)
@@ -204,6 +204,12 @@ class GUI_category_select_select_category_button(GUI_element_button):
                 
 
     def create_unlocked_objects(self):
+        if self.pack_uuid in self.game.player.cleared_categories:
+            self.objs['status_icon'] = GUI_category_completed_tick(self.game)
+            
+        if self.pack_dir == "0001":
+            return
+        
         completed = len(self.game.player.cleared_puzzles[self.pack_uuid]) if self.pack_uuid in self.game.player.cleared_puzzles else 0
         text = Text(self.game.core.media.fonts['category_button_completed_count'], 0, 0, TEXT_ALIGN_TOP_RIGHT, str(completed))
         text.z = self.z - 1
@@ -225,9 +231,6 @@ class GUI_category_select_select_category_button(GUI_element_button):
         text.shadow = 1
         text.shadow_colour = (.2, .2, .2)
         self.objs['solved'] = text
-
-        if self.pack_uuid in self.game.player.cleared_categories:
-            self.objs['status_icon'] = GUI_category_completed_tick(self.game)
         
 
     def update_obj_positions(self):
@@ -263,7 +266,11 @@ class GUI_category_select_select_category_button(GUI_element_button):
         if self.disabled:
             return
         self.game.manager.load_pack(self.pack_dir, user_created = False)
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
+        if self.pack_dir == "0001":
+            self.game.manager.current_puzzle_file = "0001.puz"
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40)
+        else:
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
 
     
     def On_Exit(self):
