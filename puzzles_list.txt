@@ -1,0 +1,75 @@
+5x5
+  Giraffe  -  0002/0011.puz - 00:00:06
+  Pi  -  0003/0020.puz - 00:00:07
+  Cup  -  0002/0009.puz - 00:00:11
+  J  -  0002/0020.puz - 00:00:13
+
+5x10
+  Steam Train  -  0003/0015.puz - 00:00:19
+  Tortoise  -  0004/0002.puz - 00:00:26
+
+10x10
+  Floppy Disk  -  0003/0010.puz - 00:00:29
+  Pawn  -  0002/0003.puz - 00:00:35
+  Rook  -  0002/0019.puz - 00:00:35
+  Coffee to Go  -  0004/0008.puz - 00:00:41
+  Cup of Tea  -  0004/0009.puz - 00:00:47
+  Arc de Triomphe  -  0004/0004.puz - 00:00:48
+  Fine Vintage  -  0002/0001.puz - 00:00:50
+  Knight  -  0002/0004.puz - 00:00:51
+  Thumbs Up  -  0003/0009.puz - 00:00:51
+  Dice  -  0002/0007.puz - 00:01:17
+  Jack-in-the-Box  -  0002/0010.puz - 00:01:18
+  Delicious Cake  -  0002/0013.puz - 00:01:33
+
+10x15
+  Aztec Pyramid  -  0003/0018.puz - 00:01:02
+  Shuttle Launch  -  0002/0014.puz - 00:01:22
+  Eiffel Tower  -  0004/0005.puz - 00:01:32
+  Fast Food  -  0004/0001.puz - 00:01:33
+  Frankenstein's Monster  -  0003/0006.puz - 00:01:36
+  Monster Truck  -  0003/0019.puz - 00:01:37
+  Crown & Scepter  -  0003/0014.puz - 00:01:40
+  Big Ben  -  0004/0006.puz - 00:02:43
+
+15x15
+  Invaders  -  0002/0008.puz - 00:01:22
+  Treasure Map  -  0003/0012.puz - 00:02:14
+  Rampage  -  0003/0007.puz - 00:02:32
+  Encounter  -  0002/0005.puz - 00:02:42
+  Panda  -  0002/0018.puz - 00:02:46
+  Book  -  0003/0008.puz - 00:02:52
+  Lighthouse  -  0003/0013.puz - 00:03:01
+  Zombie  -  0003/0005.puz - 00:04:19
+
+20x10
+  Morse Code  -  0003/0011.puz - 00:01:23
+  Piano  -  0004/0007.puz - 00:01:34
+
+20x15
+  Ship in a Bottle  -  0002/0017.puz - 00:04:46
+  Stonehenge 2  -  0003/0004.puz - 00:05:10
+  Toy Robot  -  0004/0010.puz - 00:05:10
+  Pharaoh's Mask  -  0003/0017.puz - 00:08:42
+  Blimp  -  0003/0016.puz - 00:10:20
+
+20x20
+  Medusa  -  0002/0012.puz - 00:03:40
+  Jupiter  -  0003/0002.puz - 00:05:16
+  Hipster  -  0002/0015.puz - 00:05:37
+  Pizza  -  0002/0002.puz - 00:06:30
+  DJ  -  0002/0006.puz - 00:08:23
+  Hot Air Balloons  -  0004/0003.puz - 00:20:52
+
+25x15
+  Milky Way  -  0003/0001.puz - 00:25:41
+
+25x25
+  Wakka Wakka  -  0002/0016.puz - 00:13:37
+
+
+
+?????????
+
+15x10
+  Stonehenge  -  0003/0003.puz - 00:00:27
