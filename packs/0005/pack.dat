@@ -10,188 +10,188 @@ p2
 Ntp3
 Rp4
 (dp5
-S'name'
+S'uuid'
 p6
-S'Puzzles'
+S'240d1789-2f38-4e9e-a7ad-13e42710ad5c'
 p7
 sS'author_name'
 p8
 S'Stompy Blondie'
 p9
-sS'puzzles'
+sS'name'
 p10
-(dp11
-S'0014.puz'
+S'Puzzles'
+p11
+sS'puzzles'
 p12
-(lp13
-VSui (Water)
+(dp13
+S'0014.puz'
 p14
+(lp15
+VSui (Water)
+p16
 aI10
 aI10
 asS'0001.puz'
-p15
-(lp16
-VUnicorn
 p17
+(lp18
+VUnicorn
+p19
 aI15
 aI15
 asS'0013.puz'
-p18
-(lp19
-VHand of Cards
 p20
+(lp21
+VHand of Cards
+p22
 aI20
 aI15
 asS'0016.puz'
-p21
-(lp22
-VKa (Fire)
 p23
+(lp24
+VKa (Fire)
+p25
 aI10
 aI10
 asS'0020.puz'
-p24
-(lp25
-VBatteries
 p26
+(lp27
+VBatteries
+p28
 aI20
 aI10
 asS'0010.puz'
-p27
-(lp28
-VLight Bulb
 p29
+(lp30
+VLight Bulb
+p31
 aI10
 aI15
 asS'0017.puz'
-p30
-(lp31
-VThe Sphynx
 p32
+(lp33
+VThe Sphynx
+p34
 aI20
 aI10
 asS'0012.puz'
-p33
-(lp34
-VCupcake
 p35
+(lp36
+VCupcake
+p37
 aI10
 aI10
 asS'0019.puz'
-p36
-(lp37
-VChi (Earth)
 p38
+(lp39
+VChi (Earth)
+p40
 aI10
 aI10
 asS'0007.puz'
-p39
-(lp40
-VImpossible Waterfall
 p41
+(lp42
+VImpossible Waterfall
+p43
 aI20
 aI20
 asS'0018.puz'
-p42
-(lp43
-VKu (Void)
 p44
+(lp45
+VKu (Void)
+p46
 aI10
 aI10
 asS'0002.puz'
-p45
-(lp46
-VRapunzel
 p47
+(lp48
+VRapunzel
+p49
 aI10
 aI20
 asS'0005.puz'
-p48
-(lp49
-VComputer
 p50
+(lp51
+VComputer
+p52
 aI15
 aI15
 asS'0004.puz'
-p51
-(lp52
-VToadstool
 p53
+(lp54
+VToadstool
+p55
 aI10
 aI10
 asS'0015.puz'
-p54
-(lp55
-VFu (Wind)
 p56
+(lp57
+VFu (Wind)
+p58
 aI10
 aI10
 asS'0006.puz'
-p57
-(lp58
-VHilbert Curve
 p59
+(lp60
+VHilbert Curve
+p61
 aI15
 aI15
 asS'0009.puz'
-p60
-(lp61
-VSpider
 p62
+(lp63
+VSpider
+p64
 aI20
 aI15
 asS'0008.puz'
-p63
-(lp64
-VEaster Island Moai
 p65
+(lp66
+VEaster Island Moai
+p67
 aI15
 aI25
 asS'0003.puz'
-p66
-(lp67
-VTest Tubes
 p68
+(lp69
+VTest Tubes
+p70
 aI15
 aI10
 asS'0011.puz'
-p69
-(lp70
-VPixel Pigs
 p71
-aI20
-aI20
-assS'uud'
-p72
-S'428417e2-7715-4836-b4ad-1931c1df8e90'
+(lp72
+VPixel Pigs
 p73
-sS'author_id'
+aI20
+aI20
+assS'author_id'
 p74
 S'f2494e4b-8eff-4899-ae03-888fe9b7a94d'
 p75
 sS'order'
 p76
 (lp77
-g15
-ag45
-ag66
-ag51
-ag48
-ag57
-ag39
-ag63
-ag60
-ag27
-ag69
-ag33
-ag18
-ag12
-ag54
-ag21
-ag30
-ag42
-ag36
-ag24
+g17
+ag47
+ag68
+ag53
+ag50
+ag59
+ag41
+ag65
+ag62
+ag29
+ag71
+ag35
+ag20
+ag14
+ag56
+ag23
+ag32
+ag44
+ag38
+ag26
 asS'freemode'
 p78
 I00
