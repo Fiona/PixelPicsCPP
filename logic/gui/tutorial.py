@@ -41,6 +41,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
         GUI_puzzle_container.__init__(self, game)
         self.tutorial_stages = []
         self.current_stage = 0
+        self.display_error = False
         self.stage_object = None
 
         self.add_stage(
@@ -61,7 +62,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             )
         self.add_stage(
             instructions = ["This row has two separate numbers, each being a 1.", "So somewhere in this row there are two separated filled squares."],
-            row_highlights = [[(3,0), (3,4)]]
+            row_highlights = [[(0,3), (4,3)]]
             )
         self.add_stage(
             instructions = ["Sounds tricky right? It's actually really easy!"]
@@ -71,16 +72,16 @@ class GUI_tutorial_container(GUI_puzzle_container):
             )
         self.add_stage(
             instructions = ["Let's start with this column.", "The clue says there's a single block of 5 squares here."],
-            col_highlights = [[(0,2), (4,2)]]
+            col_highlights = [[(2,0), (2,4)]]
             )
         self.add_stage(
             instructions = ["That's the whole height of the board! So we know for sure that they must all be filled in."],
-            col_highlights = [[(0,2), (4,2)]]
+            col_highlights = [[(2,0), (2,4)]]
             )
         self.add_stage(
             instructions = ["Go ahead and fill in those squares by clicking on them with your right mouse button!"],
             alt_instructions = ["Go ahead and fill in those squares by clicking on them with your left mouse button!"],
-            col_highlights = [[(0,2), (4,2)]],
+            col_highlights = [[(2, 0), (2, 4)]],
             cells_fill = [(0, 2), (1, 2), (2, 2), (3, 2), (4, 2)],
             wrong_cell = "We'll get to the other squares in a second - let's focus on the highlighted ones for now!",
             wrong_input = [
@@ -93,16 +94,16 @@ class GUI_tutorial_container(GUI_puzzle_container):
             )
         self.add_stage(
             instructions = ["Take a look at this column.", "The clue is 0, that means there are no filled squares in this column at all!"],
-            col_highlights = [[(0,4), (4,4)]]
+            col_highlights = [[(4,0), (4,4)]]
             )
         self.add_stage(
             instructions = ["When we know for sure that a square isn't filled in,", "we can mark it with an 'X'."],
-            col_highlights = [[(0,4), (4,4)]]
+            col_highlights = [[(4,0), (4,4)]]
             )
         self.add_stage(
             instructions = ["Go ahead and mark those squares as empty with your left mouse button!"],
             alt_instructions = ["Go ahead and mark those squares as empty with your right mouse button!"],
-            col_highlights = [[(0,4), (4,4)]],
+            col_highlights = [[(4,0), (4,4)]],
             cells_empty = [(0, 4), (1, 4), (2, 4), (3, 4), (4, 4)],
             wrong_cell = "We'll get to the other squares in a second - let's focus on the highlighted ones for now!",
             wrong_input = [
@@ -115,11 +116,11 @@ class GUI_tutorial_container(GUI_puzzle_container):
             )
         self.add_stage(
             instructions = ["Remember this row? The clue says there are 2 separated filled squares.", "Hey, we've already found one of them!"],
-            row_highlights = [[(3,0), (3,4)]]
+            row_highlights = [[(0,3), (4,3)]]
             )
         self.add_stage(
             instructions = ["Each block of squares must be separated by at least 1 empty square.", "That means that the squares either side of the filled block must be empty!"],
-            cell_highlights = [(3,1), (3,3)]
+            cell_highlights = [(1,3), (3,3)]
             )
         self.add_stage(
             instructions = ["Go ahead and mark those spaces as empty with your left mouse button."],
@@ -243,11 +244,59 @@ class GUI_tutorial_container(GUI_puzzle_container):
 
 
     def next_stage(self):
-        if not self.stage_object is None:
+        if self.display_error or not self.stage_object is None:
             return
-        
-        self.stage_object = GUI_tutorial_stage(self.game, self, self.tutorial_stages[self.current_stage])
 
+        self.stage_object = GUI_tutorial_stage(self.game, self, self.tutorial_stages[self.current_stage])
+        
+
+    def check_stage_completion(self):
+        if len(self.tutorial_stages[self.current_stage]['cells_fill']):
+            done = True
+            for cell in self.tutorial_stages[self.current_stage]['cells_fill']:
+                if not self.game.manager.current_puzzle_state[cell[0]][cell[1]] == True:
+                    done = False
+                    break
+
+        if len(self.tutorial_stages[self.current_stage]['cells_empty']):
+            done = True
+            for cell in self.tutorial_stages[self.current_stage]['cells_empty']:
+                if not self.game.manager.current_puzzle_state[cell[0]][cell[1]] == False:
+                    done = False
+                    break
+        
+        if done:
+            self.finish_stage()
+
+
+    def wrong_input(self):
+        if self.game.settings['mouse_left_empty']:
+            message = self.tutorial_stages[self.current_stage]['wrong_input'][0]
+        else:
+            message = self.tutorial_stages[self.current_stage]['wrong_input'][1]        
+        self.show_error(message)
+
+
+    def wrong_cell(self):
+        self.show_error(self.tutorial_stages[self.current_stage]['wrong_cell'])
+
+
+    def out_of_board(self):
+        self.show_error(self.message_out_of_board)
+
+
+    def show_error(self, error_message):
+        self.stage_object.Kill()
+        self.stage_object = GUI_tutorial_error_message(self.game, self, error_message)
+        self.display_error = True
+
+
+    def remove_error(self):
+        self.stage_object.Kill()
+        self.stage_object = None
+        self.display_error = False
+        self.next_stage()
+                
 
 
 class GUI_tutorial_puzzle(GUI_puzzle):
@@ -259,6 +308,38 @@ class GUI_tutorial_puzzle(GUI_puzzle):
             if self.parent.current_stage < len(self.parent.tutorial_stages):
                 self.parent.next_stage()
 
+
+    def mark_cell(self, state, cell, skip_animation = False):
+        if -1 in cell:
+            self.parent.out_of_board()
+            return
+        
+        stage = self.parent.tutorial_stages[self.parent.current_stage]
+
+        # If we have cells that need filling
+        if len(stage['cells_fill']):
+            if state == False:
+                self.parent.wrong_input()
+                return
+
+            if not cell in stage['cells_fill']:
+                self.parent.wrong_cell()
+                return
+
+        # If we have cells that need emptying
+        if len(stage['cells_empty']):
+            if state == True:
+                self.parent.wrong_input()
+                return
+            if not cell in stage['cells_empty']:
+                self.parent.wrong_cell()
+                return
+        
+        GUI_puzzle.mark_cell(self, state, cell, skip_animation)
+
+        self.parent.next_stage_wait = 0
+        self.parent.check_stage_completion()
+        
 
 
 class GUI_tutorial_stage(GUI_element):
@@ -281,7 +362,12 @@ class GUI_tutorial_stage(GUI_element):
         self.objs = []
 
         text_y_pos = 50
-        for text_string in self.stage['instructions']:
+
+        ins = self.stage['instructions']
+        if not self.stage['alt_instructions'] == "" and not self.game.settings['mouse_left_empty']:
+            ins = self.stage['alt_instructions']
+        
+        for text_string in ins:
             text = Text(self.game.core.media.fonts['tutorial_instructions'], 20, text_y_pos, TEXT_ALIGN_TOP_LEFT, text_string)
             text.colour = (1.0, .5, 0.0)
             text.shadow = 1
@@ -297,7 +383,17 @@ class GUI_tutorial_stage(GUI_element):
             text.shadow_colour = (.5, .3, .1, .5)
             text.z = self.z
             self.objs.append(text)
-            
+
+        if len(self.stage['col_highlights']):
+            for column_highlight in self.stage['col_highlights']:
+                self.objs.append(Tutorial_Line_Highlight(self.game, self, column_highlight[0], column_highlight[1], is_col = True))
+        if len(self.stage['row_highlights']):
+            for row_highlight in self.stage['row_highlights']:
+                self.objs.append(Tutorial_Line_Highlight(self.game, self, row_highlight[0], row_highlight[1], is_col = False))
+        if len(self.stage['cell_highlights']):
+            for cell_highlight in self.stage['cell_highlights']:
+                self.objs.append(Tutorial_Cell_Highlight(self.game, self, cell_highlight))
+
         self.gui_init()
 
 
@@ -310,3 +406,167 @@ class GUI_tutorial_stage(GUI_element):
         GUI_element.On_Exit(self)
         for x in self.objs:
             x.Kill()
+            
+
+
+class GUI_tutorial_error_message(GUI_element):
+    def __init__(self, game, parent, message):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x, self.y = 0, 0
+        self.z = Z_GUI_OBJECT_LEVEL_7 - 1
+        self.width = self.game.settings['screen_width']
+        self.height = self.game.settings['screen_height']
+        self.objs = []
+        
+        text = Text(self.game.core.media.fonts['tutorial_instructions'], 20, 50, TEXT_ALIGN_TOP_LEFT, message)
+        text.colour = (1.0, .5, 0.0)
+        text.shadow = 1
+        text.shadow_colour = (.6, .4, .2, .5)
+        text.z = self.z
+        self.objs.append(text)
+
+        text_y_pos = 75 + text.text_height
+
+        text = Text(self.game.core.media.fonts['tutorial_click_to_continue'], self.game.settings['screen_width'] / 2, text_y_pos, TEXT_ALIGN_TOP, "[ Click to continue ]")
+        text.colour = (.8, .3, 0.0)
+        text.shadow = 2
+        text.shadow_colour = (.5, .3, .1, .5)
+        text.z = self.z
+        self.objs.append(text)
+
+        self.wait = 0
+        self.gui_init()
+
+
+    def mouse_left_up(self):
+        self.wait += 1
+        if self.wait > 1:
+            self.parent.remove_error()
+
+
+    def mouse_right_up(self):
+        self.wait += 1
+        if self.wait > 1:
+            self.parent.remove_error()
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        for x in self.objs:
+            x.Kill()
+
+
+
+class Tutorial_Line_Highlight(Process):
+    def __init__(self, game, parent, highlight_from, highlight_to, is_col):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.highlight_from = highlight_from
+        self.highlight_to = highlight_to
+        self.is_col = is_col
+        self.z = Z_GUI_OBJECT_LEVEL_9
+        self.strobe_dir = 1
+        self.alpha = .6
+        self.draw_strat()
+
+
+    def Execute(self):
+        if self.strobe_dir:
+            if self.alpha >= .6:
+                self.strobe_dir = 0
+            else:
+                self.alpha += .01
+        else:
+            if self.alpha <= .2:
+                self.strobe_dir = 1
+            else:
+                self.alpha -= .01
+        self.draw_strat()
+        
+
+    def draw_strat(self):        
+        puzzle_obj = self.parent.parent.puzzle
+        
+        self.x = ((puzzle_obj.grid_x - puzzle_obj.camera_pos[0]) * self.game.current_zoom_level) + (self.game.settings['screen_width']/2)
+        self.y = ((puzzle_obj.grid_y - puzzle_obj.camera_pos[1]) * self.game.current_zoom_level) + (self.game.settings['screen_height']/2)
+
+        self.x += (self.highlight_from[0] * PUZZLE_CELL_WIDTH)
+        self.y += (self.highlight_from[1] * PUZZLE_CELL_HEIGHT)
+
+        if self.is_col:
+            self.width = PUZZLE_CELL_WIDTH
+            self.height = (self.highlight_to[1] * PUZZLE_CELL_HEIGHT) + PUZZLE_CELL_HEIGHT
+        else:
+            self.width = (self.highlight_to[0] * PUZZLE_CELL_WIDTH) + PUZZLE_CELL_WIDTH
+            self.height = PUZZLE_CELL_HEIGHT
+
+        pad = 5
+        self.x -= pad
+        self.y -= pad
+        self.width += pad * 2
+        self.height += pad * 2
+        
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = self.x
+        self.primitive_square_y = self.y
+        self.primitive_square_colour = (1.0, 0.0, 0.0, self.alpha)
+
+
+
+class Tutorial_Cell_Highlight(Process):
+    def __init__(self, game, parent, highlight):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.highlight = highlight
+        self.z = Z_GUI_OBJECT_LEVEL_9
+        self.strobe_dir = 1
+        self.alpha = .6
+        self.draw_strat()
+
+
+    def Execute(self):
+        if self.strobe_dir:
+            if self.alpha >= .6:
+                self.strobe_dir = 0
+            else:
+                self.alpha += .01
+        else:
+            if self.alpha <= .2:
+                self.strobe_dir = 1
+            else:
+                self.alpha -= .01
+        self.draw_strat()
+        
+
+    def draw_strat(self):        
+        puzzle_obj = self.parent.parent.puzzle
+        
+        self.x = ((puzzle_obj.grid_x - puzzle_obj.camera_pos[0]) * self.game.current_zoom_level) + (self.game.settings['screen_width']/2)
+        self.y = ((puzzle_obj.grid_y - puzzle_obj.camera_pos[1]) * self.game.current_zoom_level) + (self.game.settings['screen_height']/2)
+
+        self.x += (self.highlight[0] * PUZZLE_CELL_WIDTH)
+        self.y += (self.highlight[1] * PUZZLE_CELL_HEIGHT)
+
+        self.width = PUZZLE_CELL_WIDTH
+        self.height = PUZZLE_CELL_HEIGHT
+
+        pad = 5
+        self.x -= pad
+        self.y -= pad
+        self.width += pad * 2
+        self.height += pad * 2
+        
+        self.draw_strategy = "primitive_square"
+        self.draw_strategy_call_parent = False
+        self.primitive_square_width = self.width
+        self.primitive_square_height = self.height
+        self.primitive_square_x = self.x
+        self.primitive_square_y = self.y
+        self.primitive_square_colour = (1.0, 0.0, 0.0, self.alpha)
