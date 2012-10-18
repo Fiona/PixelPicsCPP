@@ -711,7 +711,7 @@ class GUI_puzzle(GUI_element):
                 self.rectangle_marker_bottom_right = (self.hovered_row, self.hovered_column)
             
 
-    def mouse_left_down(self):       
+    def mouse_left_down(self):
         if self.game.settings['mouse_left_empty']:
             self.default_mouse_left_down()
         else:
@@ -948,7 +948,7 @@ class GUI_puzzle(GUI_element):
         if self.game.game_state in [GAME_STATE_PUZZLE, GAME_STATE_TEST, GAME_STATE_TUTORIAL]:
             self.check_line_completion(cell[0], cell[1])
             if self.game.manager.is_current_puzzle_complete():
-                self.state = PUZZLE_STATE_CLEARED
+                self.set_cleared()
         # --- DESIGNER ONLY ---
         elif self.game.game_state == GAME_STATE_DESIGNER:
             self.game.manager.work_out_puzzle_hint_numbers(self.game.manager.current_puzzle)
@@ -1200,12 +1200,17 @@ class GUI_puzzle(GUI_element):
         elif not (cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE) in self.black_chunks_to_redraw:
             self.black_chunks_to_redraw.append((cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE))
 
+
     def reset_drawing_whites(self, cell = None):
         if cell is None:
             self.reset_drawing_all_whites = True
         elif not (cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE) in self.white_chunks_to_redraw:
             self.white_chunks_to_redraw.append((cell[0] / PUZZLE_RENDER_CHUNK_SIZE, cell[1] / PUZZLE_RENDER_CHUNK_SIZE))
 
+
+    def set_cleared(self):
+        self.state = PUZZLE_STATE_CLEARED
+        
 
     def On_Exit(self):        
         GUI_element.On_Exit(self)
