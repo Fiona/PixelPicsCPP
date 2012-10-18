@@ -19,6 +19,8 @@ bool Main_App::On_Init()
         return False;
     if(TTF_Init() < 0)
         return False;
+    if(Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 4096) < 0)
+        return False;
 
     SDL_ShowCursor(SDL_DISABLE);
 

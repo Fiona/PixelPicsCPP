@@ -1,10 +1,10 @@
-using gcc ;
 lib SDL : : <name>SDL ; 
 lib pthread : : <name>pthread ; 
 lib m : : <name>m ; 
 lib dl : : <name>dl ; 
 lib SDL_image : : <name>SDL_image ; 
 lib SDL_ttf : : <name>SDL_ttf ; 
+lib SDL_mixer : : <name>SDL_mixer ; 
 lib freetype : : <name>freetype ; 
 lib z : : <name>z ; 
 lib bz2 : : <name>bz2 ; 
@@ -16,4 +16,4 @@ lib boost_filesystem : : <name>boost_filesystem ;
 lib boost_system : : <name>boost_system ; 
 
 
-exe pixelpics : [ glob *.cpp ] z/<link>static bz2/<link>static freetype/<link>static SDL_ttf SDL_image SDL python2.7 boost_python boost_filesystem boost_system GL GLU : <cflags>-fno-stack-protector <include>/usr/include/python2.7 <variant>debug:<define>DEBUG ;
+exe pixelpics : [ glob *.cpp ] z/<link>static bz2/<link>static freetype/<link>static SDL_ttf SDL_image SDL_mixer SDL python2.7 boost_python boost_filesystem boost_system GL GLU : <cflags>-fno-stack-protector <include>/usr/include/python2.7 <variant>debug:<define>DEBUG ;

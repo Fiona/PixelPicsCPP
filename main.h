@@ -98,10 +98,12 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_timer.h>
 #include <SDL/SDL_ttf.h>
+#include <SDL/SDL_mixer.h>
 
 // Program includes
 #include "image.h"
 #include "font.h"
+#include "sfx.h"
 #include "process.h"
 #include "media.h"
 #include "game_objects.h"

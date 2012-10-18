@@ -59,12 +59,17 @@ BOOST_PYTHON_MODULE(core)
         .def_readonly("height", &Image::height)
         ;
     class_<Font>("Font");
+    class_<SFX>("SFX")
+        .def("play", &SFX::play)
+        ;
 
     STL_MAP_WRAPPING_PTR(string, Image*, "gfxMap");
     STL_MAP_WRAPPING_PTR(string, Font*, "fontMap");
+    STL_MAP_WRAPPING_PTR(string, SFX*, "sfxMap");
     class_<Media>("Media")
         .def_readonly("gfx", &Media::gfx)
         .def_readonly("fonts", &Media::fonts)
+        .def_readonly("sfx", &Media::sfx)
         ;
 
     // Expose settings object

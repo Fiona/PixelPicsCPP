@@ -105,7 +105,11 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_button_sharing_play", new Image("gfx/gui/button_sharing_play.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_next", new Image("gfx/gui/button_sharing_next.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_prev", new Image("gfx/gui/button_sharing_prev.png", False, 3)));
- 
+
+    // Sound effects!
+    sfx.insert(pair<string,SFX*>("empty_square", new SFX("sfx/empty_square.wav")));
+    sfx.insert(pair<string,SFX*>("fill_square", new SFX("sfx/fill_square.wav")));
+
 }
 
 
@@ -120,6 +124,13 @@ Media::~Media()
     }
 
     for(map<string, Font* >::iterator it = fonts.begin(); it != fonts.end(); ++it)
+    {
+        if(it->second == NULL)
+            continue;
+        delete it->second;
+    }
+
+    for(map<string, SFX* >::iterator it = sfx.begin(); it != sfx.end(); ++it)
     {
         if(it->second == NULL)
             continue;

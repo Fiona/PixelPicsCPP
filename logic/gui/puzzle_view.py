@@ -739,6 +739,7 @@ class GUI_puzzle(GUI_element):
                 self.mark_cell(True, (self.hovered_row, self.hovered_column))
             # --- DESIGNER ONLY ---
             else:
+                self.game.core.media.sfx['empty_square'].play(0)
                 self.mark_cell(False, (self.hovered_row, self.hovered_column))
                 
 
@@ -777,6 +778,7 @@ class GUI_puzzle(GUI_element):
                     return
         
         if self.last_state_set == "ignore" or not self.last_hovered_cell == (self.hovered_row, self.hovered_column):
+            self.game.core.media.sfx['fill_square'].play(0)
             self.mark_cell(True, (self.hovered_row, self.hovered_column))
 
 

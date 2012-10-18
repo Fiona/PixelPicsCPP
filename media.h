@@ -15,6 +15,7 @@ using namespace std;
 
 typedef std::map <string, Image* > gfx_map;
 typedef std::map <string, Font* > font_map;
+typedef std::map <string, SFX* > sfx_map;
 
 
 /*
@@ -28,6 +29,7 @@ public:
 
     gfx_map gfx;
     font_map fonts;
+    sfx_map sfx;
 
 };
 
