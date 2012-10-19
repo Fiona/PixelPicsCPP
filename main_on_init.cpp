@@ -93,7 +93,7 @@ bool Main_App::On_Init()
     mouse = new Mouse();
 
     // Load all the media
-    Main_App::media = new Media();
+    Main_App::media = new Media(this);
 
     // Start up python
     python_interface = new Python_Interface(this);

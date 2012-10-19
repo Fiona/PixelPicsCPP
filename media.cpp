@@ -12,8 +12,31 @@ using namespace std;
 #include "main.h"
 
 
+void channel_finished_playing(int channel)
+{
+    
+    for(map<string, SFX* >::iterator it = Main_App::media->sfx.begin(); it != Main_App::media->sfx.end(); ++it)
+    {
+        if(it->second == NULL)
+            continue;
+        if(it->second->channel == channel)
+            it->second->channel = -1;
+    }
+
+}
+
+
 Media::Media()
 {
+    game = NULL;
+}
+
+
+Media::Media(Main_App* _game)
+{
+
+    game = _game;
+    Mix_ChannelFinished(channel_finished_playing);
 
     // Load all the fonts!
     fonts.insert(pair<string,Font*>("basic", new Font("fnt/arulent.ttf", 13)));
@@ -107,8 +130,8 @@ Media::Media()
     gfx.insert(pair<string, Image*>("gui_button_sharing_prev", new Image("gfx/gui/button_sharing_prev.png", False, 3)));
 
     // Sound effects!
-    sfx.insert(pair<string,SFX*>("empty_square", new SFX("sfx/empty_square.wav")));
-    sfx.insert(pair<string,SFX*>("fill_square", new SFX("sfx/fill_square.wav")));
+    sfx.insert(pair<string,SFX*>("empty_square", new SFX("sfx/empty_square.wav", game, False)));
+    sfx.insert(pair<string,SFX*>("fill_square", new SFX("sfx/fill_square.wav", game, False)));
 
 }
 

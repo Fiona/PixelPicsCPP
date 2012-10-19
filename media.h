@@ -25,8 +25,10 @@ class Media
 
 public:
     Media();
+    Media(Main_App* _game);
     ~Media();
 
+    Main_App* game;
     gfx_map gfx;
     font_map fonts;
     sfx_map sfx;

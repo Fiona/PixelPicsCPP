@@ -42,8 +42,8 @@
 #define DEFAULT_SETTING_FULL_SCREEN "0"
 #define DEFAULT_SETTING_SOUND_EFFECTS_ON "1"
 #define DEFAULT_SETTING_MUSIC_ON "1"
-#define DEFAULT_SETTING_SOUND_EFFECTS_VOL "100"
-#define DEFAULT_SETTING_MUSIC_VOL "100"
+#define DEFAULT_SETTING_SOUND_EFFECTS_VOL "128"
+#define DEFAULT_SETTING_MUSIC_VOL "128"
 #define DEFAULT_SETTING_MOUSE_LEFT_EMPTY "1"
 #define DEFAULT_SETTING_BUMP_SCROLL "1"
 #define DEFAULT_SETTING_LOCK_DRAWING "1"
@@ -144,7 +144,7 @@ public:
     static float screen_height;
 
     Settings* settings;
-    Media* media;
+    static Media* media;
     std::vector<SDLKey> Keyboard_keys_down;
     std::vector<SDLKey> Keyboard_keys_released;
     std::vector<int> Text_input;

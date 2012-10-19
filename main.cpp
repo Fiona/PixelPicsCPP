@@ -44,6 +44,7 @@ Uint32 SDL_AMASK = 0xff000000;
 map <string, Main_App::FuncGetter> Main_App::draw_strategies;
 float Main_App::screen_width;
 float Main_App::screen_height;
+Media* Main_App::media = NULL;
 
 
 Main_App::Main_App()

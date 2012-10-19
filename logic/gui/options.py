@@ -285,7 +285,7 @@ class GUI_options_sound_effects_on(GUI_element_yes_no_radios):
 
 class GUI_options_music_volume(GUI_element_slider):
     min_value = 0
-    max_value = 100
+    max_value = 128
     width = 170
 
     def __init__(self, game, parent):
@@ -311,7 +311,7 @@ class GUI_options_music_volume(GUI_element_slider):
 
 class GUI_options_sound_effects_volume(GUI_element_slider):
     min_value = 0
-    max_value = 100
+    max_value = 128
     width = 170
 
     def __init__(self, game, parent):
