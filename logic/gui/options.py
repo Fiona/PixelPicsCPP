@@ -104,7 +104,15 @@ class GUI_options(GUI_element_window):
                 "Notice",
                 ["You will need to restart PixelPics before your", "settings will be applied."]
                 )
-            
+
+        # alter music settings were appropriate
+        self.game.set_music_volume(self.game.core.settings.music_vol)
+        
+        if self.game.core.settings.music_on:
+            self.game.ensure_correct_music_playing()
+        else:
+            self.game.fade_out_music()
+        
         self.Kill()
     
 
@@ -303,6 +311,10 @@ class GUI_options_music_volume(GUI_element_slider):
         self.name_text.colour = (0.0, 0.0, 0.0)
 
 
+    def slider_dragged(self):
+        self.game.set_music_volume(self.current_value)
+
+    
     def On_Exit(self):
         GUI_element_slider.On_Exit(self)
         self.name_text.Kill()

@@ -135,7 +135,7 @@ class GUI_main_menu_title(GUI_element):
     def first_time(self):
         self.game.manager.load_pack("0001", user_created = False)
         self.game.manager.current_puzzle_file = "0001.puz"
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40)
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40, stop_music = True)
     
 
 
@@ -192,7 +192,7 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
 
         if no_download_items:
             self.game.manager.user_created_puzzles = False
-            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30)
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30, stop_music = True)
         else:
             GUI_main_menu_puzzle_type_selection(self.game, self.parent)
 
@@ -214,7 +214,7 @@ class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_DESIGNER), speed = 20)
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_DESIGNER), speed = 20, stop_music = True)
 
 
 
@@ -519,7 +519,7 @@ class GUI_main_menu_puzzle_type_select_main(GUI_element_button):
 
     def mouse_left_up(self):
         self.game.manager.user_created_puzzles = False
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30)
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30, stop_music = True)
 
 
 
@@ -552,7 +552,7 @@ class GUI_main_menu_puzzle_type_select_downloaded(GUI_element_button):
 
 
     def mouse_left_up(self):
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING, gui_state = GUI_STATE_SHARING_DOWNLOADED), speed = 30)
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING, gui_state = GUI_STATE_SHARING_DOWNLOADED), speed = 30, stop_music = True)
 
 
 

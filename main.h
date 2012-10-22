@@ -104,6 +104,7 @@
 #include "image.h"
 #include "font.h"
 #include "sfx.h"
+#include "music.h"
 #include "process.h"
 #include "media.h"
 #include "game_objects.h"
@@ -162,6 +163,7 @@ public:
     string path_player_progress;
     string author_id;
 
+    Music* current_playing_music;
     Mouse* mouse;
 
     vector< vector<float> > allowed_screen_sizes;

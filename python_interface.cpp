@@ -62,14 +62,21 @@ BOOST_PYTHON_MODULE(core)
     class_<SFX>("SFX")
         .def("play", &SFX::play)
         ;
+    class_<Music>("Music")
+        .def("play_loop", &Music::play_loop)
+        .def("stop", &Music::stop)
+        .def("set_volume", &Music::set_volume)
+        ;
 
     STL_MAP_WRAPPING_PTR(string, Image*, "gfxMap");
     STL_MAP_WRAPPING_PTR(string, Font*, "fontMap");
     STL_MAP_WRAPPING_PTR(string, SFX*, "sfxMap");
+    STL_MAP_WRAPPING_PTR(string, Music*, "musicMap");
     class_<Media>("Media")
         .def_readonly("gfx", &Media::gfx)
         .def_readonly("fonts", &Media::fonts)
         .def_readonly("sfx", &Media::sfx)
+        .def_readonly("music", &Media::music)
         ;
 
     // Expose settings object

@@ -1475,6 +1475,7 @@ class GUI_element_slider(GUI_element):
         elif self.current_value_percentage > 100:
             self.current_value_percentage = 100
         self.set_value(int(((self.max_value - self.min_value) * (float(self.current_value_percentage) / 100)) + self.min_value))
+        self.slider_dragged()
 
 
     def set_value(self, new_value):

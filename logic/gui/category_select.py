@@ -268,7 +268,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.game.manager.load_pack(self.pack_dir, user_created = False)
         if self.pack_dir == "0001":
             self.game.manager.current_puzzle_file = "0001.puz"
-            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40)
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40, stop_music = True)
         else:
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
 

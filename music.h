@@ -2,11 +2,11 @@
  PIXEL PICS
  2011/2012 STOMPY BLONDIE GAMES
  ****************************
- Sound effects loading and playing header
+ Music loading and playing header
  ****************************/
 
-#ifndef _SFX_H_
-#define _SFX_H_
+#ifndef _MUSIC_H_
+#define _MUSIC_H_
  
 #include <string>
 using namespace std;
@@ -20,21 +20,20 @@ class Main_App;
 
 /*
  */ 
-class SFX
+class Music
 {
 
 public:
-    SFX();
-    SFX(string sound_file, Main_App* _game, bool overlap = True);
-    ~SFX();
-    void play(int times_repeat = 0);
-
-    int channel;
-    bool overlap;
+    Music();
+    Music(string sound_file, Main_App* _game);
+    ~Music();
+    void play_loop(int fade_out_time = 1000);
+    void stop(int fade_out_time);
+    void set_volume(int volume);
 
 private:
     Main_App* game;
-    Mix_Chunk *sound;
+    Mix_Music *sound;
 
 };
  

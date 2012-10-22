@@ -387,6 +387,7 @@ class GUI_puzzle(GUI_element):
                     self.game.gui.block_gui_mouse_input = True
                     self.game.gui.mouse.alpha = 0.0
                     self.title_text = Title_failed(self.game, 0, 100, wait = 1)
+                    self.game.fade_out_music(500)
                     self.wait_time = 0
 
                 self.anim_state = 1
@@ -394,7 +395,7 @@ class GUI_puzzle(GUI_element):
             elif self.anim_state == 1:
                 if self.hint_alpha > 0.0:
                     if self.iter < 120:
-                        self.zoom_out_fade_and_position(self.iter)
+                        self.zoom_out_fade_and_position(self.iter, 120)
                         self.iter += 1
                 else:
                     self.anim_state = 2
@@ -436,13 +437,14 @@ class GUI_puzzle(GUI_element):
                     self.game.gui.mouse.alpha = 0.0
                     self.title_text = Title_cleared(self.game, 0, 100, wait = 1)
                     self.wait_time = 0
-
+                    self.game.core.media.sfx['success'].play(0)
+                    self.game.fade_out_music(500)
                 self.anim_state = 1
 
             elif self.anim_state == 1:
                 if self.hint_alpha > 0.0:
-                    if self.iter < 120:
-                        self.zoom_out_fade_and_position(self.iter)
+                    if self.iter < 100:
+                        self.zoom_out_fade_and_position(self.iter, 100)
                         self.iter += 1
                 else:
                     Finished_puzzle_image(self.game, self, self.grid_x, self.grid_y)
@@ -590,20 +592,20 @@ class GUI_puzzle(GUI_element):
         self.rectangle_marker_bottom_right = (0, 0)
 
 
-    def zoom_out_fade_and_position(self, num):
-        self.hint_alpha = lerp(num, 120, self.hint_alpha, 0.0)
+    def zoom_out_fade_and_position(self, num, target):
+        self.hint_alpha = lerp(num, target, self.hint_alpha, 0.0)
         for x in self.text:
             for i in self.text[x]:
                 for j in i:
                     j.alpha = self.hint_alpha
 
-        self.camera_pos[0] = lerp(num, 120, self.camera_pos[0], 0.0)
-        self.camera_pos[1] = lerp(num, 120, self.camera_pos[1], 0.0)
+        self.camera_pos[0] = lerp(num, target, self.camera_pos[0], 0.0)
+        self.camera_pos[1] = lerp(num, target, self.camera_pos[1], 0.0)
 
-        self.grid_x = int(lerp(num, 120, self.grid_x, -(self.grid_width/2)))
-        self.grid_y = int(lerp(num, 120, self.grid_y, -(self.grid_height/2)))
+        self.grid_x = int(lerp(num, target, self.grid_x, -(self.grid_width/2)))
+        self.grid_y = int(lerp(num, target, self.grid_y, -(self.grid_height/2)))
 
-        self.game.current_zoom_level = lerp(num, 120, self.game.current_zoom_level, self.game.minimum_zoom_level)
+        self.game.current_zoom_level = lerp(num, target, self.game.current_zoom_level, self.game.minimum_zoom_level)
 
 
     def adjust_gui_coords(self):
@@ -739,7 +741,6 @@ class GUI_puzzle(GUI_element):
                 self.mark_cell(True, (self.hovered_row, self.hovered_column))
             # --- DESIGNER ONLY ---
             else:
-                self.game.core.media.sfx['empty_square'].play(0)
                 self.mark_cell(False, (self.hovered_row, self.hovered_column))
                 
 
@@ -778,7 +779,6 @@ class GUI_puzzle(GUI_element):
                     return
         
         if self.last_state_set == "ignore" or not self.last_hovered_cell == (self.hovered_row, self.hovered_column):
-            self.game.core.media.sfx['fill_square'].play(0)
             self.mark_cell(True, (self.hovered_row, self.hovered_column))
 
 
@@ -1008,7 +1008,16 @@ class GUI_puzzle(GUI_element):
             self.made_mistake = True
             if self.game.lives <= 0:
                 self.state = PUZZLE_STATE_FAILED
+                self.game.core.media.sfx['failure'].play(0)
+            self.game.core.media.sfx['incorrect_square'].play(0)
             return
+
+        # play sound effect on drawing
+        if self.last_state_set is True:
+            self.game.core.media.sfx['fill_square'].play(0)
+        elif self.last_state_set is False:
+            self.game.core.media.sfx['empty_square'].play(0)
+        
 
 
     def check_line_completion(self, row_index, column_index):

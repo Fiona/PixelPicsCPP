@@ -71,6 +71,12 @@ class Game(Process):
 
     # When is set to true, we wont get the main menu animation
     no_button_anim = False
+
+    # Current playing music, is compared to when a music is supposed to be playing
+    current_playing_music = None
+
+    # Keeps track of what we should be playing even if we are not
+    music_to_play = None
     
 
     def __init__(self, core):
@@ -162,6 +168,8 @@ class Game(Process):
         if self.game_state == GAME_STATE_LOGO:
             col = (0, 0, 0)
 
+        self.music_to_play = None
+        
         # Switch to new state
         self.game_state = state
 
@@ -172,6 +180,7 @@ class Game(Process):
             self.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
             self.gui.fade_toggle(speed = 120, colour = col)
             self.gui.switch_gui_state_to(GUI_STATE_MENU if gui_state is None else gui_state)
+            self.music_to_play = "title"
         elif state == GAME_STATE_PUZZLE:
             self.current_zoom_level = 1.0
             self.lives = INITIAL_LIVES
@@ -180,19 +189,23 @@ class Game(Process):
             #self.manager.load_puzzle("MarksAmezzinPuzzles0001", "Cat0001.puz")
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
+            self.music_to_play = "puzzle"
         elif state == GAME_STATE_CATEGORY_SELECT:
             self.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
             self.manager.user_created_puzzles = False
             self.gui.fade_toggle(speed = 60)
             self.gui.switch_gui_state_to(GUI_STATE_CATEGORY_SELECT if gui_state is None else gui_state)
+            self.music_to_play = "select_puzzle"
         elif state == GAME_STATE_PUZZLE_SELECT:
             self.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
             self.gui.fade_toggle(speed = 60)           
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE_SELECT if gui_state is None else gui_state)
+            self.music_to_play = "select_puzzle"
         elif state == GAME_STATE_DESIGNER:
             self.manager.user_created_puzzles = True
             self.gui.fade_toggle(speed = 20, colour = col)
             self.gui.switch_gui_state_to(GUI_STATE_DESIGNER_PACKS if gui_state is None else gui_state)
+            self.music_to_play = "editor"
         elif state == GAME_STATE_TEST:
             self.current_zoom_level = 1.0
             self.lives = INITIAL_LIVES
@@ -200,9 +213,11 @@ class Game(Process):
             self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file)
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
+            self.music_to_play = "puzzle"
         elif state == GAME_STATE_SHARING:
             self.gui.fade_toggle(speed = 20)
             self.gui.switch_gui_state_to(GUI_STATE_SHARING_NEWEST if gui_state is None else gui_state)
+            self.music_to_play = "select_puzzle"
         elif state == GAME_STATE_TUTORIAL:
             self.current_zoom_level = 1.0
             self.lives = INITIAL_LIVES
@@ -210,7 +225,32 @@ class Game(Process):
             self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file, user_created = False)
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_TUTORIAL if gui_state is None else gui_state)
+            self.music_to_play = "puzzle"
 
+        self.ensure_correct_music_playing()
+
+
+    def ensure_correct_music_playing(self):
+        if self.music_to_play is None:
+            if not self.current_playing_music is None:
+                self.core.media.music[self.current_playing_music].stop()
+                self.current_playing_music = None
+        else:
+            if not self.music_to_play == self.current_playing_music:
+                self.core.media.music[self.music_to_play].play_loop(1000)
+                self.current_playing_music = self.music_to_play
+
+
+    def fade_out_music(self, fade_out_time = 1000):
+        if not self.current_playing_music is None:
+            self.core.media.music[self.current_playing_music].stop(fade_out_time)
+            self.current_playing_music = None
+
+
+    def set_music_volume(self, volume):
+        if not self.current_playing_music is None:
+            self.core.media.music[self.current_playing_music].set_volume(volume)
+        
 
     def player_action_cleared_puzzle(self, category_uuid, puzzle):
         # -----------

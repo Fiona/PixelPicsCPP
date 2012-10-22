@@ -316,7 +316,7 @@ class GUI(Process):
     fading_callback = None
 
     
-    def fade_toggle(self, callback = None, speed = 15, colour = (1.0, 1.0, 1.0)):
+    def fade_toggle(self, callback = None, speed = 15, colour = (1.0, 1.0, 1.0), stop_music = False):
         if not self.fading_done:
             return
         self.fade_speed = speed
@@ -325,3 +325,5 @@ class GUI(Process):
         self.fade_colour = colour
         self.fade_to = 1.0 if self.fading < 1.0 else 0.0
         self.fading_done = False
+        if stop_music:
+            self.game.fade_out_music()

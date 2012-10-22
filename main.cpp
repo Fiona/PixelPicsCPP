@@ -65,6 +65,7 @@ Main_App::Main_App()
     frames_rendered = 0;
     python_interface = NULL;
     mouse = NULL;
+    current_playing_music = NULL;
     text_input_enabled = False;
 
     // Get the application data path depending on system

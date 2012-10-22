@@ -132,6 +132,15 @@ Media::Media(Main_App* _game)
     // Sound effects!
     sfx.insert(pair<string,SFX*>("empty_square", new SFX("sfx/empty_square.wav", game, False)));
     sfx.insert(pair<string,SFX*>("fill_square", new SFX("sfx/fill_square.wav", game, False)));
+    sfx.insert(pair<string,SFX*>("incorrect_square", new SFX("sfx/incorrect_square.wav", game)));
+    sfx.insert(pair<string,SFX*>("failure", new SFX("sfx/failure.wav", game)));
+    sfx.insert(pair<string,SFX*>("success", new SFX("sfx/success.wav", game)));
+
+    // Music
+    music.insert(pair<string,Music*>("title", new Music("music/title.ogg", game)));
+    music.insert(pair<string,Music*>("select_puzzle", new Music("music/select_puzzle.ogg", game)));
+    music.insert(pair<string,Music*>("puzzle", new Music("music/puzzle.ogg", game)));
+    music.insert(pair<string,Music*>("editor", new Music("music/editor.ogg", game)));
 
 }
 
@@ -154,6 +163,13 @@ Media::~Media()
     }
 
     for(map<string, SFX* >::iterator it = sfx.begin(); it != sfx.end(); ++it)
+    {
+        if(it->second == NULL)
+            continue;
+        delete it->second;
+    }
+
+    for(map<string, Music* >::iterator it = music.begin(); it != music.end(); ++it)
     {
         if(it->second == NULL)
             continue;
