@@ -2342,6 +2342,7 @@ class GUI_designer_colour_puzzle(GUI_element):
         if not self.parent.tool == DRAWING_TOOL_STATE_DRAW:
             return
 
+        self.game.core.media.sfx['paint'].play(0)                
         self.colour_cell(list(self.parent.palette_object.selected_hsv_colour), (self.hovered_row, self.hovered_column))
 
 
@@ -2356,6 +2357,7 @@ class GUI_designer_colour_puzzle(GUI_element):
             if len(cell_list) > 0:
                 self.parent.need_to_save = True        
                 self.change_cells(cell_list, list(self.parent.palette_object.selected_hsv_colour))
+                self.game.core.media.sfx['fill'].play(0)                
 
 
     def mouse_right_up(self):
@@ -2365,6 +2367,7 @@ class GUI_designer_colour_puzzle(GUI_element):
         if -1 in (self.hovered_row, self.hovered_column):
             return
 
+        self.game.core.media.sfx['pipette'].play(0)                
         self.parent.palette_object.change_selected_colour(list(self.game.manager.current_puzzle.cells[self.hovered_row][self.hovered_column][1]))
 
 

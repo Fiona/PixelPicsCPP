@@ -59,6 +59,19 @@ class Mascot_Category_Select(Mascot):
                 self.iter = 0
                 self.dir = 0
                 self.y = self.initial_position[1]
+
+        if self.game.gui.block_gui_mouse_input:
+            return
+        coordinates = (self.game.gui.mouse.x, self.game.gui.mouse.y)
+        x = self.x - (self.image.width / 2)
+        y = self.y - (self.image.height / 2)
+        if (coordinates[0] > x and \
+            coordinates[0] < x + self.image.width and \
+            coordinates[1] > y and \
+            coordinates[1] < y + self.image.height and \
+            self.game.core.mouse.left_up):
+            self.game.core.media.sfx['meow1'].play(0)
+               
                 
         
     def set_location(self):

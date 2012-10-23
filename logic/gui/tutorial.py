@@ -239,10 +239,16 @@ class GUI_tutorial_container(GUI_puzzle_container):
     def finish_stage(self):
         if self.stage_object is None:
             return
-        if len(self.tutorial_stages[self.current_stage]['cells_empty']):
-            self.wait_one_left_click = True
+        if self.game.settings['mouse_left_empty']:        
+            if len(self.tutorial_stages[self.current_stage]['cells_empty']):
+                self.wait_one_left_click = True
+            else:
+                self.wait_one_left_click = False
         else:
-            self.wait_one_left_click = False
+            if len(self.tutorial_stages[self.current_stage]['cells_fill']):
+                self.wait_one_left_click = True
+            else:
+                self.wait_one_left_click = False
         self.stage_object.Kill()
         self.stage_object = None
         self.current_stage += 1
@@ -422,7 +428,7 @@ class GUI_tutorial_stage(GUI_element):
         text_y_pos = 50
 
         ins = self.stage['instructions']
-        if not self.stage['alt_instructions'] == "" and not self.game.settings['mouse_left_empty']:
+        if not self.stage['alt_instructions'] == [""] and not self.game.settings['mouse_left_empty']:
             ins = self.stage['alt_instructions']
         
         for text_string in ins:

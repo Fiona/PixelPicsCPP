@@ -513,7 +513,7 @@ class GUI_options_bump_scroll(GUI_element_yes_no_radios):
         self.current_value = bool(self.game.core.settings.bump_scroll)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Enable bump scrolling")
+        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Bump scrolling")
         self.name_text.z = self.z - 1
         self.name_text.colour = (0.0, 0.0, 0.0)
 

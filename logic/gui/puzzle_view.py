@@ -165,6 +165,7 @@ class GUI_puzzle_pause_menu_resume_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.parent.Get_rid()
 
 
@@ -187,6 +188,7 @@ class GUI_puzzle_pause_menu_options_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         GUI_options(self.game, self.parent)
 
 
@@ -209,6 +211,7 @@ class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.parent.Stop_playing()
 
 

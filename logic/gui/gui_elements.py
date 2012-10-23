@@ -226,6 +226,9 @@ class GUI_element_button(GUI_element):
     # Set to True to disable. If not generic, image_seq 3 is used. Can be switched on and off at will.
     disabled = False
 
+    # Set false to disable clicks and stuff 
+    play_sound = True
+
     generic_button_text_object = None
     sequence_count = 0
 
@@ -243,6 +246,8 @@ class GUI_element_button(GUI_element):
         """
         GUI_element.gui_init(self)
 
+        self.hover_sound = False
+        
         if not self.image is None:
             self.generic_button = False
             self.width = self.image.width if self.width == 0 else self.width
@@ -289,11 +294,23 @@ class GUI_element_button(GUI_element):
         self.toggle_state = True if self.toggle_state == False else False
 
 
+    def mouse_left_up(self):
+        if self.play_sound:
+            self.game.core.media.sfx['button_click'].play(0)
+        
+
     def mouse_over(self):
         if self.disabled:
             return
+        if self.play_sound and not self.hover_sound:
+            self.game.core.media.sfx['button_hover'].play(0)
+            self.hover_sound = True
         if self.sequence_count > 1 and not (self.toggle_button and self.toggle_state):
             self.image_sequence = 2
+
+
+    def mouse_out(self):
+        self.hover_sound = False
 
 
     def mouse_left_down(self):
@@ -492,6 +509,7 @@ class GUI_button_dialog_box_confirm(GUI_element_button):
 
     
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.parent.Kill()
         if not self.parent.callback is None:
             self.parent.callback()
@@ -544,6 +562,7 @@ class GUI_button_confirmation_box_confirm(GUI_element_button):
 
     
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         if not self.parent.confirm_callback is None:
             self.parent.confirm_callback()
         self.parent.Kill()
@@ -566,6 +585,7 @@ class GUI_button_confirmation_box_cancel(GUI_element_button):
 
     
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         if not self.parent.cancel_callback is None:
             self.parent.cancel_callback()
         self.parent.Kill()
@@ -825,6 +845,7 @@ class GUI_element_text_input(GUI_element):
         for input_key in self.game.core.Text_input:
             # Backspace
             if input_key == key.BACKSPACE:
+                self.game.core.media.sfx['type'].play(0)                
                 if len(self.current_text) > 0 and self.caret_location > 0:
                     self.current_text = self.current_text[0:self.caret_location-1] + self.current_text[self.caret_location:]
                     self.caret_location -= 1
@@ -842,6 +863,7 @@ class GUI_element_text_input(GUI_element):
                 and not input_key == key.BACKSPACE
                 and not input_key == key.DELETE
                 ):
+                self.game.core.media.sfx['type'].play(0)                
                 if len(self.current_text) < self.max_length:
                     self.current_text = self.current_text[0:self.caret_location] + chr(input_key).decode('utf-8') + self.current_text[self.caret_location:]
                     self.caret_location += 1
@@ -1002,6 +1024,7 @@ class GUI_element_dropdown(GUI_element):
 
 
     def mouse_left_up(self):
+        self.game.core.media.sfx['button_click'].play(0)
         self.hide_all_options()
 
         
@@ -1035,6 +1058,7 @@ class GUI_element_dropdown_currently_selected(GUI_element):
         self.z = self.parent.display_z
         self.draw_strategy = "gui_dropdown_currently_selected"
         self.image = self.game.core.media.gfx['gui_dropdown_arrow']
+        self.hover_sound = False
         self.gui_init()
 
 
@@ -1052,14 +1076,22 @@ class GUI_element_dropdown_currently_selected(GUI_element):
             
         
     def mouse_over(self):
+        if not self.hover_sound:
+            self.game.core.media.sfx['button_hover'].play(0)
+            self.hover_sound = True
         self.image_sequence = 2
 
+
+    def mouse_out(self):
+        self.hover_sound = False
+        
 
     def mouse_left_down(self):
         self.image_sequence = 3
 
 
     def mouse_left_up(self):
+        self.game.core.media.sfx['button_click'].play(0)        
         if self.parent.options_displayed:
             self.parent.hide_all_options()
         else:
@@ -1087,6 +1119,8 @@ class GUI_element_dropdown_options(GUI_element):
         self.draw_strategy = "gui_dropdown_options"
         self.display_height = self.parent.display_height
         self.num_dropdown_options = len(self.parent.dropdown_options)
+        self.hover_sound = False
+        self.last_hovered_item = -1
         
 
     def Execute(self):
@@ -1124,9 +1158,20 @@ class GUI_element_dropdown_options(GUI_element):
         self.hovered_item = int((self.game.gui.mouse.y - self.y) / (self.parent.display_height))
         if self.hovered_item >= len(self.parent.dropdown_options):
             self.hovered_item = -1
+        if not self.hover_sound and self.hovered_item > -1 and self.hovered_item != self.last_hovered_item:
+            self.game.core.media.sfx['button_hover'].play(0)
+            self.hover_sound = True
+        if self.hovered_item != self.last_hovered_item:
+            self.hover_sound = False            
+        self.last_hovered_item = self.hovered_item
 
 
+    def mouse_out(self):
+        self.hover_sound = False
+        
+        
     def mouse_left_up(self):
+        self.game.core.media.sfx['button_click'].play(0)
         if self.hovered_item > -1:
             self.parent.hide_all_options()
             self.parent.change_selected_item(self.hovered_item)
@@ -1419,6 +1464,11 @@ class GUI_element_single_radio_button(GUI_element_button):
         self.action = action
         self.gui_init()
 
+
+    def Execute(self):
+        GUI_element_button.Execute(self)
+        self.play_sound = False if self.toggle_state else True
+        
         
     def gui_init(self):
         self.z = self.parent.z - 1
@@ -1427,6 +1477,7 @@ class GUI_element_single_radio_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         if not self.action is None:
             self.action()
 
@@ -1453,6 +1504,7 @@ class GUI_element_slider(GUI_element):
         
     def gui_init(self):
         GUI_element.gui_init(self)
+        self.hover_sound = False
         self.slider_handle = GUI_element_slider_handle(self.game, self)
         #self.draw_strategy = "gui_slider"
         self.set_value(self.current_value)
@@ -1461,10 +1513,14 @@ class GUI_element_slider(GUI_element):
 
 
     def mouse_over(self):
+        if not self.hover_sound:
+            self.game.core.media.sfx['button_hover'].play(0)
+            self.hover_sound = True        
         self.slider_handle.highlight = True
 
 
     def mouse_out(self):
+        self.hover_sound = False
         self.slider_handle.highlight = False
 
 

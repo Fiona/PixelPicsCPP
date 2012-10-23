@@ -183,6 +183,7 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
+        GUI_main_menu_button.mouse_left_up(self)
         no_download_items = True
         for pack in self.game.manager.packs:
             if pack.author_id == self.game.author_id:
@@ -214,6 +215,7 @@ class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
+        GUI_main_menu_button.mouse_left_up(self)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_DESIGNER), speed = 20, stop_music = True)
 
 
@@ -234,6 +236,7 @@ class GUI_main_menu_sharing_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
+        GUI_main_menu_button.mouse_left_up(self)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING), speed = 20)
 
 
@@ -254,6 +257,7 @@ class GUI_main_menu_options_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
+        GUI_main_menu_button.mouse_left_up(self)
         GUI_options(self.game, self.parent)
 
 
@@ -274,6 +278,7 @@ class GUI_main_menu_quit_button(GUI_main_menu_button):
 
 
     def mouse_left_up(self):
+        GUI_main_menu_button.mouse_left_up(self)
         self.conf_box = GUI_element_confirmation_box(
             self.game,
             self,
@@ -458,6 +463,7 @@ class GUI_main_menu_credits_close_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.parent.Kill()
 
 
@@ -518,6 +524,7 @@ class GUI_main_menu_puzzle_type_select_main(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.game.manager.user_created_puzzles = False
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30, stop_music = True)
 
@@ -552,6 +559,7 @@ class GUI_main_menu_puzzle_type_select_downloaded(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING, gui_state = GUI_STATE_SHARING_DOWNLOADED), speed = 30, stop_music = True)
 
 
@@ -571,4 +579,5 @@ class GUI_main_menu_puzzle_type_select_go_back(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.parent.Kill()
