@@ -178,6 +178,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
                 self.iter = 0
                 self.objs['status_icon'].image_sequence = 2
                 self.anim_state = 3
+                self.game.core.media.sfx['unlock'].play(0)
         elif self.anim_state == 3:
             if self.iter > 5:
                 self.iter = 0
@@ -263,6 +264,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         if self.disabled:
             return
         self.game.manager.load_pack(self.pack_dir, user_created = False)

@@ -247,6 +247,7 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
 
 
     def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
         self.game.manager.current_puzzle_file = self.puzzle_filename
         if self.saved_icon:
             self.game.manager.load_puzzle_state_from = self.game.manager.current_puzzle_pack + "_" + self.puzzle_filename + FILE_SAVES_EXTENSION
@@ -258,9 +259,14 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         if self.cleared:
             self.coloured_picture.alpha = 0.0
             self.monochrome_picture.alpha = 1.0
+        self.hover_sound = False
 
         
     def mouse_over(self):
+        if self.play_sound and not self.hover_sound:
+            self.game.core.media.sfx['button_hover'].play(0)
+            self.hover_sound = True
+        
         self.alpha = .78
         
         if self.cleared:        

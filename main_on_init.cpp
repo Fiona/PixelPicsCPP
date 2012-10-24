@@ -16,11 +16,25 @@ bool Main_App::On_Init()
 
     // Initialise SDL
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    {
+        cout << "Error initialising: " << SDL_GetError() << endl;
         return False;
+    }
+
     if(TTF_Init() < 0)
+    {
+        cout << "Error initialising font system: " << TTF_GetError() << endl;
         return False;
+    }
+
     if(Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 4096) < 0)
+    {
+        cout << "Error initialising audio system: " << Mix_GetError() << endl;
+#if __LINUX__
+        cout << "If using ALSA ensure that the OSS compatability module is loaded." << endl;
+#endif
         return False;
+    }
 
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -56,7 +70,10 @@ bool Main_App::On_Init()
 
         surf_display = SDL_SetVideoMode(settings->screen_width, settings->screen_height, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
         if(surf_display == NULL)
+        {
+            cout << "Error initilising video mode."  << endl;
             return False;
+        }
 
     }
 
