@@ -83,6 +83,15 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_main_menu_background", new Image("gfx/gui/main_menu_background.png")));
     gfx.insert(pair<string, Image*>("gui_stompyblondie_logo_mini", new Image("gfx/gui/stompyblondie_logo_mini.png", False, 2)));
 
+    gfx.insert(pair<string, Image*>("gui_title_bg", new Image("gfx/gui/title_bg.png")));
+    gfx.insert(pair<string, Image*>("gui_title_p", new Image("gfx/gui/title_p.png")));
+    gfx.insert(pair<string, Image*>("gui_title_i", new Image("gfx/gui/title_i.png")));
+    gfx.insert(pair<string, Image*>("gui_title_x", new Image("gfx/gui/title_x.png", False, 6)));
+    gfx.insert(pair<string, Image*>("gui_title_e", new Image("gfx/gui/title_e.png")));
+    gfx.insert(pair<string, Image*>("gui_title_l", new Image("gfx/gui/title_l.png")));
+    gfx.insert(pair<string, Image*>("gui_title_c", new Image("gfx/gui/title_c.png")));
+    gfx.insert(pair<string, Image*>("gui_title_s", new Image("gfx/gui/title_s.png")));
+
     gfx.insert(pair<string, Image*>("gui_puzzle_grid_background", new Image("gfx/gui/puzzle_grid_background.png", True)));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_white", new Image("gfx/gui/puzzle_cell_white.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_black", new Image("gfx/gui/puzzle_cell_black.png")));

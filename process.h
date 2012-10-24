@@ -108,6 +108,7 @@ public:
     void Draw_strategy_category_select();
     void Draw_strategy_puzzle_select();
     void Draw_strategy_puzzle_select_puzzle_item();
+    void Draw_strategy_main_menu_title();
     void create_image_from_puzzle();
     void destroy_puzzle_image();
     void create_image_as_pallete(int pallete_width, int pallete_height);

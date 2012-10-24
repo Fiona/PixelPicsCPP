@@ -49,9 +49,9 @@ class GUI_main_menu_container(GUI_element):
         self.primitive_square_four_colours = True
         self.primitive_square_colour = (
               (1.0,1.0,1.0,1.0),
-              (.9,1.0,1.0,1.0),
-              (.9,1.0,1.0,1.0),
-              (1.0,1.0,1.0,1.0)                
+              (1.0,1.0,1.0,1.0),
+              (.9,.95,1.0,1.0),
+              (.9,.95,1.0,1.0),
             )
 
 
@@ -68,7 +68,6 @@ class GUI_main_menu_container(GUI_element):
 
 class GUI_main_menu_title(GUI_element):
 
-    title_message = None
     title_state = 0
     
     def __init__(self, game, parent = None, no_button_anim = False):
@@ -76,17 +75,32 @@ class GUI_main_menu_title(GUI_element):
         self.game = game
         self.parent = parent
         self.gui_init()
-        self.x = 0.0
-        self.y = 100.0
+        self.x = self.game.settings['screen_width'] / 2
+        self.y = (self.game.settings['screen_height'] / 2) - 180
+        self.z = Z_GUI_OBJECT_LEVEL_2
+        self.image = self.game.core.media.gfx['gui_title_bg']
         self.title_state = 0
         self.wait = 0
         self.no_button_anim = no_button_anim
-        
-        self.title_message = Pixel_message(self.game, self.x, self.y, z = Z_GUI_OBJECT_LEVEL_3)
-        
+        self.height = 300       
+
+        self.letters = []
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "p", -183, -45, 20))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -103, -48, 30))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "x", 0, -40, 110))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 108, -41, 40))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 188, -46, 50))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "p", -138, 84, 60))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -50, 81, 70))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "c", 37, 92, 80))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "s", 138, 93, 90))
+
         if self.no_button_anim:
-            self.title_message.finish()
+            self.finish()
             self.wait = 220
+
+        self.draw_strategy = "main_menu_title"
+        self.draw_strategy_screen_width = self.game.settings['screen_width']
 
 
     def Execute(self):
@@ -95,12 +109,12 @@ class GUI_main_menu_title(GUI_element):
         if self.title_state == 0:
 
             if self.game.core.Keyboard_key_released(key.ESCAPE):
-                self.title_message.finish()
-                self.wait = 220
+                self.finish()
+                self.wait = 100
                 self.no_button_anim = True
                 
             self.wait += 1
-            if self.wait >= 220:
+            if self.wait >= 100:
                 GUI_main_menu_play_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_options_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_puzzle_designer_button(self.game, self, self.no_button_anim)
@@ -127,16 +141,93 @@ class GUI_main_menu_title(GUI_element):
 
         
 
-    def On_Exit(self):
-        GUI_element.On_Exit(self)
-        self.title_message.Kill()
-
+    def finish(self):
+        for x in self.letters:
+            x.finish()
+    
 
     def first_time(self):
         self.game.manager.load_pack("0001", user_created = False)
         self.game.manager.current_puzzle_file = "0001.puz"
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40, stop_music = True)
     
+
+    def get_screen_draw_position(self):
+        return (self.x - (self.image.width / 2), self.y - (self.image.height / 2))
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        for x in self.letters:
+            x.Kill()
+        self.title_message.Kill()
+
+
+
+class GUI_main_menu_title_letter(Process):
+
+    def __init__(self, game, parent, image, x, y, bubble_wait):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.image = self.game.core.media.gfx['gui_title_' + str(image)]
+        self.z = Z_GUI_OBJECT_LEVEL_3
+        self.x = self.parent.x + x
+        self.y = self.parent.y + y
+        self.bubble_wait = bubble_wait
+        self.is_x = False
+        if image == 'x':
+            self.is_x = True
+        self.scale = 0.0
+        self.wait = 0
+        self.state = 0
+        self.iter = 0
+
+
+    def Execute(self):
+        if self.state == 0:
+            self.wait += 1
+            if self.wait == self.bubble_wait:
+                self.state = 1
+                self.wait = 0
+                if self.is_x:
+                    self.scale = 1.0                
+        elif self.state == 1:
+            if self.is_x:
+                self.wait += 1
+                if self.wait == 2:
+                    self.image_sequence += 1
+                    self.wait = 0
+                if self.image_sequence == 6:
+                    self.state = 3
+            else:
+                self.scale = lerp(self.iter, 10, 0, 1.2)
+                self.iter += 1
+                if self.scale >= 1.1:
+                    self.state = 2
+                    self.iter = 0
+        elif self.state == 2:
+            self.scale = lerp(self.iter, 5, 1.2, 1.0)
+            self.iter += 1
+            if self.iter >= 5:
+                self.state = 3
+
+
+    def finish(self):
+        if not self.state == 3:
+            self.scale = 1.0
+            if self.is_x:
+                self.image_sequence = 6
+            self.state = 3
+            
+
+    def get_screen_draw_position(self):
+        return (
+            self.x - ((self.image.width * self.scale) / 2),
+            self.y - ((self.image.height * self.scale) / 2)
+            )
+
+                
 
 
 class GUI_main_menu_button(GUI_element_button):
@@ -174,7 +265,7 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = -80, iter_wait = 50)
+        self.main_menu_button_init(y_shift_to = 20, iter_wait = 50)
 
         if no_button_anim:
             self.y = self.y_to
@@ -206,7 +297,7 @@ class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = -40, y_shift = 40, iter_wait = 100)
+        self.main_menu_button_init(y_shift_to = 60, y_shift = 40, iter_wait = 100)
 
         if no_button_anim:
             self.y = self.y_to
@@ -227,7 +318,7 @@ class GUI_main_menu_sharing_button(GUI_main_menu_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift = 80, iter_wait = 150)
+        self.main_menu_button_init(y_shift_to = 100, iter_wait = 150)
 
         if no_button_anim:
             self.y = self.y_to
@@ -248,7 +339,7 @@ class GUI_main_menu_options_button(GUI_main_menu_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = 40, y_shift = 120, iter_wait = 200)
+        self.main_menu_button_init(y_shift_to = 140, y_shift = 120, iter_wait = 200)
 
         if no_button_anim:
             self.y = self.y_to
@@ -269,7 +360,7 @@ class GUI_main_menu_quit_button(GUI_main_menu_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = 80, y_shift = 140, iter_wait = 250)
+        self.main_menu_button_init(y_shift_to = 180, y_shift = 140, iter_wait = 250)
 
         if no_button_anim:
             self.y = self.y_to
@@ -324,13 +415,13 @@ class GUI_main_menu_credits_button(GUI_element_button):
         self.game = game
         self.parent = parent
         self.x = self.game.settings['screen_width'] - 128.0
-        self.y = self.game.settings['screen_height'] - 100.0
+        self.y = self.game.settings['screen_height'] - 130.0
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.image = self.game.core.media.gfx['gui_stompyblondie_logo_mini']
         self.gui_init()
         self.alpha = 0.0
 
-        self.text = Text(self.game.core.media.fonts['basic'], self.x + 55.0, self.y + 75.0, TEXT_ALIGN_TOP_LEFT, "Credits")
+        self.text = Text(self.game.core.media.fonts['basic'], self.x - 20, self.y + 50, TEXT_ALIGN_TOP_LEFT, "Credits")
         self.text.z = self.z - 1
         self.text.alpha = 0.0
         self.text.colour = (0.0, 0.0, 0.0)

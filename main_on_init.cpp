@@ -139,6 +139,7 @@ bool Main_App::On_Init()
     draw_strategies["category_select"] = &Process::Draw_strategy_category_select;
     draw_strategies["puzzle_select"] = &Process::Draw_strategy_puzzle_select;
     draw_strategies["puzzle_select_puzzle_item"] = &Process::Draw_strategy_puzzle_select_puzzle_item;
+    draw_strategies["main_menu_title"] = &Process::Draw_strategy_main_menu_title;
 
     return True;
 
