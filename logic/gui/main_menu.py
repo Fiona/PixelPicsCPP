@@ -160,7 +160,6 @@ class GUI_main_menu_title(GUI_element):
         GUI_element.On_Exit(self)
         for x in self.letters:
             x.Kill()
-        self.title_message.Kill()
 
 
 
