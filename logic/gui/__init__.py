@@ -175,7 +175,10 @@ class GUI(Process):
             if not self.block_gui_keyboard_input:
                 # Back to menu on escape
                 if not self.game.paused and self.game.core.Keyboard_key_released(key.ESCAPE):
-                    self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container'].show_menu()
+                    if self.game.game_state  == GAME_STATE_TUTORIAL:
+                        self.current_visible_gui_elements[GUI_STATE_TUTORIAL]['puzzle_container'].show_menu()
+                    else:
+                        self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container'].show_menu()
 
             if not self.block_gui_mouse_input:
                 self.do_mouse_wheel_zooming()

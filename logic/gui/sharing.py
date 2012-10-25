@@ -1172,6 +1172,9 @@ class GUI_sharing_downloaded_scroll_window(GUI_element_scroll_window):
             self.pack_items.append(
                 GUI_sharing_packs_downloaded_button_play(self.game, self, pack, i, count)
                 )
+            self.pack_items.append(
+                GUI_sharing_packs_downloaded_button_delete(self.game, self, pack, i, count)
+                )
             count += 1
             
         if last_item is None:
@@ -1209,14 +1212,14 @@ class GUI_sharing_downloaded_pack_item(GUI_element):
         self.text_pack_author.colour = (1.0, 1.0, 1.0)
 
         completed = len(self.game.player.cleared_puzzles[self.pack.uuid]) if self.pack.uuid in self.game.player.cleared_puzzles else 0
-        text = Text(self.game.core.media.fonts['category_button_total_count'], self.x + self.width - 140, 0, TEXT_ALIGN_TOP, str(completed) + "of " + str(len(self.pack.puzzles)))
+        text = Text(self.game.core.media.fonts['category_button_total_count'], self.x + self.width - 160, 0, TEXT_ALIGN_TOP, str(completed) + " of " + str(len(self.pack.puzzles)))
         text.z = self.z - 1
         text.colour = (1.0, 1.0, 1.0)
         text.shadow = 2
         text.shadow_colour = (.2, .2, .2)
         self.text_total_count = text
 
-        text = Text(self.game.core.media.fonts['category_button_total_count'], self.x + self.width - 140, 0, TEXT_ALIGN_TOP, "solved")
+        text = Text(self.game.core.media.fonts['category_button_total_count'], self.x + self.width - 160, 0, TEXT_ALIGN_TOP, "solved")
         text.z = self.z - 1
         text.colour = (1.0, 1.0, 1.0)
         text.shadow = 1
@@ -1265,7 +1268,7 @@ class GUI_sharing_packs_downloaded_button_play(GUI_element_button):
         self.pack = pack
         self.pack_num = pack_num
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.width - 195
+        self.x = self.parent.width - 230
         self.y = (50 * display_count) + 10 + (10 * display_count) + 12
         self.image = self.game.core.media.gfx['gui_button_sharing_play']
         self.gui_init()
@@ -1276,3 +1279,40 @@ class GUI_sharing_packs_downloaded_button_play(GUI_element_button):
         self.game.manager.user_created_puzzles = True
         self.game.manager.load_pack(self.game.manager.pack_directory_list[self.pack_num], user_created = True)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
+
+
+
+class GUI_sharing_packs_downloaded_button_delete(GUI_element_button):
+    def __init__(self, game, parent = None, pack = None, pack_num = 0, display_count = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent
+        self.pack = pack
+        self.pack_num = pack_num
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.x = self.parent.width - 95
+        self.y = (50 * display_count) + 10 + (10 * display_count) + 12
+        self.image = self.game.core.media.gfx['gui_button_sharing_delete']
+        self.gui_init()
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        GUI_element_confirmation_box(
+            self.game,
+            self,
+            "Delete Pack",
+            ["This will delete this puzzle pack from your computer.",
+             "Are you sure you want to delete this?"],
+            confirm_callback = self.delete
+            )
+
+
+    def delete(self):
+        try:
+            self.game.manager.delete_user_created_pack(self.game.manager.pack_directory_list[self.pack_num])
+        except Exception as e:
+            GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
+        finally:
+            self.parent.reread_pack_items()

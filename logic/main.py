@@ -235,7 +235,7 @@ class Game(Process):
             if not self.current_playing_music is None:
                 self.core.media.music[self.current_playing_music].stop()
                 self.current_playing_music = None
-        else:
+        elif self.core.settings.music_on:            
             if not self.music_to_play == self.current_playing_music:
                 self.core.media.music[self.music_to_play].play_loop(1000)
                 self.current_playing_music = self.music_to_play
