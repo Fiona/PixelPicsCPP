@@ -39,10 +39,24 @@ class GUI_puzzle_container(GUI_element):
         self.create_puzzle_element()
         if not self.game.freemode:
             self.objs.append(Player_lives(self.game))
-        self.objs.append(Timer(self.game))
+        self.objs.append(Timer(self.game))        
 
         GUI_puzzle_pause_button(self.game, self)
 
+
+    def Execute(self):
+        GUI_element.Execute(self)
+        for x in self.objs:
+            x.show()
+        if self.game.paused or not self.puzzle.state == PUZZLE_STATE_SOLVING:
+            return
+        if self.game.gui.mouse.x > self.game.settings['screen_width'] - 260 and \
+           self.game.gui.mouse.x < self.game.settings['screen_width'] and \
+           self.game.gui.mouse.y > self.game.settings['screen_height'] - 120 and \
+           self.game.gui.mouse.y < self.game.settings['screen_height']:
+            for x in self.objs:
+                x.hide()
+        
 
     def create_puzzle_element(self):
         self.puzzle = GUI_puzzle(self.game, self)
@@ -1561,6 +1575,18 @@ class Player_lives(Process):
         self.current_lives = self.game.lives
 
 
+    def show(self):
+        self.draw_strategy = "primitive_square"
+        for x in self.lives_objs:
+            x.alpha = 1.0
+        
+        
+    def hide(self):
+        self.draw_strategy = ""
+        for x in self.lives_objs:
+            x.alpha = 0.0
+
+
     def get_screen_draw_position(self):
         return self.x, self.y
 
@@ -1659,6 +1685,16 @@ class Timer(Process):
                 
             self.text.text = str(hours).rjust(2, "0") + ":" + str(minutes).rjust(2, "0") + ":" + str(seconds).rjust(2, "0")
 
+
+    def show(self):
+        self.draw_strategy = "primitive_square"
+        self.text.alpha = 1.0
+        
+        
+    def hide(self):
+        self.draw_strategy = ""
+        self.text.alpha = 0.0
+        
 
     def get_screen_draw_position(self):
         return self.x, self.y
