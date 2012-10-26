@@ -18,12 +18,33 @@ class Mascot(Process):
         self.game = game
         self.image = self.game.core.media.gfx['gui_chips_happy']
         self.speech_bubble = None
+        self.shift_amount = 15
         self.set_location()
+        self.initial_position = self.x, self.y
+        self.dir = 0
+        self.iter = 0
 
 
     def On_Exit(self):
         if self.speech_bubble:
             self.speech_bubble.Kill()
+
+
+    def Execute(self):
+        if self.dir == 0:
+            self.iter += 1
+            self.y = lerp(self.iter, 60, self.initial_position[1], self.initial_position[1] + self.shift_amount)
+            if self.y >= self.initial_position[1] + self.shift_amount:
+                self.iter = 0
+                self.dir = 1
+                self.y = self.initial_position[1] + self.shift_amount
+        else:
+            self.iter += 1
+            self.y = lerp(self.iter, 60, self.initial_position[1] + self.shift_amount, self.initial_position[1])
+            if self.y <= self.initial_position[1]:
+                self.iter = 0
+                self.dir = 0
+                self.y = self.initial_position[1]
             
 
     def set_location(self):
@@ -45,21 +66,7 @@ class Mascot(Process):
 class Mascot_Category_Select(Mascot):
 
     def Execute(self):
-        if self.dir == 0:
-            self.iter += 1
-            self.y = lerp(self.iter, 60, self.initial_position[1], self.initial_position[1] + 15)
-            if self.y >= self.initial_position[1] + 15:
-                self.iter = 0
-                self.dir = 1
-                self.y = self.initial_position[1] + 15
-        else:
-            self.iter += 1
-            self.y = lerp(self.iter, 60, self.initial_position[1] + 15, self.initial_position[1])
-            if self.y <= self.initial_position[1]:
-                self.iter = 0
-                self.dir = 0
-                self.y = self.initial_position[1]
-
+        Mascot.Execute(self)
         if self.game.gui.block_gui_mouse_input:
             return
         coordinates = (self.game.gui.mouse.x, self.game.gui.mouse.y)
@@ -72,17 +79,32 @@ class Mascot_Category_Select(Mascot):
             self.game.core.mouse.left_up):
             self.game.core.media.sfx['meow1'].play(0)
                
-                
-        
+                        
     def set_location(self):
         self.x = (self.game.settings['screen_width'] / 2) - (self.image.width / 2) - 25
         self.y = self.game.settings['screen_height'] / 2
         self.z = Z_MASCOT
-        self.initial_position = self.x, self.y
-        self.dir = 0
-        self.iter = 0
         self.set_speech("Pick a category of puzzles to play!")
-    
+
+
+
+class Mascot_Main_Menu(Mascot):
+    def Execute(self):
+        Mascot.Execute(self)
+        if self.alpha < 1.0:
+            self.iter2 += 1
+            self.alpha = lerp(self.iter2, 60, 0.0, 1.0)
+
+
+    def set_location(self):
+        self.x = (self.game.settings['screen_width'] / 2) - 150
+        self.y = (self.game.settings['screen_height'] / 2) + 350
+        self.z = Z_GUI_OBJECT_LEVEL_3
+        self.scale = .5
+        self.shift_amount = 5
+        self.alpha = 0.0
+        self.iter2 = 0
+
 
 
 class Speech_Bubble(Process):
