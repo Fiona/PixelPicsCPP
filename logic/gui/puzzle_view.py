@@ -358,6 +358,9 @@ class GUI_puzzle(GUI_element):
             if not self.game.paused:
                 self.game.timer+= 1
                 self.do_bump_scrolling()
+                if not self.game.game_state in [GAME_STATE_TEST, GAME_STATE_TUTORIAL] and (self.game.timer % 30) == 0:
+                    self.game.manager.save_current_puzzle_state()
+                
             # --- DESIGNER ONLY ---            
             if self.game.game_state == GAME_STATE_DESIGNER:
                  if self.puzzle_solver_state is None:
@@ -484,6 +487,7 @@ class GUI_puzzle(GUI_element):
                         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
                     else:
                         self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
+                        self.game.manager.delete_current_puzzle_save()
                         if self.game.category_to_unlock is None:
                             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
                         else:
