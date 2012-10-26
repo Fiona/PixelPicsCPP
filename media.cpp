@@ -59,6 +59,7 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("options_mouse_button", new Font("fnt/arulent.ttf", 12)));
     fonts.insert(pair<string,Font*>("tutorial_instructions", new Font("fnt/basiccomical.ttf", 25)));
     fonts.insert(pair<string,Font*>("tutorial_click_to_continue", new Font("fnt/borisblackbloxx.ttf", 20)));
+    fonts.insert(pair<string,Font*>("title_speech_bubble", new Font("fnt/basiccomical.ttf", 20)));
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/gui/stompyblondie_logo.png")));
@@ -91,6 +92,8 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_title_l", new Image("gfx/gui/title_l.png")));
     gfx.insert(pair<string, Image*>("gui_title_c", new Image("gfx/gui/title_c.png")));
     gfx.insert(pair<string, Image*>("gui_title_s", new Image("gfx/gui/title_s.png")));
+
+    gfx.insert(pair<string, Image*>("gui_title_speech_bubble", new Image("gfx/gui/title_speech_bubble.png")));
 
     gfx.insert(pair<string, Image*>("gui_puzzle_grid_background", new Image("gfx/gui/puzzle_grid_background.png", True)));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_white", new Image("gfx/gui/puzzle_cell_white.png")));

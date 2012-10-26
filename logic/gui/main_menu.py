@@ -130,16 +130,6 @@ class GUI_main_menu_title(GUI_element):
         if self.title_state == 1:
             self.wait += 1
             if self.wait >= 30:
-                if self.game.player.first_run:
-                    self.conf_box = GUI_element_confirmation_box(
-                        self.game,
-                        self,
-                        "Play Tutorial?",
-                        ["This is your first time playing PixelPics.", "Would you like to learn how to play?"],
-                        confirm_callback = self.first_time
-                        )
-                    self.game.player.first_run = False
-                    self.game.save_player(self.game.player)
                 self.title_state = 2
 
         
@@ -147,13 +137,7 @@ class GUI_main_menu_title(GUI_element):
     def finish(self):
         for x in self.letters:
             x.finish()
-    
-
-    def first_time(self):
-        self.game.manager.load_pack("0001", user_created = False)
-        self.game.manager.current_puzzle_file = "0001.puz"
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40, stop_music = True)
-    
+        
 
     def get_screen_draw_position(self):
         return (self.x - (self.image.width / 2), self.y - (self.image.height / 2))
