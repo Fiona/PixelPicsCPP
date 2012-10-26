@@ -966,6 +966,51 @@ void Process::Draw_strategy_puzzle_pixel_message()
 }
 
 
+
+void Process::Draw_strategy_main_menu_title()
+{
+
+    float screen_width = boost::python::extract<float>(self_.attr("draw_strategy_screen_width"));
+    int height = boost::python::extract<float>(self_.attr("height"));
+
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glBegin(GL_QUADS);
+      glColor4f(0.95f, 0.8f, 0.2f, 0.6f);
+      glVertex2f(0.0f, y - (float)(height / 2));
+      glVertex2f(screen_width, y - (float)(height / 2));
+      glVertex2f(screen_width, y + (float)(height / 2));
+      glVertex2f(0.0f, y + (float)(height / 2));
+    glEnd();
+
+    glBegin(GL_QUADS);
+      glColor4f(0.95f, 0.8f, 0.2f, 0.0f);
+      glVertex2f(0.0f, y - (float)(height / 2) - 40.0f);
+      glVertex2f(screen_width, y - (float)(height / 2) - 40.0f);
+      glColor4f(0.95f, 0.8f, 0.2f, 0.6f);
+      glVertex2f(screen_width, y - (float)(height / 2));
+      glVertex2f(0.0f, y - (float)(height / 2));
+    glEnd();
+
+    glBegin(GL_QUADS);
+      glColor4f(0.95f, 0.8f, 0.2f, 0.6f);
+      glVertex2f(0.0f, y + (float)(height / 2));
+      glVertex2f(screen_width, y + (float)(height / 2));
+      glColor4f(0.95f, 0.8f, 0.2f, 0.0f);
+      glVertex2f(screen_width, y + (float)(height / 2) + 40.0f);
+      glVertex2f(0.0f, y + (float)(height / 2) + 40.0f);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+    glPushMatrix();
+
+    this->Draw();
+
+}
+
+
+
 void Process::Draw_strategy_puzzle()
 {
 

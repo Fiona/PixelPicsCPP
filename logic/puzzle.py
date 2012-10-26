@@ -198,6 +198,34 @@ class Puzzle_manager(object):
             self.load_puzzle_state_from = ""
 
 
+    def delete_user_created_pack(self, pack_dir):
+        try:
+            if not (os.path.isdir(os.path.join(self.game.core.path_user_pack_directory, pack_dir)) and os.path.exists(os.path.join(self.game.core.path_user_pack_directory, pack_dir, FILE_PACK_INFO_FILE))):
+                return
+
+            # Kill the info file
+            os.remove(os.path.join(self.game.core.path_user_pack_directory, pack_dir, FILE_PACK_INFO_FILE))
+
+            # Kill all puzzles
+            cur_dir = os.getcwd()
+            os.chdir(os.path.join(self.game.core.path_user_pack_directory, pack_dir))
+            puzzles = glob.glob("*" + FILE_PUZZLE_EXTENSION)
+
+            for puzzle_file in puzzles:
+                if not os.path.isdir(os.path.join(self.game.core.path_user_pack_directory, pack_dir, puzzle_file)):
+                    os.remove(os.path.join(self.game.core.path_user_pack_directory, pack_dir, puzzle_file))
+
+            os.chdir(cur_dir)
+
+            # Remove directory if it's now empty. If not just leave it, without the info file it wont be read anyway.
+            if len(os.listdir(os.path.join(self.game.core.path_user_pack_directory, pack_dir))) == 0:
+                os.rmdir(os.path.join(self.game.core.path_user_pack_directory, pack_dir))
+
+            self.load_packs()
+        except IOError as e:
+            raise e
+
+
     def extract_pack_uuid(self, pack_dir, user_created = True):
         try:
             main_dir = self.game.core.path_user_pack_directory if user_created else self.game.core.path_game_pack_directory
