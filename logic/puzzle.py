@@ -374,6 +374,18 @@ class Puzzle_manager(object):
 
 
 
+    def delete_current_puzzle_save(self):
+        # get filename we want
+        save_filename = os.path.join(
+            self.game.core.path_saves_user_directory if self.user_created_puzzles else self.game.core.path_saves_game_directory,
+            self.current_puzzle_pack + "_" + self.current_puzzle_file + FILE_SAVES_EXTENSION
+            )
+
+        if os.path.exists(save_filename):
+            os.remove(save_filename)
+            
+        
+
     def load_puzzle_state(self, state_filename):
         try:
             if self.game.manager.user_created_puzzles:
