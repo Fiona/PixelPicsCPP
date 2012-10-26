@@ -120,6 +120,7 @@ class GUI_puzzle_pause_menu(GUI_element):
         GUI_puzzle_pause_menu_resume_button(self.game, self)
         GUI_puzzle_pause_menu_options_button(self.game, self)
         GUI_puzzle_pause_menu_stop_button(self.game, self)
+        GUI_puzzle_pause_menu_restart_button(self.game, self)
         
         self.draw_strategy = "primitive_square"
         self.draw_strategy_call_parent = False
@@ -133,7 +134,19 @@ class GUI_puzzle_pause_menu(GUI_element):
     def Get_rid(self):
         self.game.paused = False
         self.Kill()
-        
+
+
+    def Restart_puzzle(self):
+        if self.game.game_state == GAME_STATE_TEST:
+            self.game.manager.reset_puzzle_state()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TEST), speed = 20)
+        elif self.game.game_state == GAME_STATE_TUTORIAL:
+            self.game.manager.reset_puzzle_state()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 20)
+        else:
+            self.game.manager.reset_puzzle_state()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 20)
+            
         
     def Stop_playing(self):
         if self.game.game_state == GAME_STATE_TEST:
@@ -195,7 +208,36 @@ class GUI_puzzle_pause_menu_options_button(GUI_element_button):
 
 class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
     generic_button = True
-    generic_button_text = "Stop Playing"
+    generic_button_text = "Save and Quit"
+    width = 150
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = (self.game.settings['screen_width'] / 2)
+        self.y = (self.game.settings['screen_height'] / 2) + 60
+
+        if self.game.game_state == GAME_STATE_TEST:
+            self.generic_button_text = "Stop Testing"
+        elif self.game.game_state == GAME_STATE_TUTORIAL:
+            self.generic_button_text = "Quit Tutorial"
+            
+        self.gui_init()
+        self.x -= self.width / 2
+        self.generic_button_text_object.x -= (self.width / 2)
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.Stop_playing()
+
+
+
+class GUI_puzzle_pause_menu_restart_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Restart Puzzle"
     width = 150
 
     def __init__(self, game, parent = None):
@@ -205,6 +247,10 @@ class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.x = (self.game.settings['screen_width'] / 2)
         self.y = (self.game.settings['screen_height'] / 2) + 30
+
+        if self.game.game_state == GAME_STATE_TUTORIAL:
+            self.generic_button_text = "Restart Tutorial"
+        
         self.gui_init()
         self.x -= self.width / 2
         self.generic_button_text_object.x -= (self.width / 2)
@@ -212,7 +258,13 @@ class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
-        self.parent.Stop_playing()
+        self.conf_box = GUI_element_confirmation_box(
+            self.game,
+            self,
+            "Restart puzzle",
+            ["This will restart the current puzzle from the beginning.", "Are you sure you wish to restart this puzzle?"],
+            confirm_callback = self.parent.Restart_puzzle
+            )
 
 
 
