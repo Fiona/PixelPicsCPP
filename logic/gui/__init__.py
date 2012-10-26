@@ -243,6 +243,12 @@ class GUI(Process):
         if self.game.core.mouse.wheel_up:
             self.game.current_zoom_level *= 1.25
 
+        # page up/page down
+        if self.game.core.Keyboard_key_down(key.PAGEUP):
+            self.game.current_zoom_level *= 0.95
+        if self.game.core.Keyboard_key_down(key.PAGEDOWN):
+            self.game.current_zoom_level *= 1.05
+
         # Adjust zoom level
         if self.game.current_zoom_level > 1.00:
             self.game.current_zoom_level = 1.00
