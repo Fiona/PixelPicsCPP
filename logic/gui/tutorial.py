@@ -537,7 +537,7 @@ class Tutorial_Line_Highlight(Process):
         self.highlight_from = highlight_from
         self.highlight_to = highlight_to
         self.is_col = is_col
-        self.z = Z_GUI_OBJECT_LEVEL_9
+        self.z = Z_GUI_OBJECT_LEVEL_7 - 1
         self.strobe_dir = 1
         self.alpha = .6
         self.draw_strat()
