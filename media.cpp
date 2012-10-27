@@ -83,6 +83,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_main_menu_title_pixel", new Image("gfx/gui/main_menu_title_pixel.png")));
     gfx.insert(pair<string, Image*>("gui_main_menu_background", new Image("gfx/gui/main_menu_background.png")));
     gfx.insert(pair<string, Image*>("gui_stompyblondie_logo_mini", new Image("gfx/gui/stompyblondie_logo_mini.png", False, 2)));
+    gfx.insert(pair<string, Image*>("gui_reward_star", new Image("gfx/gui/reward_star.png")));
 
     gfx.insert(pair<string, Image*>("gui_title_bg", new Image("gfx/gui/title_bg.png")));
     gfx.insert(pair<string, Image*>("gui_title_p", new Image("gfx/gui/title_p.png")));

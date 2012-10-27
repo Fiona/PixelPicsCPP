@@ -40,6 +40,11 @@ class GUI_main_menu_container(GUI_element):
                 Main_menu_background(self.game)
                 )
 
+        for x in range(20):
+            self.objs.append(
+                Reward_star(self.game)
+                )
+
         # Draw strategy data
         self.draw_strategy = "primitive_square"
         self.draw_strategy_call_parent = False
@@ -694,3 +699,32 @@ class GUI_main_menu_puzzle_type_select_go_back(GUI_element_button):
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.parent.Kill()
+
+
+
+class Reward_star(Process):
+    def __init__(self, game):
+        Process.__init__(self)
+        self.game = game
+        self.image = self.game.core.media.gfx['gui_reward_star']
+        self.y = random.randrange(-self.image.height, self.game.settings['screen_height'])
+        self.reposition()
+        self.z = Z_GUI_OBJECT_LEVEL_4
+
+
+    def Execute(self):
+        self.rotation -= self.rot
+        self.y += 1.0
+        self.x -= self.x_shift
+        if self.y > self.game.settings['screen_height'] + self.image.height or self.x < -self.image.width or self.x > self.game.settings['screen_width'] + self.image.width:
+            self.y = -self.image.height
+            self.reposition()
+            
+    
+    def reposition(self):
+        self.x = int(random.randrange(0, self.game.settings['screen_width']) / 64) * 64
+        self.rotation = random.randrange(360)
+        self.rot = random.randrange(-2, 2)
+        if self.rot == 0:
+            self.rot = 1
+        self.x_shift = random.randrange(-10, 10) * .1

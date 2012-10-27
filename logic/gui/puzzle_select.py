@@ -238,9 +238,13 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         if self.cleared:
             self.solved_icon = GUI_puzzle_puzzle_item_solved_icon(self.game, self)
             if self.game.manager.current_pack.uuid in self.game.player.puzzle_scores and self.puzzle_filename in self.game.player.puzzle_scores[self.game.manager.current_pack.uuid]:
-                seconds = int(self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][0] / 60)
-                if int(seconds / 60) <= 30:
+                #seconds = int(self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][0] / 60)
+                #if int(seconds / 60) <= 30:
+                #    self.star_icon = GUI_puzzle_puzzle_item_star_icon(self.game, self)
+                print self.puzzle_filename, self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][1]
+                if self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][1] == 4:
                     self.star_icon = GUI_puzzle_puzzle_item_star_icon(self.game, self)
+
                     
         # draw strategy
         self.draw_strategy = "puzzle_select_puzzle_item"

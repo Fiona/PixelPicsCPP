@@ -145,7 +145,7 @@ class Mascot_Main_Menu(Mascot):
         self.shift_amount = 5
         self.alpha = 0.0
         self.iter2 = 0
-        self.mood = "happy"
+        self.mood = "normal"
         
         if self.game.player.first_run:
             self.game.player.first_run = False
