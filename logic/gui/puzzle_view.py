@@ -39,10 +39,24 @@ class GUI_puzzle_container(GUI_element):
         self.create_puzzle_element()
         if not self.game.freemode:
             self.objs.append(Player_lives(self.game))
-        self.objs.append(Timer(self.game))
+        self.objs.append(Timer(self.game))        
 
         GUI_puzzle_pause_button(self.game, self)
 
+
+    def Execute(self):
+        GUI_element.Execute(self)
+        for x in self.objs:
+            x.show()
+        if self.game.paused or not self.puzzle.state == PUZZLE_STATE_SOLVING:
+            return
+        if self.game.gui.mouse.x > self.game.settings['screen_width'] - 260 and \
+           self.game.gui.mouse.x < self.game.settings['screen_width'] and \
+           self.game.gui.mouse.y > self.game.settings['screen_height'] - 120 and \
+           self.game.gui.mouse.y < self.game.settings['screen_height']:
+            for x in self.objs:
+                x.hide()
+        
 
     def create_puzzle_element(self):
         self.puzzle = GUI_puzzle(self.game, self)
@@ -120,6 +134,7 @@ class GUI_puzzle_pause_menu(GUI_element):
         GUI_puzzle_pause_menu_resume_button(self.game, self)
         GUI_puzzle_pause_menu_options_button(self.game, self)
         GUI_puzzle_pause_menu_stop_button(self.game, self)
+        GUI_puzzle_pause_menu_restart_button(self.game, self)
         
         self.draw_strategy = "primitive_square"
         self.draw_strategy_call_parent = False
@@ -133,7 +148,19 @@ class GUI_puzzle_pause_menu(GUI_element):
     def Get_rid(self):
         self.game.paused = False
         self.Kill()
-        
+
+
+    def Restart_puzzle(self):
+        if self.game.game_state == GAME_STATE_TEST:
+            self.game.manager.reset_puzzle_state()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TEST), speed = 20)
+        elif self.game.game_state == GAME_STATE_TUTORIAL:
+            self.game.manager.reset_puzzle_state()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 20)
+        else:
+            self.game.manager.reset_puzzle_state()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 20)
+            
         
     def Stop_playing(self):
         if self.game.game_state == GAME_STATE_TEST:
@@ -195,7 +222,36 @@ class GUI_puzzle_pause_menu_options_button(GUI_element_button):
 
 class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
     generic_button = True
-    generic_button_text = "Stop Playing"
+    generic_button_text = "Save and Quit"
+    width = 150
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 2
+        self.x = (self.game.settings['screen_width'] / 2)
+        self.y = (self.game.settings['screen_height'] / 2) + 60
+
+        if self.game.game_state == GAME_STATE_TEST:
+            self.generic_button_text = "Stop Testing"
+        elif self.game.game_state == GAME_STATE_TUTORIAL:
+            self.generic_button_text = "Quit Tutorial"
+            
+        self.gui_init()
+        self.x -= self.width / 2
+        self.generic_button_text_object.x -= (self.width / 2)
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.Stop_playing()
+
+
+
+class GUI_puzzle_pause_menu_restart_button(GUI_element_button):
+    generic_button = True
+    generic_button_text = "Restart Puzzle"
     width = 150
 
     def __init__(self, game, parent = None):
@@ -205,6 +261,10 @@ class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.x = (self.game.settings['screen_width'] / 2)
         self.y = (self.game.settings['screen_height'] / 2) + 30
+
+        if self.game.game_state == GAME_STATE_TUTORIAL:
+            self.generic_button_text = "Restart Tutorial"
+        
         self.gui_init()
         self.x -= self.width / 2
         self.generic_button_text_object.x -= (self.width / 2)
@@ -212,7 +272,13 @@ class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
-        self.parent.Stop_playing()
+        self.conf_box = GUI_element_confirmation_box(
+            self.game,
+            self,
+            "Restart puzzle",
+            ["This will restart the current puzzle from the beginning.", "Are you sure you wish to restart this puzzle?"],
+            confirm_callback = self.parent.Restart_puzzle
+            )
 
 
 
@@ -358,6 +424,9 @@ class GUI_puzzle(GUI_element):
             if not self.game.paused:
                 self.game.timer+= 1
                 self.do_bump_scrolling()
+                if not self.game.game_state in [GAME_STATE_TEST, GAME_STATE_TUTORIAL] and (self.game.timer % 30) == 0:
+                    self.game.manager.save_current_puzzle_state()
+                
             # --- DESIGNER ONLY ---            
             if self.game.game_state == GAME_STATE_DESIGNER:
                  if self.puzzle_solver_state is None:
@@ -484,6 +553,7 @@ class GUI_puzzle(GUI_element):
                         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
                     else:
                         self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
+                        self.game.manager.delete_current_puzzle_save()
                         if self.game.category_to_unlock is None:
                             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
                         else:
@@ -1505,6 +1575,18 @@ class Player_lives(Process):
         self.current_lives = self.game.lives
 
 
+    def show(self):
+        self.draw_strategy = "primitive_square"
+        for x in self.lives_objs:
+            x.alpha = 1.0
+        
+        
+    def hide(self):
+        self.draw_strategy = ""
+        for x in self.lives_objs:
+            x.alpha = 0.0
+
+
     def get_screen_draw_position(self):
         return self.x, self.y
 
@@ -1603,6 +1685,16 @@ class Timer(Process):
                 
             self.text.text = str(hours).rjust(2, "0") + ":" + str(minutes).rjust(2, "0") + ":" + str(seconds).rjust(2, "0")
 
+
+    def show(self):
+        self.draw_strategy = "primitive_square"
+        self.text.alpha = 1.0
+        
+        
+    def hide(self):
+        self.draw_strategy = ""
+        self.text.alpha = 0.0
+        
 
     def get_screen_draw_position(self):
         return self.x, self.y

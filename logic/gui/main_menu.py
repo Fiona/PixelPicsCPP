@@ -14,6 +14,7 @@ from consts import *
 from helpers  import *
 from gui.gui_elements import *
 from gui.options import *
+from gui.mascot import Mascot_Main_Menu
 
 
 class GUI_main_menu_container(GUI_element):
@@ -83,7 +84,8 @@ class GUI_main_menu_title(GUI_element):
         self.wait = 0
         self.no_button_anim = no_button_anim
         self.height = 300       
-
+        self.mascot = None
+        
         self.letters = []
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "p", -183, -45, 20))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -103, -48, 30))
@@ -121,22 +123,13 @@ class GUI_main_menu_title(GUI_element):
                 GUI_main_menu_sharing_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_quit_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_credits_button(self.game, self)
+                self.mascot = Mascot_Main_Menu(self.game)
                 self.title_state = 1
                 self.wait = 0
 
         if self.title_state == 1:
             self.wait += 1
             if self.wait >= 30:
-                if self.game.player.first_run:
-                    self.conf_box = GUI_element_confirmation_box(
-                        self.game,
-                        self,
-                        "Play Tutorial?",
-                        ["This is your first time playing PixelPics.", "Would you like to learn how to play?"],
-                        confirm_callback = self.first_time
-                        )
-                    self.game.player.first_run = False
-                    self.game.save_player(self.game.player)
                 self.title_state = 2
 
         
@@ -144,13 +137,7 @@ class GUI_main_menu_title(GUI_element):
     def finish(self):
         for x in self.letters:
             x.finish()
-    
-
-    def first_time(self):
-        self.game.manager.load_pack("0001", user_created = False)
-        self.game.manager.current_puzzle_file = "0001.puz"
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40, stop_music = True)
-    
+        
 
     def get_screen_draw_position(self):
         return (self.x - (self.image.width / 2), self.y - (self.image.height / 2))
@@ -160,7 +147,9 @@ class GUI_main_menu_title(GUI_element):
         GUI_element.On_Exit(self)
         for x in self.letters:
             x.Kill()
-
+        if not self.mascot is None:
+            self.mascot.Kill()
+            
 
 
 class GUI_main_menu_title_letter(Process):
@@ -173,17 +162,21 @@ class GUI_main_menu_title_letter(Process):
         self.z = Z_GUI_OBJECT_LEVEL_3
         self.x = self.parent.x + x
         self.y = self.parent.y + y
+        self.initial_y = self.y
         self.bubble_wait = bubble_wait
         self.is_x = False
+        self.is_s = False
         if image == 'x':
             self.is_x = True
+        if image == 's':
+            self.is_s = True
         self.scale = 0.0
         self.wait = 0
         self.state = 0
         self.iter = 0
 
 
-    def Execute(self):
+    def Execute(self):   
         if self.state == 0:
             self.wait += 1
             if self.wait == self.bubble_wait:
@@ -206,18 +199,48 @@ class GUI_main_menu_title_letter(Process):
                     self.state = 2
                     self.iter = 0
         elif self.state == 2:
-            self.scale = lerp(self.iter, 5, 1.2, 1.0)
-            self.iter += 1
             if self.iter >= 5:
-                self.state = 3
-
+                if self.is_s:
+                    for x in self.parent.letters:
+                        if not x.is_x:
+                            x.finish()
+            else:
+                self.scale = lerp(self.iter, 5, 1.2, 1.0)
+                self.iter += 1                
+        elif self.state == 3:
+            if not self.is_x:
+                self.wait += 1
+                if self.wait == self.bubble_wait:
+                    self.wait = 0
+                    self.iter = 0
+                    self.state = 4            
+        elif self.state == 4:
+            self.y = lerp(self.iter, 5, self.initial_y, self.initial_y - 5)
+            if self.iter >= 5:
+                self.state = 5
+                self.iter = 0
+            self.iter += 1
+        elif self.state == 5:
+            if self.iter >= 5:
+                if self.is_s:
+                    for x in self.parent.letters:
+                        x.state = 3
+                        x.iter = 0
+                        x.wait = 0
+            else:
+                self.y = lerp(self.iter, 5, self.initial_y - 5, self.initial_y)
+            self.iter += 1
+                
 
     def finish(self):
-        if not self.state == 3:
+        if self.state < 3:
             self.scale = 1.0
             if self.is_x:
                 self.image_sequence = 6
             self.state = 3
+            self.wait = 0
+            self.iter = 0
+            self.bubble_wait += 60
             
 
     def get_screen_draw_position(self):
