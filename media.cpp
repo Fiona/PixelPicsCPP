@@ -132,7 +132,9 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_puzzle_select_rating_star", new Image("gfx/gui/puzzle_select_rating_star.png", False, 2)));
     gfx.insert(pair<string, Image*>("gui_sharing_rating_stars", new Image("gfx/gui/sharing_rating_stars.png", False, 6)));
 
-    gfx.insert(pair<string, Image*>("gui_chips_happy", new Image("gfx/gui/chips_happy.png")));
+    gfx.insert(pair<string, Image*>("gui_chips_normal", new Image("gfx/gui/chips_normal.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_chips_happy", new Image("gfx/gui/chips_happy.png", False, 2)));
+    gfx.insert(pair<string, Image*>("gui_chips_sad", new Image("gfx/gui/chips_sad.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_speech_bubble", new Image("gfx/gui/speech_bubble.png")));
 
     gfx.insert(pair<string, Image*>("gui_button_sharing_upload", new Image("gfx/gui/button_sharing_upload.png", False, 3)));

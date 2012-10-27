@@ -35,7 +35,7 @@ class GUI_category_select_container(GUI_element):
         self.mascot_object = Mascot_Category_Select(self.game)
 
         if not self.game.category_to_unlock == None:
-            self.mascot_object.set_speech("Wow, you unlocked a new category!")
+            self.mascot_object.set_speech(["Wow, you unlocked a new category!"])
             self.game.gui.block_gui_keyboard_input = True
             self.game.gui.block_gui_mouse_input = True
             self.game.gui.mouse.alpha = 0.0

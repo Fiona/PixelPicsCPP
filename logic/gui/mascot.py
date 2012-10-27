@@ -19,14 +19,19 @@ class Mascot(Process):
     def __init__(self, game):
         Process.__init__(self)
         self.game = game
-        self.image = self.game.core.media.gfx['gui_chips_happy']
         self.speech_bubble = None
         self.shift_amount = 15
+        self.talking = False
+        self.is_saying = ""
+        self.current_letter = 0
+        self.anim_wait = 0
+        self.mood = "normal"
         self.set_location()
+        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
         self.initial_position = self.x, self.y
         self.dir = 0
         self.iter = 0
-
+        
 
     def On_Exit(self):
         if self.speech_bubble:
@@ -48,7 +53,33 @@ class Mascot(Process):
                 self.iter = 0
                 self.dir = 0
                 self.y = self.initial_position[1]
-            
+
+        if self.talking:
+            self.anim_wait += 1
+            if self.anim_wait == 5 :
+                if self.is_saying[self.current_letter] in [" ", ",", ".", "!", "?"]:
+                    self.image_sequence = 1
+                else:
+                    self.image_sequence = 2
+                self.current_letter += 1
+                self.anim_wait = 0
+                if self.current_letter >= len(self.is_saying):
+                    self.talking = False
+                    self.image_sequence = 1
+        else:
+            if self.image.num_of_frames < 3:
+                self.image_sequence = 1
+            else:
+                self.anim_wait += 1
+                if self.image_sequence == 1:
+                    if self.anim_wait >= 120:
+                        self.image_sequence = 3
+                        self.anim_wait = 0
+                elif self.image_sequence == 3:
+                    if self.anim_wait >= 5:
+                        self.image_sequence = 1
+                        self.anim_wait = 0
+                
 
     def set_location(self):
         self.x = 100
@@ -57,6 +88,8 @@ class Mascot(Process):
     
 
     def set_speech(self, to_say):
+        self.talking = True
+        self.is_saying = " ".join(to_say)
         if self.speech_bubble:
             self.speech_bubble.Kill()
         if len(to_say) > 0:
@@ -88,10 +121,11 @@ class Mascot_Category_Select(Mascot):
                
                         
     def set_location(self):
+        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]        
         self.x = (self.game.settings['screen_width'] / 2) - (self.image.width / 2) - 25
         self.y = self.game.settings['screen_height'] / 2
         self.z = Z_MASCOT
-        self.set_speech("Pick a category of puzzles to play!")
+        self.set_speech(["Pick a category of puzzles to play!"])
 
 
 
@@ -111,7 +145,8 @@ class Mascot_Main_Menu(Mascot):
         self.shift_amount = 5
         self.alpha = 0.0
         self.iter2 = 0
-
+        self.mood = "happy"
+        
         if self.game.player.first_run:
             self.game.player.first_run = False
             self.game.save_player(self.game.player)
@@ -152,7 +187,7 @@ class Speech_Bubble(Process):
         self.z = Z_MASCOT
         self.image = self.game.core.media.gfx['gui_speech_bubble']
 
-        self.text = Text(self.game.core.media.fonts['speech_bubble'], self.x, self.y - 30, TEXT_ALIGN_CENTER, to_say)
+        self.text = Text(self.game.core.media.fonts['speech_bubble'], self.x, self.y - 30, TEXT_ALIGN_CENTER, to_say[0])
         self.text.z = self.z
         self.text.colour = (.7,.5,0)
         self.text.shadow = 2
