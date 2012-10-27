@@ -8,6 +8,7 @@ import random
 
 # Game engine imports
 from core import *
+from gui.gui_elements import GUI_element_button
 
 # Game imports
 from consts import *
@@ -146,11 +147,13 @@ class Mascot_Main_Menu(Mascot):
         self.alpha = 0.0
         self.iter2 = 0
         self.mood = "normal"
-        
+        self.extra_button = None
+
         if self.game.player.first_run:
             self.game.player.first_run = False
             self.game.save_player(self.game.player)
-            self.set_speech(["Hey, is this is your", "first time playing?", "Would you like to learn", "how to play?"])
+            self.set_speech(["Hey, is this is your", "first time here?", "Would you like to learn", "how to play?"])
+            self.extra_button = Mascot_Main_Menu_Tutorial_Button(self.game, self.game.gui.parent_window, self)
         else:
             items = [
                 ["Did you know that you", "can zoom in and out of", "puzzles with your", "mouse wheel?"],
@@ -174,6 +177,12 @@ class Mascot_Main_Menu(Mascot):
         self.game.manager.current_puzzle_file = "0001.puz"
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40, stop_music = True)
 
+
+    def On_Exit(self):
+        Mascot.On_Exit(self)
+        if not self.extra_button is None:
+            self.extra_button.Kill()
+            
 
 
 class Speech_Bubble(Process):
@@ -209,19 +218,59 @@ class Main_Menu_Speech_Bubble(Process):
         self.x = self.parent.x - (self.image.width / 2) - 20
         self.y = self.parent.y - 300
         self.z = Z_GUI_OBJECT_LEVEL_3
+        self.scale = 0.0
+        self.iter = 1
 
         self.text = []
 
-        y = self.y - 110
+        y = self.y - 120
         for s in to_say:
             text = Text(self.game.core.media.fonts['title_speech_bubble'], self.x, y, TEXT_ALIGN_TOP, s)
             text.z = self.z - 1
             text.colour = (.3, .3, .3)
+            text.alpha = 0.0
             self.text.append(text)
             y += text.text_height
 
+
+    def Execute(self):
+        if self.scale < 1.0:
+            self.iter += 1
+            self.scale = lerp(self.iter, 20, 0.0, 1.0)
+        else:
+            self.scale = 1.0
+            for x in self.text:
+                x.alpha = 1.0
+            
 
     def On_Exit(self):
         for x in self.text:
             x.Kill()
         
+
+    def get_screen_draw_position(self):
+        return (
+            self.x - ((self.image.width * self.scale) / 2),
+            self.y - ((self.image.height * self.scale) / 2)
+            )
+
+
+
+class Mascot_Main_Menu_Tutorial_Button(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None, mascot = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.mascot = mascot
+        self.z = Z_GUI_OBJECT_LEVEL_4
+        self.image = self.game.core.media.gfx['gui_button_main_menu_tutorial']
+        self.x = self.mascot.x - 215
+        self.y = self.mascot.y - 340
+        self.gui_init()
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.mascot.first_time()

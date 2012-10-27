@@ -269,22 +269,23 @@ void Process::Draw_strategy_gui_button()
 
     // Draw the surrounding rectangle    
     glDisable(GL_TEXTURE_2D);
-    glLineWidth(1.0f);
-    glColor4f(.5f, .5f, .5f, alpha);
 
+    glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
+    glLineWidth(2.0f);
     glBegin(GL_LINES);
-    glVertex2f(0.0f, 0.0f);
-    glVertex2f(width, 0.0f);
+    glVertex2f(-1.0f, 0.0f);
+    glVertex2f(width + 1.0f, 0.0f);
 
     glVertex2f(width, 0.0f);
     glVertex2f(width, height);
 
-    glVertex2f(width, height);
     glVertex2f(-1.0f, height);
+    glVertex2f(width + 1.0f, height);
 
-    glVertex2f(0.0f, height);
     glVertex2f(0.0f, 0.0f);
+    glVertex2f(0.0f, height);
     glEnd();
+    glLineWidth(1.0f);
 
     glEnable(GL_TEXTURE_2D);
 
@@ -326,50 +327,41 @@ void Process::Draw_strategy_gui_window_frame()
     glDisable(GL_TEXTURE_2D);
 
     // Background grey shadow
-    glColor4f(0.7, 0.7, 0.7, 0.7);
+    glColor4f(0.3, 0.3, 0.3, 0.7);
     glBegin(GL_QUADS);
-    glVertex2f(draw_x + 12.0f,        draw_y + 12.0f);
-    glVertex2f(draw_x + width - 4.0f, draw_y + 12.0f);
-    glVertex2f(draw_x + width - 4.0f, draw_y + height - 4.0f);
-    glVertex2f(draw_x + 12.0f,        draw_y + height - 4.0f);
+    glVertex2f(draw_x + 10.0f,        draw_y + 10.0f);
+    glVertex2f(draw_x + width + 10.0f, draw_y + 10.0f);
+    glVertex2f(draw_x + width + 10.0f, draw_y + height + 10.0f);
+    glVertex2f(draw_x + 10.0f,        draw_y + height + 10.0f);
     glEnd();
 
     // Background of frame
     glBegin(GL_QUADS);
-    glColor4f(0.8, 1.0f, 1.0f, 1.0f);
-    glVertex2f(draw_x + 8.0f,          draw_y + 8.0f);
-    glVertex2f(draw_x + width - 8.0f,  draw_y + 8.0f);
+    glColor4f(.84f, .89f, .94f, 1.0f);
+    glVertex2f(draw_x,          draw_y);
+    glVertex2f(draw_x + width,  draw_y);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glVertex2f(draw_x + width - 8.0f,  draw_y + height - 8.0f);
-    glVertex2f(draw_x + 8.0f,          draw_y + height - 8.0f);
+    glVertex2f(draw_x + width,  draw_y + height);
+    glVertex2f(draw_x,          draw_y + height);
     glEnd();
 
     // Frame border
-    glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(draw_x + 10.0f,          draw_y + 10.0f);
-    glVertex2f(draw_x + width - 10.0f,  draw_y + 10.0f);
-    glVertex2f(draw_x + width - 10.0f,  draw_y + height - 10.0f);
-    glVertex2f(draw_x + 10.0f,          draw_y + height - 10.0f);
-    glEnd();
+    glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
+    glLineWidth(5.0f);
+    glBegin(GL_LINES);
+    glVertex2f(draw_x - 3.0f,          draw_y);
+    glVertex2f(draw_x + width + 2.0f,  draw_y);
 
-    // Title shadow
-    glColor4f(0.7f, 0.7f, 0.7f, 0.7f);
-    glBegin(GL_QUADS);
-    glVertex2f(draw_x + 16.0f,   draw_y + 6.0f);
-    glVertex2f(draw_x + 250.0f,  draw_y + 6.0f);
-    glVertex2f(draw_x + 250.0f,  draw_y + 20.0f);
-    glVertex2f(draw_x + 16.0f,   draw_y + 20.0f);
-    glEnd();
+    glVertex2f(draw_x + width,  draw_y);
+    glVertex2f(draw_x + width,  draw_y + height);
 
-    // Title 
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glBegin(GL_QUADS);
-    glVertex2f(draw_x + 10.0f,   draw_y);
-    glVertex2f(draw_x + 244.0f,  draw_y);
-    glVertex2f(draw_x + 244.0f,  draw_y + 16.0f);
-    glVertex2f(draw_x + 10.0f,   draw_y + 16.0f);
+    glVertex2f(draw_x - 3.0f,          draw_y + height);
+    glVertex2f(draw_x + width + 2.0f,  draw_y + height);
+
+    glVertex2f(draw_x,          draw_y);
+    glVertex2f(draw_x,          draw_y + height);
     glEnd();
+    glLineWidth(1.0f);
 
     glEnable(GL_TEXTURE_2D);
 
@@ -600,26 +592,35 @@ void Process::Draw_strategy_gui_dropdown_currently_selected()
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_QUADS);
+    glColor4f(.84f, .89f, .94f, 1.0f);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glVertex2f(width + x, height + y);
     glVertex2f(x, height + y);
     glEnd();
 
-    glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
-    glLineWidth(1.0f);
-    glBegin(GL_LINE_LOOP);
+    glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    glVertex2f(x -1.0f, y);
+    glVertex2f(width + x + 1.0f, y);
+
+    glVertex2f(x + width, y);
+    glVertex2f(x + width, y + height);
+
+    glVertex2f(x - 1.0f, y + height);
+    glVertex2f(x + width + 1.0f, y + height);
+
     glVertex2f(x, y);
-    glVertex2f(width + x, y);
-    glVertex2f(width + x, height + y);
-    glVertex2f(x, height + y);
+    glVertex2f(x, y + height);
     glEnd();
+    glLineWidth(1.0f);
 
     glEnable(GL_TEXTURE_2D);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glTranslatef(x + width - 25.0f, y + 1.0f, 0.0f);
+    glTranslatef(x + width - 32.0f, y, 0.0f);
     glTexCoordPointer(2, GL_FLOAT, 0, &image->texture_coords[image_sequence-1][0]);
     glBindTexture(GL_TEXTURE_2D, image->texture);
     glVertexPointer(3, GL_FLOAT, 0, image->vertex_list);

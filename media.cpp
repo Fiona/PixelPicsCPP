@@ -41,6 +41,10 @@ Media::Media(Main_App* _game)
     // Load all the fonts!
     fonts.insert(pair<string,Font*>("basic", new Font("fnt/arulent.ttf", 13)));
     fonts.insert(pair<string,Font*>("small", new Font("fnt/bitmap1.ttf", 10)));
+    fonts.insert(pair<string,Font*>("window_title", new Font("fnt/borisblackbloxx.ttf", 25)));
+    fonts.insert(pair<string,Font*>("window_text", new Font("fnt/basiccomical.ttf", 20)));
+    fonts.insert(pair<string,Font*>("generic_buttons", new Font("fnt/borisblackbloxx.ttf", 14)));
+    fonts.insert(pair<string,Font*>("dropdown_text", new Font("fnt/basiccomical.ttf", 17)));
     fonts.insert(pair<string,Font*>("puzzle_hint_numbers", new Font("fnt/borisblackbloxx.ttf", 40)));
     fonts.insert(pair<string,Font*>("puzzle_message", new Font("fnt/arulent.ttf", 25)));
     fonts.insert(pair<string,Font*>("puzzle_timer", new Font("fnt/borisblackbloxx.ttf", 30)));
@@ -76,9 +80,9 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_generic_background", new Image("gfx/gui/button_generic_background.png", True, 4)));
     gfx.insert(pair<string, Image*>("gui_button_spinner_down", new Image("gfx/gui/button_spinner_down.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_spinner_up", new Image("gfx/gui/button_spinner_up.png", False, 3)));
-    gfx.insert(pair<string, Image*>("gui_dropdown_arrow", new Image("gfx/gui/dropdown_arrow.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_dropdown_arrow", new Image("gfx/gui/dropdown_arrow.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_radio_button", new Image("gfx/gui/radio_button.png", True, 4)));
-    gfx.insert(pair<string, Image*>("gui_slider_handle", new Image("gfx/gui/slider_handle.png", True, 2)));
+    gfx.insert(pair<string, Image*>("gui_slider_handle", new Image("gfx/gui/slider_handle.png", True, 4)));
 
     gfx.insert(pair<string, Image*>("gui_main_menu_title_pixel", new Image("gfx/gui/main_menu_title_pixel.png")));
     gfx.insert(pair<string, Image*>("gui_main_menu_background", new Image("gfx/gui/main_menu_background.png")));
@@ -95,6 +99,12 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_title_s", new Image("gfx/gui/title_s.png")));
 
     gfx.insert(pair<string, Image*>("gui_title_speech_bubble", new Image("gfx/gui/title_speech_bubble.png")));
+    gfx.insert(pair<string, Image*>("gui_button_main_menu_play", new Image("gfx/gui/button_main_menu_play.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_main_menu_extras", new Image("gfx/gui/button_main_menu_extras.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_main_menu_options", new Image("gfx/gui/button_main_menu_options.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_main_menu_designer", new Image("gfx/gui/button_main_menu_designer.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_main_menu_quit", new Image("gfx/gui/button_main_menu_quit.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_main_menu_tutorial", new Image("gfx/gui/button_main_menu_tutorial.png", False, 3)));
 
     gfx.insert(pair<string, Image*>("gui_puzzle_grid_background", new Image("gfx/gui/puzzle_grid_background.png", True)));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_white", new Image("gfx/gui/puzzle_cell_white.png")));
@@ -113,8 +123,8 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_palette_cursor", new Image("gfx/gui/palette_cursor.png")));
     gfx.insert(pair<string, Image*>("gui_value_slider", new Image("gfx/gui/value_slider.png")));
 
-    gfx.insert(pair<string, Image*>("gui_button_puzzle_type_select_main", new Image("gfx/gui/button_puzzle_type_select_main.png", False, 4)));
-    gfx.insert(pair<string, Image*>("gui_button_puzzle_type_select_downloaded", new Image("gfx/gui/button_puzzle_type_select_downloaded.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_puzzle_type_select_main", new Image("gfx/gui/button_puzzle_type_select_main.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_puzzle_type_select_downloaded", new Image("gfx/gui/button_puzzle_type_select_downloaded.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_go_back", new Image("gfx/gui/button_go_back.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category", new Image("gfx/gui/button_select_category.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category_tutorial", new Image("gfx/gui/button_select_category_tutorial.png", False, 4)));

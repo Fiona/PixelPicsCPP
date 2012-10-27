@@ -187,7 +187,6 @@ class GUI_options_apply_button(GUI_element_button):
 
 class GUI_options_resolution(GUI_element_dropdown):
     display_width = 170
-    display_height = 25
 
     dropdown_options = []
 
