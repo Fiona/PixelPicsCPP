@@ -40,10 +40,11 @@ class GUI_main_menu_container(GUI_element):
                 Main_menu_background(self.game)
                 )
 
-        for x in range(20):
-            self.objs.append(
-                Reward_star(self.game)
-                )
+        if self.game.manager.all_main_packs_starred:
+            for x in range(20):
+                self.objs.append(
+                    Reward_star(self.game)
+                    )
 
         # Draw strategy data
         self.draw_strategy = "primitive_square"

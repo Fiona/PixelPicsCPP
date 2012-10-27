@@ -304,6 +304,7 @@ class Game(Process):
         # finalise
         # -----------
         self.save_player(self.player)
+        self.manager.check_which_packs_starred()
 
 
     def rate_pack(self, pack_uuid, rating):

@@ -206,7 +206,10 @@ class GUI_category_select_select_category_button(GUI_element_button):
 
     def create_unlocked_objects(self):
         if self.pack_uuid in self.game.player.cleared_categories:
-            self.objs['status_icon'] = GUI_category_completed_tick(self.game)
+            if self.pack_uuid in self.game.manager.starred_packs:
+                self.objs['status_icon'] = GUI_category_completed_star(self.game)
+            else:
+                self.objs['status_icon'] = GUI_category_completed_tick(self.game)
             
         if self.pack_dir == "0001":
             return
@@ -308,6 +311,14 @@ class GUI_category_completed_tick(Process):
         Process.__init__(self)
         self.game = game
         self.image = self.game.core.media.gfx['gui_category_complete_tick']
+        self.z = Z_GUI_OBJECT_LEVEL_3
+
+
+class GUI_category_completed_star(Process):
+    def __init__(self, game):
+        Process.__init__(self)
+        self.game = game
+        self.image = self.game.core.media.gfx['gui_reward_star']
         self.z = Z_GUI_OBJECT_LEVEL_3
 
 
