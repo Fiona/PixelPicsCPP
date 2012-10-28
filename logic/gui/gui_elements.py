@@ -1076,7 +1076,7 @@ class GUI_element_dropdown_currently_selected(GUI_element):
 
     def set_text_to(self, text):
         if self.text_object is None:
-            self.text_object = Text(self.game.core.media.fonts['dropdown_text'], self.x + 6, self.y + 4, TEXT_ALIGN_TOP_LEFT, text)
+            self.text_object = Text(self.game.core.media.fonts['dropdown_text'], self.x + 6, self.y + 6, TEXT_ALIGN_TOP_LEFT, text)
             self.text_object.z = self.z - 2
             self.text_object.colour = (0.3,0.3,0.3)
         else:
@@ -1125,7 +1125,7 @@ class GUI_element_dropdown_options(GUI_element):
         self.parent = parent
         self.gui_init()
         self.draw_strategy = "gui_dropdown_options"
-        self.display_height = self.parent.display_height
+        self.display_height = self.parent.display_height - 4
         self.num_dropdown_options = len(self.parent.dropdown_options)
         self.hover_sound = False
         self.last_hovered_item = -1
@@ -1141,11 +1141,12 @@ class GUI_element_dropdown_options(GUI_element):
         
         self.height = 0
         for item in self.parent.dropdown_options:
-            new_text = Text(self.game.core.media.fonts['basic'], self.x + 2, self.y + 2 + self.height, TEXT_ALIGN_TOP_LEFT, item['text'])
+            new_text = Text(self.game.core.media.fonts['dropdown_text_options'], self.x + 2, self.y + 4 + self.height, TEXT_ALIGN_TOP_LEFT, item['text'])
             new_text.z = self.z - 2
+            new_text.colour = (.3, .3, .3)
             self.texts.append(new_text)
 
-            self.height += self.parent.display_height
+            self.height += self.display_height
 
             if new_text.text_width > self.width:
                 self.width = new_text.text_width
@@ -1163,7 +1164,7 @@ class GUI_element_dropdown_options(GUI_element):
 
 
     def mouse_over(self):
-        self.hovered_item = int((self.game.gui.mouse.y - self.y) / (self.parent.display_height))
+        self.hovered_item = int((self.game.gui.mouse.y - self.y) / (self.display_height))
         if self.hovered_item >= len(self.parent.dropdown_options):
             self.hovered_item = -1
         if not self.hover_sound and self.hovered_item > -1 and self.hovered_item != self.last_hovered_item:
@@ -1420,18 +1421,18 @@ class GUI_element_yes_no_radios(GUI_element):
         self.buttons['yes'].x = self.x
         self.buttons['yes'].y = self.y
         self.buttons['yes'].on_press = self.press_yes
-        text = Text(self.game.core.media.fonts["basic"], self.x + 30.0, self.y, TEXT_ALIGN_TOP_LEFT, self.yes_text)
+        text = Text(self.game.core.media.fonts["window_text"], self.x + 35.0, self.y + 16, TEXT_ALIGN_CENTER_LEFT, self.yes_text)
         text.z = self.z - 1
-        text.colour = (0.0,0.0,0.0)
+        text.colour = (0.3,0.3,0.3)
         self.text.append(text)
 
         self.buttons['no'] = GUI_element_single_radio_button(self.game, self, self.press_no)
-        self.buttons['no'].x = self.x + 65
+        self.buttons['no'].x = self.x + 80
         self.buttons['no'].y = self.y
         self.buttons['no'].on_press = self.press_no
-        text = Text(self.game.core.media.fonts["basic"], self.x + 95.0, self.y, TEXT_ALIGN_TOP_LEFT, self.no_text)
+        text = Text(self.game.core.media.fonts["window_text"], self.x + 115.0, self.y + 16, TEXT_ALIGN_CENTER_LEFT, self.no_text)
         text.z = self.z - 1
-        text.colour = (0.0,0.0,0.0)
+        text.colour = (0.3,0.3,0.3)
         self.text.append(text)
 
         if self.current_value == True:
@@ -1463,7 +1464,7 @@ class GUI_element_single_radio_button(GUI_element_button):
     generic_button = False
     toggle_button = True
     width = 60
-    height = 22
+    height = 32
 
     def __init__(self, game, parent, action = None):
         Process.__init__(self)

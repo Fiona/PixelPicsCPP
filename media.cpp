@@ -42,9 +42,11 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("basic", new Font("fnt/arulent.ttf", 13)));
     fonts.insert(pair<string,Font*>("small", new Font("fnt/bitmap1.ttf", 10)));
     fonts.insert(pair<string,Font*>("window_title", new Font("fnt/borisblackbloxx.ttf", 25)));
-    fonts.insert(pair<string,Font*>("window_text", new Font("fnt/basiccomical.ttf", 20)));
+    fonts.insert(pair<string,Font*>("window_subtitle", new Font("fnt/borisblackbloxx.ttf", 22)));
+    fonts.insert(pair<string,Font*>("window_text", new Font("fnt/designosaur.ttf", 18)));
     fonts.insert(pair<string,Font*>("generic_buttons", new Font("fnt/borisblackbloxx.ttf", 14)));
-    fonts.insert(pair<string,Font*>("dropdown_text", new Font("fnt/basiccomical.ttf", 17)));
+    fonts.insert(pair<string,Font*>("dropdown_text", new Font("fnt/designosaur.ttf", 17)));
+    fonts.insert(pair<string,Font*>("dropdown_text_options", new Font("fnt/designosaur.ttf", 15)));
     fonts.insert(pair<string,Font*>("puzzle_hint_numbers", new Font("fnt/borisblackbloxx.ttf", 40)));
     fonts.insert(pair<string,Font*>("puzzle_message", new Font("fnt/arulent.ttf", 25)));
     fonts.insert(pair<string,Font*>("puzzle_timer", new Font("fnt/borisblackbloxx.ttf", 30)));
@@ -59,8 +61,7 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("speech_bubble", new Font("fnt/cookies.ttf", 20)));
     fonts.insert(pair<string,Font*>("puzzle_select_number", new Font("fnt/cookies.ttf", 30)));
     fonts.insert(pair<string,Font*>("puzzle_select_size", new Font("fnt/bitmap1.ttf", 12)));
-    fonts.insert(pair<string,Font*>("options_title", new Font("fnt/arulent.ttf", 15)));
-    fonts.insert(pair<string,Font*>("options_mouse_button", new Font("fnt/arulent.ttf", 12)));
+    fonts.insert(pair<string,Font*>("options_mouse_button", new Font("fnt/designosaur.ttf", 15)));
     fonts.insert(pair<string,Font*>("tutorial_instructions", new Font("fnt/basiccomical.ttf", 25)));
     fonts.insert(pair<string,Font*>("tutorial_click_to_continue", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("title_speech_bubble", new Font("fnt/basiccomical.ttf", 20)));

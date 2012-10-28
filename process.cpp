@@ -518,6 +518,33 @@ void Process::Draw_strategy_gui_slider()
 
     glDisable(GL_TEXTURE_2D);
 
+    glBegin(GL_QUADS);
+    glColor4f(.84f, .89f, .94f, 1.0f);
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(width + draw_x, draw_y);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    glVertex2f(draw_x -1.0f, draw_y);
+    glVertex2f(width + draw_x + 1.0f, draw_y);
+
+    glVertex2f(draw_x + width, draw_y);
+    glVertex2f(draw_x + width, draw_y + height);
+
+    glVertex2f(draw_x - 1.0f, draw_y + height);
+    glVertex2f(draw_x + width + 1.0f, draw_y + height);
+
+    glVertex2f(draw_x, draw_y);
+    glVertex2f(draw_x, draw_y + height);
+    glEnd();
+    glLineWidth(1.0f);
+
+/*
     glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(draw_x, draw_y);
@@ -534,6 +561,7 @@ void Process::Draw_strategy_gui_slider()
     glVertex2f(width + draw_x, height + draw_y);
     glVertex2f(draw_x, height + draw_y);
     glEnd();
+*/
 
     glEnable(GL_TEXTURE_2D);
 
@@ -649,7 +677,7 @@ void Process::Draw_strategy_gui_dropdown_options()
     glDisable(GL_TEXTURE_2D);
 
     // Background behind items
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
@@ -660,10 +688,11 @@ void Process::Draw_strategy_gui_dropdown_options()
     // highlight on hovered item
     if(hovered_item > -1)
     {
-        glColor4f(0.2f, 0.2f, 0.2f, 1.0f);
         glBegin(GL_QUADS);
+        glColor4f(.84f, .89f, .94f, 1.0f);
         glVertex2f(x, y + (display_height * hovered_item));
         glVertex2f(width + x, y + (display_height * hovered_item));
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glVertex2f(width + x, y + (display_height * (hovered_item + 1)));
         glVertex2f(x, y + (display_height * (hovered_item + 1)));
         glEnd();
@@ -673,7 +702,7 @@ void Process::Draw_strategy_gui_dropdown_options()
     int start_y = 0;
     for(int i = 0; i < num_dropdown_options; i++)
     {
-        glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
+        glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
         glLineWidth(1.0f);
         glBegin(GL_LINE_LOOP);
         glVertex2f(x, y + start_y);
