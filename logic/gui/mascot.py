@@ -122,9 +122,9 @@ class Mascot_Category_Select(Mascot):
                
                         
     def set_location(self):
-        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]        
-        self.x = 290
-        self.y = 570
+        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
+        self.x = (self.game.settings['screen_width'] / 2) - 256
+        self.y = (self.game.settings['screen_height'] / 2) + 200
         self.z = Z_MASCOT
         self.scale = .7
         self.set_speech(["Pick a category of", "puzzles to play!"])

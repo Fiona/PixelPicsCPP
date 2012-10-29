@@ -30,7 +30,9 @@ class GUI_category_select_container(GUI_element):
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
         self.alpha = .1
-
+        self.scroll_up = False
+        self.scroll_down = False
+        
         self.title = Text(self.game.core.media.fonts['menu_titles'], 20, 10, TEXT_ALIGN_TOP_LEFT, "Category Select")
         self.title.z = Z_GUI_OBJECT_LEVEL_2
         self.title.colour = (0.95, 0.58, 0.09)
@@ -40,6 +42,9 @@ class GUI_category_select_container(GUI_element):
         GUI_category_go_back(self.game, self)
         self.mascot_object = Mascot_Category_Select(self.game)
 
+        GUI_category_select_up_button(self.game, self)
+        GUI_category_select_down_button(self.game, self)
+        
         if not self.game.category_to_unlock == None:
             self.mascot_object.set_speech(["Wow, you unlocked a new category!"])
             self.game.gui.block_gui_keyboard_input = True
@@ -84,23 +89,30 @@ class GUI_category_select_container(GUI_element):
         self.update()
 
         if not self.game.gui.block_gui_mouse_input:
-            if self.game.gui.mouse.x > (self.game.settings['screen_width'] - 512) and self.game.gui.mouse.y < 50:
-                if self.first_category.y > 75:
-                    self.scroll_speed = 0.0
-                else:
-                    self.scroll_speed -= .2
-            if self.game.gui.mouse.x > (self.game.settings['screen_width'] - 512) and self.game.gui.mouse.y > (self.game.settings['screen_height'] - 50):
-                if self.last_category.y < self.game.settings['screen_height'] - 150:
-                    self.scroll_speed = 0.0
-                else:
-                    self.scroll_speed += .2
+            if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.gui.mouse.y < 50:
+                    self.scroll_up = True
+            if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.gui.mouse.y > (self.game.settings['screen_height'] - 50):
+                    self.scroll_down = True
 
+        if self.scroll_up:
+            self.scroll_speed -= .2
+        elif self.scroll_down:
+            self.scroll_speed += .2
+
+        if self.first_category.y > 75 and self.scroll_speed < 0:
+            self.scroll_speed = 0.0
+        if self.last_category.y < self.game.settings['screen_height'] - 128 and self.scroll_speed > 0:
+            self.scroll_speed = 0.0
+            
         self.scroll_speed *= .95
-
+            
         if self.scroll_speed > 7.0:
             self.scroll_speed = 7.0
         if self.scroll_speed < -7.0:
             self.scroll_speed = -7.0
+
+        self.scroll_up = False
+        self.scroll_down = False
             
         for cat in self.category_objs:
             cat.y -= self.scroll_speed
@@ -109,6 +121,7 @@ class GUI_category_select_container(GUI_element):
         self.text_offset_x -= 3.0
         self.text_offset_y += 3.0
 
+        
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
@@ -130,7 +143,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.z = self.parent.z - 3
         self.image = self.game.core.media.gfx['gui_button_select_category']
         self.gui_init()
-        self.x = (self.game.settings['screen_width'] / 2) - 25
+        self.x = (self.game.settings['screen_width'] / 2) - 100
         self.y = 75 + (80 * num) + (40 * num)
         self.width = 466
         self.height = 80
@@ -327,6 +340,7 @@ class GUI_category_completed_tick(Process):
         self.z = Z_GUI_OBJECT_LEVEL_3
 
 
+
 class GUI_category_completed_star(Process):
     def __init__(self, game):
         Process.__init__(self)
@@ -363,4 +377,44 @@ class GUI_category_go_back(GUI_element_button):
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 20)
+
+
+
+class GUI_category_select_up_button(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_scroll_button_up']
+        self.gui_init()
+        self.x = (self.game.settings['screen_width'] / 2) + 450 - (self.image.height / 2)
+        self.y = 100 - (self.image.width / 2)
+
+
+    def mouse_left_down(self):
+        GUI_element_button.mouse_left_down(self)
+        self.parent.scroll_up = True
+        
+    
+
+class GUI_category_select_down_button(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_scroll_button_down']
+        self.gui_init()
+        self.x = (self.game.settings['screen_width'] / 2) + 450 - (self.image.height / 2)
+        self.y = self.game.settings['screen_height'] - 100 - (self.image.width / 2)
+
+
+    def mouse_left_down(self):
+        GUI_element_button.mouse_left_down(self)
+        self.parent.scroll_down = True
 
