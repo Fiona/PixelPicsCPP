@@ -123,10 +123,15 @@ class Mascot_Category_Select(Mascot):
                         
     def set_location(self):
         self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]        
-        self.x = (self.game.settings['screen_width'] / 2) - (self.image.width / 2) - 25
-        self.y = self.game.settings['screen_height'] / 2
+        self.x = 290
+        self.y = 570
         self.z = Z_MASCOT
-        self.set_speech(["Pick a category of puzzles to play!"])
+        self.scale = .7
+        self.set_speech(["Pick a category of", "puzzles to play!"])
+
+
+    def create_speech_bubble(self, to_say):
+        return Category_Select_Speech_Bubble(self.game, self, to_say)
 
 
 
@@ -274,3 +279,52 @@ class Mascot_Main_Menu_Tutorial_Button(GUI_element_button):
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.mascot.first_time()
+
+
+
+class Category_Select_Speech_Bubble(Process):
+    def __init__(self, game, parent, to_say):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.to_say = to_say
+        self.image = self.game.core.media.gfx['gui_speech_bubble']
+        self.x = self.parent.x - 70
+        self.y = self.parent.y - 350
+        self.z = Z_GUI_OBJECT_LEVEL_3
+        self.scale = 0.0
+        self.iter = 1
+
+        self.text = []
+
+        y = self.y - 60
+        for s in to_say:
+            text = Text(self.game.core.media.fonts['category_select_speech_bubble'], self.x, y, TEXT_ALIGN_TOP, s)
+            text.z = self.z - 1
+            text.colour = (.3, .3, .3)
+            text.alpha = 0.0
+            self.text.append(text)
+            y += text.text_height
+
+
+    def Execute(self):
+        if self.scale < 1.0:
+            self.iter += 1
+            self.scale = lerp(self.iter, 20, 0.0, 1.0)
+        else:
+            self.scale = 1.0
+            for x in self.text:
+                x.alpha = 1.0
+            
+
+    def On_Exit(self):
+        for x in self.text:
+            x.Kill()
+        
+
+    def get_screen_draw_position(self):
+        return (
+            self.x - ((self.image.width * self.scale) / 2),
+            self.y - ((self.image.height * self.scale) / 2)
+            )
+

@@ -402,25 +402,34 @@ void Process::Draw_strategy_gui_text_input()
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_QUADS);
+    glColor4f(.84f, .89f, .94f, 1.0f);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glVertex2f(width + draw_x, height + draw_y);
     glVertex2f(draw_x, height + draw_y);
     glEnd();
 
     if(active)
-        glColor4f(0.8f, 0.8f, 0.8f, 1.0f);
+        glColor4f(0.94f, 0.67f, 0.31f, 1.0f);
     else
-        glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
-    glLineWidth(1.0f);
-    glBegin(GL_LINE_LOOP);
+        glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    glVertex2f(draw_x -1.0f, draw_y);
+    glVertex2f(width + draw_x + 1.0f, draw_y);
+
+    glVertex2f(draw_x + width, draw_y);
+    glVertex2f(draw_x + width, draw_y + height);
+
+    glVertex2f(draw_x - 1.0f, draw_y + height);
+    glVertex2f(draw_x + width + 1.0f, draw_y + height);
+
     glVertex2f(draw_x, draw_y);
-    glVertex2f(width + draw_x, draw_y);
-    glVertex2f(width + draw_x, height + draw_y);
-    glVertex2f(draw_x, height + draw_y);
+    glVertex2f(draw_x, draw_y + height);
     glEnd();
+    glLineWidth(1.0f);
 
     glEnable(GL_TEXTURE_2D);
 
@@ -543,25 +552,6 @@ void Process::Draw_strategy_gui_slider()
     glVertex2f(draw_x, draw_y + height);
     glEnd();
     glLineWidth(1.0f);
-
-/*
-    glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-    glBegin(GL_QUADS);
-    glVertex2f(draw_x, draw_y);
-    glVertex2f(width + draw_x, draw_y);
-    glVertex2f(width + draw_x, height + draw_y);
-    glVertex2f(draw_x, height + draw_y);
-    glEnd();
-
-    glColor4f(0.2f, 0.2f, 0.2f, 1.0f);
-    glLineWidth(1.0f);
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(draw_x, draw_y);
-    glVertex2f(width + draw_x, draw_y);
-    glVertex2f(width + draw_x, height + draw_y);
-    glVertex2f(draw_x, height + draw_y);
-    glEnd();
-*/
 
     glEnable(GL_TEXTURE_2D);
 
@@ -2034,40 +2024,60 @@ void Process::Draw_strategy_category_select()
     glDisable(GL_TEXTURE_2D);
 
     glBegin(GL_QUADS);
-    glColor4f(.4f,1.0f,1.0f,1.0f);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
     glVertex2f(0.0f, 0.0f);
-    glColor4f(.7f,1.0f,1.0f,1.0f);
     glVertex2f(width, 0.0f);
-    glColor4f(.7f,1.0f,1.0f,1.0f);
+    glColor4f(.84f,.89f,.94f,1.0f);
     glVertex2f(width, height);
-    glColor4f(.4f,1.0f,1.0f,1.0f);
     glVertex2f(0.0f, height);
     glEnd();
                                           
     float tex_coords_pointer[] = {width, height, 0.0f, height, width, 0.0f, 0.0f, 0.0f};
     glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_pointer);
 
+    glColor4f(1.0f, 1.0f, 1.0f, .1f);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_polka"]->texture);
-    glColor4f(.8f, 1.0f, 1.0f, .8f);
+    float text_coord_x, text_coord_y, new_text_offset_x, new_text_offset_y;
 
-    float text_coord_x = width / media->gfx["gui_polka"]->width;
-    float text_coord_y = height / media->gfx["gui_polka"]->height;
-    text_offset_x = (text_offset_x / media->gfx["gui_polka"]->width) * .1f;
-    text_offset_y = (text_offset_y / media->gfx["gui_polka"]->height) * .1f;
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_background_balloons"]->texture);
+    text_coord_x = width / media->gfx["gui_background_balloons"]->width;
+    text_coord_y = height / media->gfx["gui_background_balloons"]->height;
+    new_text_offset_x = (text_offset_x / media->gfx["gui_background_balloons"]->width) * .1f;
+    new_text_offset_y = (text_offset_y / media->gfx["gui_background_balloons"]->height) * .1f;
                                 
     glBegin(GL_TRIANGLE_STRIP);
     // top right
-    glTexCoord2f(text_coord_x + text_offset_x, text_coord_y + text_offset_y);
+    glTexCoord2f(text_coord_x + new_text_offset_x, text_coord_y + new_text_offset_y);
     glVertex3f(width, height, 0.0f);
     // top left
-    glTexCoord2f(text_offset_x, text_coord_y + text_offset_y);
+    glTexCoord2f(new_text_offset_x, text_coord_y + new_text_offset_y);
     glVertex3f(0.0f, height, 0.0f);
     // bottom right
-    glTexCoord2f(text_coord_x + text_offset_x, text_offset_y);
+    glTexCoord2f(text_coord_x + new_text_offset_x, new_text_offset_y);
     glVertex3f(width, 0.0f, 0.0f);
     // bottom left
-    glTexCoord2f(text_offset_x, text_offset_y);
+    glTexCoord2f(new_text_offset_x, new_text_offset_y);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_background_grid"]->texture);
+    text_coord_x = width / media->gfx["gui_background_grid"]->width;
+    text_coord_y = height / media->gfx["gui_background_grid"]->height;
+    new_text_offset_x = -((text_offset_x / media->gfx["gui_background_grid"]->width) * .1f);
+    new_text_offset_y = -((text_offset_y / media->gfx["gui_background_grid"]->height) * .1f);
+                                
+    glBegin(GL_TRIANGLE_STRIP);
+    // top right
+    glTexCoord2f(text_coord_x + new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(width, height, 0.0f);
+    // top left
+    glTexCoord2f(new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(0.0f, height, 0.0f);
+    // bottom right
+    glTexCoord2f(text_coord_x + new_text_offset_x, new_text_offset_y);
+    glVertex3f(width, 0.0f, 0.0f);
+    // bottom left
+    glTexCoord2f(new_text_offset_x, new_text_offset_y);
     glVertex3f(0.0f, 0.0f, 0.0f);
     glEnd();
 

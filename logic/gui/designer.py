@@ -157,11 +157,10 @@ class GUI_designer_packs_create_pack(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
+        self.x = self.game.settings['screen_width'] - 130
         self.y = 160
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.gui_init()
-        self.x = self.game.settings['screen_width'] - self.width - 50
-        self.generic_button_text_object.x = self.x + 9
 
 
     def mouse_left_up(self):
@@ -173,7 +172,7 @@ class GUI_designer_packs_create_pack(GUI_element_button):
 class GUI_designer_packs_add_pack_dialog(GUI_element_window):
     title = "Create Pack"
     height = 240
-    width = 450
+    width = 480
     objs = {}
 
     def __init__(self, game, parent = None):
@@ -191,19 +190,19 @@ class GUI_designer_packs_add_pack_dialog(GUI_element_window):
 
         self.objs = {}
         y = 0
-        for text in ["Enter a simple descriptive name for your new pack", "and your name as the author."]:
-            txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
+        for text in ["Enter a simple descriptive name for your", "new pack and your name as the author."]:
+            txt = Text(self.game.core.media.fonts['window_text'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
             txt.z = self.z - 2
-            txt.colour = (0.0, 0.0, 0.0)
+            txt.colour = (0.3, 0.3, 0.3)
             self.objs['text_' + str(y)] = txt
-            y += 15
+            y += 20
 
         self.pack_name_text = GUI_designer_packs_add_pack_pack_name_text_input(self.game, self)
         self.author_text = GUI_designer_packs_add_pack_author_text_input(self.game, self)
         GUI_designer_packs_add_pack_pack_confirm_button(self.game, self)
         GUI_designer_packs_add_pack_pack_cancel_button(self.game, self)
 
-        txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 147, TEXT_ALIGN_TOP_LEFT, "Game mode: ")
+        txt = Text(self.game.core.media.fonts['window_text'], self.x + 30, self.y + 147, TEXT_ALIGN_TOP_LEFT, "Game mode: ")
         txt.z = self.z - 2
         txt.colour = (0.0, 0.0, 0.0)
         self.objs['text_dropdown'] = txt        
@@ -282,7 +281,6 @@ class GUI_designer_packs_add_pack_author_text_input(GUI_element_text_input):
 
 class GUI_designer_packs_edit_pack_puzzle_type_dropdown(GUI_element_dropdown):
     display_width = 290
-    display_height = 25
 
     dropdown_options = [
         {'text' : "Lives on (Easy)", 'data' : 'normal'},
@@ -313,9 +311,9 @@ class GUI_designer_packs_add_pack_pack_confirm_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
-        self.y = self.parent.y + 180
-        self.generic_button_text_object.x = self.x + 9
-        self.generic_button_text_object.y = self.y + 4
+        self.y = self.parent.y + 190
+        self.generic_button_text_object.x = self.x + (self.width / 2)
+        self.generic_button_text_object.y = self.y + (self.height / 2)
 
 
     def mouse_left_up(self):
@@ -335,9 +333,9 @@ class GUI_designer_packs_add_pack_pack_cancel_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
-        self.y = self.parent.y + 180
-        self.generic_button_text_object.x = self.x + 9
-        self.generic_button_text_object.y = self.y + 4
+        self.y = self.parent.y + 190
+        self.generic_button_text_object.x = self.x + (self.width / 2)
+        self.generic_button_text_object.y = self.y + (self.height / 2)
 
 
     def mouse_left_up(self):

@@ -410,6 +410,7 @@ class GUI_element_dialog_box(GUI_element):
         GUI_element.gui_init(self)
         self.z = Z_GUI_OBJECT_LEVEL_9
 
+
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
 
@@ -830,15 +831,16 @@ class GUI_element_text_input(GUI_element):
         GUI_element.gui_init(self)
 
         if not self.label is None:            
-            self.label_text_object = Text(self.game.core.media.fonts['basic'], self.x, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.label + " "))
+            self.label_text_object = Text(self.game.core.media.fonts['window_text'], self.x, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.label + " "))
             self.label_text_object.z = self.z
-            self.label_text_object.colour = (0,0,0)
+            self.label_text_object.colour = (.3,.3,.3)
             self.width -= self.label_text_object.text_width
             
         self.x += self.label_text_object.text_width
 
-        self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_text))
+        self.text_object = Text(self.game.core.media.fonts['text_input'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_text))
         self.text_object.z = self.z - 1
+        self.text_object.colour = (.2,.2,.2)
 
         self.draw_strategy = "gui_text_input"
 

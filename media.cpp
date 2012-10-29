@@ -47,17 +47,18 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("generic_buttons", new Font("fnt/borisblackbloxx.ttf", 14)));
     fonts.insert(pair<string,Font*>("dropdown_text", new Font("fnt/designosaur.ttf", 17)));
     fonts.insert(pair<string,Font*>("dropdown_text_options", new Font("fnt/designosaur.ttf", 15)));
+    fonts.insert(pair<string,Font*>("text_input", new Font("fnt/bitstreamverasansmono.ttf", 15)));
     fonts.insert(pair<string,Font*>("puzzle_hint_numbers", new Font("fnt/borisblackbloxx.ttf", 40)));
     fonts.insert(pair<string,Font*>("puzzle_message", new Font("fnt/arulent.ttf", 25)));
     fonts.insert(pair<string,Font*>("puzzle_timer", new Font("fnt/borisblackbloxx.ttf", 30)));
-    fonts.insert(pair<string,Font*>("menu_titles", new Font("fnt/borisblackbloxx.ttf", 35)));
+    fonts.insert(pair<string,Font*>("menu_titles", new Font("fnt/borisblackbloxx.ttf", 45)));
     fonts.insert(pair<string,Font*>("menu_subtitles", new Font("fnt/borisblackbloxx.ttf", 25)));
     fonts.insert(pair<string,Font*>("designer_pack_name", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("designer_pack_author", new Font("fnt/borisblackbloxx.ttf", 15)));
     fonts.insert(pair<string,Font*>("verifier_status", new Font("fnt/borisblackbloxx.ttf", 16)));
-    fonts.insert(pair<string,Font*>("category_button_name", new Font("fnt/borisblackbloxx.ttf", 36)));
-    fonts.insert(pair<string,Font*>("category_button_completed_count", new Font("fnt/borisblackbloxx.ttf", 20)));
-    fonts.insert(pair<string,Font*>("category_button_total_count", new Font("fnt/borisblackbloxx.ttf", 12)));
+    fonts.insert(pair<string,Font*>("category_button_name", new Font("fnt/borisblackbloxx.ttf", 35)));
+    fonts.insert(pair<string,Font*>("category_button_completed_count", new Font("fnt/borisblackbloxx.ttf", 28)));
+    fonts.insert(pair<string,Font*>("category_button_solved_text", new Font("fnt/borisblackbloxx.ttf", 22)));
     fonts.insert(pair<string,Font*>("speech_bubble", new Font("fnt/cookies.ttf", 20)));
     fonts.insert(pair<string,Font*>("puzzle_select_number", new Font("fnt/cookies.ttf", 30)));
     fonts.insert(pair<string,Font*>("puzzle_select_size", new Font("fnt/bitmap1.ttf", 12)));
@@ -65,6 +66,7 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("tutorial_instructions", new Font("fnt/basiccomical.ttf", 25)));
     fonts.insert(pair<string,Font*>("tutorial_click_to_continue", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("title_speech_bubble", new Font("fnt/basiccomical.ttf", 20)));
+    fonts.insert(pair<string,Font*>("category_select_speech_bubble", new Font("fnt/basiccomical.ttf", 30)));
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/gui/stompyblondie_logo.png")));
@@ -128,12 +130,15 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_puzzle_type_select_downloaded", new Image("gfx/gui/button_puzzle_type_select_downloaded.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_go_back", new Image("gfx/gui/button_go_back.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category", new Image("gfx/gui/button_select_category.png", False, 4)));
-    gfx.insert(pair<string, Image*>("gui_button_select_category_tutorial", new Image("gfx/gui/button_select_category_tutorial.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_select_category_shadow", new Image("gfx/gui/button_select_category_shadow.png")));
     gfx.insert(pair<string, Image*>("gui_button_select_category_unlock_mask", new Image("gfx/gui/button_select_category_unlock_mask.png")));
     gfx.insert(pair<string, Image*>("gui_category_complete_tick", new Image("gfx/gui/category_complete_tick.png")));
+    gfx.insert(pair<string, Image*>("gui_category_complete_star", new Image("gfx/gui/category_complete_star.png")));
     gfx.insert(pair<string, Image*>("gui_category_locked", new Image("gfx/gui/category_locked.png", False, 2)));
 
-    gfx.insert(pair<string, Image*>("gui_polka", new Image("gfx/gui/polka.png", True)));
+    gfx.insert(pair<string, Image*>("gui_background_present", new Image("gfx/gui/background_present.png", True)));
+    gfx.insert(pair<string, Image*>("gui_background_balloons", new Image("gfx/gui/background_balloons.png", True)));
+    gfx.insert(pair<string, Image*>("gui_background_grid", new Image("gfx/gui/background_grid.png", True)));
     gfx.insert(pair<string, Image*>("gui_stars", new Image("gfx/gui/stars.png", True)));
     gfx.insert(pair<string, Image*>("gui_mouse", new Image("gfx/gui/mouse.png")));
 
