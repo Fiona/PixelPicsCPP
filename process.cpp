@@ -2235,7 +2235,7 @@ void Process::create_image_from_puzzle()
             else
             {
                 if(boost::python::extract<bool>(puzzle_cells[i][j][0]))
-                    pixel_colour = SDL_MapRGBA(raw_surface -> format, 130, 180, 170, 255);
+                    pixel_colour = SDL_MapRGBA(raw_surface -> format, 140, 140, 140, 255);
                 else
                     pixel_colour = SDL_MapRGBA(raw_surface -> format, 255, 255, 255, 255);
             }

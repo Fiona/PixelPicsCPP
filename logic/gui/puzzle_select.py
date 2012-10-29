@@ -30,10 +30,23 @@ class GUI_puzzle_select_container(GUI_element_network_container):
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
         self.alpha = .1
-        #self.colour = (.8, .8, 1.0)
         self.colour = (1.0, .7, .5)
 
-        GUI_category_go_back(self.game, self)
+        self.title = Text(self.game.core.media.fonts['menu_titles'], 20, 10, TEXT_ALIGN_TOP_LEFT, str(self.game.manager.current_pack.name))
+        self.title.z = Z_GUI_OBJECT_LEVEL_2
+        self.title.colour = (0.95, 0.58, 0.09)
+        self.title.shadow = 2
+        self.title.shadow_colour = (0.7, 0.7, 0.7)
+
+        self.author = None
+        if not self.game.manager.user_created_puzzles:
+            self.author = Text(self.game.core.media.fonts['menu_subtitles'], 40, 55, TEXT_ALIGN_TOP_LEFT, "by " + str(self.game.manager.current_pack.author_name))
+            self.author.z = Z_GUI_OBJECT_LEVEL_2
+            self.author.colour = (0.45, 0.45, 0.45)
+            self.author.shadow = 2
+            self.author.shadow_colour = (0.9, 0.9, 0.9)
+
+        GUI_puzzle_select_go_back(self.game, self)
         self.puzzle_name = Hover_text(self.game, self.game.settings['screen_width'] / 2, 50)
         self.puzzle_best_time = Hover_text(self.game, self.game.settings['screen_width'] / 2, 95)
         self.puzzle_size = Hover_text(self.game, (self.game.settings['screen_width'] / 2) - 225, 95, "puzzle_select_size", 2.0)
@@ -52,7 +65,7 @@ class GUI_puzzle_select_container(GUI_element_network_container):
                 self.report_button = GUI_puzzle_select_report(self.game, self)
             
         # Draw strategy data
-        self.draw_strategy = "puzzle_select"
+        self.draw_strategy = "category_select"
 
 
     def Execute(self):
@@ -67,13 +80,16 @@ class GUI_puzzle_select_container(GUI_element_network_container):
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
+        self.title.Kill()
         self.puzzle_name.Kill()
         self.puzzle_best_time.Kill()
         self.puzzle_size.Kill()
+        if not self.author is None:
+            self.author.Kill()
 
         
 
-class GUI_category_go_back(GUI_element_button):
+class GUI_puzzle_select_go_back(GUI_element_button):
     generic_button = False
 
     def __init__(self, game, parent = None):
@@ -83,14 +99,9 @@ class GUI_category_go_back(GUI_element_button):
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_go_back']
         self.gui_init()
-        self.x = 16
-        self.y = 16
+        self.x = 8
+        self.y = self.game.settings['screen_height'] - self.image.height
         self.width = 128
-        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 16, TEXT_ALIGN_TOP_LEFT, "Back")
-        self.text.z = self.z - 1
-        self.text.colour = (1.0, 1.0, 1.0)
-        self.text.shadow = 2
-        self.text.shadow_colour = (.2, .2, .2)
 
 
     def mouse_left_up(self):
@@ -99,10 +110,6 @@ class GUI_category_go_back(GUI_element_button):
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING, gui_state = GUI_STATE_SHARING_DOWNLOADED), speed = 20)
         else:
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 20)
-
-
-    def On_Exit(self):
-        self.text.Kill()
 
 
 
@@ -156,6 +163,8 @@ class Hover_text(Process):
 
 
 class GUI_puzzle_puzzle_item(GUI_element_button):
+    generic_button = False
+    
     def __init__(self, game, parent, puzzle_filename, puzzle_info, puzzle_num):
         Process.__init__(self)
         self.game = game
@@ -163,15 +172,16 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         self.puzzle_filename = puzzle_filename
         self.puzzle_info = puzzle_info
         self.puzzle_num = puzzle_num
+        self.image = self.game.core.media.gfx['gui_puzzle_select_puzzle_box']
         self.gui_init()
         self.width = 100
         self.height = 100
-        self.alpha = .47
+        
         column = self.puzzle_num % 5
         row = self.puzzle_num / 5
-        puzzle_box_size = (1024, 768)
+        puzzle_box_size = (870, 625)
         self.x = float((puzzle_box_size[0] / 5) * column) + self.width - (self.width / 2)
-        self.y = 100.0 + float((puzzle_box_size[1] / 5) * row) + self.height - (self.height / 2)
+        self.y = 100.0 + float((puzzle_box_size[1] / 5) * row) + self.height - (self.height / 2) - 130
 
         if self.game.settings['screen_width'] > puzzle_box_size[0]:
             self.x += (self.game.settings['screen_width'] - puzzle_box_size[0]) / 2
@@ -187,8 +197,8 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
 
         self.number_text = Text(
             self.game.core.media.fonts['puzzle_select_number'],
-            self.x - 5,
-            self.y,
+            self.x,
+            self.y + 5,
             TEXT_ALIGN_TOP_RIGHT,
             str(self.puzzle_num + 1)
             )
@@ -196,7 +206,7 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         self.number_text.colour = (0.0, 0.0, 0.0) if self.cleared else (0.3, 0.3, 0.3)
         self.number_text.shadow = 2
         self.number_text.shadow_colour = (.5, .5, .5, .5)
-
+        
         if self.cleared:
             path_dir = self.game.core.path_user_pack_directory if self.game.manager.user_created_puzzles else self.game.core.path_game_pack_directory
 
@@ -246,10 +256,6 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
                     if self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.puzzle_filename][1] == 4:
                         self.star_icon = GUI_puzzle_puzzle_item_star_icon(self.game, self)
 
-                    
-        # draw strategy
-        self.draw_strategy = "puzzle_select_puzzle_item"
-
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
@@ -260,7 +266,6 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
 
         
     def mouse_not_over(self):
-        self.alpha = .47
         if self.cleared:
             self.coloured_picture.alpha = 0.0
             self.monochrome_picture.alpha = 1.0
@@ -271,9 +276,7 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         if self.play_sound and not self.hover_sound:
             self.game.core.media.sfx['button_hover'].play(0)
             self.hover_sound = True
-        
-        self.alpha = .78
-        
+            
         if self.cleared:        
             self.coloured_picture.alpha = 1.0
             self.monochrome_picture.alpha = 0.0
@@ -310,7 +313,6 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
                 self.star_icon.Kill()
 
 
-
 class GUI_puzzle_puzzle_item_picture_unsolved(Process):
     def __init__(self, game, parent):
         Process.__init__(self)
@@ -333,14 +335,15 @@ class GUI_puzzle_puzzle_item_picture_unsolved(Process):
 class GUI_puzzle_puzzle_item_picture(Puzzle_image):
     def gui_init(self):
         Puzzle_image.gui_init(self)
-        self.draw_strategy = "gui_designer_monochrome_puzzle_image"        
+        #self.draw_strategy = "gui_designer_monochrome_puzzle_image"        
         
     def set_position_z_scale(self, x, y):        
         self.z = Z_GUI_OBJECT_LEVEL_5
         scale_start = self.height if self.height > self.width else self.width
-        self.scale = .01 * ((76.0 / scale_start) * 100)
-        self.x = x - ((self.width * self.scale) / 2)
-        self.y = y - ((self.height * self.scale) / 2)
+        #self.scale = .01 * ((76.0 / scale_start) * 100)
+        self.scale = .01 * ((84.0 / scale_start) * 100)
+        self.x = x - ((self.width * self.scale) / 2) + 13
+        self.y = y - ((self.height * self.scale) / 2) + 13
 
 
 

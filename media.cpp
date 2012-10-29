@@ -52,7 +52,7 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("puzzle_message", new Font("fnt/arulent.ttf", 25)));
     fonts.insert(pair<string,Font*>("puzzle_timer", new Font("fnt/borisblackbloxx.ttf", 30)));
     fonts.insert(pair<string,Font*>("menu_titles", new Font("fnt/borisblackbloxx.ttf", 35)));
-    fonts.insert(pair<string,Font*>("menu_subtitles", new Font("fnt/borisblackbloxx.ttf", 25)));
+    fonts.insert(pair<string,Font*>("menu_subtitles", new Font("fnt/borisblackbloxx.ttf", 22)));
     fonts.insert(pair<string,Font*>("designer_pack_name", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("designer_pack_author", new Font("fnt/borisblackbloxx.ttf", 15)));
     fonts.insert(pair<string,Font*>("verifier_status", new Font("fnt/borisblackbloxx.ttf", 16)));
@@ -60,7 +60,7 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("category_button_completed_count", new Font("fnt/borisblackbloxx.ttf", 28)));
     fonts.insert(pair<string,Font*>("category_button_solved_text", new Font("fnt/borisblackbloxx.ttf", 22)));
     fonts.insert(pair<string,Font*>("speech_bubble", new Font("fnt/cookies.ttf", 20)));
-    fonts.insert(pair<string,Font*>("puzzle_select_number", new Font("fnt/cookies.ttf", 30)));
+    fonts.insert(pair<string,Font*>("puzzle_select_number", new Font("fnt/borisblackbloxx.ttf", 30)));
     fonts.insert(pair<string,Font*>("puzzle_select_size", new Font("fnt/bitmap1.ttf", 12)));
     fonts.insert(pair<string,Font*>("options_mouse_button", new Font("fnt/designosaur.ttf", 15)));
     fonts.insert(pair<string,Font*>("tutorial_instructions", new Font("fnt/basiccomical.ttf", 25)));
@@ -145,6 +145,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_mouse", new Image("gfx/gui/mouse.png")));
 
     gfx.insert(pair<string, Image*>("gui_puzzle_image_unsolved", new Image("gfx/gui/puzzle_image_unsolved.png")));
+    gfx.insert(pair<string, Image*>("gui_puzzle_select_puzzle_box", new Image("gfx/gui/puzzle_select_puzzle_box.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_solved_icon", new Image("gfx/gui/puzzle_select_solved_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_saved_icon", new Image("gfx/gui/puzzle_select_saved_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_star_icon", new Image("gfx/gui/puzzle_select_star_icon.png")));
