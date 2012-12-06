@@ -1248,8 +1248,7 @@ class GUI_element_button_scroll_window_arrow(GUI_element_button):
         self.scroll_element = self.parent
         self.x = self.parent.width - 64
         self.z = self.parent.z - 1
-        self.rotation = 0 if self.up_arrow else 180
-        self.image = self.game.core.media.gfx['gui_button_scroll_window_arrow']
+        self.image = self.game.core.media.gfx['gui_scroll_button_up' if self.up_arrow else 'gui_scroll_button_down']
         self.gui_init()
 
 

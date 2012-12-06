@@ -59,6 +59,7 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("category_button_name", new Font("fnt/borisblackbloxx.ttf", 35)));
     fonts.insert(pair<string,Font*>("category_button_completed_count", new Font("fnt/borisblackbloxx.ttf", 28)));
     fonts.insert(pair<string,Font*>("category_button_solved_text", new Font("fnt/borisblackbloxx.ttf", 22)));
+    fonts.insert(pair<string,Font*>("category_button_total_count", new Font("fnt/borisblackbloxx.ttf", 22)));
     fonts.insert(pair<string,Font*>("speech_bubble", new Font("fnt/cookies.ttf", 20)));
     fonts.insert(pair<string,Font*>("puzzle_select_number", new Font("fnt/borisblackbloxx.ttf", 30)));
     fonts.insert(pair<string,Font*>("puzzle_select_size", new Font("fnt/bitmap1.ttf", 12)));
@@ -67,6 +68,9 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("tutorial_click_to_continue", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("title_speech_bubble", new Font("fnt/basiccomical.ttf", 20)));
     fonts.insert(pair<string,Font*>("category_select_speech_bubble", new Font("fnt/basiccomical.ttf", 30)));
+    fonts.insert(pair<string,Font*>("puzzle_select_speech_bubble", new Font("fnt/basiccomical.ttf", 35)));
+    fonts.insert(pair<string,Font*>("puzzle_select_hover_text", new Font("fnt/borisblackbloxx.ttf", 20)));
+    fonts.insert(pair<string,Font*>("puzzle_select_rate_pack_text", new Font("fnt/borisblackbloxx.ttf", 20)));
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/gui/stompyblondie_logo.png")));
@@ -145,12 +149,14 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_mouse", new Image("gfx/gui/mouse.png")));
 
     gfx.insert(pair<string, Image*>("gui_puzzle_image_unsolved", new Image("gfx/gui/puzzle_image_unsolved.png")));
-    gfx.insert(pair<string, Image*>("gui_puzzle_select_puzzle_box", new Image("gfx/gui/puzzle_select_puzzle_box.png")));
+    gfx.insert(pair<string, Image*>("gui_puzzle_select_puzzle_box", new Image("gfx/gui/puzzle_select_puzzle_box.png", False, 2)));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_solved_icon", new Image("gfx/gui/puzzle_select_solved_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_saved_icon", new Image("gfx/gui/puzzle_select_saved_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_star_icon", new Image("gfx/gui/puzzle_select_star_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_rating_star", new Image("gfx/gui/puzzle_select_rating_star.png", False, 2)));
     gfx.insert(pair<string, Image*>("gui_sharing_rating_stars", new Image("gfx/gui/sharing_rating_stars.png", False, 6)));
+    gfx.insert(pair<string, Image*>("gui_puzzle_select_speech_bubble", new Image("gfx/gui/puzzle_select_speech_bubble.png")));
+    gfx.insert(pair<string, Image*>("gui_puzzle_select_button_report", new Image("gfx/gui/puzzle_select_button_report.png", False, 4)));
 
     gfx.insert(pair<string, Image*>("gui_chips_normal", new Image("gfx/gui/chips_normal.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_chips_happy", new Image("gfx/gui/chips_happy.png", False, 2)));
