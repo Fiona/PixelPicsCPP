@@ -139,8 +139,8 @@ class Mascot_Puzzle_Select(Mascot):
 
     def Execute(self):
         Mascot.Execute(self)
-               
-                        
+
+                                       
     def set_location(self):
         self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
         self.x = (self.game.settings['screen_width'] / 2) + 330
@@ -395,3 +395,19 @@ class Puzzle_Select_Speech_Bubble(Process):
             self.x - ((self.image.width * self.scale) / 2),
             self.y - ((self.image.height * self.scale) / 2)
             )
+
+
+
+class Mascot_Tutorial(Mascot):
+
+    def Execute(self):
+        Mascot.Execute(self)
+
+                                       
+    def set_location(self):
+        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
+        self.x = (self.game.settings['screen_width'] / 2) - 120
+        self.y = (self.game.settings['screen_height'] / 2) + 70
+        self.z = Z_GUI_OBJECT_LEVEL_6 - 1
+        self.scale = .5
+

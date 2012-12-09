@@ -148,9 +148,12 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_menu_button_save_quit", new Image("gfx/gui/menu_button_save_quit.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_menu_button_quit_tutorial", new Image("gfx/gui/menu_button_quit_tutorial.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_menu_button_stop_testing", new Image("gfx/gui/menu_button_stop_testing.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_tutorial_speech_bubble", new Image("gfx/gui/tutorial_speech_bubble.png")));
 
     gfx.insert(pair<string, Image*>("gui_background_present", new Image("gfx/gui/background_present.png", True)));
     gfx.insert(pair<string, Image*>("gui_background_balloons", new Image("gfx/gui/background_balloons.png", True)));
+    gfx.insert(pair<string, Image*>("gui_background_designer", new Image("gfx/gui/background_designer.png", True)));
+    gfx.insert(pair<string, Image*>("gui_background_tutorial", new Image("gfx/gui/background_tutorial.png", True)));
     gfx.insert(pair<string, Image*>("gui_background_grid", new Image("gfx/gui/background_grid.png", True)));
     gfx.insert(pair<string, Image*>("gui_stars", new Image("gfx/gui/stars.png", True)));
     gfx.insert(pair<string, Image*>("gui_mouse", new Image("gfx/gui/mouse.png")));

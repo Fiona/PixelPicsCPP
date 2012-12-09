@@ -346,7 +346,11 @@ class GUI_puzzle(GUI_element):
         # Draw strategy data
         self.parent.text_offset_x = 0.0
         self.parent.text_offset_y = 0.0
-        self.parent.draw_strategy = "balloons_background"
+        if self.game.game_state == GAME_STATE_TUTORIAL:
+            self.parent.draw_strategy = "tutorial_background"
+        else:
+            self.parent.draw_strategy = "balloons_background"
+            
         """
         if BACKGROUNDS[self.game.manager.current_puzzle.background]['type'] == BACKGROUND_TYPE_COLOUR:
             self.parent.draw_strategy = "primitive_square"
@@ -404,7 +408,8 @@ class GUI_puzzle(GUI_element):
         if self.state == PUZZLE_STATE_SOLVING:
             if not self.game.paused:
                 self.game.timer+= 1
-                self.do_bump_scrolling()
+                if not self.game.game_state == GAME_STATE_TUTORIAL:
+                    self.do_bump_scrolling()
                 if not self.game.game_state in [GAME_STATE_TEST, GAME_STATE_TUTORIAL] and (self.game.timer % 30) == 0:
                     self.game.manager.save_current_puzzle_state()
                 
@@ -906,6 +911,8 @@ class GUI_puzzle(GUI_element):
 
     def mouse_middle_down(self):
         if not self.state == PUZZLE_STATE_SOLVING:
+            return
+        if not self.game.game_state == GAME_STATE_TUTORIAL:
             return
 
         diff = (self.game.gui.mouse.x - self.remember_mouse_pos[0], self.game.gui.mouse.y - self.remember_mouse_pos[1])

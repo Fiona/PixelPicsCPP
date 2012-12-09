@@ -13,6 +13,7 @@ from core import *
 from consts import *
 from gui.gui_elements import *
 from gui.puzzle_view import GUI_puzzle, GUI_puzzle_container
+from gui.mascot import Mascot_Tutorial
 
 
 
@@ -36,6 +37,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
         ]
     message_final_stage_cell_filled = ["Whoops! That square has already been completed!"]
     message_tutorial_complete = ["Great work - you solved the puzzle and revealed the hidden picture!", "That's all I have to teach you! Have fun playing PixelPics!"]
+
     
     def __init__(self, game, parent = None):
         GUI_puzzle_container.__init__(self, game)
@@ -46,25 +48,26 @@ class GUI_tutorial_container(GUI_puzzle_container):
         self.puzzle_cleared = False
         self.wait_one_left_click = False
         self.stage_object = None
+        self.mascot = Mascot_Tutorial(self.game)
 
         self.add_stage(
-            instructions = ["Hi there!", "I'm Chips! I'm going to show you how to solve PixelPics puzzles!"]
+            instructions = ["Hi there, I'm Chips!", "I'm going to show you how to solve PixelPics puzzles!"]
             )
         self.add_stage(
-            instructions = ["The goal is to reveal the hidden picture in each puzzle.", "This is done by figuring out which squares are filled and which are empty."]
+            instructions = ["The goal is to reveal the hidden picture in each puzzle.", "This is done by figuring out which squares are filled and", "which are empty."]
             )
         self.add_stage(
             instructions = ["Take a look at this one."]
             )
         self.add_stage(
-            instructions = ["See the numbers along the edges?", "They tell you the lengths of the filled blocks that can be found on that row or column,", "in the order they appear."]
+            instructions = ["See the numbers along the edges?", "They tell you the lengths of the filled blocks that can be", "found on that row or column, in the order they appear."]
             )
         self.add_stage(
-            instructions = ["This column has only one number, a 2!", "So somewhere in this column there's a single block of 2 filled squares."],
+            instructions = ["This column has only one number, a 2!", "So somewhere in this column there's a single block of 2", "filled squares."],
             col_highlights = [[(0,0), (0,4)]]
             )
         self.add_stage(
-            instructions = ["This row has two separate numbers, each being a 1.", "So somewhere in this row there are two separated filled squares."],
+            instructions = ["This row has two separate numbers, each being a 1.", "So somewhere in this row there are two separated filled", "squares."],
             row_highlights = [[(0,3), (4,3)]]
             )
         self.add_stage(
@@ -78,12 +81,12 @@ class GUI_tutorial_container(GUI_puzzle_container):
             col_highlights = [[(2,0), (2,4)]]
             )
         self.add_stage(
-            instructions = ["That's the whole height of the board! So we know for sure that they must all be filled in."],
+            instructions = ["That's the whole height of the board! So we know for sure", "that they must all be filled in."],
             col_highlights = [[(2,0), (2,4)]]
             )
         self.add_stage(
-            instructions = ["Go ahead and fill in those squares by clicking on them with your right mouse button!"],
-            alt_instructions = ["Go ahead and fill in those squares by clicking on them with your left mouse button!"],
+            instructions = ["Go ahead and fill in those squares by clicking on them with", "your right mouse button!"],
+            alt_instructions = ["Go ahead and fill in those squares by clicking on them with", "your left mouse button!"],
             col_highlights = [[(2, 0), (2, 4)]],
             cells_fill = [(0, 2), (1, 2), (2, 2), (3, 2), (4, 2)],
             wrong_cell = "We'll get to the other squares in a second - let's focus on the highlighted ones for now!",
@@ -93,10 +96,10 @@ class GUI_tutorial_container(GUI_puzzle_container):
               ]
             )
         self.add_stage(
-            instructions = ["Great!", "The squares that you figure out will help you solve more of the puzzle!"]
+            instructions = ["Great!", "The squares that you figure out will help you solve more", "of the puzzle!"]
             )
         self.add_stage(
-            instructions = ["Take a look at this column.", "The clue is 0, that means there are no filled squares in this column at all!"],
+            instructions = ["Take a look at this column.", "The clue is 0, that means there are no filled squares in this", "column at all!"],
             col_highlights = [[(4,0), (4,4)]]
             )
         self.add_stage(
@@ -104,8 +107,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             col_highlights = [[(4,0), (4,4)]]
             )
         self.add_stage(
-            instructions = ["Go ahead and mark those squares as empty with your left mouse button!"],
-            alt_instructions = ["Go ahead and mark those squares as empty with your right mouse button!"],
+            instructions = ["Go ahead and mark those squares as empty with your", "left mouse button!"],
+            alt_instructions = ["Go ahead and mark those squares as empty with your", "right mouse button!"],
             col_highlights = [[(4,0), (4,4)]],
             cells_empty = [(0, 4), (1, 4), (2, 4), (3, 4), (4, 4)],
             wrong_cell = "We'll get to the other squares in a second - let's focus on the highlighted ones for now!",
@@ -118,16 +121,16 @@ class GUI_tutorial_container(GUI_puzzle_container):
             instructions = ["Excellent!", "These will help us deduce more of the puzzle too."]
             )
         self.add_stage(
-            instructions = ["Remember this row? The clue says there are 2 separated filled squares.", "Hey, we've already found one of them!"],
+            instructions = ["Remember this row? The clue says there are 2 separated", "filled squares.", "Hey, we've already found one of them!"],
             row_highlights = [[(0,3), (4,3)]]
             )
         self.add_stage(
-            instructions = ["Each block of squares must be separated by at least 1 empty square.", "That means that the squares either side of the filled block must be empty!"],
+            instructions = ["Each block of squares must be separated by at least 1", "empty square.", "That means that the squares either side of the filled block", "must be empty!"],
             cell_highlights = [(1,3), (3,3)]
             )
         self.add_stage(
-            instructions = ["Go ahead and mark those spaces as empty with your left mouse button."],
-            alt_instructions = ["Go ahead and mark those spaces as empty with your right mouse button."],
+            instructions = ["Go ahead and mark those spaces as empty with your left", "mouse button."],
+            alt_instructions = ["Go ahead and mark those spaces as empty with your right", "mouse button."],
             cell_highlights = [(1,3), (3,3)],
             cells_empty = [(3,1), (3,3)],
             wrong_cell = "We'll get to the other squares in a second - let's focus on the highlighted ones for now!",
@@ -140,7 +143,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             instructions = ["Fabulous!"]
             )        
         self.add_stage(
-            instructions = ["Sometimes there is only 1 remaining place a block of squares could be.", "So the other filled square must be in the highlighted space!"],
+            instructions = ["Sometimes there is only 1 remaining place a block of squares", "could be.", "So the other filled square must be in the highlighted space!"],
             cell_highlights = [(0,3)]
             )
         self.add_stage(
@@ -157,7 +160,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             instructions = ["Bravo!"]
             )        
         self.add_stage(
-            instructions = ["Check out this row. The clue says there's a single block of 3. But there are 4 spaces!", "So we don't know for sure exactly where the block starts and ends."],
+            instructions = ["Check out this row. The clue says there's a single block of 3.", "But there are 4 spaces!", "So we don't know for sure exactly where the block starts", "and ends."],
             row_highlights = [[(0,0), (4,0)]]
             )
         self.add_stage(
@@ -186,11 +189,11 @@ class GUI_tutorial_container(GUI_puzzle_container):
             instructions = ["You got it!"]
             )
         self.add_stage(
-            instructions = ["Take a look at these rows. We've already found the blocks mentioned in the clues!", "Notice that the clues change colour when we've solved them."],
+            instructions = ["Take a look at these rows. We've already found the blocks", "mentioned in the clues!", "Notice that the clues change colour when we've solved them."],
             row_highlights = [[(0,1), (4,1)], [(0,4), (4,4)]]
             )
         self.add_stage(
-            instructions = ["That means we know for sure that the other squares on these rows must be empty."],
+            instructions = ["That means we know for sure that the other squares on", "these rows must be empty."],
             row_highlights = [[(0,1), (4,1)], [(0,4), (4,4)]]
             )
         self.add_stage(
@@ -210,7 +213,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             instructions = ["Now there are only a few unfilled squares left.", "How about you take it from here?"]
             )
         self.add_stage(
-            instructions = ["Remember, only mark squares that you know for sure. Good luck!"]
+            instructions = ["Remember, only mark squares that you know for sure.", "Good luck!"]
             )
         
 
@@ -338,6 +341,11 @@ class GUI_tutorial_container(GUI_puzzle_container):
             self.next_stage()
                 
 
+    def On_Exit(self):
+        GUI_puzzle_container.On_Exit(self)
+        self.mascot.Kill()
+
+
 
 class GUI_tutorial_puzzle(GUI_puzzle):
 
@@ -412,8 +420,10 @@ class GUI_tutorial_stage(GUI_element):
         self.game = game
         self.parent = parent
         self.stage = stage
-        self.x, self.y = 0, 0
+        self.x = (self.game.settings['screen_width'] / 2) - 450
+        self.y = (self.game.settings['screen_height'] / 2) - 395
         self.z = Z_GUI_OBJECT_LEVEL_7 - 1
+        self.image = self.game.core.media.gfx['gui_tutorial_speech_bubble']
 
         self.width, self.height = 0, 0
         self.click_to_continue = False
@@ -425,18 +435,16 @@ class GUI_tutorial_stage(GUI_element):
 
         self.objs = []
 
-        text_y_pos = 50
+        text_y_pos = self.y + 40
 
         ins = self.stage['instructions']
         if not self.stage['alt_instructions'] == [""] and not self.game.settings['mouse_left_empty']:
             ins = self.stage['alt_instructions']
         
         for text_string in ins:
-            text = Text(self.game.core.media.fonts['tutorial_instructions'], 20, text_y_pos, TEXT_ALIGN_TOP_LEFT, text_string)
-            text.colour = (1.0, .5, 0.0)
-            text.shadow = 1
-            text.shadow_colour = (.6, .4, .2, .5)
-            text.z = self.z
+            text = Text(self.game.core.media.fonts['tutorial_instructions'], self.x + 190, text_y_pos, TEXT_ALIGN_TOP_LEFT, text_string)
+            text.colour = (.2, .2, .2)
+            text.z = self.z - 1
             self.objs.append(text)
             text_y_pos += text.text_height + 5
 
@@ -445,7 +453,7 @@ class GUI_tutorial_stage(GUI_element):
             text.colour = (.8, .3, 0.0)
             text.shadow = 2
             text.shadow_colour = (.5, .3, .1, .5)
-            text.z = self.z
+            text.z = self.z - 1
             self.objs.append(text)
 
         if len(self.stage['col_highlights']):
@@ -482,7 +490,8 @@ class GUI_tutorial_message(GUI_element):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x, self.y = 0, 0
+        self.x = 0
+        self.y = 0
         self.z = Z_GUI_OBJECT_LEVEL_7 - 1
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
@@ -495,7 +504,7 @@ class GUI_tutorial_message(GUI_element):
             text.colour = (1.0, .5, 0.0)
             text.shadow = 1
             text.shadow_colour = (.6, .4, .2, .5)
-            text.z = self.z
+            text.z = self.z - 1
             self.objs.append(text)
             text_y_pos += text.text_height + 5
         
@@ -503,7 +512,7 @@ class GUI_tutorial_message(GUI_element):
         text.colour = (.8, .3, 0.0)
         text.shadow = 2
         text.shadow_colour = (.5, .3, .1, .5)
-        text.z = self.z
+        text.z = self.z - 1
         self.objs.append(text)
 
         self.wait = 0
