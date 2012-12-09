@@ -50,9 +50,9 @@ class GUI_puzzle_container(GUI_element):
             x.show()
         if self.game.paused or not self.puzzle.state == PUZZLE_STATE_SOLVING:
             return
-        if self.game.gui.mouse.x > self.game.settings['screen_width'] - 260 and \
+        if self.game.gui.mouse.x > self.game.settings['screen_width'] - 200 and \
            self.game.gui.mouse.x < self.game.settings['screen_width'] and \
-           self.game.gui.mouse.y > self.game.settings['screen_height'] - 120 and \
+           self.game.gui.mouse.y > self.game.settings['screen_height'] - 90 and \
            self.game.gui.mouse.y < self.game.settings['screen_height']:
             for x in self.objs:
                 x.hide()
@@ -82,41 +82,16 @@ class GUI_puzzle_pause_button(GUI_element_button):
         self.game = game
         self.parent = parent
         self.z = Z_GUI_OBJECT_LEVEL_7
-        self.image = self.game.core.media.gfx['gui_button_go_back']
+        self.image = self.game.core.media.gfx['gui_button_puzzle_menu']
         self.gui_init()
-        self.x = 8
-        self.y = 8
-        self.width = 128
-        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 8, TEXT_ALIGN_TOP_LEFT, "Menu")
-        self.text.z = self.z - 1
-        self.text.colour = (1.0, 1.0, 1.0)
-        self.text.shadow = 2
-        self.text.shadow_colour = (.2, .2, .2)
-
-        # Draw strategy data
-        self.draw_strategy = "primitive_square"
-        self.draw_strategy_call_parent = True
-        self.primitive_square_filled = True
-        self.primitive_square_x = 0.0
-        self.primitive_square_y = 0.0
-        self.primitive_square_width = 200.0
-        self.primitive_square_height = 45
-        self.primitive_square_four_colours = True
-        self.primitive_square_colour = (
-            (.5, .7, .8, 1.0),
-            (1.0, 1.0, 1.0, 0.0),
-            (1.0, 1.0, 1.0, 0.0),
-            (.5, .7, .8, 1.0)
-            )
-
+        self.x = -16
+        self.y = -16
+        self.width = 105
+        self.height = 105
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.parent.show_menu()
-
-
-    def On_Exit(self):
-        self.text.Kill()
 
 
 
@@ -159,6 +134,7 @@ class GUI_puzzle_pause_menu(GUI_element):
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 20)
         else:
             self.game.manager.reset_puzzle_state()
+            self.game.manager.delete_current_puzzle_save()
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 20)
             
         
@@ -175,20 +151,18 @@ class GUI_puzzle_pause_menu(GUI_element):
 
 
 class GUI_puzzle_pause_menu_resume_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Resume Game"
-    width = 150
+    generic_button = False
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.z = self.parent.z - 2
-        self.x = (self.game.settings['screen_width'] / 2)
-        self.y = (self.game.settings['screen_height'] / 2) - 30
+        self.z = self.parent.z - 6
+        self.image = self.game.core.media.gfx['gui_menu_button_resume_game']
+        self.x = (self.game.settings['screen_width'] / 2) - (self.image.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - 112
+        self.height = 54
         self.gui_init()
-        self.x -= self.width / 2
-        self.generic_button_text_object.x -= (self.width / 2)
 
 
     def mouse_left_up(self):
@@ -198,20 +172,17 @@ class GUI_puzzle_pause_menu_resume_button(GUI_element_button):
 
 
 class GUI_puzzle_pause_menu_options_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Options"
-    width = 150
+    generic_button = False
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.z = self.parent.z - 2
-        self.x = (self.game.settings['screen_width'] / 2)
-        self.y = (self.game.settings['screen_height'] / 2)
+        self.z = self.parent.z - 5
+        self.image = self.game.core.media.gfx['gui_button_main_menu_options']
+        self.x = (self.game.settings['screen_width'] / 2) - (self.image.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - 64
         self.gui_init()
-        self.x -= self.width / 2
-        self.generic_button_text_object.x -= (self.width / 2)
 
 
     def mouse_left_up(self):
@@ -220,54 +191,26 @@ class GUI_puzzle_pause_menu_options_button(GUI_element_button):
 
 
 
-class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Save and Quit"
-    width = 150
-
-    def __init__(self, game, parent = None):
-        Process.__init__(self)
-        self.game = game
-        self.parent = parent
-        self.z = self.parent.z - 2
-        self.x = (self.game.settings['screen_width'] / 2)
-        self.y = (self.game.settings['screen_height'] / 2) + 60
-
-        if self.game.game_state == GAME_STATE_TEST:
-            self.generic_button_text = "Stop Testing"
-        elif self.game.game_state == GAME_STATE_TUTORIAL:
-            self.generic_button_text = "Quit Tutorial"
-            
-        self.gui_init()
-        self.x -= self.width / 2
-        self.generic_button_text_object.x -= (self.width / 2)
-
-
-    def mouse_left_up(self):
-        GUI_element_button.mouse_left_up(self)
-        self.parent.Stop_playing()
-
-
 
 class GUI_puzzle_pause_menu_restart_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Restart Puzzle"
-    width = 150
+    generic_button = False
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.z = self.parent.z - 2
-        self.x = (self.game.settings['screen_width'] / 2)
-        self.y = (self.game.settings['screen_height'] / 2) + 30
+        self.z = self.parent.z - 4
+
+        self.image = self.game.core.media.gfx['gui_menu_button_restart_tutorial']
 
         if self.game.game_state == GAME_STATE_TUTORIAL:
-            self.generic_button_text = "Restart Tutorial"
+            self.image = self.game.core.media.gfx['gui_menu_button_restart_tutorial']
+
+        self.x = (self.game.settings['screen_width'] / 2) - (self.image.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) - 16
+        self.height = 54
         
         self.gui_init()
-        self.x -= self.width / 2
-        self.generic_button_text_object.x -= (self.width / 2)
 
 
     def mouse_left_up(self):
@@ -279,6 +222,35 @@ class GUI_puzzle_pause_menu_restart_button(GUI_element_button):
             ["This will restart the current puzzle from the beginning.", "Are you sure you wish to restart this puzzle?"],
             confirm_callback = self.parent.Restart_puzzle
             )
+
+
+
+class GUI_puzzle_pause_menu_stop_button(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 3
+
+        self.image = self.game.core.media.gfx['gui_menu_button_save_quit']
+
+        if self.game.game_state == GAME_STATE_TEST:
+            self.image = self.game.core.media.gfx['gui_menu_button_stop_testing']
+        elif self.game.game_state == GAME_STATE_TUTORIAL:
+            self.image = self.game.core.media.gfx['gui_menu_button_quit_tutorial']
+
+        self.x = (self.game.settings['screen_width'] / 2) - (self.image.width / 2)
+        self.y = (self.game.settings['screen_height'] / 2) + 32
+        self.height = 54
+        
+        self.gui_init()
+
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.Stop_playing()
 
 
 
@@ -371,7 +343,11 @@ class GUI_puzzle(GUI_element):
         
 
     def reload_puzzle_background(self):
-        # Draw strat
+        # Draw strategy data
+        self.parent.text_offset_x = 0.0
+        self.parent.text_offset_y = 0.0
+        self.parent.draw_strategy = "balloons_background"
+        """
         if BACKGROUNDS[self.game.manager.current_puzzle.background]['type'] == BACKGROUND_TYPE_COLOUR:
             self.parent.draw_strategy = "primitive_square"
             self.parent.draw_strategy_call_parent = False
@@ -386,7 +362,8 @@ class GUI_puzzle(GUI_element):
                 (1.0,1.0,1.0,1.0),
                 BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
                 )
-    
+                """
+        
 
     def Execute(self):
         self.draw_strategy_camera_x = self.camera_pos[0]
@@ -396,6 +373,10 @@ class GUI_puzzle(GUI_element):
         self.reset_drawing_all_whites = False
         self.black_chunks_to_redraw = []
         self.white_chunks_to_redraw = []
+
+        if not self.game.paused:
+            self.parent.text_offset_x += 5.0
+            self.parent.text_offset_y -= 5.0
 
         self.adjust_gui_coords()
         self.adjust_text_hint_coords()
@@ -491,6 +472,7 @@ class GUI_puzzle(GUI_element):
                     elif self.game.game_state == GAME_STATE_TUTORIAL:
                         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
                     else:
+                        self.game.manager.delete_current_puzzle_save()
                         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
                     self.game.gui.block_gui_mouse_input = False
                     self.game.gui.block_gui_keyboard_input = False
@@ -572,6 +554,8 @@ class GUI_puzzle(GUI_element):
         
 
     def reload_puzzle_display(self):
+        self.hint_alpha = 1.0
+        
         self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
         self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
 
@@ -598,7 +582,7 @@ class GUI_puzzle(GUI_element):
                 text = Text(self.game.core.media.fonts['puzzle_hint_numbers'], 0, 0, TEXT_ALIGN_TOP_LEFT, str(number))
                 text.colour = PUZZLE_HINT_COMPLETED_COLOUR if number_list == (0,) else PUZZLE_HINT_COLOUR
                 text.shadow = 2
-                text.shadow_colour = (.3, .3, .3, .5)
+                text.shadow_colour = (.5, .5, .5, .5)
                 text.generate_mipmaps = True
                 text.z = Z_GUI_OBJECT_LEVEL_5
                 self.text['rows'][row_num].append(text)
@@ -614,7 +598,7 @@ class GUI_puzzle(GUI_element):
                 text = Text(self.game.core.media.fonts['puzzle_hint_numbers'], 0, 0, TEXT_ALIGN_TOP_LEFT, str(number))
                 text.colour = PUZZLE_HINT_COMPLETED_COLOUR if number_list == (0,) else PUZZLE_HINT_COLOUR
                 text.shadow = 2
-                text.shadow_colour = (.3, .3, .3, .5)
+                text.shadow_colour = (.5, .5, .5, .5)
                 text.generate_mipmaps = True
                 text.z = Z_GUI_OBJECT_LEVEL_5
                 self.text['cols'][col_num].append(text)
@@ -644,7 +628,7 @@ class GUI_puzzle(GUI_element):
         # Work out initial placement of the grid
         self.grid_x = int(self.row_number_width - ((self.row_number_width + self.grid_width) / 2) - PUZZLE_CELL_WIDTH)
         self.grid_y = int(self.column_number_height - ((self.column_number_height + self.grid_height) / 2) - PUZZLE_CELL_HEIGHT)
-
+        
         # Reset the drawing
         self.draw_strategy_reset_vectors = True
         self.reset_drawing_blacks()
@@ -659,6 +643,7 @@ class GUI_puzzle(GUI_element):
         self.draw_strategy_current_puzzle_width = self.game.manager.current_puzzle.width
         self.draw_strategy_current_puzzle_height = self.game.manager.current_puzzle.height
         self.draw_strategy_current_puzzle_state = self.game.manager.current_puzzle_state
+        self.draw_strategy_reset_hint_gradients = False
 
         self.display_rectangle_marker = False
         self.rectangle_marker_top_left = (0, 0)
@@ -672,6 +657,8 @@ class GUI_puzzle(GUI_element):
                 for j in i:
                     j.alpha = self.hint_alpha
 
+        self.draw_strategy_reset_hint_gradients = True
+        
         self.camera_pos[0] = lerp(num, target, self.camera_pos[0], 0.0)
         self.camera_pos[1] = lerp(num, target, self.camera_pos[1], 0.0)
 
@@ -1553,17 +1540,11 @@ class Player_lives(Process):
         self.draw_strategy = "primitive_square"
         self.draw_strategy_call_parent = False
         self.primitive_square_filled = True
-        self.primitive_square_x = self.game.settings['screen_width'] - 300.0
-        self.primitive_square_y = self.game.settings['screen_height'] - 74.0
-        self.primitive_square_width = 300.0
-        self.primitive_square_height = 74.0
-        self.primitive_square_four_colours = True
-        self.primitive_square_colour = (
-            (1.0, 1.0, 1.0, 0.0),
-            (.5, .7, .8, 1.0),
-            (.5, .7, .8, 1.0),
-            (1.0, 1.0, 1.0, 0.0)
-            )
+        self.primitive_square_x = self.game.settings['screen_width'] - 200.0
+        self.primitive_square_y = self.game.settings['screen_height'] - 55.0
+        self.primitive_square_width = 200.0
+        self.primitive_square_height = 55.0
+        self.primitive_square_colour = (1.0, 1.0, 1.0, 0.5)
 
 
     def Execute(self):
@@ -1606,11 +1587,11 @@ class Player_lives_life(Process):
         self.game = game
         self.num = num
         self.image = self.game.core.media.gfx['gui_heart']
-        self.x = self.game.settings['screen_width'] - ((self.image.width * (num + 1)) + 15)
-        self.y = self.game.settings['screen_height'] - self.image.height - 10
+        self.x = self.game.settings['screen_width'] - ((40 * (num + 1)) + 32)
+        self.y = self.game.settings['screen_height'] - 60
         self.z = Z_GUI_OBJECT_LEVEL_6 - 1
         self.scale_pos = (float(self.image.width / 2), float(self.image.height / 2))
-        self.scale = .8
+        self.scale = .6
         self.dying = False
         self.iter = 0
         
@@ -1625,7 +1606,7 @@ class Player_lives_life(Process):
 
         elif self.current:
             self.iter += 1
-            self.scale = lerp(self.iter, 60, .8 if self.scale_dir else 1.0, 1.0 if self.scale_dir else .8)
+            self.scale = lerp(self.iter, 60, .6 if self.scale_dir else .8, .8 if self.scale_dir else .6)
             if self.iter > 60:
                 self.iter = 0
                 self.scale_dir = not self.scale_dir
@@ -1639,7 +1620,7 @@ class Player_lives_life(Process):
         self.dying = True
         self.init_y = self.y
         self.image_sequence = 2
-        self.scale = 1.0
+        self.scale = .6
 
 
 
@@ -1649,27 +1630,21 @@ class Timer(Process):
         Process.__init__(self)
         self.game = game
         self.z = Z_GUI_OBJECT_LEVEL_6            
-        self.text = Text(self.game.core.media.fonts['puzzle_timer'], self.game.settings['screen_width'] - 25, self.game.settings['screen_height'] - 100, TEXT_ALIGN_CENTER_RIGHT, "00:00:00")
-        self.text.colour = (1.0, 1.0, 1.0)
-        self.text.shadow = 2
-        self.text.shadow_colour = (.3, .3, .3, .5)
+        self.text = Text(self.game.core.media.fonts['puzzle_timer'], self.game.settings['screen_width'] - 40, self.game.settings['screen_height'] - 62, TEXT_ALIGN_CENTER_RIGHT, "00:00:00")
+        self.text.colour = (0.95, 0.58, 0.09)
+        self.text.shadow = 1
+        self.text.shadow_colour = (.6, .6, .6, .5)
         self.text.z = self.z - 1
 
         # Draw strategy data
         self.draw_strategy = "primitive_square"
         self.draw_strategy_call_parent = False
         self.primitive_square_filled = True
-        self.primitive_square_x = self.game.settings['screen_width'] - 300.0
-        self.primitive_square_y = self.text.y - 20.0
-        self.primitive_square_width = 300.0
-        self.primitive_square_height = 45
-        self.primitive_square_four_colours = True
-        self.primitive_square_colour = (
-            (1.0, 1.0, 1.0, 0.0),
-            (.5, .7, .8, 1.0),
-            (.5, .7, .8, 1.0),
-            (1.0, 1.0, 1.0, 0.0)
-            )
+        self.primitive_square_x = self.game.settings['screen_width'] - 200.0
+        self.primitive_square_y = self.game.settings['screen_height'] - 82.0
+        self.primitive_square_width = 200.0
+        self.primitive_square_height = 27.0
+        self.primitive_square_colour = (1.0, 1.0, 1.0, .5)
 
 
     def Execute(self):

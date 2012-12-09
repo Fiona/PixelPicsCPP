@@ -78,11 +78,10 @@ class GUI_category_select_container(GUI_element):
 
         self.scroll_speed = 0.0
 
+        # Draw strategy data
         self.text_offset_x = 0.0
         self.text_offset_y = 0.0
-
-        # Draw strategy data
-        self.draw_strategy = "category_select"
+        self.draw_strategy = "balloons_background"
 
 
     def Execute(self):

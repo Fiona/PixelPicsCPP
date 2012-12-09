@@ -105,7 +105,7 @@ public:
     void Draw_strategy_designer_puzzle_background_item();
     void Draw_strategy_designer_colour_current_colour();
     void Draw_strategy_designer_colour_value_slider();
-    void Draw_strategy_category_select();
+    void Draw_strategy_balloons_background();
     void Draw_strategy_puzzle_select();
     void Draw_strategy_puzzle_select_puzzle_item();
     void Draw_strategy_main_menu_title();

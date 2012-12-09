@@ -65,9 +65,6 @@ class GUI_puzzle_select_container(GUI_element_network_container):
             2.0
             )
 
-        self.text_offset_x = 0.0
-        self.text_offset_y = 0.0
-
         i = 0
         for puzzle_filename in self.game.manager.current_pack.order:
             GUI_puzzle_puzzle_item(self.game, self, puzzle_filename, self.game.manager.current_pack.puzzles[puzzle_filename], i)
@@ -79,7 +76,9 @@ class GUI_puzzle_select_container(GUI_element_network_container):
                 self.report_button = GUI_puzzle_select_report(self.game, self)
             
         # Draw strategy data
-        self.draw_strategy = "category_select"
+        self.text_offset_x = 0.0
+        self.text_offset_y = 0.0
+        self.draw_strategy = "balloons_background"
 
 
     def Execute(self):

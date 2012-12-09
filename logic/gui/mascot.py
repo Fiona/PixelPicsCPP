@@ -114,9 +114,9 @@ class Mascot_Category_Select(Mascot):
         x = self.x - (self.image.width / 2)
         y = self.y - (self.image.height / 2)
         if (coordinates[0] > x and \
-            coordinates[0] < x + self.image.width and \
+            coordinates[0] < x + 320 and \
             coordinates[1] > y and \
-            coordinates[1] < y + self.image.height and \
+            coordinates[1] < y + 280 and \
             self.game.core.mouse.left_up):
             self.game.core.media.sfx['meow1'].play(0)
                

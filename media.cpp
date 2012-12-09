@@ -50,7 +50,7 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("text_input", new Font("fnt/bitstreamverasansmono.ttf", 15)));
     fonts.insert(pair<string,Font*>("puzzle_hint_numbers", new Font("fnt/borisblackbloxx.ttf", 40)));
     fonts.insert(pair<string,Font*>("puzzle_message", new Font("fnt/arulent.ttf", 25)));
-    fonts.insert(pair<string,Font*>("puzzle_timer", new Font("fnt/borisblackbloxx.ttf", 30)));
+    fonts.insert(pair<string,Font*>("puzzle_timer", new Font("fnt/timer_mono.ttf", 25)));
     fonts.insert(pair<string,Font*>("menu_titles", new Font("fnt/borisblackbloxx.ttf", 35)));
     fonts.insert(pair<string,Font*>("menu_subtitles", new Font("fnt/borisblackbloxx.ttf", 22)));
     fonts.insert(pair<string,Font*>("designer_pack_name", new Font("fnt/borisblackbloxx.ttf", 20)));
@@ -141,6 +141,13 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_category_complete_tick", new Image("gfx/gui/category_complete_tick.png")));
     gfx.insert(pair<string, Image*>("gui_category_complete_star", new Image("gfx/gui/category_complete_star.png")));
     gfx.insert(pair<string, Image*>("gui_category_locked", new Image("gfx/gui/category_locked.png", False, 2)));
+
+    gfx.insert(pair<string, Image*>("gui_button_puzzle_menu", new Image("gfx/gui/button_puzzle_menu.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_menu_button_resume_game", new Image("gfx/gui/menu_button_resume_game.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_menu_button_restart_tutorial", new Image("gfx/gui/menu_button_restart_tutorial.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_menu_button_save_quit", new Image("gfx/gui/menu_button_save_quit.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_menu_button_quit_tutorial", new Image("gfx/gui/menu_button_quit_tutorial.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_menu_button_stop_testing", new Image("gfx/gui/menu_button_stop_testing.png", False, 3)));
 
     gfx.insert(pair<string, Image*>("gui_background_present", new Image("gfx/gui/background_present.png", True)));
     gfx.insert(pair<string, Image*>("gui_background_balloons", new Image("gfx/gui/background_balloons.png", True)));
