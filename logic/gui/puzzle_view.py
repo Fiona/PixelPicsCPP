@@ -201,7 +201,7 @@ class GUI_puzzle_pause_menu_restart_button(GUI_element_button):
         self.parent = parent
         self.z = self.parent.z - 4
 
-        self.image = self.game.core.media.gfx['gui_menu_button_restart_tutorial']
+        self.image = self.game.core.media.gfx['gui_menu_button_restart_puzzle']
 
         if self.game.game_state == GAME_STATE_TUTORIAL:
             self.image = self.game.core.media.gfx['gui_menu_button_restart_tutorial']

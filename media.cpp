@@ -144,6 +144,7 @@ Media::Media(Main_App* _game)
 
     gfx.insert(pair<string, Image*>("gui_button_puzzle_menu", new Image("gfx/gui/button_puzzle_menu.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_menu_button_resume_game", new Image("gfx/gui/menu_button_resume_game.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_menu_button_restart_puzzle", new Image("gfx/gui/menu_button_restart_puzzle.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_menu_button_restart_tutorial", new Image("gfx/gui/menu_button_restart_tutorial.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_menu_button_save_quit", new Image("gfx/gui/menu_button_save_quit.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_menu_button_quit_tutorial", new Image("gfx/gui/menu_button_quit_tutorial.png", False, 3)));
