@@ -15,6 +15,95 @@ from helpers  import *
 from gui.gui_elements import *
 from gui.options import *
 from solver import verify_puzzle, ContradictionException, AmbiguousException, GuessesExceededException
+from gui.main_menu import GUI_main_menu_title_letter
+
+
+
+class GUI_puzzle_title(GUI_element):
+
+    title_state = 0
+    
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.gui_init()
+        self.x = self.game.settings['screen_width'] / 2
+        self.z = Z_GUI_OBJECT_LEVEL_4
+        self.height = 300       
+        self.life = 0
+        self.dying = False
+        
+
+    def Execute(self):
+        self.life += 1
+        if self.dying:
+            self.alpha -= .05
+            for x in self.letters:
+                x.alpha = self.alpha
+            if self.alpha <= 0.0:
+                self.Kill()
+
+
+    def die(self):
+        self.dying = True
+        
+
+    def get_screen_draw_position(self):
+        return (self.x - (self.image.width / 2), self.y - (self.image.height / 2))
+
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)
+        for x in self.letters:
+            x.Kill()
+
+
+
+class GUI_ready_title(GUI_puzzle_title):
+
+    def __init__(self, game, parent = None):
+        GUI_puzzle_title.__init__(self, game, parent)
+        self.y = 200
+        self.letters = []
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "R", -227, 0, 20))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", -120, 3, 30))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "a", -10, 5, 40))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "d", 105, -3, 50))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "y", 215, 22, 60))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "?", 305, -3, 70))
+
+
+
+class GUI_cleared_title(GUI_puzzle_title):
+
+    def __init__(self, game, parent = None):
+        GUI_puzzle_title.__init__(self, game, parent)
+        self.y = 80
+        self.letters = []
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "C", -305, 0, 20))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", -230, -2, 30))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", -150, 4, 40))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "a", -40, 8, 50))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "r", 55, 10, 60))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 147, 4, 70))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "d", 255, 0, 80))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "!", 340, -2, 90))
+
+
+
+class GUI_failed_title(GUI_puzzle_title):
+
+    def __init__(self, game, parent = None):
+        GUI_puzzle_title.__init__(self, game, parent)
+        self.y = 150
+        self.letters = []
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "F", -205, 0, 20))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "a", -100, 4, 30))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -20, -6, 40))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 30, -4, 50))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 110, 2, 60))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "d", 220, -4, 70))
 
 
 
@@ -41,7 +130,7 @@ class GUI_puzzle_container(GUI_element):
             self.objs.append(Player_lives(self.game))
         self.objs.append(Timer(self.game))        
 
-        GUI_puzzle_pause_button(self.game, self)
+        self.pause_button = GUI_puzzle_pause_button(self.game, self)
 
 
     def Execute(self):
@@ -334,6 +423,7 @@ class GUI_puzzle(GUI_element):
         self.anim_state = 0
         self.iter = 0
 
+        self.click_to_continue = False
         self.made_mistake = False
 
         self.current_locked_row = None
@@ -393,7 +483,7 @@ class GUI_puzzle(GUI_element):
             self.game.gui.block_gui_keyboard_input = True
             self.game.gui.mouse.alpha = 0.0
             if self.wait_time == 120:
-                self.title_text = Title_ready(self.game, 0, 100, wait = 1)
+                self.title_text = GUI_ready_title(self.game, self)
             if not self.title_text is None and self.title_text.life > 100:
                 self.title_text.die()
                 self.title_text = None
@@ -444,7 +534,7 @@ class GUI_puzzle(GUI_element):
                     self.game.gui.block_gui_keyboard_input = True
                     self.game.gui.block_gui_mouse_input = True
                     self.game.gui.mouse.alpha = 0.0
-                    self.title_text = Title_failed(self.game, 0, 100, wait = 1)
+                    self.title_text = GUI_failed_title(self.game, self)
                     self.game.fade_out_music(500)
                     self.wait_time = 0
 
@@ -461,8 +551,8 @@ class GUI_puzzle(GUI_element):
 
             elif self.anim_state == 2:
                 if not self.title_text is None and self.wait_time > 220:
-                    self.title_text.die()
-                    self.title_text = None
+                    #self.title_text.die()
+                    #self.title_text = None
                     self.additional_text = Puzzle_nameplate_text(
                         self.game,
                         self.game.settings['screen_width'] /2,
@@ -470,8 +560,9 @@ class GUI_puzzle(GUI_element):
                         "Click to continue..."
                         )
                     self.objs.append(self.additional_text)
+                    self.click_to_continue = True
 
-                if self.title_text is None and self.game.core.mouse.left_up:
+                if self.click_to_continue and self.game.core.mouse.left_up:
                     if self.game.game_state == GAME_STATE_TEST:
                         self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
                     elif self.game.game_state == GAME_STATE_TUTORIAL:
@@ -494,7 +585,7 @@ class GUI_puzzle(GUI_element):
                     self.game.gui.block_gui_keyboard_input = True
                     self.game.gui.block_gui_mouse_input = True
                     self.game.gui.mouse.alpha = 0.0
-                    self.title_text = Title_cleared(self.game, 0, 100, wait = 1)
+                    self.title_text = GUI_cleared_title(self.game, self)
                     self.wait_time = 0
                     self.game.core.media.sfx['success'].play(0)
                     self.game.fade_out_music(500)
@@ -511,10 +602,11 @@ class GUI_puzzle(GUI_element):
                     self.iter = 0
 
             elif self.anim_state == 2:
-                if not self.title_text is None and self.wait_time > 220:
-                    self.title_text.die()
-                    self.title_text = None
+                if not self.click_to_continue and self.wait_time > 100:
+                    #self.title_text.die()
+                    #self.title_text = None
 
+                    """
                     self.additional_text = Puzzle_nameplate_text(
                         self.game,
                         self.game.settings['screen_width'] / 2,
@@ -522,17 +614,50 @@ class GUI_puzzle(GUI_element):
                         "Click to continue..."
                         )
                     self.objs.append(self.additional_text)
+                    """
                     
                     self.objs.append(
                         Puzzle_nameplate_text(
                         self.game,
                         self.game.settings['screen_width'] / 2,
-                        50,
+                        #self.game.settings['screen_height'] - 70,
+                        self.grid_gui_y + self.grid_gui_height + 40,
                         str(self.game.manager.current_puzzle.name)
                         )
                         )
 
-                if self.title_text is None and self.game.core.mouse.left_up:
+                    self.additional_text = Text(
+                        self.game.core.media.fonts['puzzle_click_to_continue'],
+                        self.game.settings['screen_width'] - 10,
+                        self.game.settings['screen_height'] - 10,
+                        TEXT_ALIGN_BOTTOM_RIGHT,
+                        "Click to continue..."
+                        )
+                    self.additional_text.colour = (0.4, 0.4, 0.4)
+                    self.additional_text.alpha = 0.0
+                    self.additional_text.z = Z_GUI_OBJECT_LEVEL_4
+                    self.objs.append(self.additional_text)
+                    
+                    self.click_to_continue = True
+
+                if self.wait_time == 150 and not self.game.game_state in [GAME_STATE_TEST, GAME_STATE_TUTORIAL]:
+                    has_perfect = False
+                    if self.game.lives == INITIAL_LIVES:
+                        self.objs.append(
+                            Puzzle_perfect_star(self.game, self)
+                            )
+                        has_perfect = True
+
+                    if self.game.timer < self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.game.manager.current_puzzle_file][0]:
+                        self.objs.append(
+                            Puzzle_record_clock(self.game, self, has_perfect = has_perfect)
+                            )
+
+                if self.wait_time > 200 and self.additional_text.alpha < 1.0:
+                    self.additional_text.alpha += 0.01
+                    
+
+                if self.click_to_continue and self.game.core.mouse.left_up:
                     if self.game.game_state == GAME_STATE_TEST:
                         self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
                     elif self.game.game_state == GAME_STATE_TUTORIAL:
@@ -661,6 +786,10 @@ class GUI_puzzle(GUI_element):
             for i in self.text[x]:
                 for j in i:
                     j.alpha = self.hint_alpha
+
+        for x in self.parent.objs:
+            x.alpha = self.hint_alpha
+        self.parent.pause_button.alpha = self.hint_alpha
 
         self.draw_strategy_reset_hint_gradients = True
         
@@ -912,7 +1041,7 @@ class GUI_puzzle(GUI_element):
     def mouse_middle_down(self):
         if not self.state == PUZZLE_STATE_SOLVING:
             return
-        if not self.game.game_state == GAME_STATE_TUTORIAL:
+        if self.game.game_state == GAME_STATE_TUTORIAL:
             return
 
         diff = (self.game.gui.mouse.x - self.remember_mouse_pos[0], self.game.gui.mouse.y - self.remember_mouse_pos[1])
@@ -1493,11 +1622,12 @@ class Puzzle_nameplate_text(Process):
             TEXT_ALIGN_CENTER,
             text,
             )
-        self.text.colour = (1.0, 1.0, 1.0)
+        self.text.colour = (0.95, 0.58, 0.09)
         self.text.shadow = 2
-        self.text.shadow_colour = (.3, .3, .3, .5)
-
-        self.text.z = self.z - 1
+        self.text.shadow_colour = (.5, .5, .5, .5)
+        self.text.alpha = 0.0
+        
+        self.text.z = self.z - 2
         self.do_fade = True
         self.iter = 0
         self.alpha = 0.0
@@ -1507,19 +1637,20 @@ class Puzzle_nameplate_text(Process):
         self.draw_strategy_call_parent = False
         self.primitive_square_filled = True
         self.primitive_square_width = self.text.text_width + 40.0
-        self.primitive_square_height = self.text.text_height + 4.0
+        self.primitive_square_height = self.text.text_height + 6.0
         self.primitive_square_x = self.x - (self.text.text_width/2) - 20.0
         self.primitive_square_y = self.y - (self.text.text_height/2) - 2.0
-        self.primitive_square_colour = (0.0, 0.0, 0.0, 0.0)
+        self.primitive_square_colour = (1.0, 1.0, 1.0, 0.0)
         
 
     def Execute(self):
-        if not self.do_fade:
+        if self.do_fade == False:
             return
         self.iter += 1
-        self.alpha = lerp(self.iter, 60, self.alpha, 1.0)
+        self.alpha = lerp(self.iter, 60, 0.0, 1.0)
         self.text.alpha = self.alpha
-        self.primitive_square_colour = (0.0, 0.0, 0.0, self.alpha - .7)
+        colour_alpha = lerp(self.iter, 60, 0.0, .6)
+        self.primitive_square_colour = (1.0, 1.0, 1.0, colour_alpha)
         if self.iter > 60:
             self.do_fade = False
 
@@ -1542,6 +1673,7 @@ class Player_lives(Process):
         for x in range(self.game.lives):
             self.lives_objs.append(Player_lives_life(self.game, x))
         self.lives_objs[self.game.lives-1].current = True
+        self.alpha = 1.0
 
         # Draw strategy data
         self.draw_strategy = "primitive_square"
@@ -1561,6 +1693,10 @@ class Player_lives(Process):
             if len(self.lives_objs):
                 self.lives_objs[self.game.lives - 1].current = True
         self.current_lives = self.game.lives
+
+        self.primitive_square_colour = (1.0, 1.0, 1.0, self.alpha - .5)
+        for x in self.lives_objs:
+            x.alpha = self.alpha
 
 
     def show(self):
@@ -1616,7 +1752,7 @@ class Player_lives_life(Process):
             self.scale = lerp(self.iter, 60, .6 if self.scale_dir else .8, .8 if self.scale_dir else .6)
             if self.iter > 60:
                 self.iter = 0
-                self.scale_dir = not self.scale_dir
+                self.scale_dir = not self.scale_dir                
 
 
     def get_screen_draw_position(self):
@@ -1642,6 +1778,7 @@ class Timer(Process):
         self.text.shadow = 1
         self.text.shadow_colour = (.6, .6, .6, .5)
         self.text.z = self.z - 1
+        self.alpha = 1.0
 
         # Draw strategy data
         self.draw_strategy = "primitive_square"
@@ -1667,7 +1804,10 @@ class Timer(Process):
                 
             self.text.text = str(hours).rjust(2, "0") + ":" + str(minutes).rjust(2, "0") + ":" + str(seconds).rjust(2, "0")
 
-
+        self.primitive_square_colour = (1.0, 1.0, 1.0, self.alpha - .5)            
+        self.text.alpha = self.alpha
+        
+            
     def show(self):
         self.draw_strategy = "primitive_square"
         self.text.alpha = 1.0
@@ -1684,3 +1824,138 @@ class Timer(Process):
 
     def On_Exit(self):
         self.text.Kill()
+
+
+
+class Puzzle_perfect_star(Process):
+    def __init__(self, game, parent = False):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = Z_GUI_OBJECT_LEVEL_6            
+        self.image = self.game.core.media.gfx['gui_category_complete_star']
+        self.x = 64
+        self.y = self.game.settings['screen_height'] - (self.image.height / 2)
+        self.scale = 0.0
+        
+        self.state = 0
+        self.iter = 0
+        self.text = None
+
+
+    def Execute(self):
+        if self.state == 0:
+            self.scale = lerp(self.iter, 30, 0, 1.2)
+            self.iter += 1
+            if self.scale >= 1.1:
+                self.state = 1
+                self.iter = 0
+        elif self.state == 1:
+            if self.iter < 15:
+                self.scale = lerp(self.iter, 15, 1.2, 1.0)
+                self.iter += 1
+            else:
+                self.scale = 1.0
+                self.state = 2
+                self.iter = 0
+                self.text = Text(
+                    self.game.core.media.fonts['puzzle_special_icons'],
+                    self.x + ((self.image.width / 2) - 15),
+                    self.y,
+                    TEXT_ALIGN_CENTER_LEFT,
+                    "Perfect!"
+                    )
+                self.text.colour = (0.95, 0.58, 0.09)
+                self.text.shadow = 2
+                self.text.shadow_colour = (.5, .5, .5, .5)
+                self.text.alpha = 0.0
+                self.text.z = self.z - 2
+        elif self.state == 2:
+            if self.text.alpha < 1.0:
+                self.text.alpha += .05
+            
+
+    def On_Exit(self):
+        if not self.text is None:
+            self.text.Kill()
+
+
+    def get_screen_draw_position(self):
+        return (
+            self.x - ((self.image.width * self.scale) / 2),
+            self.y - ((self.image.height * self.scale) / 2)
+            )
+
+
+
+class Puzzle_record_clock(Process):
+    def __init__(self, game, parent, has_perfect = True):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.has_perfect = has_perfect
+        self.z = Z_GUI_OBJECT_LEVEL_6 - 2         
+        self.image = self.game.core.media.gfx['gui_puzzle_record_clock']
+        self.x = 64
+        self.y = self.game.settings['screen_height'] - (self.image.height / 2)
+        self.scale = 0.0
+
+        self.waiting = False
+        
+        if self.has_perfect:
+            self.y -= 90
+            self.waiting = True
+        
+        self.state = 0
+        self.iter = 0
+        self.text = None
+
+
+    def Execute(self):
+        if self.state == 0:
+            if self.waiting:
+                self.iter += 1
+                if self.iter == 40:
+                    self.iter = 0
+                    self.waiting = False
+                return
+            self.scale = lerp(self.iter, 30, 0, 1.2)
+            self.iter += 1
+            if self.scale >= 1.1:
+                self.state = 1
+                self.iter = 0
+        elif self.state == 1:
+            if self.iter < 15:
+                self.scale = lerp(self.iter, 15, 1.2, 1.0)
+                self.iter += 1
+            else:
+                self.scale = 1.0
+                self.state = 2
+                self.iter = 0
+                self.text = Text(
+                    self.game.core.media.fonts['puzzle_special_icons'],
+                    self.x + ((self.image.width / 2) - 15),
+                    self.y,
+                    TEXT_ALIGN_CENTER_LEFT,
+                    "Record!"
+                    )
+                self.text.colour = (0.95, 0.58, 0.09)
+                self.text.shadow = 2
+                self.text.shadow_colour = (.5, .5, .5, .5)
+                self.text.alpha = 0.0
+                self.text.z = self.z - 2
+        elif self.state == 2:
+            if self.text.alpha < 1.0:
+                self.text.alpha += .05
+        
+
+    def On_Exit(self):
+        if not self.text is None:
+            self.text.Kill()
+
+
+    def get_screen_draw_position(self):
+        return (
+            self.x - ((self.image.width * self.scale) / 2),
+            self.y - ((self.image.height * self.scale) / 2)
+            )
