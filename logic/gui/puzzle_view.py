@@ -135,10 +135,10 @@ class GUI_puzzle_container(GUI_element):
 
     def Execute(self):
         GUI_element.Execute(self)
-        for x in self.objs:
-            x.show()
         if self.game.paused or not self.puzzle.state == PUZZLE_STATE_SOLVING:
             return
+        for x in self.objs:
+            x.show()
         if self.game.gui.mouse.x > self.game.settings['screen_width'] - 200 and \
            self.game.gui.mouse.x < self.game.settings['screen_width'] and \
            self.game.gui.mouse.y > self.game.settings['screen_height'] - 90 and \
@@ -550,17 +550,34 @@ class GUI_puzzle(GUI_element):
                     self.iter = 0
 
             elif self.anim_state == 2:
-                if not self.title_text is None and self.wait_time > 220:
+                if not self.click_to_continue and self.wait_time > 120:
                     #self.title_text.die()
                     #self.title_text = None
+                    """
                     self.additional_text = Puzzle_nameplate_text(
                         self.game,
                         self.game.settings['screen_width'] /2,
                         self.game.settings['screen_height'] - 50,
                         "Click to continue..."
                         )
+                        """
+                    self.additional_text = Text(
+                        self.game.core.media.fonts['puzzle_click_to_continue'],
+                        self.game.settings['screen_width'] - 10,
+                        self.game.settings['screen_height'] - 10,
+                        TEXT_ALIGN_BOTTOM_RIGHT,
+                        "Click to continue..."
+                        )
+                    self.additional_text.colour = (0.4, 0.4, 0.4)
+                    self.additional_text.alpha = 0.0
+                    self.additional_text.z = Z_GUI_OBJECT_LEVEL_4
+                    self.objs.append(self.additional_text)
+                    
                     self.objs.append(self.additional_text)
                     self.click_to_continue = True
+
+                if self.wait_time > 200 and self.additional_text.alpha < 1.0:
+                    self.additional_text.alpha += 0.01
 
                 if self.click_to_continue and self.game.core.mouse.left_up:
                     if self.game.game_state == GAME_STATE_TEST:
@@ -572,7 +589,7 @@ class GUI_puzzle(GUI_element):
                         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
                     self.game.gui.block_gui_mouse_input = False
                     self.game.gui.block_gui_keyboard_input = False
-
+                    
         # ****************
         # PUZZLE_STATE - Puzzle has been cleared, display the coloured image and cleared message
         # ****************
@@ -1702,14 +1719,12 @@ class Player_lives(Process):
 
     def show(self):
         self.draw_strategy = "primitive_square"
-        for x in self.lives_objs:
-            x.alpha = 1.0
+        self.alpha = 1.0
         
         
     def hide(self):
         self.draw_strategy = ""
-        for x in self.lives_objs:
-            x.alpha = 0.0
+        self.alpha = 0.0
 
 
     def get_screen_draw_position(self):
@@ -1811,12 +1826,12 @@ class Timer(Process):
             
     def show(self):
         self.draw_strategy = "primitive_square"
-        self.text.alpha = 1.0
+        self.alpha = 1.0
         
         
     def hide(self):
         self.draw_strategy = ""
-        self.text.alpha = 0.0
+        self.alpha = 0.0
         
 
     def get_screen_draw_position(self):
