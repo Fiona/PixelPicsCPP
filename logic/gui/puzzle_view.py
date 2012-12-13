@@ -639,16 +639,18 @@ class GUI_puzzle(GUI_element):
                     self.objs.append(self.additional_text)
                     
                     self.click_to_continue = True
-
                 if self.wait_time == 150 and not self.game.game_state in [GAME_STATE_TEST, GAME_STATE_TUTORIAL]:
                     has_perfect = False
+
                     if self.game.lives == INITIAL_LIVES:
                         self.objs.append(
                             Puzzle_perfect_star(self.game, self)
                             )
                         has_perfect = True
 
-                    if self.game.timer < self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.game.manager.current_puzzle_file][0]:
+                    if (not self.game.manager.current_pack.uuid in self.game.player.puzzle_scores or \
+                            not self.game.manager.current_puzzle_file in self.game.player.puzzle_scores[self.game.manager.current_pack.uuid] or \
+                            self.game.timer < self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.game.manager.current_puzzle_file][0]):
                         self.objs.append(
                             Puzzle_record_clock(self.game, self, has_perfect = has_perfect)
                             )
@@ -656,7 +658,6 @@ class GUI_puzzle(GUI_element):
                 if self.wait_time > 200 and self.additional_text.alpha < 1.0:
                     self.additional_text.alpha += 0.01
                     
-
                 if self.click_to_continue and self.game.core.mouse.left_up:
                     if self.game.game_state == GAME_STATE_TEST:
                         self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
