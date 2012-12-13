@@ -26,13 +26,12 @@ class Mascot(Process):
         self.is_saying = ""
         self.current_letter = 0
         self.anim_wait = 0
-        self.mood = "normal"
+        self.set_mood("normal")
         self.set_location()
-        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
         self.initial_position = self.x, self.y
         self.dir = 0
         self.iter = 0
-        
+                
 
     def On_Exit(self):
         if self.speech_bubble:
@@ -86,14 +85,29 @@ class Mascot(Process):
         self.x = 100
         self.y = 100
         self.z = Z_MASCOT
+
+
+    def set_mood(self, mood):
+        self.mood = mood
+        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
     
 
-    def set_speech(self, to_say):
-        self.talking = True
-        self.is_saying = " ".join(to_say)
+    def set_speech(self, to_say, bubble = True):
+        self.anim_wait = 0
+        self.image_sequence = 1
+        self.current_letter = 0
+
+        if len(to_say) > 0:
+            self.is_saying = " ".join(to_say)
+            self.talking = True
+        else:
+            self.is_saying = ""
+            self.talking = False
+
         if self.speech_bubble:
             self.speech_bubble.Kill()
-        if len(to_say) > 0:
+            
+        if len(to_say) > 0 and bubble:
             self.speech_bubble = self.create_speech_bubble(to_say)
         else:
             self.speech_bubble = None

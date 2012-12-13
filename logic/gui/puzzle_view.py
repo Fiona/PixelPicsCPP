@@ -598,10 +598,11 @@ class GUI_puzzle(GUI_element):
                 self.hovered_column = -1
                 self.hovered_row = -1
 
-                if self.title_text is None and self.additional_text is None:
+                if self.title_text is None and self.additional_text is None:                    
                     self.game.gui.block_gui_keyboard_input = True
-                    self.game.gui.block_gui_mouse_input = True
-                    self.game.gui.mouse.alpha = 0.0
+                    if not self.game.game_state == GAME_STATE_TUTORIAL:                    
+                        self.game.gui.block_gui_mouse_input = True
+                        self.game.gui.mouse.alpha = 0.0
                     self.title_text = GUI_cleared_title(self.game, self)
                     self.wait_time = 0
                     self.game.core.media.sfx['success'].play(0)
@@ -643,19 +644,20 @@ class GUI_puzzle(GUI_element):
                         )
                         )
 
-                    self.additional_text = Text(
-                        self.game.core.media.fonts['puzzle_click_to_continue'],
-                        self.game.settings['screen_width'] - 10,
-                        self.game.settings['screen_height'] - 10,
-                        TEXT_ALIGN_BOTTOM_RIGHT,
-                        "Click to continue..."
-                        )
-                    self.additional_text.colour = (0.4, 0.4, 0.4)
-                    self.additional_text.alpha = 0.0
-                    self.additional_text.z = Z_GUI_OBJECT_LEVEL_4
-                    self.objs.append(self.additional_text)
+                    if not self.game.game_state == GAME_STATE_TUTORIAL:
+                        self.additional_text = Text(
+                            self.game.core.media.fonts['puzzle_click_to_continue'],
+                            self.game.settings['screen_width'] - 10,
+                            self.game.settings['screen_height'] - 10,
+                            TEXT_ALIGN_BOTTOM_RIGHT,
+                            "Click to continue..."
+                            )
+                        self.additional_text.colour = (0.4, 0.4, 0.4)
+                        self.additional_text.alpha = 0.0
+                        self.additional_text.z = Z_GUI_OBJECT_LEVEL_4
+                        self.objs.append(self.additional_text)
                     
-                    self.click_to_continue = True
+                        self.click_to_continue = True
                 if self.wait_time == 150 and not self.game.game_state in [GAME_STATE_TEST, GAME_STATE_TUTORIAL]:
                     has_perfect = False
 
@@ -672,29 +674,35 @@ class GUI_puzzle(GUI_element):
                             Puzzle_record_clock(self.game, self, has_perfect = has_perfect)
                             )
 
-                if self.wait_time > 200 and self.additional_text.alpha < 1.0:
-                    self.additional_text.alpha += 0.01
+                if self.wait_time > 200:
+                    if not self.additional_text is None and self.additional_text.alpha < 1.0:
+                        self.additional_text.alpha += 0.01
+                    self.finish_cleared_anim()
                     
                 if self.click_to_continue and self.game.core.mouse.left_up:
-                    if self.game.game_state == GAME_STATE_TEST:
-                        self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
-                    elif self.game.game_state == GAME_STATE_TUTORIAL:
-                        self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
-                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
-                    else:
-                        self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
-                        self.game.manager.delete_current_puzzle_save()
-                        if self.game.category_to_unlock is None:
-                            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
-                        else:
-                            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
-                    self.game.gui.block_gui_mouse_input = False
-                    self.game.gui.block_gui_keyboard_input = False
+                    self.close_puzzle()
                     
             
         self.wait_time += 1
         self.update()
 
+
+    def close_puzzle(self):
+        if self.game.game_state == GAME_STATE_TEST:
+            self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
+        elif self.game.game_state == GAME_STATE_TUTORIAL:
+            self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
+        else:
+            self.game.player_action_cleared_puzzle(self.game.manager.current_pack.uuid, self.game.manager.current_puzzle_file)
+            self.game.manager.delete_current_puzzle_save()
+            if self.game.category_to_unlock is None:
+                self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
+            else:
+                self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
+        self.game.gui.block_gui_mouse_input = False
+        self.game.gui.block_gui_keyboard_input = False
+        
 
     def back_to_designer(self):
         self.game.manager.load_puzzle(self.game.manager.current_puzzle_pack, self.game.manager.current_puzzle_file, set_state = True)
@@ -1435,7 +1443,11 @@ class GUI_puzzle(GUI_element):
 
     def set_cleared(self):
         self.state = PUZZLE_STATE_CLEARED
-        
+
+
+    def finish_cleared_anim(self):
+        pass
+
 
     def On_Exit(self):        
         GUI_element.On_Exit(self)
@@ -1645,7 +1657,7 @@ class Puzzle_nameplate_text(Process):
         self.text.shadow_colour = (.5, .5, .5, .5)
         self.text.alpha = 0.0
         
-        self.text.z = self.z - 2
+        self.text.z = self.z - 5
         self.do_fade = True
         self.iter = 0
         self.alpha = 0.0
