@@ -17,8 +17,8 @@ from gui.gui_elements import *
 
 class GUI_options(GUI_element_window):
     title = "Options"
-    height = 565
-    width = 400
+    height = 620
+    width = 420
     objs = {}
     widgets = {}
 
@@ -41,9 +41,9 @@ class GUI_options(GUI_element_window):
         self.y = (self.game.settings['screen_height'] / 2) - (self.height / 2)
         GUI_element_window.gui_init(self)
 
-        self.objs['title_graphics'] = GUI_options_title(self.game, self, "Graphics", 30)
-        self.objs['title_sound'] = GUI_options_title(self.game, self, "Audio", 120)
-        self.objs['title_gameplay'] = GUI_options_title(self.game, self, "Gameplay", 275)
+        self.objs['title_graphics'] = GUI_options_title(self.game, self, "Graphics", 50)
+        self.objs['title_sound'] = GUI_options_title(self.game, self, "Audio", 160)
+        self.objs['title_gameplay'] = GUI_options_title(self.game, self, "Gameplay", 330)
         self.objs['mouse_image'] = GUI_options_mouse_image(self.game, self)
 
         self.widgets['resolution'] = GUI_options_resolution(self.game, self)
@@ -52,10 +52,10 @@ class GUI_options(GUI_element_window):
         self.widgets['music_vol'] = GUI_options_music_volume(self.game, self)
         self.widgets['sound_effects_on'] = GUI_options_sound_effects_on(self.game, self)
         self.widgets['sound_effects_vol'] = GUI_options_sound_effects_volume(self.game, self)
-        self.widgets['cancel_button'] = GUI_options_cancel_button(self.game, self)
-        self.widgets['apply_button'] = GUI_options_apply_button(self.game, self)
         self.widgets['bump_scroll'] = GUI_options_bump_scroll(self.game, self)
         self.widgets['lock_drawing'] = GUI_options_lock_drawing(self.game, self)
+        self.widgets['cancel_button'] = GUI_options_cancel_button(self.game, self)
+        self.widgets['apply_button'] = GUI_options_apply_button(self.game, self)
         
         self.game.gui.block_gui_keyboard_input = True
         self.x = 0
@@ -131,13 +131,11 @@ class GUI_options_title(Process):
         self.x = self.parent.x + 20
         self.y = self.parent.y + y_offset
         self.z = self.parent.z - 2
-        self.name_text = Text(self.game.core.media.fonts['options_title'], self.x, self.y, TEXT_ALIGN_TOP_LEFT, str(title_text))
+        self.name_text = Text(self.game.core.media.fonts['window_subtitle'], self.x, self.y, TEXT_ALIGN_TOP_LEFT, str(title_text))
         self.name_text.z = self.z
-        self.name_text.colour = (0.0, 0.0, 0.0)
-
-        self.draw_strategy = "primitive_line"
-        self.primitive_line_colour = ((.6, .6, .6, 1.0), (1.0, 1.0, 1.0, 0.0))
-        self.primitive_line_position = ((self.x + 5, self.y + 20), ((self.x + self.parent.width - 30, self.y + 20)))
+        self.name_text.colour = (0.95, 0.58, 0.09)
+        self.name_text.shadow = 1
+        self.name_text.shadow_colour = (0.5, 0.5, 0.5)
 
 
     def On_Exit(self):
@@ -153,7 +151,7 @@ class GUI_options_cancel_button(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + self.parent.width - 160
+        self.x = self.parent.x + (self.parent.width / 2) + 13
         self.y = self.parent.y + self.parent.height - 45
         self.z = self.parent.z - 2
         self.gui_init()
@@ -173,7 +171,7 @@ class GUI_options_apply_button(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + self.parent.width - 80
+        self.x = self.parent.x + (self.parent.width / 2) - 87
         self.y = self.parent.y + self.parent.height - 45
         self.z = self.parent.z - 2
         self.gui_init()
@@ -187,7 +185,6 @@ class GUI_options_apply_button(GUI_element_button):
 
 class GUI_options_resolution(GUI_element_dropdown):
     display_width = 170
-    display_height = 25
 
     dropdown_options = []
 
@@ -197,8 +194,8 @@ class GUI_options_resolution(GUI_element_dropdown):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.display_x = self.parent.x + 175
-        self.display_y = self.parent.y + 55
+        self.display_x = self.parent.x + 180
+        self.display_y = self.parent.y + 90
         self.display_z = Z_GUI_OBJECT_LEVEL_11
 
         i = 0
@@ -216,9 +213,9 @@ class GUI_options_resolution(GUI_element_dropdown):
         
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.display_y, TEXT_ALIGN_TOP_LEFT, "Screen resolution")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.display_y + 7, TEXT_ALIGN_TOP_LEFT, "Screen resolution")
         self.name_text.z = self.z - 1
-        self.name_text.colour = (0.0, 0.0, 0.0)
+        self.name_text.colour = (0.3, 0.3, 0.3)
 
 
     def On_Exit(self):
@@ -232,15 +229,15 @@ class GUI_options_full_screen(GUI_element_yes_no_radios):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + 175
-        self.y = self.parent.y + 85
+        self.x = self.parent.x + 180
+        self.y = self.parent.y + 120
         self.z = self.parent.z - 3
         self.current_value = bool(self.game.core.settings.full_screen)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Full screen")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Full screen")
         self.name_text.z = self.z - 1
-        self.name_text.colour = (0.0, 0.0, 0.0)
+        self.name_text.colour = (0.3, 0.3, 0.3)
 
 
     def On_Exit(self):
@@ -253,15 +250,15 @@ class GUI_options_music_on(GUI_element_yes_no_radios):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + 175
-        self.y = self.parent.y + 150
+        self.x = self.parent.x + 180
+        self.y = self.parent.y + 200
         self.z = self.parent.z - 3
         self.current_value = bool(self.game.core.settings.music_on)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Music on")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Music on")
         self.name_text.z = self.z - 1
-        self.name_text.colour = (0.0, 0.0, 0.0)
+        self.name_text.colour = (0.3, 0.3, 0.3)
 
 
     def On_Exit(self):
@@ -274,15 +271,15 @@ class GUI_options_sound_effects_on(GUI_element_yes_no_radios):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + 175
-        self.y = self.parent.y + 210
+        self.x = self.parent.x + 180
+        self.y = self.parent.y + 260
         self.z = self.parent.z - 3
         self.current_value = bool(self.game.core.settings.sound_effects_on)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Sound effects on")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Sound effects on")
         self.name_text.z = self.z - 1
-        self.name_text.colour = (0.0, 0.0, 0.0)
+        self.name_text.colour = (0.3, 0.3, 0.3)
 
 
     def On_Exit(self):
@@ -300,15 +297,15 @@ class GUI_options_music_volume(GUI_element_slider):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + 175
-        self.y = self.parent.y + 180
+        self.x = self.parent.x + 180
+        self.y = self.parent.y + 237
         self.z = self.parent.z - 3
         self.current_value = int(self.game.core.settings.music_vol)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Music volume")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y, TEXT_ALIGN_TOP_LEFT, "Music volume")
         self.name_text.z = self.z - 1
-        self.name_text.colour = (0.0, 0.0, 0.0)
+        self.name_text.colour = (0.3, 0.3, 0.3)
 
 
     def slider_dragged(self):
@@ -330,15 +327,15 @@ class GUI_options_sound_effects_volume(GUI_element_slider):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + 175
-        self.y = self.parent.y + 240
+        self.x = self.parent.x + 180
+        self.y = self.parent.y + 297
         self.z = self.parent.z - 3
         self.current_value = int(self.game.core.settings.sound_effects_vol)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Sound volume")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y, TEXT_ALIGN_TOP_LEFT, "Sound volume")
         self.name_text.z = self.z - 1
-        self.name_text.colour = (0.0, 0.0, 0.0)
+        self.name_text.colour = (0.3, 0.3, 0.3)
 
 
     def On_Exit(self):
@@ -354,7 +351,7 @@ class GUI_options_mouse_image(GUI_element):
         self.parent = parent
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2)
-        self.y = self.parent.y + 375
+        self.y = self.parent.y + 430
         self.z = self.parent.z - 2
         self.image = self.game.core.media.gfx['gui_mouse']
         self.mouse_key_left = GUI_options_mouse_key_left(self.game, self)
@@ -384,7 +381,7 @@ class GUI_options_mouse_key_left(Process):
         self.z = self.parent.z - 1
         self.text = Text(self.game.core.media.fonts['options_mouse_button'], self.x - 60, self.y - 20, TEXT_ALIGN_BOTTOM_RIGHT, "wub wub")
         self.text.z = self.z
-        self.text.colour = (0.0, 0.0, 0.0)
+        self.text.colour = (0.3, 0.3, 0.3)
         self.tile_image = None
 
         self.draw_strategy = "primitive_line"
@@ -421,7 +418,7 @@ class GUI_options_mouse_key_right(Process):
         self.z = self.parent.z - 1
         self.text = Text(self.game.core.media.fonts['options_mouse_button'], self.x + 94, self.y - 20, TEXT_ALIGN_BOTTOM_LEFT, "boom boom tish")
         self.text.z = self.z
-        self.text.colour = (0.0, 0.0, 0.0)
+        self.text.colour = (0.3, 0.3, 0.3)
         self.tile_image = None
 
         self.draw_strategy = "primitive_line"
@@ -507,15 +504,15 @@ class GUI_options_bump_scroll(GUI_element_yes_no_radios):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + 240
-        self.y = self.parent.y + 450
+        self.x = self.parent.x + 260
+        self.y = self.parent.y + 500
         self.z = self.parent.z - 3
         self.current_value = bool(self.game.core.settings.bump_scroll)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Bump scrolling")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Enable bump scrolling?")
         self.name_text.z = self.z - 1
-        self.name_text.colour = (0.0, 0.0, 0.0)
+        self.name_text.colour = (0.3, 0.3, 0.3)
 
 
     def On_Exit(self):
@@ -529,15 +526,15 @@ class GUI_options_lock_drawing(GUI_element_yes_no_radios):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.parent.x + 240
-        self.y = self.parent.y + 480
+        self.x = self.parent.x + 260
+        self.y = self.parent.y + 530
         self.z = self.parent.z - 3
         self.current_value = bool(self.game.core.settings.lock_drawing)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["basic"], self.parent.x + 20, self.y, TEXT_ALIGN_TOP_LEFT, "Lock drawing to row/column")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Lock drawing to row/column")
         self.name_text.z = self.z - 1
-        self.name_text.colour = (0.0, 0.0, 0.0)
+        self.name_text.colour = (0.3, 0.3, 0.3)
 
 
     def On_Exit(self):

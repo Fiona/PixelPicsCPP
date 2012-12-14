@@ -14,6 +14,7 @@ from consts import *
 from helpers  import *
 from gui.gui_elements import *
 from gui.options import *
+from gui.mascot import Mascot_Main_Menu
 
 
 class GUI_main_menu_container(GUI_element):
@@ -38,6 +39,12 @@ class GUI_main_menu_container(GUI_element):
             self.objs.append(
                 Main_menu_background(self.game)
                 )
+
+        if self.game.manager.all_main_packs_starred:
+            for x in range(20):
+                self.objs.append(
+                    Reward_star(self.game)
+                    )
 
         # Draw strategy data
         self.draw_strategy = "primitive_square"
@@ -83,17 +90,18 @@ class GUI_main_menu_title(GUI_element):
         self.wait = 0
         self.no_button_anim = no_button_anim
         self.height = 300       
-
+        self.mascot = None
+        
         self.letters = []
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "p", -183, -45, 20))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -103, -48, 30))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -103, -50, 30))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "x", 0, -40, 110))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 108, -41, 40))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 188, -46, 50))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 108, -42, 40))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 188, -48, 50))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "p", -138, 84, 60))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -50, 81, 70))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "c", 37, 92, 80))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "s", 138, 93, 90))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -50, 79, 70))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "c", 37, 90, 80))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "s", 138, 91, 90))
 
         if self.no_button_anim:
             self.finish()
@@ -116,27 +124,18 @@ class GUI_main_menu_title(GUI_element):
             self.wait += 1
             if self.wait >= 100:
                 GUI_main_menu_play_button(self.game, self, self.no_button_anim)
-                GUI_main_menu_options_button(self.game, self, self.no_button_anim)
-                GUI_main_menu_puzzle_designer_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_sharing_button(self.game, self, self.no_button_anim)
+                GUI_main_menu_puzzle_designer_button(self.game, self, self.no_button_anim)
+                GUI_main_menu_options_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_quit_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_credits_button(self.game, self)
+                self.mascot = Mascot_Main_Menu(self.game)
                 self.title_state = 1
                 self.wait = 0
 
         if self.title_state == 1:
             self.wait += 1
             if self.wait >= 30:
-                if self.game.player.first_run:
-                    self.conf_box = GUI_element_confirmation_box(
-                        self.game,
-                        self,
-                        "Play Tutorial?",
-                        ["This is your first time playing PixelPics.", "Would you like to learn how to play?"],
-                        confirm_callback = self.first_time
-                        )
-                    self.game.player.first_run = False
-                    self.game.save_player(self.game.player)
                 self.title_state = 2
 
         
@@ -144,13 +143,7 @@ class GUI_main_menu_title(GUI_element):
     def finish(self):
         for x in self.letters:
             x.finish()
-    
-
-    def first_time(self):
-        self.game.manager.load_pack("0001", user_created = False)
-        self.game.manager.current_puzzle_file = "0001.puz"
-        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 40, stop_music = True)
-    
+        
 
     def get_screen_draw_position(self):
         return (self.x - (self.image.width / 2), self.y - (self.image.height / 2))
@@ -160,6 +153,8 @@ class GUI_main_menu_title(GUI_element):
         GUI_element.On_Exit(self)
         for x in self.letters:
             x.Kill()
+        if not self.mascot is None:
+            self.mascot.Kill()
 
 
 
@@ -170,20 +165,24 @@ class GUI_main_menu_title_letter(Process):
         self.game = game
         self.parent = parent
         self.image = self.game.core.media.gfx['gui_title_' + str(image)]
-        self.z = Z_GUI_OBJECT_LEVEL_3
+        self.z = Z_GUI_OBJECT_LEVEL_5 - 40
         self.x = self.parent.x + x
         self.y = self.parent.y + y
+        self.initial_y = self.y
         self.bubble_wait = bubble_wait
         self.is_x = False
+        self.is_s = False
         if image == 'x':
             self.is_x = True
+        if image == 's':
+            self.is_s = True
         self.scale = 0.0
         self.wait = 0
         self.state = 0
         self.iter = 0
 
 
-    def Execute(self):
+    def Execute(self):   
         if self.state == 0:
             self.wait += 1
             if self.wait == self.bubble_wait:
@@ -206,18 +205,48 @@ class GUI_main_menu_title_letter(Process):
                     self.state = 2
                     self.iter = 0
         elif self.state == 2:
-            self.scale = lerp(self.iter, 5, 1.2, 1.0)
-            self.iter += 1
             if self.iter >= 5:
-                self.state = 3
-
+                if self.is_s:
+                    for x in self.parent.letters:
+                        if not x.is_x:
+                            x.finish()
+            else:
+                self.scale = lerp(self.iter, 5, 1.2, 1.0)
+                self.iter += 1                
+        elif self.state == 3:
+            if not self.is_x:
+                self.wait += 1
+                if self.wait == self.bubble_wait:
+                    self.wait = 0
+                    self.iter = 0
+                    self.state = 4            
+        elif self.state == 4:
+            self.y = lerp(self.iter, 5, self.initial_y, self.initial_y - 5)
+            if self.iter >= 5:
+                self.state = 5
+                self.iter = 0
+            self.iter += 1
+        elif self.state == 5:
+            if self.iter >= 5:
+                if self.is_s:
+                    for x in self.parent.letters:
+                        x.state = 3
+                        x.iter = 0
+                        x.wait = 0
+            else:
+                self.y = lerp(self.iter, 5, self.initial_y - 5, self.initial_y)
+            self.iter += 1
+                
 
     def finish(self):
-        if not self.state == 3:
+        if self.state < 3:
             self.scale = 1.0
             if self.is_x:
                 self.image_sequence = 6
             self.state = 3
+            self.wait = 0
+            self.iter = 0
+            self.bubble_wait += 60
             
 
     def get_screen_draw_position(self):
@@ -230,8 +259,7 @@ class GUI_main_menu_title_letter(Process):
 
 
 class GUI_main_menu_button(GUI_element_button):
-    generic_button = True
-    width = 150
+    generic_button = False
 
     def main_menu_button_init(self, y_shift_to = 0, y_shift = 0, iter_wait = 0):
         self.x = self.game.settings['screen_width'] / 2
@@ -239,8 +267,7 @@ class GUI_main_menu_button(GUI_element_button):
         self.y = self.game.settings['screen_height'] + y_shift
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.gui_init()
-        self.x -= (self.width / 2)
-        self.generic_button_text_object.x -= (self.width / 2)
+        self.x -= (self.image.width / 2)
         self.main_menu_button_state = 0
         self.iter = 0
         self.iter_wait = iter_wait
@@ -251,24 +278,23 @@ class GUI_main_menu_button(GUI_element_button):
         if self.main_menu_button_state == 0:
             self.iter += 1
             self.y = lerp(self.iter, self.iter_wait, self.y, self.y_to)
-            self.generic_button_text_object.y = self.y + 4
             if self.iter > self.iter_wait:
                 self.main_menu_button_state = 1
 
         
 
 class GUI_main_menu_play_button(GUI_main_menu_button):
-    generic_button_text = "Play!"
-
+    
     def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = 20, iter_wait = 50)
+        self.image = self.game.core.media.gfx['gui_button_main_menu_play']
+        self.z = Z_GUI_OBJECT_LEVEL_2
+        self.main_menu_button_init(y_shift_to = 40, iter_wait = 50)
 
         if no_button_anim:
             self.y = self.y_to
-            self.generic_button_text_object.y = self.y + 4
             self.main_menu_button_state = 1
 
 
@@ -290,17 +316,17 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
 
 
 class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
-    generic_button_text = "Puzzle Designer"
 
     def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = 60, y_shift = 40, iter_wait = 100)
+        self.image = self.game.core.media.gfx['gui_button_main_menu_designer']
+        self.z = Z_GUI_OBJECT_LEVEL_2        
+        self.main_menu_button_init(y_shift_to = 150, y_shift = 100, iter_wait = 150)
 
         if no_button_anim:
             self.y = self.y_to
-            self.generic_button_text_object.y = self.y + 4
             self.main_menu_button_state = 1
 
 
@@ -311,17 +337,17 @@ class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
 
 
 class GUI_main_menu_sharing_button(GUI_main_menu_button):
-    generic_button_text = "Download Puzzles"
 
     def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = 100, iter_wait = 150)
+        self.image = self.game.core.media.gfx['gui_button_main_menu_extras']
+        self.z = Z_GUI_OBJECT_LEVEL_2        
+        self.main_menu_button_init(y_shift_to = 95, y_shift = 50, iter_wait = 100)
 
         if no_button_anim:
             self.y = self.y_to
-            self.generic_button_text_object.y = self.y + 4
             self.main_menu_button_state = 1
 
 
@@ -332,17 +358,17 @@ class GUI_main_menu_sharing_button(GUI_main_menu_button):
 
 
 class GUI_main_menu_options_button(GUI_main_menu_button):
-    generic_button_text = "Options"
 
     def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = 140, y_shift = 120, iter_wait = 200)
+        self.image = self.game.core.media.gfx['gui_button_main_menu_options']
+        self.z = Z_GUI_OBJECT_LEVEL_2        
+        self.main_menu_button_init(y_shift_to = 205, y_shift = 150, iter_wait = 200)
 
         if no_button_anim:
             self.y = self.y_to
-            self.generic_button_text_object.y = self.y + 4
             self.main_menu_button_state = 1
 
 
@@ -353,17 +379,17 @@ class GUI_main_menu_options_button(GUI_main_menu_button):
 
 
 class GUI_main_menu_quit_button(GUI_main_menu_button):
-    generic_button_text = "Quit"
 
     def __init__(self, game, parent = None, no_button_anim = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.main_menu_button_init(y_shift_to = 180, y_shift = 140, iter_wait = 250)
+        self.image = self.game.core.media.gfx['gui_button_main_menu_quit']
+        self.z = Z_GUI_OBJECT_LEVEL_2        
+        self.main_menu_button_init(y_shift_to = 260, y_shift = 200, iter_wait = 250)
 
         if no_button_anim:
             self.y = self.y_to
-            self.generic_button_text_object.y = self.y + 4
             self.main_menu_button_state = 1
 
 
@@ -459,14 +485,12 @@ class GUI_main_menu_credits_button(GUI_element_button):
 
 class GUI_main_menu_credits(GUI_element_window):
     title = "Credits"
-    height = 420
+    height = 490
     width = 450
     objs = {}
     text_to_write = [
         "PixelPics",
-        "",
         "Dedicated to Felix",
-        "",
         "",
         " -- Programming -- ",
         "Fiona Burrows",
@@ -475,14 +499,13 @@ class GUI_main_menu_credits(GUI_element_window):
         "Mark Frimston",
         "",
         " -- Visuals -- ",
-        "Fiona Burrows",
+        "Fiona Burrows & Mark Frimston",
         "",
         " -- Audio -- ",
         "Fiona Burrows",
         "",
         " -- Level Design -- ",
-        "Fiona Burrows",
-        "Mark Frimston",
+        "Fiona Burrows & Mark Frimston",
         "",
         "Stompy Blondie Games, 2011-2012",
         ]
@@ -511,13 +534,13 @@ class GUI_main_menu_credits(GUI_element_window):
         GUI_element_window.gui_init(self)
 
         self.objs = {}
-        y = 0
+        y = 30
         for text in self.text_to_write:
-            txt = Text(self.game.core.media.fonts['basic'], self.x + (self.width/2), self.y + 30 + y, TEXT_ALIGN_CENTER, text)
+            txt = Text(self.game.core.media.fonts['window_text'], self.x + (self.width/2), self.y + 30 + y, TEXT_ALIGN_CENTER, text)
             txt.z = self.z - 2
-            txt.colour = (0.0, 0.0, 0.0)
+            txt.colour = (0.3,0.3,0.3)
             self.objs['text_' + str(y)] = txt
-            y += 15
+            y += 20
 
         GUI_main_menu_credits_close_button(self.game, self)
 
@@ -544,12 +567,10 @@ class GUI_main_menu_credits_close_button(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.z = self.parent.z - 1
-        self.gui_init()
+        self.z = Z_GUI_OBJECT_LEVEL_9
         self.x = self.parent.x + self.parent.width - 100
         self.y = self.parent.y + self.parent.height - 50
-        self.generic_button_text_object.x = self.x + 9
-        self.generic_button_text_object.y = self.y + 4
+        self.gui_init()
 
 
     def mouse_left_up(self):
@@ -597,7 +618,7 @@ class GUI_main_menu_puzzle_type_select_main(GUI_element_button):
         self.gui_init()
         self.x = -self.image.width
         self.y = (self.game.settings['screen_height'] / 2) - (self.image.height / 2)
-        self.x_to = (self.game.settings['screen_width'] / 2) - self.image.width
+        self.x_to = (self.game.settings['screen_width'] / 2) - self.image.width + 6.0
 
         self.button_state = 0
         self.iter = 0
@@ -664,10 +685,39 @@ class GUI_main_menu_puzzle_type_select_go_back(GUI_element_button):
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_go_back']
         self.gui_init()
-        self.x = (self.game.settings['screen_width'] / 2) - 256
-        self.y = (self.game.settings['screen_height'] / 2) + 40
+        self.x = 0.0
+        self.y = self.game.settings['screen_height'] - 128
 
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.parent.Kill()
+
+
+
+class Reward_star(Process):
+    def __init__(self, game):
+        Process.__init__(self)
+        self.game = game
+        self.image = self.game.core.media.gfx['gui_reward_star']
+        self.y = random.randrange(-self.image.height, self.game.settings['screen_height'])
+        self.reposition()
+        self.z = Z_GUI_OBJECT_LEVEL_4
+
+
+    def Execute(self):
+        self.rotation -= self.rot
+        self.y += 1.0
+        self.x -= self.x_shift
+        if self.y > self.game.settings['screen_height'] + self.image.height or self.x < -self.image.width or self.x > self.game.settings['screen_width'] + self.image.width:
+            self.y = -self.image.height
+            self.reposition()
+            
+    
+    def reposition(self):
+        self.x = int(random.randrange(0, self.game.settings['screen_width']) / 64) * 64
+        self.rotation = random.randrange(360)
+        self.rot = random.randrange(-2, 2)
+        if self.rot == 0:
+            self.rot = 1
+        self.x_shift = random.randrange(-10, 10) * .1

@@ -269,7 +269,9 @@ class Game(Process):
         if not puzzle in self.player.puzzle_scores[category_uuid]:
             self.player.puzzle_scores[category_uuid][puzzle] = [self.timer, self.lives]
         if self.timer < self.player.puzzle_scores[category_uuid][puzzle][0]:
-            self.player.puzzle_scores[category_uuid][puzzle] = [self.timer, self.lives]
+            self.player.puzzle_scores[category_uuid][puzzle][0] = self.timer
+        if self.lives > self.player.puzzle_scores[category_uuid][puzzle][1]:
+            self.player.puzzle_scores[category_uuid][puzzle][1] = self.lives
 
         # Add category as being cleared if true
         if len(self.player.cleared_puzzles[category_uuid]) >= len(self.manager.current_pack.puzzles) and not category_uuid in self.player.cleared_categories:
@@ -302,6 +304,7 @@ class Game(Process):
         # finalise
         # -----------
         self.save_player(self.player)
+        self.manager.check_which_packs_starred()
 
 
     def rate_pack(self, pack_uuid, rating):

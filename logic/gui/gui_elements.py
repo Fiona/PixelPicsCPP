@@ -257,20 +257,19 @@ class GUI_element_button(GUI_element):
             self.generic_button = True
             self.image = self.game.core.media.gfx['gui_button_generic_background']
             self.draw_strategy = "gui_button"
+
+            # fixed height
+            self.height = 30
             
             # Create the text
-            self.generic_button_text_object = Text(self.game.core.media.fonts["basic"], self.x + 9.0, self.y + 4.0, TEXT_ALIGN_TOP_LEFT, self.generic_button_text)
+            self.generic_button_text_object = Text(self.game.core.media.fonts["generic_buttons"], self.x, self.y + (self.height / 2), TEXT_ALIGN_CENTER, self.generic_button_text)
             self.generic_button_text_object.z = self.z - 1
-            self.generic_button_text_object.colour = (0.0,0.0,0.0)
+            self.generic_button_text_object.colour = (1.0,1.0,1.0)
             
             # Set up the width, if we have a larger than normal width then we want to centre the text.
-            if self.width > self.generic_button_text_object.text_width + 20:
-                self.generic_button_text_object.x += (self.width / 2) - (self.generic_button_text_object.text_width/2) - 9
-            else:
+            if self.width < self.generic_button_text_object.text_width + 20:
                 self.width = self.generic_button_text_object.text_width + 20
-
-            # Fixed height, a little bit taller than the text
-            self.height = self.generic_button_text_object.text_height + 10
+            self.generic_button_text_object.x += (self.width / 2)
             
         self.sequence_count = self.image.num_of_frames
         self.draw_strategy_call_parent = False
@@ -278,6 +277,8 @@ class GUI_element_button(GUI_element):
 
     def update(self):
         self.image_sequence = 1
+        if self.generic_button:
+            self.generic_button_text_object.colour = (1.0, 1.0, 1.0)
         GUI_element.update(self)
         if self.disabled:
             self.image_sequence = 4
@@ -318,6 +319,8 @@ class GUI_element_button(GUI_element):
             return
         if self.sequence_count > 2:
             self.image_sequence = 3
+        if self.generic_button:
+            self.generic_button_text_object.colour = (.84,.84,.84)
 
 
     def On_Exit(self):
@@ -366,8 +369,10 @@ class GUI_element_window(GUI_element):
     def gui_init(self):
         GUI_element.gui_init(self)
         self.frame = GUI_element_window_frame(self.game, self, self.x, self.y, self.width, self.height)
-        self.text = Text(self.game.core.media.fonts['small'], self.x+16.0, self.y+4.0, TEXT_ALIGN_TOP_LEFT,  self.title)
-        self.text.colour = (0.0,0.0,0.0)
+        self.text = Text(self.game.core.media.fonts['window_title'], self.x + self.width / 2, self.y + 5.0, TEXT_ALIGN_TOP,  self.title)
+        self.text.colour = (0.95, 0.58, 0.09)
+        self.text.shadow = 2
+        self.text.shadow_colour = (0.5, 0.5, 0.5)
         self.text.z = self.z - 2
 
     
@@ -387,7 +392,7 @@ class GUI_element_dialog_box(GUI_element):
     message_text = []
     caption_image_obj = None
 
-    min_box_height = 95
+    min_box_height = 100
     min_box_width = 300    
        
     def __init__(self, game, parent = None, title = "test", message = ["test message"], caption_image = None, callback = None):
@@ -405,23 +410,26 @@ class GUI_element_dialog_box(GUI_element):
         GUI_element.gui_init(self)
         self.z = Z_GUI_OBJECT_LEVEL_9
 
+
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
 
         # Create the title text objects
-        self.title_text = Text(self.game.core.media.fonts['small'], 0.0, 0.0, TEXT_ALIGN_TOP_LEFT, self.title)
-        self.title_text.colour = (0.0,0.0,0.0)
+        self.title_text = Text(self.game.core.media.fonts['window_title'], 0.0, 0.0, TEXT_ALIGN_TOP,  self.title)
+        self.title_text.colour = (0.95, 0.58, 0.09)
+        self.title_text.shadow = 2
+        self.title_text.shadow_colour = (0.5, 0.5, 0.5)
         self.title_text.z = Z_GUI_OBJECT_LEVEL_10 - 1
 
         # Create all the message texts
         self.message_text = []
 
-        y = 30.0
+        y = 45.0
         max_text_width = None
 
         for msg in self.message:
-            txt_obj = Text(self.game.core.media.fonts['basic'], 0.0, y, TEXT_ALIGN_TOP_LEFT, str(msg))
-            txt_obj.colour = (0.0,0.0,0.0)
+            txt_obj = Text(self.game.core.media.fonts['window_text'], 0.0, y, TEXT_ALIGN_TOP_LEFT, str(msg))
+            txt_obj.colour = (0.3,0.3,0.3)
             txt_obj.z = Z_GUI_OBJECT_LEVEL_10 - 1
             self.message_text.append(txt_obj)
             y += txt_obj.text_height + 2
@@ -451,8 +459,8 @@ class GUI_element_dialog_box(GUI_element):
         self.frame = GUI_element_window_frame(self.game, self, self.frame_location_x, self.frame_location_y, self.min_box_width, self.min_box_height)
 
         # Adjust the position of the text objects based on the final location of the frame
-        self.title_text.x = self.frame_location_x + 16
-        self.title_text.y = self.frame_location_y + 4
+        self.title_text.x = self.frame_location_x + self.min_box_width / 2
+        self.title_text.y = self.frame_location_y + 5.0
 
         for txt_obj in self.message_text:
             txt_obj.x = self.frame_location_x + 28
@@ -504,7 +512,7 @@ class GUI_button_dialog_box_confirm(GUI_element_button):
         self.parent = parent
         self.z = self.parent.frame.z - 1
         self.x = x
-        self.y = self.parent.frame.y + self.parent.frame.height - 50.0
+        self.y = self.parent.frame.y + self.parent.frame.height - 45.0
         self.gui_init()
 
     
@@ -541,8 +549,8 @@ class GUI_element_confirmation_box(GUI_element_dialog_box):
 
 
     def create_button_objects(self):
-        GUI_button_confirmation_box_confirm(self.game, self, self.frame.x + (self.frame.width/2) - 50)
-        GUI_button_confirmation_box_cancel(self.game, self, self.frame.x + (self.frame.width/2) + 20)
+        GUI_button_confirmation_box_confirm(self.game, self, self.frame.x + (self.frame.width/2) - 49)
+        GUI_button_confirmation_box_cancel(self.game, self, self.frame.x + (self.frame.width/2) + 11 )
 
 
 
@@ -557,7 +565,7 @@ class GUI_button_confirmation_box_confirm(GUI_element_button):
         self.parent = parent
         self.z = self.parent.frame.z - 1
         self.x = x
-        self.y = self.parent.frame.y + self.parent.frame.height - 50.0
+        self.y = self.parent.frame.y + self.parent.frame.height - 45.0
         self.gui_init()
 
     
@@ -580,7 +588,7 @@ class GUI_button_confirmation_box_cancel(GUI_element_button):
         self.parent = parent
         self.z = self.parent.frame.z - 1
         self.x = x
-        self.y = self.parent.frame.y + self.parent.frame.height - 50.0
+        self.y = self.parent.frame.y + self.parent.frame.height - 45.0
         self.gui_init()
 
     
@@ -823,15 +831,16 @@ class GUI_element_text_input(GUI_element):
         GUI_element.gui_init(self)
 
         if not self.label is None:            
-            self.label_text_object = Text(self.game.core.media.fonts['basic'], self.x, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.label + " "))
+            self.label_text_object = Text(self.game.core.media.fonts['window_text'], self.x, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.label + " "))
             self.label_text_object.z = self.z
-            self.label_text_object.colour = (0,0,0)
+            self.label_text_object.colour = (.3,.3,.3)
             self.width -= self.label_text_object.text_width
             
         self.x += self.label_text_object.text_width
 
-        self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_text))
+        self.text_object = Text(self.game.core.media.fonts['text_input'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_text))
         self.text_object.z = self.z - 1
+        self.text_object.colour = (.2,.2,.2)
 
         self.draw_strategy = "gui_text_input"
 
@@ -947,7 +956,7 @@ class GUI_element_dropdown(GUI_element):
 
     # Override these instead of the typical attributes
     display_width = 300
-    display_height = 25
+    display_height = 28
     display_x = 0
     display_y = 0
     display_z = Z_GUI_OBJECT_LEVEL_6
@@ -1069,8 +1078,9 @@ class GUI_element_dropdown_currently_selected(GUI_element):
 
     def set_text_to(self, text):
         if self.text_object is None:
-            self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 2, self.y + 2, TEXT_ALIGN_TOP_LEFT, text)
+            self.text_object = Text(self.game.core.media.fonts['dropdown_text'], self.x + 6, self.y + 6, TEXT_ALIGN_TOP_LEFT, text)
             self.text_object.z = self.z - 2
+            self.text_object.colour = (0.3,0.3,0.3)
         else:
             self.text_object.text = text
             
@@ -1117,7 +1127,7 @@ class GUI_element_dropdown_options(GUI_element):
         self.parent = parent
         self.gui_init()
         self.draw_strategy = "gui_dropdown_options"
-        self.display_height = self.parent.display_height
+        self.display_height = self.parent.display_height - 4
         self.num_dropdown_options = len(self.parent.dropdown_options)
         self.hover_sound = False
         self.last_hovered_item = -1
@@ -1133,11 +1143,12 @@ class GUI_element_dropdown_options(GUI_element):
         
         self.height = 0
         for item in self.parent.dropdown_options:
-            new_text = Text(self.game.core.media.fonts['basic'], self.x + 2, self.y + 2 + self.height, TEXT_ALIGN_TOP_LEFT, item['text'])
+            new_text = Text(self.game.core.media.fonts['dropdown_text_options'], self.x + 2, self.y + 4 + self.height, TEXT_ALIGN_TOP_LEFT, item['text'])
             new_text.z = self.z - 2
+            new_text.colour = (.3, .3, .3)
             self.texts.append(new_text)
 
-            self.height += self.parent.display_height
+            self.height += self.display_height
 
             if new_text.text_width > self.width:
                 self.width = new_text.text_width
@@ -1155,7 +1166,7 @@ class GUI_element_dropdown_options(GUI_element):
 
 
     def mouse_over(self):
-        self.hovered_item = int((self.game.gui.mouse.y - self.y) / (self.parent.display_height))
+        self.hovered_item = int((self.game.gui.mouse.y - self.y) / (self.display_height))
         if self.hovered_item >= len(self.parent.dropdown_options):
             self.hovered_item = -1
         if not self.hover_sound and self.hovered_item > -1 and self.hovered_item != self.last_hovered_item:
@@ -1222,7 +1233,7 @@ class GUI_element_scroll_window(GUI_element):
             self.contents_scroll_location = self.contents_height - self.height
 
         for x in self.arrows:
-            x.y = (64 if x.up_arrow else self.height - 128) + self.contents_scroll_location
+            x.y = (0 if x.up_arrow else self.height - 128) + self.contents_scroll_location
 
 
 
@@ -1237,8 +1248,7 @@ class GUI_element_button_scroll_window_arrow(GUI_element_button):
         self.scroll_element = self.parent
         self.x = self.parent.width - 64
         self.z = self.parent.z - 1
-        self.rotation = 0 if self.up_arrow else 180
-        self.image = self.game.core.media.gfx['gui_button_scroll_window_arrow']
+        self.image = self.game.core.media.gfx['gui_scroll_button_up_small' if self.up_arrow else 'gui_scroll_button_down_small']
         self.gui_init()
 
 
@@ -1412,18 +1422,18 @@ class GUI_element_yes_no_radios(GUI_element):
         self.buttons['yes'].x = self.x
         self.buttons['yes'].y = self.y
         self.buttons['yes'].on_press = self.press_yes
-        text = Text(self.game.core.media.fonts["basic"], self.x + 30.0, self.y, TEXT_ALIGN_TOP_LEFT, self.yes_text)
+        text = Text(self.game.core.media.fonts["window_text"], self.x + 35.0, self.y + 16, TEXT_ALIGN_CENTER_LEFT, self.yes_text)
         text.z = self.z - 1
-        text.colour = (0.0,0.0,0.0)
+        text.colour = (0.3,0.3,0.3)
         self.text.append(text)
 
         self.buttons['no'] = GUI_element_single_radio_button(self.game, self, self.press_no)
-        self.buttons['no'].x = self.x + 65
+        self.buttons['no'].x = self.x + 80
         self.buttons['no'].y = self.y
         self.buttons['no'].on_press = self.press_no
-        text = Text(self.game.core.media.fonts["basic"], self.x + 95.0, self.y, TEXT_ALIGN_TOP_LEFT, self.no_text)
+        text = Text(self.game.core.media.fonts["window_text"], self.x + 115.0, self.y + 16, TEXT_ALIGN_CENTER_LEFT, self.no_text)
         text.z = self.z - 1
-        text.colour = (0.0,0.0,0.0)
+        text.colour = (0.3,0.3,0.3)
         self.text.append(text)
 
         if self.current_value == True:
@@ -1455,7 +1465,7 @@ class GUI_element_single_radio_button(GUI_element_button):
     generic_button = False
     toggle_button = True
     width = 60
-    height = 22
+    height = 32
 
     def __init__(self, game, parent, action = None):
         Process.__init__(self)

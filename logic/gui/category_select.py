@@ -30,12 +30,23 @@ class GUI_category_select_container(GUI_element):
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
         self.alpha = .1
+        self.scroll_up = False
+        self.scroll_down = False
+        
+        self.title = Text(self.game.core.media.fonts['menu_titles'], 20, 10, TEXT_ALIGN_TOP_LEFT, "Category Select")
+        self.title.z = Z_GUI_OBJECT_LEVEL_2
+        self.title.colour = (0.95, 0.58, 0.09)
+        self.title.shadow = 2
+        self.title.shadow_colour = (0.7, 0.7, 0.7)
 
         GUI_category_go_back(self.game, self)
         self.mascot_object = Mascot_Category_Select(self.game)
 
+        GUI_category_select_up_button(self.game, self)
+        GUI_category_select_down_button(self.game, self)
+        
         if not self.game.category_to_unlock == None:
-            self.mascot_object.set_speech("Wow, you unlocked a new category!")
+            self.mascot_object.set_speech(["Wow, you unlocked", "a new category!"])
             self.game.gui.block_gui_keyboard_input = True
             self.game.gui.block_gui_mouse_input = True
             self.game.gui.mouse.alpha = 0.0
@@ -67,46 +78,54 @@ class GUI_category_select_container(GUI_element):
 
         self.scroll_speed = 0.0
 
+        # Draw strategy data
         self.text_offset_x = 0.0
         self.text_offset_y = 0.0
-
-        # Draw strategy data
-        self.draw_strategy = "category_select"
+        self.draw_strategy = "balloons_background"
 
 
     def Execute(self):
         self.update()
 
         if not self.game.gui.block_gui_mouse_input:
-            if self.game.gui.mouse.x > (self.game.settings['screen_width'] - 512) and self.game.gui.mouse.y < 50:
-                if self.first_category.y > self.first_category.image.height:
-                    self.scroll_speed = 0.0
-                else:
-                    self.scroll_speed -= .2
-            if self.game.gui.mouse.x > (self.game.settings['screen_width'] - 512) and self.game.gui.mouse.y > (self.game.settings['screen_height'] - 50):
-                if self.last_category.y < self.game.settings['screen_height'] - (self.last_category.image.height * 2):
-                    self.scroll_speed = 0.0
-                else:
-                    self.scroll_speed += .2
+            if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.gui.mouse.y < 50:
+                    self.scroll_up = True
+            if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.gui.mouse.y > (self.game.settings['screen_height'] - 50):
+                    self.scroll_down = True
 
+        if self.scroll_up:
+            self.scroll_speed -= .2
+        elif self.scroll_down:
+            self.scroll_speed += .2
+
+        if self.first_category.y > 75 and self.scroll_speed < 0:
+            self.scroll_speed = 0.0
+        if self.last_category.y < self.game.settings['screen_height'] - 128 and self.scroll_speed > 0:
+            self.scroll_speed = 0.0
+            
         self.scroll_speed *= .95
-
+            
         if self.scroll_speed > 7.0:
             self.scroll_speed = 7.0
         if self.scroll_speed < -7.0:
             self.scroll_speed = -7.0
+
+        self.scroll_up = False
+        self.scroll_down = False
             
         for cat in self.category_objs:
             cat.y -= self.scroll_speed
             cat.update_obj_positions()
 
-        self.text_offset_x -= 5.0
-        self.text_offset_y += 5.0
+        self.text_offset_x -= 3.0
+        self.text_offset_y += 3.0
 
+        
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
         self.mascot_object.Kill()
+        self.title.Kill()
         
 
 
@@ -120,20 +139,22 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.parent = parent
         self.pack_dir = pack_dir
         self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
-        self.z = self.parent.z - 1
-        self.image = self.game.core.media.gfx['gui_button_select_category_tutorial' if self.pack_dir == "0001" else 'gui_button_select_category']
+        self.z = self.parent.z - 3
+        self.image = self.game.core.media.gfx['gui_button_select_category']
         self.gui_init()
-        self.x = (self.game.settings['screen_width'] / 2) - 25
-        self.y = self.image.height + (self.image.height * num) + (32 * num)
-        self.normal_colour = colour
+        self.x = (self.game.settings['screen_width'] / 2) - 100
+        self.y = 75 + (80 * num) + (40 * num)
+        self.width = 466
+        self.height = 80
+        self.normal_colour = colour        
 
         self.objs = {}
 
-        text = Text(self.game.core.media.fonts['category_button_name'], 0, 0, TEXT_ALIGN_CENTER, name)
+        self.objs['shadow'] = Select_category_button_shadow(self.game, self)
+        
+        text = Text(self.game.core.media.fonts['category_button_name'], 0, 0, TEXT_ALIGN_TOP_LEFT, name)
         text.z = self.z - 3
         text.colour = (1.0, 1.0, 1.0)
-        text.shadow = 2
-        text.shadow_colour = (.2, .2, .2)
         self.objs['cat_name'] = text
 
         if self.game.category_to_unlock == self.pack_dir or not self.pack_dir in self.game.player.unlocked_categories:
@@ -206,61 +227,52 @@ class GUI_category_select_select_category_button(GUI_element_button):
 
     def create_unlocked_objects(self):
         if self.pack_uuid in self.game.player.cleared_categories:
-            self.objs['status_icon'] = GUI_category_completed_tick(self.game)
+            if self.pack_uuid in self.game.manager.starred_packs:
+                self.objs['status_icon'] = GUI_category_completed_star(self.game)
+            else:
+                self.objs['status_icon'] = GUI_category_completed_tick(self.game)
             
         if self.pack_dir == "0001":
             return
         
         completed = len(self.game.player.cleared_puzzles[self.pack_uuid]) if self.pack_uuid in self.game.player.cleared_puzzles else 0
-        text = Text(self.game.core.media.fonts['category_button_completed_count'], 0, 0, TEXT_ALIGN_TOP_RIGHT, str(completed))
+        text = Text(self.game.core.media.fonts['category_button_completed_count'], 0, 0, TEXT_ALIGN_TOP_RIGHT, str(completed) + "/" + str(len(self.game.manager.game_packs[self.pack_dir].puzzles)))
         text.z = self.z - 1
         text.colour = (1.0, 1.0, 1.0)
-        text.shadow = 2
-        text.shadow_colour = (.2, .2, .2)
         self.objs['completed_count'] = text
 
-        text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, str(len(self.game.manager.game_packs[self.pack_dir].puzzles)))
+        text = Text(self.game.core.media.fonts['category_button_solved_text'], 0, 0, TEXT_ALIGN_TOP_RIGHT, "solved")
         text.z = self.z - 1
         text.colour = (1.0, 1.0, 1.0)
-        text.shadow = 2
-        text.shadow_colour = (.2, .2, .2)
-        self.objs['total_count'] = text
-
-        text = Text(self.game.core.media.fonts['category_button_total_count'], 0, 0, TEXT_ALIGN_TOP_LEFT, "solved")
-        text.z = self.z - 1
-        text.colour = (1.0, 1.0, 1.0)
-        text.shadow = 1
-        text.shadow_colour = (.2, .2, .2)
         self.objs['solved'] = text
         
 
     def update_obj_positions(self):
-        self.objs['cat_name'].x = self.x + (self.image.width/2) - 32
-        self.objs['cat_name'].y = self.y + (self.image.height/2)
+        self.objs['cat_name'].x = self.x + 60
+        self.objs['cat_name'].y = self.y + 15
 
         if 'completed_count' in self.objs:
-            self.objs['completed_count'].x = self.x + 460
-            self.objs['completed_count'].y = self.y + 6
-
-        if 'total_count' in self.objs:
-            self.objs['total_count'].x = self.x + 470
-            self.objs['total_count'].y = self.y + 27
+            self.objs['completed_count'].x = self.x + 447
+            self.objs['completed_count'].y = self.y + 10
 
         if 'solved' in self.objs:
-            self.objs['solved'].x = self.x + 437
+            self.objs['solved'].x = self.x + 447
             self.objs['solved'].y = self.y + 40
 
         if 'status_icon' in self.objs:
-            self.objs['status_icon'].x = self.x + 64
-            self.objs['status_icon'].y = self.y + 32
+            self.objs['status_icon'].x = self.x + 10
+            self.objs['status_icon'].y = self.y + 60
 
         if not self.lock_icon is None:
-            self.lock_icon.x = self.x + 64
-            self.lock_icon.y = self.y + 32
+            self.lock_icon.x = self.x + 10
+            self.lock_icon.y = self.y + 60
 
         if not self.unlock_mask is None:
             self.unlock_mask.x = self.x
             self.unlock_mask.y = self.y
+
+        self.objs['shadow'].x = self.x
+        self.objs['shadow'].y = self.y
 
 
     def mouse_left_up(self):
@@ -285,6 +297,22 @@ class GUI_category_select_select_category_button(GUI_element_button):
             self.objs[x].Kill()
 
 
+
+class Select_category_button_shadow(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z + 1
+        self.x = self.parent.x
+        self.y = self.parent.y
+        self.image = self.game.core.media.gfx['gui_button_select_category_shadow']
+
+
+    def get_screen_draw_position(self):
+        return (self.x, self.y)
+
+    
 
 class GUI_category_select_select_category_button_unlock_overlay(Process):
     def __init__(self, game, parent):
@@ -312,6 +340,15 @@ class GUI_category_completed_tick(Process):
 
 
 
+class GUI_category_completed_star(Process):
+    def __init__(self, game):
+        Process.__init__(self)
+        self.game = game
+        self.image = self.game.core.media.gfx['gui_category_complete_star']
+        self.z = Z_GUI_OBJECT_LEVEL_3
+
+
+
 class GUI_category_locked(Process):
     def __init__(self, game):
         Process.__init__(self)
@@ -331,14 +368,9 @@ class GUI_category_go_back(GUI_element_button):
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_go_back']
         self.gui_init()
-        self.x = 16
-        self.y = 16
+        self.x = 8
+        self.y = self.game.settings['screen_height'] - self.image.height
         self.width = 128
-        self.text = Text(self.game.core.media.fonts['category_button_completed_count'], 64, 16, TEXT_ALIGN_TOP_LEFT, "Back")
-        self.text.z = self.z - 1
-        self.text.colour = (1.0, 1.0, 1.0)
-        self.text.shadow = 2
-        self.text.shadow_colour = (.2, .2, .2)
 
 
     def mouse_left_up(self):
@@ -346,5 +378,42 @@ class GUI_category_go_back(GUI_element_button):
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 20)
 
 
-    def On_Exit(self):
-        self.text.Kill()
+
+class GUI_category_select_up_button(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_scroll_button_up']
+        self.gui_init()
+        self.x = (self.game.settings['screen_width'] / 2) + 450 - (self.image.height / 2)
+        self.y = 100 - (self.image.width / 2)
+
+
+    def mouse_left_down(self):
+        GUI_element_button.mouse_left_down(self)
+        self.parent.scroll_up = True
+        
+    
+
+class GUI_category_select_down_button(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = self.parent.z - 1
+        self.image = self.game.core.media.gfx['gui_scroll_button_down']
+        self.gui_init()
+        self.x = (self.game.settings['screen_width'] / 2) + 450 - (self.image.height / 2)
+        self.y = self.game.settings['screen_height'] - 100 - (self.image.width / 2)
+
+
+    def mouse_left_down(self):
+        GUI_element_button.mouse_left_down(self)
+        self.parent.scroll_down = True
+

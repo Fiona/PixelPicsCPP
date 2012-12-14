@@ -106,10 +106,15 @@ class Puzzle_manager(object):
 
     user_created_puzzles = False
 
+    starred_packs = []
+    all_main_packs_starred = False
+    
+
     def __init__(self, game):
         self.game = game
         self.load_packs()
         self.load_packs(user_created = False)
+        self.check_which_packs_starred()
         
 
     def load_packs(self, user_created = True):
@@ -147,6 +152,43 @@ class Puzzle_manager(object):
                 self.pack_uuids.append(pack.uuid)
             else:
                 packs[pack_dir_name] = pack
+                
+
+    def check_which_packs_starred(self):
+        self.starred_packs = []
+
+        game_packs = []
+        for p in self.game_packs:
+            game_packs.append(self.game_packs[p])
+            
+        for pack in game_packs + self.packs:
+            starred = True
+            if pack.uuid in self.game.player.puzzle_scores:
+                for puzzle_filename in pack.puzzles:
+                    if puzzle_filename in self.game.player.puzzle_scores[pack.uuid]:
+                        if pack.freemode:
+                            seconds = int(self.game.player.puzzle_scores[pack.uuid][puzzle_filename][0] / 60)
+                            if int(seconds / 60) > 60:
+                                starred = False
+                                break
+                        else:
+                            if self.game.player.puzzle_scores[pack.uuid][puzzle_filename][1] < 4:
+                                starred = False
+                                break
+                    else:
+                        starred = False
+                        break
+            else:
+                starred = False
+
+            if starred:
+                self.starred_packs.append(pack.uuid)
+
+        self.all_main_packs_starred = True
+        for pack in game_packs:
+            if not pack.uuid in self.starred_packs:
+                self.all_main_packs_starred = False
+                break
                 
 
     def load_pack(self, pack_dir, user_created = True):
@@ -373,6 +415,18 @@ class Puzzle_manager(object):
             raise e
 
 
+
+    def delete_current_puzzle_save(self):
+        # get filename we want
+        save_filename = os.path.join(
+            self.game.core.path_saves_user_directory if self.user_created_puzzles else self.game.core.path_saves_game_directory,
+            self.current_puzzle_pack + "_" + self.current_puzzle_file + FILE_SAVES_EXTENSION
+            )
+
+        if os.path.exists(save_filename):
+            os.remove(save_filename)
+            
+        
 
     def load_puzzle_state(self, state_filename):
         try:
