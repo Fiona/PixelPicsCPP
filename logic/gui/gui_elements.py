@@ -1233,7 +1233,7 @@ class GUI_element_scroll_window(GUI_element):
             self.contents_scroll_location = self.contents_height - self.height
 
         for x in self.arrows:
-            x.y = (64 if x.up_arrow else self.height - 128) + self.contents_scroll_location
+            x.y = (0 if x.up_arrow else self.height - 128) + self.contents_scroll_location
 
 
 
@@ -1248,7 +1248,7 @@ class GUI_element_button_scroll_window_arrow(GUI_element_button):
         self.scroll_element = self.parent
         self.x = self.parent.width - 64
         self.z = self.parent.z - 1
-        self.image = self.game.core.media.gfx['gui_scroll_button_up' if self.up_arrow else 'gui_scroll_button_down']
+        self.image = self.game.core.media.gfx['gui_scroll_button_up_small' if self.up_arrow else 'gui_scroll_button_down_small']
         self.gui_init()
 
 
