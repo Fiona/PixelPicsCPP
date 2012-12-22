@@ -93,8 +93,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             cells_fill = [(0, 2), (1, 2), (2, 2), (3, 2), (4, 2)],
             wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
             wrong_input = [
-                "Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!",
-                "Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"
+                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
+                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"]
               ]
             )
         self.add_stage(
@@ -116,8 +116,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             cells_empty = [(0, 4), (1, 4), (2, 4), (3, 4), (4, 4)],
             wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
             wrong_input = [
-                "Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!",
-                "Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"
+                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!"],
+                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"]
               ]
             )
         self.add_stage(
@@ -139,8 +139,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             cells_empty = [(3,1), (3,3)],
             wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
             wrong_input = [
-                "Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!",
-                "Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"
+                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!"],
+                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"]
               ]            
             )
         self.add_stage(
@@ -157,8 +157,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             cells_fill = [(3,0)],
             wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
             wrong_input = [
-                "Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!",
-                "Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"
+                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
+                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"]
               ]            
             )
         self.add_stage(
@@ -187,8 +187,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             cells_fill = [(0, 1)],
             wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
             wrong_input = [
-                "Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!",
-                "Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"
+                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
+                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"]
               ]            
             )
         self.add_stage(
@@ -209,8 +209,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             cells_empty = [(1,0), (1,1), (4,0), (4,1), (1,3), (4, 3)],
             wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
             wrong_input = [
-                "Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!",
-                "Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"
+                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!"],
+                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"]
               ]            
             )
         self.add_stage(
@@ -228,7 +228,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
 
     def add_stage(
           self, instructions = [""], alt_instructions = [""], row_highlights = [], col_highlights = [], cell_highlights = [], \
-          cells_fill = [], cells_empty = [], wrong_cell = "", wrong_input = ["", ""], mood = "normal"
+          cells_fill = [], cells_empty = [], wrong_cell = "", wrong_input = [[""], [""]], mood = "normal"
           ):
         empty_stage = {
             'instructions' : instructions,
@@ -315,7 +315,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             message = self.tutorial_stages[self.current_stage]['wrong_input'][0]
         else:
             message = self.tutorial_stages[self.current_stage]['wrong_input'][1]        
-        self.show_message([message])
+        self.show_message(message)
         self.mascot.set_mood("sad")
 
 
@@ -433,7 +433,7 @@ class GUI_tutorial_puzzle(GUI_puzzle):
 
     def finish_cleared_anim(self):
         self.parent.puzzle_cleared = True
-        self.mascot.set_speech(self.parent.message_tutorial_complete)
+        self.parent.mascot.set_speech(self.parent.message_tutorial_complete)
         self.parent.show_message(self.parent.message_tutorial_complete)
         
 

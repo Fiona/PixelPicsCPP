@@ -1294,15 +1294,19 @@ class GUI_element_spinner(GUI_element):
     def gui_init(self):
         GUI_element.gui_init(self)
         
-        if not self.label is None:            
-            self.label_text_object = Text(self.game.core.media.fonts['basic'], self.x, self.y + 2, TEXT_ALIGN_TOP_LEFT, self.label + " ")
-            self.label_text_object.z = self.z -1
-            self.label_text_object.colour = (0,0,0)
+        if not self.label is None:
+            self.label_text_object = Text(self.game.core.media.fonts['window_text'], self.x, self.y + 6, TEXT_ALIGN_TOP_LEFT, str(self.label + " "))
+            self.label_text_object.z = self.z
+            self.label_text_object.colour = (.3,.3,.3)
             
         self.x += self.label_text_object.text_width
 
-        self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
-        self.text_object.z = self.z - 1
+        self.text_object = Text(self.game.core.media.fonts['dropdown_text'], self.x + 6, self.y + 6, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
+        self.text_object.z = self.z - 2
+        self.text_object.colour = (0.8,0.8,0.8)
+
+        #self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
+        #self.text_object.z = self.z - 1
 
         self.spinner_down = GUI_element_spinner_button_down(self.game, self)
         self.spinner_up = GUI_element_spinner_button_up(self.game, self)

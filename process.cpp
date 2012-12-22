@@ -2700,7 +2700,6 @@ void Text::generate_new_text_image()
         image = NULL;
         return;
     }
-    return;
 
     // Create a new SDL texture to put our image in.
     SDL_Color colour = {255, 255, 255};
