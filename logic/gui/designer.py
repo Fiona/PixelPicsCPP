@@ -39,7 +39,7 @@ class GUI_designer_packs_container(GUI_element):
         self.height = self.game.settings['screen_height']
         self.alpha = 0.1
 
-        GUI_designer_title(self.game, self)
+        GUI_designer_title(self.game, self, title = "Select Pack")
         GUI_designer_packs_back(self.game, self)
         GUI_designer_packs_create_pack(self.game, self)
         
@@ -76,7 +76,7 @@ class GUI_designer_packs_container(GUI_element):
 
 
 class GUI_designer_title(GUI_element):
-    def __init__(self, game, parent, subtitle = None, no_background = False):
+    def __init__(self, game, parent, title = "", subtitle = None, no_background = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
@@ -84,16 +84,16 @@ class GUI_designer_title(GUI_element):
         self.gui_init()
         self.z = Z_GUI_OBJECT_LEVEL_5
 
-        self.text = Text(self.game.core.media.fonts['menu_titles'], 20, 10, TEXT_ALIGN_TOP_LEFT, "Select Pack")
+        self.text = Text(self.game.core.media.fonts['menu_titles'], 20, 10, TEXT_ALIGN_TOP_LEFT, title)
         self.text.z = Z_GUI_OBJECT_LEVEL_2
         self.text.colour = (0.95, 0.58, 0.09)
         self.text.shadow = 2
-        self.text.shadow_colour = (0.7, 0.7, 0.7)
+        self.text.shadow_colour = (0.8, 0.8, 0.8)
 
         if not subtitle is None:
             self.subtitle = Text(self.game.core.media.fonts['menu_subtitles'], 30, 50, TEXT_ALIGN_TOP_LEFT, subtitle)
-            self.subtitle.colour = (.2, .5, .2)
-            self.subtitle.shadow_colour = (.2, .2, .2)
+            self.subtitle.colour = (.55, .55, .55)
+            self.subtitle.shadow_colour = (.8, .8, .8)
             self.subtitle.shadow = 2
             self.subtitle.z = self.z - 2
         else:
@@ -636,7 +636,7 @@ class GUI_designer_puzzles_container(GUI_element):
         self.height = self.game.settings['screen_height']
         self.alpha = 0.1
 
-        GUI_designer_title(self.game, self, subtitle = str(self.game.manager.current_pack.name))
+        GUI_designer_title(self.game, self, title = "Select Puzzle", subtitle = str(self.game.manager.current_pack.name))
         GUI_designer_puzzles_back(self.game, self)
         GUI_designer_puzzles_create_puzzle(self.game, self)
         
@@ -909,7 +909,6 @@ class GUI_designer_puzzles_puzzles_list_scroll_window(GUI_element_scroll_window)
         num = 0
         last_item = None
         for puzzle_filename in self.game.manager.current_pack.order:
-            """
             last_item = GUI_designer_puzzles_puzzle_item(self.game, self, num, puzzle_filename, self.game.manager.current_pack.puzzles[puzzle_filename])
             self.puzzle_items.append(last_item)
 
@@ -927,7 +926,7 @@ class GUI_designer_puzzles_puzzles_list_scroll_window(GUI_element_scroll_window)
                 self.puzzle_items.append(
                     GUI_designer_puzzles_button_move_puzzle_up(self.game, self, num, puzzle_filename, self.game.manager.current_pack.puzzles[puzzle_filename])
                     )
-                    """
+
             num += 1
 
         if last_item is None:
@@ -1352,7 +1351,7 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
         self.alpha = 0.1
 
         GUI_designer_designer_menu_bar(self.game, self)
-        self.set_title(self.game.manager.current_puzzle.name)
+        self.set_title(title = self.game.manager.current_puzzle.name, subtitle = str(self.game.manager.current_puzzle.width) + " x " + str(self.game.manager.current_puzzle.height))
         GUI_designer_designer_back(self.game, self)
         self.puzzle_object = GUI_puzzle(self.game, self)
         GUI_verify_status(self.game, self, self.puzzle_object)
@@ -1369,11 +1368,19 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
         self.tool_message = Text(self.game.core.media.fonts['menu_subtitles'], self.game.settings['screen_width'] / 2,  150, TEXT_ALIGN_CENTER, "Left click to fill squares. Right click to clear.")
         self.tool_message.colour = (.2,.2,.2)
         self.tool_message.z = Z_GUI_OBJECT_LEVEL_4
+
+        # Draw strategy data
+        self.draw_strategy = "designer_background"
+        self.text_offset_x = 0.0
+        self.text_offset_y = 0.0
             
 
     def Execute(self):
         self.update()
         self.tool_message.alpha = 1.0 if self.tool_message_display else 0.0
+
+        self.text_offset_x += 5.0
+        self.text_offset_y -= 5.0
 
 
     def untoggle_tools(self, ignore):
@@ -1382,10 +1389,10 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
                 tool.toggle_state = False
 
 
-    def set_title(self, to):
+    def set_title(self, title, subtitle):
         if not self.title is None:
             self.title.Kill()
-        self.title = GUI_designer_title(self.game, self, subtitle = str(to), no_background = True)
+        self.title = GUI_designer_title(self.game, self, title = str(title), subtitle = str(subtitle), no_background = True)
 
 
     def On_Exit(self):
@@ -1402,8 +1409,7 @@ class GUI_designer_designer_menu_bar(GUI_element):
         self.gui_init()
         self.z = Z_GUI_OBJECT_LEVEL_4
         self.width = self.game.settings['screen_width']
-        self.height = 128
-        self.alpha = 0.3
+        self.height = 145
         self.draw_strategy = "gui_designer_designer_menu_bar"
 
 
@@ -1413,16 +1419,16 @@ class GUI_designer_designer_menu_bar(GUI_element):
 
 
 class GUI_designer_designer_back(GUI_element_button):
-    generic_button = True
-    generic_button_text = "< Quit"
+    generic_button = False
     
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 20
-        self.y = 90
+        self.x = 10
+        self.y = 70
         self.z = Z_GUI_OBJECT_LEVEL_5
+        self.image = self.game.core.media.gfx['gui_button_go_back_small']
         self.gui_init()
 
 
@@ -1667,7 +1673,7 @@ class GUI_designer_puzzles_edit_name_dialog(GUI_designer_puzzles_edit_puzzle_dia
             GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
         finally:
             self.parent.need_to_save = True
-            self.parent.set_title(self.puzzle_name_text.current_text)
+            self.parent.set_title(title = self.puzzle_name_text.current_text, subtitle = str(self.game.manager.current_puzzle.width) + " x " + str(self.game.manager.current_puzzle.height))
             if not dont_kill:
                 self.Kill()
 
@@ -1736,6 +1742,7 @@ class GUI_designer_puzzles_change_size_dialog(GUI_element_window):
             self.parent.puzzle_object.reload_puzzle_display()
             self.parent.need_to_save = True
             self.parent.reset_stack()
+            self.parent.set_title(title = self.game.manager.current_puzzle.name, subtitle = str(self.game.manager.current_puzzle.width) + " x " + str(self.game.manager.current_puzzle.height))
             if not dont_kill:
                 self.Kill()
 

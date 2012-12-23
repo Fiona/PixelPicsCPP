@@ -574,14 +574,22 @@ void Process::Draw_strategy_gui_designer_designer_menu_bar()
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.0f, 0.0f, 0.0f, alpha);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(0.0f, 0.0f);
     glVertex2f(width, 0.0f);
     glVertex2f(width, height);
     glVertex2f(0.0f, height);
     glEnd();
+    
+    glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
+    glLineWidth(4.0f);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(0.0f, height);
+    glVertex2f(width, height);
+    glEnd();
 
+    /*
     glBegin(GL_QUADS);
     glColor4f(0.0f, 0.0f, 0.0f, alpha);
     glVertex2f(0.0f, height);
@@ -592,6 +600,7 @@ void Process::Draw_strategy_gui_designer_designer_menu_bar()
     glColor4f(0.0f, 0.0f, 0.0f, 0.0f);
     glVertex2f(0.0f, height + 10.0f);
     glEnd();
+    */
 
     glEnable(GL_TEXTURE_2D);
 
@@ -1057,6 +1066,7 @@ void Process::Draw_strategy_puzzle()
     float hint_alpha;
     bool reset_vectors;
     bool reset_hint_gradients;
+    bool designer; 
 
     bool display_rectangle_marker;
     boost::python::object rectangle_marker_top_left;
@@ -1085,6 +1095,7 @@ void Process::Draw_strategy_puzzle()
              hint_alpha = boost::python::extract<float>(self_.attr("hint_alpha"));
              reset_vectors = boost::python::extract<bool>(self_.attr("draw_strategy_reset_vectors"));
              reset_hint_gradients = boost::python::extract<bool>(self_.attr("draw_strategy_reset_hint_gradients"));
+             designer = boost::python::extract<bool>(self_.attr("designer"));
 
              display_rectangle_marker = boost::python::extract<bool>(self_.attr("display_rectangle_marker"));
              rectangle_marker_top_left = boost::python::extract<boost::python::object>(self_.attr("rectangle_marker_top_left"));
@@ -1476,7 +1487,10 @@ void Process::Draw_strategy_puzzle()
     // ****************
     // The black squares marking location of grid elements
     // ****************
-    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_black"]->texture);
+    if(designer)
+        glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_black_designer"]->texture);
+    else
+        glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_cell_black"]->texture);
 
     // Recreate vertex lists if we should
     static vector< vector< vector<float> > > black_chunks;
@@ -2700,7 +2714,6 @@ void Text::generate_new_text_image()
         image = NULL;
         return;
     }
-    return;
 
     // Create a new SDL texture to put our image in.
     SDL_Color colour = {255, 255, 255};
