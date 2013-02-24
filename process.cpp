@@ -738,7 +738,7 @@ void Process::Draw_strategy_gui_scroll_window()
     //glVertex2f(bottom_right[0], bottom_right[1])
     //glVertex2f(top_left[0], bottom_right[1])
 
-    glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBegin(GL_QUADS);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
@@ -746,8 +746,8 @@ void Process::Draw_strategy_gui_scroll_window()
     glVertex2f(x, height + y);
     glEnd();
 
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-    glLineWidth(1.0f);
+    glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
+    glLineWidth(4.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(x, y);
     glVertex2f(width + x, y);
@@ -1054,7 +1054,9 @@ void Process::Draw_strategy_puzzle()
     boost::python::object core;
     Media* media;
     boost::python::list current_puzzle_state;
+    float hint_alpha;
     bool reset_vectors;
+    bool reset_hint_gradients;
 
     bool display_rectangle_marker;
     boost::python::object rectangle_marker_top_left;
@@ -1080,7 +1082,9 @@ void Process::Draw_strategy_puzzle()
              core = boost::python::extract<boost::python::object>(game.attr("core"));
              media = boost::python::extract<Media*>(core.attr("media"));
              current_puzzle_state = boost::python::extract<boost::python::list>(self_.attr("draw_strategy_current_puzzle_state"));
+             hint_alpha = boost::python::extract<float>(self_.attr("hint_alpha"));
              reset_vectors = boost::python::extract<bool>(self_.attr("draw_strategy_reset_vectors"));
+             reset_hint_gradients = boost::python::extract<bool>(self_.attr("draw_strategy_reset_hint_gradients"));
 
              display_rectangle_marker = boost::python::extract<bool>(self_.attr("display_rectangle_marker"));
              rectangle_marker_top_left = boost::python::extract<boost::python::object>(self_.attr("rectangle_marker_top_left"));
@@ -1106,6 +1110,12 @@ void Process::Draw_strategy_puzzle()
         grid_lines.clear();
         self_.attr("__dict__")["draw_strategy_reset_vectors"] = False;
     }
+    if(reset_hint_gradients)
+    {
+        number_gradient_colours.clear();
+        self_.attr("__dict__")["draw_strategy_reset_hint_gradients"] = False;
+    }
+
 
     // ****************
     // Set up matrix
@@ -1160,22 +1170,22 @@ void Process::Draw_strategy_puzzle()
         draw_start = 0;
         for(int y = 0; y < current_puzzle_height; y++)
         {
-            
-            if(y % 2)
-            {
-                draw_start += PUZZLE_CELL_HEIGHT;
-                continue;
-            }
+
+            number_gradient_squares.push_back(-(PUZZLE_HINT_GRADIENT_WIDTH - 100));
+            number_gradient_squares.push_back(draw_start);
+            number_gradient_squares.push_back(0.0f);
+            number_gradient_squares.push_back(draw_start);
+            number_gradient_squares.push_back(0.0f);
+            number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
+            number_gradient_squares.push_back(-(PUZZLE_HINT_GRADIENT_WIDTH - 100));
+            number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
 
             number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
             number_gradient_squares.push_back(draw_start);
-
-            number_gradient_squares.push_back(0.0f);
+            number_gradient_squares.push_back(-(PUZZLE_HINT_GRADIENT_WIDTH - 100));
             number_gradient_squares.push_back(draw_start);
-
-            number_gradient_squares.push_back(0.0f);
+            number_gradient_squares.push_back(-(PUZZLE_HINT_GRADIENT_WIDTH - 100));
             number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
-
             number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
             number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
 
@@ -1187,23 +1197,23 @@ void Process::Draw_strategy_puzzle()
         for(int x = 0; x < current_puzzle_width; x++)
         {
             
-            if(x % 2)
-            {
-                draw_start += PUZZLE_CELL_WIDTH;
-                continue;
-            }
+            number_gradient_squares.push_back(draw_start);
+            number_gradient_squares.push_back(-(PUZZLE_HINT_GRADIENT_WIDTH - 100));
+            number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
+            number_gradient_squares.push_back(-(PUZZLE_HINT_GRADIENT_WIDTH - 100));
+            number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
+            number_gradient_squares.push_back(0.0f);
+            number_gradient_squares.push_back(draw_start);
+            number_gradient_squares.push_back(0.0f);
 
             number_gradient_squares.push_back(draw_start);
             number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
-
             number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
             number_gradient_squares.push_back(-PUZZLE_HINT_GRADIENT_WIDTH);
-
             number_gradient_squares.push_back(draw_start + PUZZLE_CELL_HEIGHT);
-            number_gradient_squares.push_back(0.0f);
-
+            number_gradient_squares.push_back(-(PUZZLE_HINT_GRADIENT_WIDTH - 100));
             number_gradient_squares.push_back(draw_start);
-            number_gradient_squares.push_back(0.0f);
+            number_gradient_squares.push_back(-(PUZZLE_HINT_GRADIENT_WIDTH - 100));
 
             draw_start += (float)PUZZLE_CELL_WIDTH;
 
@@ -1215,33 +1225,85 @@ void Process::Draw_strategy_puzzle()
     {
 
         float horisontal_colours[] = {
-            1.0f, 1.0f, 1.0f, 0.0f,
-            .5f, .7f, .8f, 1.0f,
-            .5f, .7f, .8f, 1.0f,
-            1.0f, 1.0f, 1.0f, 0.0f
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, hint_alpha
+        };
+        float horisontal_colours_fade[] = {
+            0.95f, 0.87f, 0.76f, 0.0f,
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, 0.0f
+        };
+
+        float horisontal_colours_even[] = {
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, hint_alpha
+        };
+        float horisontal_colours_fade_even[] = {
+            1.0f, 1.07f, 1.0f, 0.0f,
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, 0.0f
         };
 
         float vertical_colours[] = {
-            1.0f, 1.0f, 1.0f, 0.0f,
-            1.0f, 1.0f, 1.0f, 0.0f,
-            .5f, .7f, .8f, 1.0f,
-            .5f, .7f, .8f, 1.0f
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, hint_alpha
+        };
+        float vertical_colours_fade[] = {
+            0.95f, 0.87f, 0.76f, 0.0f,
+            0.95f, 0.87f, 0.76f, 0.0f,
+            0.95f, 0.87f, 0.76f, hint_alpha,
+            0.95f, 0.87f, 0.76f, hint_alpha
+        };
+
+        float vertical_colours_even[] = {
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, hint_alpha
+        };
+        float vertical_colours_fade_even[] = {
+            1.0f, 1.07f, 1.0f, 0.0f,
+            1.0f, 1.07f, 1.0f, 0.0f,
+            1.0f, 1.07f, 1.0f, hint_alpha,
+            1.0f, 1.07f, 1.0f, hint_alpha
         };
 
         for(int y = 0; y < current_puzzle_height; y++)
         {
-            if(y % 2)
-                continue;
             for(int i = 0; i < 16; i++)
-                number_gradient_colours.push_back(horisontal_colours[i]);
+                if(y % 2)
+                    number_gradient_colours.push_back(horisontal_colours_even[i]);
+                else
+                    number_gradient_colours.push_back(horisontal_colours[i]);
+            for(int i = 0; i < 16; i++)
+                if(y % 2)
+                    number_gradient_colours.push_back(horisontal_colours_fade_even[i]);
+                else
+                    number_gradient_colours.push_back(horisontal_colours_fade[i]);
         }
 
         for(int x = 0; x < current_puzzle_width; x++)
         {
-            if(x % 2)
-                continue;
+
             for(int i = 0; i < 16; i++)
-                number_gradient_colours.push_back(vertical_colours[i]);
+                if(x % 2)
+                    number_gradient_colours.push_back(vertical_colours_even[i]);
+                else
+                    number_gradient_colours.push_back(vertical_colours[i]);
+            for(int i = 0; i < 16; i++)
+                if(x % 2)
+                    number_gradient_colours.push_back(vertical_colours_fade_even[i]);
+                else
+                    number_gradient_colours.push_back(vertical_colours_fade[i]);
+
         }
 
     }
@@ -1257,7 +1319,7 @@ void Process::Draw_strategy_puzzle()
     if(hovered_row > -1)
     {
 
-        glColor4f(.5f, .5f, 1.0f, .2f);
+        glColor4f(0.95f, 0.58f, 0.09f, .2f);
 
         glBegin(GL_QUADS);
 
@@ -1266,12 +1328,12 @@ void Process::Draw_strategy_puzzle()
         glVertex2f(grid_width, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
         glVertex2f(0.0f, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
 
-        glColor4f(.5f, .5f, .5f, .4f);
+        glColor4f(0.95f, 0.58f, 0.09f, .5f);
         glVertex2f(0.0f, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
-        glColor4f(.5f, .5f, .5f, 0.0f);
+        glColor4f(0.95f, 0.58f, 0.09f, 0.0f);
         glVertex2f(-500.0f, (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f(-500.0f, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
-        glColor4f(.5f, .5f, .5f, .4f);
+        glColor4f(0.95f, 0.58f, 0.09f, .5f);
         glVertex2f(0.0f, (float)((PUZZLE_CELL_HEIGHT * hovered_row) + PUZZLE_CELL_HEIGHT));
 
         glEnd();
@@ -1281,7 +1343,7 @@ void Process::Draw_strategy_puzzle()
     if(hovered_column > -1)
     {
 
-        glColor4f(.5f, .5f, 1.0f, .2f);
+        glColor4f(0.95f, 0.58f, 0.09f, .2f);
 
         glBegin(GL_QUADS);
 
@@ -1290,10 +1352,10 @@ void Process::Draw_strategy_puzzle()
         glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), grid_height);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), grid_height);
 
-        glColor4f(.5f, .5f, .5f, .4f);
+        glColor4f(0.95f, 0.58f, 0.09f, .5f);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), 0.0f);
         glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), 0.0f);
-        glColor4f(.5f, .5f, .5f, 0.0f);
+        glColor4f(0.95f, 0.58f, 0.09f, 0.0f);
         glVertex2f((float)((PUZZLE_CELL_WIDTH * hovered_column) + PUZZLE_CELL_WIDTH), -500.0f);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), -500.0f);
 
@@ -1368,7 +1430,8 @@ void Process::Draw_strategy_puzzle()
 
 		//glLineWidth(2.0f / zoom_level);
 		glLineWidth(2.0f);
-	    glColor4f(0.3f, 0.7f, 0.3f, 1.0f);
+	    //glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
+	    glColor4f(.2f, .2f, .2f, 1.0f);
 		glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
 	    glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
 
@@ -1377,9 +1440,9 @@ void Process::Draw_strategy_puzzle()
     // ****************
     // Puzzle border
     // ****************
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+    glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
     //glLineWidth(2.0f / zoom_level);
-    glLineWidth(2.0f);
+    glLineWidth(3.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(0.0f, 0.0f);
     glVertex2f(grid_width, 0.0f);
@@ -1395,7 +1458,7 @@ void Process::Draw_strategy_puzzle()
         glColor4f(1.0f, 0.0f, 0.0f, .8f);
         glBegin(GL_LINE_LOOP);
         //glLineWidth(3.0f / zoom_level);
-        glLineWidth(3.0f);
+        glLineWidth(2.0f);
         glVertex2f((float)(PUZZLE_CELL_WIDTH * hovered_column), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT * hovered_row));
         glVertex2f((float)(PUZZLE_CELL_WIDTH + (PUZZLE_CELL_WIDTH * hovered_column)), (float)(PUZZLE_CELL_HEIGHT + (PUZZLE_CELL_HEIGHT * hovered_row)));
@@ -1771,16 +1834,25 @@ void Process::Draw_strategy_gui_designer_packs_pack_item()
     glPushMatrix();
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.5f, 0.5f, 0.5f, alpha);
     glBegin(GL_QUADS);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
     glVertex2f(width + draw_x, height + draw_y);
     glVertex2f(draw_x, height + draw_y);
     glEnd();
 
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-    glLineWidth(1.0f);
+    glBegin(GL_QUADS);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    glVertex2f(draw_x, draw_y + (height * .75));
+    glVertex2f(width + draw_x, draw_y + (height * .75));
+    glColor4f(.84f,.89f,.94f,1.0f);
+    glVertex2f(width + draw_x, height + draw_y);
+    glVertex2f(draw_x, height + draw_y);
+    glEnd();
+
+    glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
+    glLineWidth(3.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
@@ -2009,7 +2081,7 @@ void Process::Draw_strategy_designer_colour_value_slider()
 
 
 
-void Process::Draw_strategy_category_select()
+void Process::Draw_strategy_balloons_background()
 {
 
     float width = boost::python::extract<float>(self_.attr("width"));
@@ -2032,9 +2104,6 @@ void Process::Draw_strategy_category_select()
     glVertex2f(0.0f, height);
     glEnd();
                                           
-    float tex_coords_pointer[] = {width, height, 0.0f, height, width, 0.0f, 0.0f, 0.0f};
-    glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_pointer);
-
     glColor4f(1.0f, 1.0f, 1.0f, .1f);
     glEnable(GL_TEXTURE_2D);
     float text_coord_x, text_coord_y, new_text_offset_x, new_text_offset_y;
@@ -2061,6 +2130,158 @@ void Process::Draw_strategy_category_select()
     glEnd();
 
     glBindTexture(GL_TEXTURE_2D, media->gfx["gui_background_grid"]->texture);
+    Process::current_bound_texture = media->gfx["gui_background_grid"]->texture;
+    text_coord_x = width / media->gfx["gui_background_grid"]->width;
+    text_coord_y = height / media->gfx["gui_background_grid"]->height;
+    new_text_offset_x = -((text_offset_x / media->gfx["gui_background_grid"]->width) * .1f);
+    new_text_offset_y = -((text_offset_y / media->gfx["gui_background_grid"]->height) * .1f);
+                                
+    glBegin(GL_TRIANGLE_STRIP);
+    // top right
+    glTexCoord2f(text_coord_x + new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(width, height, 0.0f);
+    // top left
+    glTexCoord2f(new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(0.0f, height, 0.0f);
+    // bottom right
+    glTexCoord2f(text_coord_x + new_text_offset_x, new_text_offset_y);
+    glVertex3f(width, 0.0f, 0.0f);
+    // bottom left
+    glTexCoord2f(new_text_offset_x, new_text_offset_y);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glEnd();
+
+    glPopMatrix();
+
+}
+
+
+void Process::Draw_strategy_tutorial_background()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    boost::python::object game = boost::python::extract<boost::python::object>(self_.attr("game"));
+    boost::python::object core = boost::python::extract<boost::python::object>(game.attr("core"));
+    Media* media = boost::python::extract<Media*>(core.attr("media"));
+    float text_offset_x = boost::python::extract<float>(self_.attr("text_offset_x"));
+    float text_offset_y = boost::python::extract<float>(self_.attr("text_offset_y"));
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glBegin(GL_QUADS);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(width, 0.0f);
+    glColor4f(.84f,.89f,.94f,1.0f);
+    glVertex2f(width, height);
+    glVertex2f(0.0f, height);
+    glEnd();
+                                          
+    glColor4f(1.0f, 1.0f, 1.0f, .1f);
+    glEnable(GL_TEXTURE_2D);
+    float text_coord_x, text_coord_y, new_text_offset_x, new_text_offset_y;
+
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_background_tutorial"]->texture);
+    text_coord_x = width / media->gfx["gui_background_tutorial"]->width;
+    text_coord_y = height / media->gfx["gui_background_tutorial"]->height;
+    new_text_offset_x = (text_offset_x / media->gfx["gui_background_tutorial"]->width) * .1f;
+    new_text_offset_y = (text_offset_y / media->gfx["gui_background_tutorial"]->height) * .1f;
+                                
+    glBegin(GL_TRIANGLE_STRIP);
+    // top right
+    glTexCoord2f(text_coord_x + new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(width, height, 0.0f);
+    // top left
+    glTexCoord2f(new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(0.0f, height, 0.0f);
+    // bottom right
+    glTexCoord2f(text_coord_x + new_text_offset_x, new_text_offset_y);
+    glVertex3f(width, 0.0f, 0.0f);
+    // bottom left
+    glTexCoord2f(new_text_offset_x, new_text_offset_y);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_background_grid"]->texture);
+    Process::current_bound_texture = media->gfx["gui_background_grid"]->texture;
+    text_coord_x = width / media->gfx["gui_background_grid"]->width;
+    text_coord_y = height / media->gfx["gui_background_grid"]->height;
+    new_text_offset_x = -((text_offset_x / media->gfx["gui_background_grid"]->width) * .1f);
+    new_text_offset_y = -((text_offset_y / media->gfx["gui_background_grid"]->height) * .1f);
+                                
+    glBegin(GL_TRIANGLE_STRIP);
+    // top right
+    glTexCoord2f(text_coord_x + new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(width, height, 0.0f);
+    // top left
+    glTexCoord2f(new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(0.0f, height, 0.0f);
+    // bottom right
+    glTexCoord2f(text_coord_x + new_text_offset_x, new_text_offset_y);
+    glVertex3f(width, 0.0f, 0.0f);
+    // bottom left
+    glTexCoord2f(new_text_offset_x, new_text_offset_y);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glEnd();
+
+    glPopMatrix();
+
+}
+
+
+
+void Process::Draw_strategy_designer_background()
+{
+
+    float width = boost::python::extract<float>(self_.attr("width"));
+    float height = boost::python::extract<float>(self_.attr("height"));
+    boost::python::object game = boost::python::extract<boost::python::object>(self_.attr("game"));
+    boost::python::object core = boost::python::extract<boost::python::object>(game.attr("core"));
+    Media* media = boost::python::extract<Media*>(core.attr("media"));
+    float text_offset_x = boost::python::extract<float>(self_.attr("text_offset_x"));
+    float text_offset_y = boost::python::extract<float>(self_.attr("text_offset_y"));
+
+    glPushMatrix();
+    glDisable(GL_TEXTURE_2D);
+
+    glBegin(GL_QUADS);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(width, 0.0f);
+    glColor4f(.84f,.89f,.94f,1.0f);
+    glVertex2f(width, height);
+    glVertex2f(0.0f, height);
+    glEnd();
+                                          
+    glColor4f(1.0f, 1.0f, 1.0f, .1f);
+    glEnable(GL_TEXTURE_2D);
+    float text_coord_x, text_coord_y, new_text_offset_x, new_text_offset_y;
+
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_background_designer"]->texture);
+    text_coord_x = width / media->gfx["gui_background_designer"]->width;
+    text_coord_y = height / media->gfx["gui_background_designer"]->height;
+    new_text_offset_x = (text_offset_x / media->gfx["gui_background_designer"]->width) * .1f;
+    new_text_offset_y = (text_offset_y / media->gfx["gui_background_designer"]->height) * .1f;
+                                
+    glBegin(GL_TRIANGLE_STRIP);
+    // top right
+    glTexCoord2f(text_coord_x + new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(width, height, 0.0f);
+    // top left
+    glTexCoord2f(new_text_offset_x, text_coord_y + new_text_offset_y);
+    glVertex3f(0.0f, height, 0.0f);
+    // bottom right
+    glTexCoord2f(text_coord_x + new_text_offset_x, new_text_offset_y);
+    glVertex3f(width, 0.0f, 0.0f);
+    // bottom left
+    glTexCoord2f(new_text_offset_x, new_text_offset_y);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, media->gfx["gui_background_grid"]->texture);
+    Process::current_bound_texture = media->gfx["gui_background_grid"]->texture;
     text_coord_x = width / media->gfx["gui_background_grid"]->width;
     text_coord_y = height / media->gfx["gui_background_grid"]->height;
     new_text_offset_x = -((text_offset_x / media->gfx["gui_background_grid"]->width) * .1f);
@@ -2469,7 +2690,10 @@ void Text::generate_new_text_image()
 {
 
     if(image != NULL)
+    {
         delete image;
+        image = NULL;
+    }
 
     if(font == NULL || text == "")
     {

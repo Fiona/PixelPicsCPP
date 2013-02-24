@@ -46,7 +46,7 @@ class GUI_category_select_container(GUI_element):
         GUI_category_select_down_button(self.game, self)
         
         if not self.game.category_to_unlock == None:
-            self.mascot_object.set_speech(["Wow, you unlocked a new category!"])
+            self.mascot_object.set_speech(["Wow, you unlocked", "a new category!"])
             self.game.gui.block_gui_keyboard_input = True
             self.game.gui.block_gui_mouse_input = True
             self.game.gui.mouse.alpha = 0.0
@@ -78,11 +78,10 @@ class GUI_category_select_container(GUI_element):
 
         self.scroll_speed = 0.0
 
+        # Draw strategy data
         self.text_offset_x = 0.0
         self.text_offset_y = 0.0
-
-        # Draw strategy data
-        self.draw_strategy = "category_select"
+        self.draw_strategy = "balloons_background"
 
 
     def Execute(self):

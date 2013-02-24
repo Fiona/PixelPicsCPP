@@ -1233,7 +1233,7 @@ class GUI_element_scroll_window(GUI_element):
             self.contents_scroll_location = self.contents_height - self.height
 
         for x in self.arrows:
-            x.y = (64 if x.up_arrow else self.height - 128) + self.contents_scroll_location
+            x.y = (0 if x.up_arrow else self.height - 128) + self.contents_scroll_location
 
 
 
@@ -1248,8 +1248,7 @@ class GUI_element_button_scroll_window_arrow(GUI_element_button):
         self.scroll_element = self.parent
         self.x = self.parent.width - 64
         self.z = self.parent.z - 1
-        self.rotation = 0 if self.up_arrow else 180
-        self.image = self.game.core.media.gfx['gui_button_scroll_window_arrow']
+        self.image = self.game.core.media.gfx['gui_scroll_button_up_small' if self.up_arrow else 'gui_scroll_button_down_small']
         self.gui_init()
 
 
@@ -1295,15 +1294,19 @@ class GUI_element_spinner(GUI_element):
     def gui_init(self):
         GUI_element.gui_init(self)
         
-        if not self.label is None:            
-            self.label_text_object = Text(self.game.core.media.fonts['basic'], self.x, self.y + 2, TEXT_ALIGN_TOP_LEFT, self.label + " ")
-            self.label_text_object.z = self.z -1
-            self.label_text_object.colour = (0,0,0)
+        if not self.label is None:
+            self.label_text_object = Text(self.game.core.media.fonts['window_text'], self.x, self.y + 6, TEXT_ALIGN_TOP_LEFT, str(self.label + " "))
+            self.label_text_object.z = self.z
+            self.label_text_object.colour = (.3,.3,.3)
             
         self.x += self.label_text_object.text_width
 
-        self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
-        self.text_object.z = self.z - 1
+        self.text_object = Text(self.game.core.media.fonts['dropdown_text'], self.x + 6, self.y + 6, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
+        self.text_object.z = self.z - 2
+        self.text_object.colour = (0.8,0.8,0.8)
+
+        #self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
+        #self.text_object.z = self.z - 1
 
         self.spinner_down = GUI_element_spinner_button_down(self.game, self)
         self.spinner_up = GUI_element_spinner_button_up(self.game, self)

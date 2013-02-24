@@ -94,14 +94,14 @@ class GUI_main_menu_title(GUI_element):
         
         self.letters = []
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "p", -183, -45, 20))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -103, -48, 30))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -103, -50, 30))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "x", 0, -40, 110))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 108, -41, 40))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 188, -46, 50))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 108, -42, 40))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 188, -48, 50))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "p", -138, 84, 60))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -50, 81, 70))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "c", 37, 92, 80))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "s", 138, 93, 90))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -50, 79, 70))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "c", 37, 90, 80))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "s", 138, 91, 90))
 
         if self.no_button_anim:
             self.finish()
@@ -155,7 +155,7 @@ class GUI_main_menu_title(GUI_element):
             x.Kill()
         if not self.mascot is None:
             self.mascot.Kill()
-            
+
 
 
 class GUI_main_menu_title_letter(Process):
@@ -165,7 +165,7 @@ class GUI_main_menu_title_letter(Process):
         self.game = game
         self.parent = parent
         self.image = self.game.core.media.gfx['gui_title_' + str(image)]
-        self.z = Z_GUI_OBJECT_LEVEL_3
+        self.z = Z_GUI_OBJECT_LEVEL_5 - 40
         self.x = self.parent.x + x
         self.y = self.parent.y + y
         self.initial_y = self.y

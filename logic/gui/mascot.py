@@ -26,13 +26,12 @@ class Mascot(Process):
         self.is_saying = ""
         self.current_letter = 0
         self.anim_wait = 0
-        self.mood = "normal"
+        self.set_mood("normal")
         self.set_location()
-        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
         self.initial_position = self.x, self.y
         self.dir = 0
         self.iter = 0
-        
+                
 
     def On_Exit(self):
         if self.speech_bubble:
@@ -86,14 +85,29 @@ class Mascot(Process):
         self.x = 100
         self.y = 100
         self.z = Z_MASCOT
+
+
+    def set_mood(self, mood):
+        self.mood = mood
+        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
     
 
-    def set_speech(self, to_say):
-        self.talking = True
-        self.is_saying = " ".join(to_say)
+    def set_speech(self, to_say, bubble = True):
+        self.anim_wait = 0
+        self.image_sequence = 1
+        self.current_letter = 0
+
+        if len(to_say) > 0:
+            self.is_saying = " ".join(to_say)
+            self.talking = True
+        else:
+            self.is_saying = ""
+            self.talking = False
+
         if self.speech_bubble:
             self.speech_bubble.Kill()
-        if len(to_say) > 0:
+            
+        if len(to_say) > 0 and bubble:
             self.speech_bubble = self.create_speech_bubble(to_say)
         else:
             self.speech_bubble = None
@@ -114,9 +128,9 @@ class Mascot_Category_Select(Mascot):
         x = self.x - (self.image.width / 2)
         y = self.y - (self.image.height / 2)
         if (coordinates[0] > x and \
-            coordinates[0] < x + self.image.width and \
+            coordinates[0] < x + 320 and \
             coordinates[1] > y and \
-            coordinates[1] < y + self.image.height and \
+            coordinates[1] < y + 280 and \
             self.game.core.mouse.left_up):
             self.game.core.media.sfx['meow1'].play(0)
                
@@ -132,6 +146,26 @@ class Mascot_Category_Select(Mascot):
 
     def create_speech_bubble(self, to_say):
         return Category_Select_Speech_Bubble(self.game, self, to_say)
+
+
+
+class Mascot_Puzzle_Select(Mascot):
+
+    def Execute(self):
+        Mascot.Execute(self)
+
+                                       
+    def set_location(self):
+        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
+        self.x = (self.game.settings['screen_width'] / 2) + 330
+        self.y = (self.game.settings['screen_height'] / 2) + 440
+        self.z = Z_GUI_OBJECT_LEVEL_6 - 1
+        self.scale = .45
+        self.set_speech(["Pick a puzzle", "to play!"])
+
+
+    def create_speech_bubble(self, to_say):
+        return Puzzle_Select_Speech_Bubble(self.game, self, to_say)
 
 
 
@@ -327,4 +361,67 @@ class Category_Select_Speech_Bubble(Process):
             self.x - ((self.image.width * self.scale) / 2),
             self.y - ((self.image.height * self.scale) / 2)
             )
+
+
+
+class Puzzle_Select_Speech_Bubble(Process):
+    def __init__(self, game, parent, to_say):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.to_say = to_say
+        self.image = self.game.core.media.gfx['gui_puzzle_select_speech_bubble']
+        self.x = self.parent.x - 450
+        self.y = self.parent.y - 160
+        self.z = Z_GUI_OBJECT_LEVEL_3
+        self.scale = 0.0
+        self.iter = 1
+
+        self.text = []
+
+        y = self.y - 40
+        for s in to_say:
+            text = Text(self.game.core.media.fonts['puzzle_select_speech_bubble'], self.x, y, TEXT_ALIGN_TOP, s)
+            text.z = self.z - 1
+            text.colour = (.3, .3, .3)
+            text.alpha = 0.0
+            self.text.append(text)
+            y += text.text_height
+
+
+    def Execute(self):
+        if self.scale < 1.0:
+            self.iter += 1
+            self.scale = lerp(self.iter, 20, 0.0, 1.0)
+        else:
+            self.scale = 1.0
+            for x in self.text:
+                x.alpha = 1.0
+            
+
+    def On_Exit(self):
+        for x in self.text:
+            x.Kill()
+        
+
+    def get_screen_draw_position(self):
+        return (
+            self.x - ((self.image.width * self.scale) / 2),
+            self.y - ((self.image.height * self.scale) / 2)
+            )
+
+
+
+class Mascot_Tutorial(Mascot):
+
+    def Execute(self):
+        Mascot.Execute(self)
+
+                                       
+    def set_location(self):
+        self.image = self.game.core.media.gfx['gui_chips_' + str(self.mood)]
+        self.x = (self.game.settings['screen_width'] / 2) - 120
+        self.y = (self.game.settings['screen_height'] / 2) + 70
+        self.z = Z_GUI_OBJECT_LEVEL_6 - 1
+        self.scale = .5
 
