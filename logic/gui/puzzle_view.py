@@ -402,9 +402,12 @@ class GUI_puzzle(GUI_element):
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
 
+        self.designer = False
+
         # --- DESIGNER ONLY ---
         if self.game.game_state == GAME_STATE_DESIGNER:
             self.state = PUZZLE_STATE_SOLVING
+            self.designer = True
         # --- DESIGNER ONLY ---
         if self.game.game_state == GAME_STATE_TUTORIAL:
             self.state = PUZZLE_STATE_SOLVING

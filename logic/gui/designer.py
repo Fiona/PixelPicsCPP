@@ -710,7 +710,6 @@ class GUI_designer_puzzles_create_puzzle(GUI_element_button):
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.gui_init()
         self.x = self.game.settings['screen_width'] - self.width - 50
-        self.generic_button_text_object.x = self.x + 9
 
 
     def mouse_left_up(self):
@@ -910,7 +909,6 @@ class GUI_designer_puzzles_puzzles_list_scroll_window(GUI_element_scroll_window)
         num = 0
         last_item = None
         for puzzle_filename in self.game.manager.current_pack.order:
-            """
             last_item = GUI_designer_puzzles_puzzle_item(self.game, self, num, puzzle_filename, self.game.manager.current_pack.puzzles[puzzle_filename])
             self.puzzle_items.append(last_item)
 

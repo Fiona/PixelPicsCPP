@@ -132,6 +132,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_puzzle_grid_background", new Image("gfx/gui/puzzle_grid_background.png", True)));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_white", new Image("gfx/gui/puzzle_cell_white.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_black", new Image("gfx/gui/puzzle_cell_black.png")));
+    gfx.insert(pair<string, Image*>("gui_puzzle_cell_black_designer", new Image("gfx/gui/puzzle_cell_black_designer.png")));
 
     gfx.insert(pair<string, Image*>("gui_heart", new Image("gfx/gui/heart.png", False, 2)));
 
@@ -149,6 +150,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_puzzle_type_select_main", new Image("gfx/gui/button_puzzle_type_select_main.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_puzzle_type_select_downloaded", new Image("gfx/gui/button_puzzle_type_select_downloaded.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_go_back", new Image("gfx/gui/button_go_back.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_go_back_small", new Image("gfx/gui/button_go_back_small.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category", new Image("gfx/gui/button_select_category.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category_shadow", new Image("gfx/gui/button_select_category_shadow.png")));
     gfx.insert(pair<string, Image*>("gui_button_select_category_unlock_mask", new Image("gfx/gui/button_select_category_unlock_mask.png")));
