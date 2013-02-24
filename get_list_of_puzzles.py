@@ -20,7 +20,13 @@ def get_names_of_puzzles_in(path):
         f = open(puzzle_filename, "rb")
         puzzle = pickle.load(f)
         f.close()
-        print puzzle.name
+        print puzzle_filename + " - " + puzzle.name
+
+    f = open("pack.dat", "rb")
+    pack = pickle.load(f)
+    f.close()
+    print pack.name
+    print pack.uuid
 
 
 parser = argparse.ArgumentParser(description='Process some integers.')
