@@ -116,8 +116,8 @@ class GUI_designer_packs_back(GUI_element_button):
         self.game = game
         self.parent = parent
         self.image = self.game.core.media.gfx['gui_button_go_back']
-        self.x = 10
-        self.y = self.game.settings['screen_height'] - self.image.height - 32
+        self.x = -8
+        self.y = self.game.settings['screen_height'] - self.image.height - 16
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.gui_init()
 
@@ -136,7 +136,7 @@ class GUI_designer_packs_create_pack(GUI_element_button):
         self.game = game
         self.parent = parent
         self.image = self.game.core.media.gfx['gui_button_designer_create']
-        self.x = self.game.settings['screen_width'] - self.image.width - 10
+        self.x = self.game.settings['screen_width'] - self.image.width + 8
         self.y = 125
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.gui_init()
@@ -331,10 +331,10 @@ class GUI_designer_packs_packs_list_scroll_window(GUI_element_scroll_window):
         self.game = game
         self.parent = parent
         self.z = Z_GUI_OBJECT_LEVEL_4
-        self.x = 150
+        self.x = 114
         self.y = 150
-        self.width = self.game.settings['screen_width'] - 300
-        self.height = self.game.settings['screen_height'] - 200
+        self.width = self.game.settings['screen_width'] - 226
+        self.height = self.game.settings['screen_height'] - 190
         self.gui_init()
         self.reread_pack_items()
 
@@ -378,18 +378,18 @@ class GUI_designer_packs_pack_item(GUI_element):
         self.z = Z_GUI_OBJECT_LEVEL_5 - 1
         self.x = 15
         self.y = (65 * display_count) + 15 + (10 * display_count)
-        self.width = self.parent.width - 140
+        self.width = self.parent.width - 80
         self.height = 65
         self.alpha = .1
         self.gui_init()
 
-        self.text_pack_name = Text(self.game.core.media.fonts['designer_pack_name'], self.x + self.scroll_element.x + 10, 0.0, TEXT_ALIGN_TOP_LEFT, str(self.pack.name))
+        self.text_pack_name = Text(self.game.core.media.fonts['designer_pack_name'], self.x + self.scroll_element.x + 4, 0.0, TEXT_ALIGN_TOP_LEFT, str(self.pack.name))
         self.text_pack_name.z = self.z - 2
         self.text_pack_name.colour = (0.95, 0.58, 0.09, 1.0)
         self.text_pack_name.shadow = 2
         self.text_pack_name.shadow_colour = (.8, .8, .8)
 
-        self.text_pack_author = Text(self.game.core.media.fonts['designer_pack_author'], self.x + self.scroll_element.x + 20, 0.0, TEXT_ALIGN_TOP_LEFT, str("by " + self.pack.author_name))
+        self.text_pack_author = Text(self.game.core.media.fonts['designer_pack_author'], self.x + self.scroll_element.x + 16, 0.0, TEXT_ALIGN_TOP_LEFT, str("by " + self.pack.author_name))
         self.text_pack_author.z = self.z - 2
         self.text_pack_author.colour = (.55, .55, .55)
         self.text_pack_author.shadow = 2
@@ -436,7 +436,7 @@ class GUI_designer_packs_button_edit_pack(GUI_element_button):
         self.pack = pack
         self.pack_num = pack_num
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.width - 205
+        self.x = self.parent.width - 185
         self.y = (65 * display_count) + 15 + (10 * display_count) + 3
         self.image = self.game.core.media.gfx['gui_button_designer_edit']
         self.gui_init()
@@ -458,7 +458,7 @@ class GUI_designer_packs_button_delete_pack(GUI_element_button):
         self.pack = pack
         self.pack_num = pack_num
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.width - 140
+        self.x = self.parent.width - 125
         self.y = (65 * display_count) + 15 + (10 * display_count) + 3
         self.image = self.game.core.media.gfx['gui_button_designer_delete']
         self.gui_init()
@@ -651,12 +651,6 @@ class GUI_designer_puzzles_container(GUI_element):
         subtitle2.z = subtitle.z
         self.objs.append(subtitle2)
 
-        subtitle3 = Text(self.game.core.media.fonts['window_title'], self.game.settings['screen_width']/2, 140.0, TEXT_ALIGN_CENTER, "aaaa")
-        #subtitle3 = Text(self.game.core.media.fonts['basic'], self.game.settings['screen_width']/2, 140.0, TEXT_ALIGN_CENTER, "Use the green arrows to reorder puzzles. (If there are multiple in this pack.)")
-        subtitle3.colour = (.4, .4, .4)
-        subtitle3.z = Z_GUI_OBJECT_LEVEL_5
-        self.objs.append(subtitle3)
-
         self.scroll = GUI_designer_puzzles_puzzles_list_scroll_window(self.game, self)
         
         # Draw strategy data
@@ -686,8 +680,8 @@ class GUI_designer_puzzles_back(GUI_element_button):
         self.game = game
         self.parent = parent
         self.image = self.game.core.media.gfx['gui_button_go_back']
-        self.x = 10
-        self.y = self.game.settings['screen_height'] - self.image.height - 32
+        self.x = -8
+        self.y = self.game.settings['screen_height'] - self.image.height - 16
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.gui_init()
 
@@ -705,11 +699,10 @@ class GUI_designer_puzzles_create_puzzle(GUI_element_button):
         self.game = game
         self.parent = parent
         self.image = self.game.core.media.gfx['gui_button_designer_create']
-        self.x = self.game.settings['screen_width'] - self.image.width - 10
+        self.x = self.game.settings['screen_width'] - self.image.width + 8
         self.y = 125
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.gui_init()
-        self.x = self.game.settings['screen_width'] - self.width - 50
 
 
     def mouse_left_up(self):
@@ -893,10 +886,10 @@ class GUI_designer_puzzles_puzzles_list_scroll_window(GUI_element_scroll_window)
         self.game = game
         self.parent = parent
         self.z = Z_GUI_OBJECT_LEVEL_4
-        self.x = 150
+        self.x = 114
         self.y = 150
-        self.width = self.game.settings['screen_width'] - 300
-        self.height = self.game.settings['screen_height'] - 200
+        self.width = self.game.settings['screen_width'] - 226
+        self.height = self.game.settings['screen_height'] - 190
         self.gui_init()
         self.reread_puzzles()
 
@@ -948,9 +941,9 @@ class GUI_designer_puzzles_puzzle_item(GUI_element):
         self.puzzle_info = puzzle_info
         self.z = Z_GUI_OBJECT_LEVEL_5
 
-        self.x = 15
+        self.x = 50
         self.y = (65 * self.puzzle_num) + 15 + (10 * self.puzzle_num)
-        self.width = self.parent.width - 85
+        self.width = self.parent.width - 110
         self.height = 65
         self.gui_init()
 
@@ -1038,7 +1031,7 @@ class GUI_designer_puzzles_button_edit_puzzle(GUI_element_button):
         self.puzzle_filename = puzzle_filename
         self.puzzle_info = puzzle_info
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.width - 205
+        self.x = self.parent.width - 185
         self.y = (65 * self.puzzle_num) + 15 + (10 * self.puzzle_num) + 3
         self.image = self.game.core.media.gfx['gui_button_designer_edit']
         self.gui_init()
@@ -1064,7 +1057,7 @@ class GUI_designer_puzzles_button_delete_puzzle(GUI_element_button):
         self.puzzle_filename = puzzle_filename
         self.puzzle_info = puzzle_info
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.width - 140
+        self.x = self.parent.width - 125
         self.y = (65 * self.puzzle_num) + 15 + (10 * self.puzzle_num) + 3
         self.image = self.game.core.media.gfx['gui_button_designer_delete']
         self.gui_init()
@@ -1209,8 +1202,8 @@ class GUI_designer_puzzle_edit_puzzle_puzzle_cancel_button(GUI_element_button):
 
 class GUI_designer_puzzles_button_move_puzzle_down(GUI_element_button):
     generic_button = False
-    width = 19
-    height = 19
+    width = 32
+    height = 32
     def __init__(self, game, parent = None, puzzle_num = 0, puzzle_filename = None, puzzle_info = None):
         Process.__init__(self)
         self.game = game
@@ -1220,8 +1213,8 @@ class GUI_designer_puzzles_button_move_puzzle_down(GUI_element_button):
         self.puzzle_filename = puzzle_filename
         self.puzzle_info = puzzle_info
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.x - 45
-        self.y = (50 * self.puzzle_num) + 10 + (10 * self.puzzle_num) + 5
+        self.x = self.parent.x - 100
+        self.y = (65 * self.puzzle_num) + 15 + (10 * self.puzzle_num) + 5
         self.image = self.game.core.media.gfx['gui_button_designer_move_down']
         self.gui_init()
             
@@ -1239,8 +1232,8 @@ class GUI_designer_puzzles_button_move_puzzle_down(GUI_element_button):
 
 class GUI_designer_puzzles_button_move_puzzle_up(GUI_element_button):
     generic_button = False
-    width = 19
-    height = 19
+    width = 32
+    height = 32
     def __init__(self, game, parent = None, puzzle_num = 0, puzzle_filename = None, puzzle_info = None):
         Process.__init__(self)
         self.game = game
@@ -1250,8 +1243,8 @@ class GUI_designer_puzzles_button_move_puzzle_up(GUI_element_button):
         self.puzzle_filename = puzzle_filename
         self.puzzle_info = puzzle_info
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.x - 45
-        self.y = (50 * self.puzzle_num) + 10 + (10 * self.puzzle_num) + 27
+        self.x = self.parent.x - 100
+        self.y = (65 * self.puzzle_num) + 15 + (10 * self.puzzle_num) + 33
         self.image = self.game.core.media.gfx['gui_button_designer_move_up']
         self.gui_init()
             
