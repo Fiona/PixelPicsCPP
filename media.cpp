@@ -103,6 +103,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_title_i", new Image("gfx/gui/title_i.png")));
     gfx.insert(pair<string, Image*>("gui_title_x", new Image("gfx/gui/title_x.png", False, 6)));
     gfx.insert(pair<string, Image*>("gui_title_e", new Image("gfx/gui/title_e.png")));
+    gfx.insert(pair<string, Image*>("gui_title_e_normal", new Image("gfx/gui/title_e_normal.png")));
     gfx.insert(pair<string, Image*>("gui_title_l", new Image("gfx/gui/title_l.png")));
     gfx.insert(pair<string, Image*>("gui_title_c", new Image("gfx/gui/title_c.png")));
     gfx.insert(pair<string, Image*>("gui_title_s", new Image("gfx/gui/title_s.png")));

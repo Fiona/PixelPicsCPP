@@ -67,7 +67,7 @@ class GUI_ready_title(GUI_puzzle_title):
         self.y = 200
         self.letters = []
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "R", -227, 0, 20))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", -120, 3, 30))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e_normal", -120, 3, 30))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "a", -10, 5, 40))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "d", 105, -3, 50))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "y", 215, 22, 60))
@@ -83,10 +83,10 @@ class GUI_cleared_title(GUI_puzzle_title):
         self.letters = []
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "C", -305, 0, 20))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", -230, -2, 30))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", -150, 4, 40))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e_normal", -150, 4, 40))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "a", -40, 8, 50))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "r", 55, 10, 60))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 147, 4, 70))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e_normal", 147, 4, 70))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "d", 255, 0, 80))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "!", 340, -2, 90))
 
@@ -102,7 +102,7 @@ class GUI_failed_title(GUI_puzzle_title):
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "a", -100, 4, 30))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -20, -6, 40))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 30, -4, 50))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e", 110, 2, 60))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e_normal", 110, 2, 60))
         self.letters.append(GUI_main_menu_title_letter(self.game, self, "d", 220, -4, 70))
 
 
