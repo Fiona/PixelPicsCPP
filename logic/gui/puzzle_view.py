@@ -1481,7 +1481,10 @@ class Puzzle_marker(Process):
         self.state = state
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.priority = PRIORITY_MARKERS
-        self.image = self.game.core.media.gfx['gui_puzzle_cell_white' if not state else 'gui_puzzle_cell_black']
+        if self.game.game_state == GAME_STATE_DESIGNER:
+            self.image = self.game.core.media.gfx['gui_puzzle_cell_black_designer']
+        else:
+            self.image = self.game.core.media.gfx['gui_puzzle_cell_white' if not state else 'gui_puzzle_cell_black']
         self.rem_img = self.image
         self.dying = dying
         self.is_incorrect = False

@@ -142,6 +142,7 @@ void Image::from_sdl_surface(SDL_Surface* raw_surface, bool mipmaps)
     }
 
     // create GL texture from string representation of surface
+    texture = 0;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 

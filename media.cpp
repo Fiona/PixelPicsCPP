@@ -55,6 +55,8 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("puzzle_click_to_continue", new Font("fnt/basiccomical.ttf", 40)));
     fonts.insert(pair<string,Font*>("menu_titles", new Font("fnt/borisblackbloxx.ttf", 35)));
     fonts.insert(pair<string,Font*>("menu_subtitles", new Font("fnt/borisblackbloxx.ttf", 22)));
+    fonts.insert(pair<string,Font*>("menu_titles_small", new Font("fnt/borisblackbloxx.ttf", 24)));
+    fonts.insert(pair<string,Font*>("menu_subtitles_small", new Font("fnt/borisblackbloxx.ttf", 18)));
     fonts.insert(pair<string,Font*>("designer_pack_name", new Font("fnt/borisblackbloxx.ttf", 30)));
     fonts.insert(pair<string,Font*>("designer_pack_author", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("verifier_status", new Font("fnt/borisblackbloxx.ttf", 16)));
@@ -144,6 +146,15 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_designer_delete", new Image("gfx/gui/button_designer_delete.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_designer_move_down", new Image("gfx/gui/button_designer_move_down.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_designer_move_up", new Image("gfx/gui/button_designer_move_up.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_test", new Image("gfx/gui/button_designer_test.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_save", new Image("gfx/gui/button_designer_save.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_paint", new Image("gfx/gui/button_designer_paint.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_help", new Image("gfx/gui/button_designer_help.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_name", new Image("gfx/gui/button_designer_name.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_size", new Image("gfx/gui/button_designer_size.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_undo", new Image("gfx/gui/button_designer_undo.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_redo", new Image("gfx/gui/button_designer_redo.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_fill", new Image("gfx/gui/button_designer_fill.png", False, 4)));
 
     gfx.insert(pair<string, Image*>("gui_palette_cursor", new Image("gfx/gui/palette_cursor.png")));
     gfx.insert(pair<string, Image*>("gui_value_slider", new Image("gfx/gui/value_slider.png")));

@@ -76,7 +76,7 @@ class GUI_designer_packs_container(GUI_element):
 
 
 class GUI_designer_title(GUI_element):
-    def __init__(self, game, parent, title = "Select Pack", subtitle = None, no_background = False):
+    def __init__(self, game, parent, title = "Select Pack", subtitle = None, no_background = False, small = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
@@ -84,18 +84,23 @@ class GUI_designer_title(GUI_element):
         self.gui_init()
         self.z = Z_GUI_OBJECT_LEVEL_5
 
-        self.text = Text(self.game.core.media.fonts['menu_titles'], 20, 10, TEXT_ALIGN_TOP_LEFT, title)
-        self.text.z = Z_GUI_OBJECT_LEVEL_2
+        self.text = Text(self.game.core.media.fonts['menu_titles_small' if small else 'menu_titles'], 20, 10, TEXT_ALIGN_TOP_LEFT, title)
+        if small:
+            self.text.y -= 8
+        self.text.z = self.z - 2
         self.text.colour = (0.95, 0.58, 0.09)
         self.text.shadow = 2
         self.text.shadow_colour = (0.7, 0.7, 0.7)
 
         if not subtitle is None:
-            self.subtitle = Text(self.game.core.media.fonts['menu_subtitles'], 30, 50, TEXT_ALIGN_TOP_LEFT, subtitle)
+            self.subtitle = Text(self.game.core.media.fonts['menu_subtitles_small' if small else 'menu_subtitles'], 30, 50, TEXT_ALIGN_TOP_LEFT, subtitle)
+            if small:
+                self.subtitle.x += 16
+                self.subtitle.y -= 16
             self.subtitle.colour = (.8, .8, .8)
             self.subtitle.shadow_colour = (.5, .5, .5)
             self.subtitle.shadow = 2
-            self.subtitle.z = self.z - 2
+            self.subtitle.z = self.z - 4
         else:
             self.subtitle = None
 
@@ -1108,11 +1113,11 @@ class GUI_designer_puzzles_edit_puzzle_dialog(GUI_element_window):
         self.objs = {}
         y = 0
         for text in ["Using this dialog you can edit the name for this puzzle."]:
-            txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
+            txt = Text(self.game.core.media.fonts['window_text'], self.x + 28, self.y + 45 + y, TEXT_ALIGN_TOP_LEFT, text)
             txt.z = self.z - 2
-            txt.colour = (0, 0, 0)
+            txt.colour = (0.3, 0.3, 0.3)
             self.objs['text_' + str(y)] = txt
-            y += 15
+            y += txt.text_height + 2 
 
         self.puzzle_name_text = GUI_designer_puzzles_add_puzzle_puzzle_name_text_input(self.game, self)
         self.puzzle_name_text.set_current_text_to(self.puzzle_info[0])
@@ -1170,8 +1175,8 @@ class GUI_designer_puzzles_edit_puzzle_puzzle_confirm_button(GUI_element_button)
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
         self.y = self.parent.y + 100
-        self.generic_button_text_object.x = self.x + 9
-        self.generic_button_text_object.y = self.y + 4
+        self.generic_button_text_object.x = self.x + 9 + (self.width / 2)
+        self.generic_button_text_object.y = self.y + 4 + (self.height / 2)
 
 
     def mouse_left_up(self):
@@ -1191,8 +1196,8 @@ class GUI_designer_puzzle_edit_puzzle_puzzle_cancel_button(GUI_element_button):
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
         self.y = self.parent.y + 100
-        self.generic_button_text_object.x = self.x + 9
-        self.generic_button_text_object.y = self.y + 4
+        self.generic_button_text_object.x = self.x + 9 + (self.width / 2)
+        self.generic_button_text_object.y = self.y + 4 + (self.height / 2)
 
 
     def mouse_left_up(self):
@@ -1346,13 +1351,13 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
         self.alpha = 0.1
 
         GUI_designer_designer_menu_bar(self.game, self)
-        self.set_title(self.game.manager.current_puzzle.name)
+        self.set_title(self.game.manager.current_puzzle.name, str(self.game.manager.current_puzzle.width) + " x " + str(self.game.manager.current_puzzle.height))
         GUI_designer_designer_back(self.game, self)
         self.puzzle_object = GUI_puzzle(self.game, self)
         GUI_verify_status(self.game, self, self.puzzle_object)
         GUI_designer_designer_edit_name_button(self.game, self)
         GUI_designer_designer_change_size_button(self.game, self)
-        GUI_designer_designer_change_puzzle_background_button(self.game, self)
+        #GUI_designer_designer_change_puzzle_background_button(self.game, self)
         GUI_designer_designer_undo_button(self.game, self)
         GUI_designer_designer_redo_button(self.game, self)
 
@@ -1360,14 +1365,15 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
         self.tool_buttons.append(GUI_designer_designer_flood_fill_button(self.game, self))
         #self.tool_buttons.append(GUI_designer_designer_rectangle_button(self.game, self))
 
+        """
         self.tool_message = Text(self.game.core.media.fonts['menu_subtitles'], self.game.settings['screen_width'] / 2,  150, TEXT_ALIGN_CENTER, "Left click to fill squares. Right click to clear.")
         self.tool_message.colour = (.2,.2,.2)
         self.tool_message.z = Z_GUI_OBJECT_LEVEL_4
-            
+        """ 
 
     def Execute(self):
         self.update()
-        self.tool_message.alpha = 1.0 if self.tool_message_display else 0.0
+        #self.tool_message.alpha = 1.0 if self.tool_message_display else 0.0
 
 
     def untoggle_tools(self, ignore):
@@ -1376,15 +1382,15 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
                 tool.toggle_state = False
 
 
-    def set_title(self, to):
+    def set_title(self, title, subtitle):
         if not self.title is None:
             self.title.Kill()
-        self.title = GUI_designer_title(self.game, self, subtitle = str(to), no_background = True)
+        self.title = GUI_designer_title(self.game, self, title = str(title), subtitle = str(subtitle), no_background = True, small = True)
 
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
-        self.tool_message.Kill()
+        #self.tool_message.Kill()
 
 
 
@@ -1396,7 +1402,7 @@ class GUI_designer_designer_menu_bar(GUI_element):
         self.gui_init()
         self.z = Z_GUI_OBJECT_LEVEL_4
         self.width = self.game.settings['screen_width']
-        self.height = 128
+        self.height = 144
         self.alpha = 0.3
         self.draw_strategy = "gui_designer_designer_menu_bar"
 
@@ -1407,15 +1413,15 @@ class GUI_designer_designer_menu_bar(GUI_element):
 
 
 class GUI_designer_designer_back(GUI_element_button):
-    generic_button = True
-    generic_button_text = "< Quit"
+    generic_button = False
     
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 20
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_go_back_small']
+        self.x = 8
+        self.y = 70
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1444,12 +1450,12 @@ class GUI_verify_status(GUI_element):
         self.game = game
         self.parent = parent
         self.puzzle = puzzle
-        self.x = self.game.settings['screen_width'] - 180
-        self.y = 0.0
+        self.x = self.game.settings['screen_width'] - 410
+        self.y = -8
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.current_solver_state = None
-        self.text = Text(self.game.core.media.fonts['verifier_status'], self.x + 32, self.y + 70, TEXT_ALIGN_CENTER, "Solving")
-        self.text.colour = (.2,.2,.2)
+        self.text = Text(self.game.core.media.fonts['verifier_status'], self.x + 64, self.y + 120, TEXT_ALIGN_CENTER, "Solving")
+        self.text.colour = (.5,.5,.5)
         self.text.z = self.z
         self.image = self.game.core.media.gfx['gui_verify_status']
         self.gui_init()
@@ -1482,6 +1488,15 @@ class GUI_verify_status(GUI_element):
                 self.image_sequence = 3                    
                 self.text.text = "Invalid Puzzle"
                 self.objs.append(
+                    GUI_designer_designer_save_puzzle_button(self.game, self, force_disabled = True)
+                    )
+                self.objs.append(
+                    GUI_designer_designer_colour_puzzle_button(self.game, self, force_disabled = True)
+                    )
+                self.objs.append(
+                    GUI_designer_designer_test_puzzle_button(self.game, self, force_disabled = True)
+                    )
+                self.objs.append(
                     GUI_designer_designer_invalid_puzzle_question_mark_button(self.game, self)
                     )
 
@@ -1499,14 +1514,14 @@ class GUI_verify_status(GUI_element):
 
 
 class GUI_designer_designer_invalid_puzzle_question_mark_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "?"    
+    generic_button = False
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 160
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_designer_help']
+        self.x = self.game.settings['screen_width'] - 280
+        self.y = 16
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1517,7 +1532,7 @@ class GUI_designer_designer_invalid_puzzle_question_mark_button(GUI_element_butt
             [
             "All PixelPics puzzles must be solvable using logical solving techniques.",
             "PixelPics runs a number of algoritms to determine if your puzzle",
-            "can be solved without resorting to much too guessing.",
+            "can be solved without resorting to guessing.",
             " ",
             "It's usually easy to alter your puzzle to make them solvable.",
             "Keep experimenting by changing only a few squares at a time.",
@@ -1527,22 +1542,28 @@ class GUI_designer_designer_invalid_puzzle_question_mark_button(GUI_element_butt
 
 
 class GUI_designer_designer_save_puzzle_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Save"
+    generic_button = False
     disabled = True
-    def __init__(self, game, parent):
+    width = 68
+    height = 68
+    def __init__(self, game, parent, force_disabled = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 250
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_designer_save']
+        self.x = self.game.settings['screen_width'] - 240
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
+        self.force_disabled = force_disabled
         self.gui_init()
 
 
     def Execute(self):
         self.update()
-        self.disabled = not self.parent.parent.need_to_save
+        if self.force_disabled:
+            self.disabled = True
+        else:
+            self.disabled = not self.parent.parent.need_to_save
 
 
     def mouse_left_up(self):
@@ -1560,21 +1581,27 @@ class GUI_designer_designer_save_puzzle_button(GUI_element_button):
 
 
 class GUI_designer_designer_colour_puzzle_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Colour"
-    def __init__(self, game, parent):
+    width = 68
+    height = 68
+    generic_button = False
+    def __init__(self, game, parent, force_disabled = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 190
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_designer_paint']
+        self.x = self.game.settings['screen_width'] - 160
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
+        self.force_disabled = force_disabled
         self.gui_init()
 
 
     def Execute(self):
         self.update()
-        self.disabled = self.parent.parent.need_to_save
+        if self.force_disabled:
+            self.disabled = True
+        else:
+            self.disabled = self.parent.parent.need_to_save
 
 
     def mouse_left_up(self):
@@ -1586,21 +1613,27 @@ class GUI_designer_designer_colour_puzzle_button(GUI_element_button):
 
 
 class GUI_designer_designer_test_puzzle_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Test"
-    def __init__(self, game, parent):
+    width = 68
+    height = 68
+    generic_button = False
+    def __init__(self, game, parent, force_disabled = False):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 110
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_designer_test']
+        self.x = self.game.settings['screen_width'] - 80
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
+        self.force_disabled = force_disabled
         self.gui_init()
 
 
     def Execute(self):
         self.update()
-        self.disabled = self.parent.parent.need_to_save
+        if self.force_disabled:
+            self.disabled = True
+        else:
+            self.disabled = self.parent.parent.need_to_save
 
 
     def mouse_left_up(self):
@@ -1613,14 +1646,16 @@ class GUI_designer_designer_test_puzzle_button(GUI_element_button):
 
 
 class GUI_designer_designer_edit_name_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Edit Name"
+    generic_button = False
+    width = 68
+    height = 68
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 350
-        self.y = 30
+        self.image = self.game.core.media.gfx['gui_button_designer_name']
+        self.x = self.game.settings['screen_width'] - 590
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1631,14 +1666,16 @@ class GUI_designer_designer_edit_name_button(GUI_element_button):
 
 
 class GUI_designer_designer_change_size_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Change Size"
+    generic_button = False
+    width = 68
+    height = 68
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 452
-        self.y = 30
+        self.image = self.game.core.media.gfx['gui_button_designer_size']
+        self.x = self.game.settings['screen_width'] - 510
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1661,7 +1698,7 @@ class GUI_designer_puzzles_edit_name_dialog(GUI_designer_puzzles_edit_puzzle_dia
             GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
         finally:
             self.parent.need_to_save = True
-            self.parent.set_title(self.puzzle_name_text.current_text)
+            self.parent.set_title(self.puzzle_name_text.current_text, str(self.game.manager.current_puzzle.width) + " x " + str(self.game.manager.current_puzzle.height))
             if not dont_kill:
                 self.Kill()
 
@@ -1730,6 +1767,7 @@ class GUI_designer_puzzles_change_size_dialog(GUI_element_window):
             self.parent.puzzle_object.reload_puzzle_display()
             self.parent.need_to_save = True
             self.parent.reset_stack()
+            self.parent.set_title(self.game.manager.current_puzzle.name, str(self.puzzle_width.current_value) + " x " + str(self.puzzle_height.current_value))
             if not dont_kill:
                 self.Kill()
 
@@ -1835,14 +1873,16 @@ class GUI_designer_designer_change_puzzle_background_button(GUI_element_button):
 
 
 class GUI_designer_designer_undo_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Undo"
+    generic_button = False
+    width = 68
+    height = 68
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 660
-        self.y = 30
+        self.image = self.game.core.media.gfx['gui_button_designer_undo']
+        self.x = self.game.settings['screen_width'] - 770
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1858,14 +1898,16 @@ class GUI_designer_designer_undo_button(GUI_element_button):
 
 
 class GUI_designer_designer_redo_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Redo"
+    generic_button = False
+    width = 68
+    height = 68
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 660
-        self.y = 60
+        self.image = self.game.core.media.gfx['gui_button_designer_redo']
+        self.x = self.game.settings['screen_width'] - 690
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1881,15 +1923,17 @@ class GUI_designer_designer_redo_button(GUI_element_button):
 
 
 class GUI_designer_designer_flood_fill_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Flood Fill"
+    generic_button = False
+    width = 68
+    height = 68
     toggle_button = True
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 350
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_designer_fill']
+        self.x = self.game.settings['screen_width'] - 870
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
