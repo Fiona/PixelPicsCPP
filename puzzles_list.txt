@@ -45,6 +45,7 @@
   Toadstool  -  0005/0004.puz - 00:01:28
   Chi (Earth)  -  0005/0019.puz - 00:01:28
   Delicious Cake  -  0002/0013.puz - 00:01:33
+  Diamond  -  0009/0017.puz - 00:01:52
   @  -  0007/0015.puz - 00:02:07
 
 10x15
@@ -62,6 +63,7 @@
   Crown & Scepter  -  0003/0014.puz - 00:01:40
   Say Cheese!  -  0007/0009.puz - 00:01:40
   Toilet  -  0008/0001.puz - 00:01:47
+  Theater Masks  -  0009/0019.puz - 00:01:55
   Light Bulb  -  0005/0010.puz - 00:02:30
   Big Ben  -  0004/0006.puz - 00:02:43
   Disguise  -  0006/0017.puz - 00:04:13
@@ -83,6 +85,7 @@
   Yin & Yang  -  0004/0020.puz - 00:03:17
   Unicorn  -  0005/0001.puz - 00:03:28
   Zombie  -  0003/0005.puz - 00:04:19
+  Circuit Board  -  0009/0004.puz - 00:04:34
   Stompy Blondie  -  0004/0011.puz - 00:04:35
   Halloween Pumpkin  -  0004/0018.puz - 00:04:45
   Hurdle Jumping  -  0006/0016.puz - 00:04:59
@@ -91,6 +94,7 @@
   Campfire  -  0007/0006.puz - 00:05:49
   Butterfly  -  0007/0001.puz - 00:06:56
   Clown  -  0004/0016.puz - 00:07:07
+  Devil Horns  -  0009/0020.puz - 00:09:20
 
 20x10
   Morse Code  -  0003/0011.puz - 00:01:23
@@ -100,6 +104,7 @@
   The Sphynx  -  0005/0017.puz - 00:01:52
   Rapunzel  -  0005/0002.puz - 00:03:06
   Skeleton  -  0004/0015.puz - 00:04:06
+  Adventurer  -  0009/0005.puz - 0004:58
 
 20x15
   Pine Tree  -  0006/0012.puz - 00:02:16
@@ -111,6 +116,7 @@
   Stonehenge 2  -  0003/0004.puz - 00:05:10
   Toy Robot  -  0004/0010.puz - 00:05:10
   Fruit Bowl  -  0007/0003.puz - 00:06:14
+  Honey Bee  -  0009/0011.puz - 00:06:55
   Mobius Strip  -  0008/0011.puz - 00:07:28
   Archery  -  0006/0019.puz - 00:07:38
   Pharaoh's Mask  -  0003/0017.puz - 00:08:42
@@ -125,35 +131,49 @@
   Jupiter  -  0003/0002.puz - 00:05:16
   Hipster  -  0002/0015.puz - 00:05:37
   Weeping Willow  -  0006/0013.puz - 00:05:38
+  Gears  -  0009/0008.puz - 00:06:20
   Pizza  -  0002/0002.puz - 00:06:30
   Gamepad  -  0004/0012.puz - 00:06:35
   Planet Earth  -  0008/0014.puz - 00:08:00
   Sunset  -  0007/0008.puz - 00:08:02
   DJ  -  0002/0006.puz - 00:08:23
+  Snowman  -  0009/0012.puz - 00:09:35
+  Teddybear  -  0009/0010.puz - 00:09:41
   Atom  -  0008/0012.puz - 00:11:09
   Pixel Pigs  -  0005/0011.puz - 00:12:16
   Potter's Wheel  -  0006/0004.puz - 00:14:59
   Amoeba  -  0008/0020.puz - 00:16:05
   Lollipop  -  0007/0019.puz - 00:20:03
   Hot Air Balloons  -  0004/0003.puz - 00:20:52
+  Sunflower  -  0009/0007.puz - 00:23:54
 
 25x15
   Gangster Boss  -  0006/0020.puz - 00:02:51
   Lightning  -  0006/0018.puz - 00:03:42
+  Kraken  -  0009/0003.puz - 00:05:53
   Easter Island Moai  -  0005/0008.puz - 00:06:45
   Rabbit Out of a Hat  -  0008/0007.puz - 00:13:35
   Milky Way  -  0003/0001.puz - 00:25:41
 
 25x20
   Mona Lisa  -  0008/0004.puz - 00:03:27
+  Shooting Star  -  0009/0013.puz - 00:05:18
+  King and Queen  -  0009/0018.puz - 00:06:24
+  Face  -  0009/0006.puz - 00:08:11
+  Pop Star  -  0009/0002.puz - 00:11:45
   Lucky Cat  -  0008/0018.puz - 00:12:15
   Castle  -  0008/0010.puz - 00:12:20
   Mount Rushmore  -  0008/0003.puz - 00:26:52
+  Celtic Cross  -  0009/0009.puz - 00:12:46
+  Atlas  -  0009/0016.puz - 00:09:54 
 
 25x25
   Koch Snowflake  -  0006/0005.puz - 00:13:15
   Wakka Wakka  -  0002/0016.puz - 00:13:37
+  Snowboarder  -  0009/0001.puz - 00:14:03
+  Japanese Garden  -  0009/0015.puz - 00:14:10
   Ride 'em Cowboy!  -  0007/0020.puz - 00:16:42
+  Tennis  -  0009/0014.puz - 00:36:43
 
 30x10
   Statue of Liberty  -  0007/0004.puz - 00:03:25
