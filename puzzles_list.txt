@@ -1,4 +1,4 @@
-5x5
+5x5   -  7      
   Giraffe  -  0002/0011.puz - 00:00:06
   Brolly  -  0007/0010.puz - 00:00:07
   Pi  -  0003/0020.puz - 00:00:07
@@ -7,14 +7,14 @@
   J  -  0002/0020.puz - 00:00:13
   Worm  -  0007/0012.puz - 00:00:14
 
-5x10
+5x10  -  5
   Steam Train  -  0003/0015.puz - 00:00:19
   Cactus  -  0007/0013.puz - 00:00:19
   Tortoise  -  0004/0002.puz - 00:00:26
   Paperclip  -  0007/0002.puz - 00:00:28
   Goldfish  -  0007/0016.puz - 00:00:42
 
-10x10
+10x10  -  32
   Floppy Disk  -  0003/0010.puz - 00:00:29
   Pawn  -  0002/0003.puz - 00:00:35
   Rook  -  0002/0019.puz - 00:00:35
@@ -48,7 +48,7 @@
   Diamond  -  0009/0017.puz - 00:01:52
   @  -  0007/0015.puz - 00:02:07
 
-10x15
+10x15  - 19
   Test Tubes  -  0005/0003.puz - 00:00:52
   Aztec Pyramid  -  0003/0018.puz - 00:01:02
   Wizard  -  0006/0007.puz - 00:01:03
@@ -69,7 +69,7 @@
   Disguise  -  0006/0017.puz - 00:04:13
   Ice Cream Cone  -  0006/0003.puz - 00:07:22
 
-15x15
+15x15  -  25
   Invaders  -  0002/0008.puz - 00:01:22
   Horseshoe  -  0008/0017.puz - 00:02:02
   Computer  -  0005/0005.puz - 00:02:10
@@ -96,7 +96,7 @@
   Clown  -  0004/0016.puz - 00:07:07
   Devil Horns  -  0009/0020.puz - 00:09:20
 
-20x10
+20x10  -  8
   Morse Code  -  0003/0011.puz - 00:01:23
   Batteries  -  0005/0020.puz - 00:01:25
   Piano  -  0004/0007.puz - 00:01:34
@@ -106,7 +106,7 @@
   Skeleton  -  0004/0015.puz - 00:04:06
   Adventurer  -  0009/0005.puz - 0004:58
 
-20x15
+20x15  - 16
   Pine Tree  -  0006/0012.puz - 00:02:16
   Union Jack  -  0006/0008.puz - 00:02:19
   Loch Ness Monster  -  0008/0009.puz - 00:02:37
@@ -124,7 +124,7 @@
   Blimp  -  0003/0016.puz - 00:10:20
   Penguin  -  0008/0002.puz - 00:19:46
 
-20x20
+20x20  - 21
   Solar Eclipse  -  0006/0011.puz - 00:03:03
   Medusa  -  0002/0012.puz - 00:03:40
   Impossible Waterfall  -  0005/0007.puz - 00:04:56
@@ -147,7 +147,7 @@
   Hot Air Balloons  -  0004/0003.puz - 00:20:52
   Sunflower  -  0009/0007.puz - 00:23:54
 
-25x15
+25x15  -  6
   Gangster Boss  -  0006/0020.puz - 00:02:51
   Lightning  -  0006/0018.puz - 00:03:42
   Kraken  -  0009/0003.puz - 00:05:53
@@ -155,7 +155,7 @@
   Rabbit Out of a Hat  -  0008/0007.puz - 00:13:35
   Milky Way  -  0003/0001.puz - 00:25:41
 
-25x20
+25x20  - 10
   Mona Lisa  -  0008/0004.puz - 00:03:27
   Shooting Star  -  0009/0013.puz - 00:05:18
   King and Queen  -  0009/0018.puz - 00:06:24
@@ -167,7 +167,7 @@
   Celtic Cross  -  0009/0009.puz - 00:12:46
   Atlas  -  0009/0016.puz - 00:09:54 
 
-25x25
+25x25  -  6
   Koch Snowflake  -  0006/0005.puz - 00:13:15
   Wakka Wakka  -  0002/0016.puz - 00:13:37
   Snowboarder  -  0009/0001.puz - 00:14:03
@@ -175,10 +175,10 @@
   Ride 'em Cowboy!  -  0007/0020.puz - 00:16:42
   Tennis  -  0009/0014.puz - 00:36:43
 
-30x10
+30x10  -  1
   Statue of Liberty  -  0007/0004.puz - 00:03:25
 
-30x15
+30x15  -  3
   Birch Tree  -  0006/0014.puz - 00:04:57
   Leaning Tower of Pisa  -  0008/0015.puz - 00:04:29
   Violin  -  0008/0019.puz - 00:07:29

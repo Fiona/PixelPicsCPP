@@ -1,0 +1,11 @@
+5x5   - need 3
+10x10 - need 3
+10x15 - need 1
+20x10 - need 2
+20x15 - need 4
+20x20 - need 4
+25x15 - need 4
+25x25 - need 4
+30x15 - need 1
+
+26
