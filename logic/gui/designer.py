@@ -802,7 +802,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_name_text_input(GUI_element_text_in
         self.parent = parent
         self.z = self.parent.z - 2
         self.x = self.parent.x + 30
-        self.y = self.parent.y + 100
+        self.y = self.parent.y + 70
         self.gui_init()
 
 
@@ -1175,8 +1175,8 @@ class GUI_designer_puzzles_edit_puzzle_puzzle_confirm_button(GUI_element_button)
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
         self.y = self.parent.y + 100
-        self.generic_button_text_object.x = self.x + 9 + (self.width / 2)
-        self.generic_button_text_object.y = self.y + 4 + (self.height / 2)
+        self.generic_button_text_object.x = self.x + (self.width / 2)
+        self.generic_button_text_object.y = self.y + (self.height / 2)
 
 
     def mouse_left_up(self):
@@ -1196,8 +1196,8 @@ class GUI_designer_puzzle_edit_puzzle_puzzle_cancel_button(GUI_element_button):
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
         self.y = self.parent.y + 100
-        self.generic_button_text_object.x = self.x + 9 + (self.width / 2)
-        self.generic_button_text_object.y = self.y + 4 + (self.height / 2)
+        self.generic_button_text_object.x = self.x + (self.width / 2)
+        self.generic_button_text_object.y = self.y + (self.height / 2)
 
 
     def mouse_left_up(self):
@@ -1824,8 +1824,8 @@ class GUI_designer_puzzle_change_size_confirm_button(GUI_element_button):
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
         self.y = self.parent.y + 150
-        self.generic_button_text_object.x = self.x + 9
-        self.generic_button_text_object.y = self.y + 4
+        self.generic_button_text_object.x = self.x + (self.width / 2)
+        self.generic_button_text_object.y = self.y + (self.height / 2)
 
 
     def mouse_left_up(self):
@@ -1845,8 +1845,8 @@ class GUI_designer_puzzle_change_size_cancel_button(GUI_element_button):
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
         self.y = self.parent.y + 150
-        self.generic_button_text_object.x = self.x + 9
-        self.generic_button_text_object.y = self.y + 4
+        self.generic_button_text_object.x = self.x + (self.width / 2)
+        self.generic_button_text_object.y = self.y + (self.height / 2)
 
 
     def mouse_left_up(self):
@@ -2026,7 +2026,7 @@ class GUI_designer_puzzles_change_puzzle_background_dialog(GUI_element_window):
         except Exception as e:
             GUI_element_dialog_box(self.game, self.parent, "Error", [str(e)])
         finally:
-            self.parent.puzzle_object.reload_puzzle_background()
+            #self.parent.puzzle_object.reload_puzzle_background()
             if not dont_kill:
                 self.Kill()
 
@@ -2173,7 +2173,14 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
         self.alpha = 0.1
 
         GUI_designer_colour_menu_bar(self.game, self)
-        self.title = GUI_designer_title(self.game, self, subtitle = str(self.game.manager.current_puzzle.name), no_background = True)
+        self.title = GUI_designer_title(
+            self.game,
+            self,
+            title = str(self.game.manager.current_puzzle.name),
+            subtitle = str(self.game.manager.current_puzzle.width) + " x " + str(self.game.manager.current_puzzle.height),
+            no_background = True,
+            small = True
+            )
         GUI_designer_designer_back(self.game, self)
         self.puzzle_object = GUI_designer_colour_puzzle(self.game, self)
         #GUI_designer_designer_change_puzzle_background_button(self.game, self)
@@ -2190,8 +2197,14 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
         self.value_slider_object = GUI_designer_colour_value_slider(self.game, self)        
         self.current_colour_object = GUI_designer_colour_current_colour(self.game, self)
 
+        self.text_offset_x = 0.0
+        self.text_offset_y = 0.0
+        self.draw_strategy = "designer_background"
+
 
     def Execute(self):
+        self.text_offset_x += 5.0
+        self.text_offset_y -= 5.0
         self.update()
 
 
@@ -2215,7 +2228,6 @@ class GUI_designer_colour_puzzle(GUI_element):
         self.gui_init()
         self.z = Z_GUI_OBJECT_LEVEL_1
         self.reload_puzzle_display()
-        self.reload_puzzle_background()
 
         # Init stuff
         self.camera_pos = [0.0, 0.0]
@@ -2265,24 +2277,6 @@ class GUI_designer_colour_puzzle(GUI_element):
         
         self.draw_strategy = "primitive_square"
         self.primitive_square_colour = (0.0,0.0,0.0,1.0)
-
-
-    def reload_puzzle_background(self):
-        # Draw strat
-        if BACKGROUNDS[self.game.manager.current_puzzle.background]['type'] == BACKGROUND_TYPE_COLOUR:
-            self.parent.draw_strategy = "primitive_square"
-            self.parent.draw_strategy_call_parent = False
-            self.parent.primitive_square_width = self.game.settings['screen_width']
-            self.parent.primitive_square_height = self.game.settings['screen_height']
-            self.parent.primitive_square_x = 0.0
-            self.parent.primitive_square_y = 0.0
-            self.parent.primitive_square_four_colours = True
-            self.parent.primitive_square_colour = (
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                (1.0,1.0,1.0,1.0),
-                BACKGROUNDS[self.game.manager.current_puzzle.background]['data'],
-                )
 
 
     def adjust_gui_coords(self):
@@ -2467,7 +2461,7 @@ class GUI_designer_colour_menu_bar(GUI_element):
         self.gui_init()
         self.z = Z_GUI_OBJECT_LEVEL_4
         self.width = self.game.settings['screen_width']
-        self.height = 155
+        self.height = 144
         self.alpha = 0.3
         self.draw_strategy = "gui_designer_designer_menu_bar"
 
@@ -2478,15 +2472,15 @@ class GUI_designer_colour_menu_bar(GUI_element):
 
 
 class GUI_designer_colour_copy_from_puzzle_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Copy From Puzzle"
+    generic_button = False
 
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 128
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_designer_copy']
+        self.x = self.game.settings['screen_width'] - 940
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2516,15 +2510,17 @@ class GUI_designer_colour_copy_from_puzzle_button(GUI_element_button):
 
 
 class GUI_designer_colour_save_puzzle_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Save"
+    generic_button = False
     disabled = True
+    width = 68
+    height = 68
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 75
-        self.y = 15
+        self.image = self.game.core.media.gfx['gui_button_designer_save']
+        self.x = self.game.settings['screen_width'] - 240
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2549,14 +2545,16 @@ class GUI_designer_colour_save_puzzle_button(GUI_element_button):
 
 
 class GUI_designer_colour_puzzle_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Puzzle"
+    width = 68
+    height = 68
+    generic_button = False
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 80
-        self.y = 52
+        self.image = self.game.core.media.gfx['gui_button_designer_puzzle']
+        self.x = self.game.settings['screen_width'] - 160
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2575,14 +2573,16 @@ class GUI_designer_colour_puzzle_button(GUI_element_button):
 
 
 class GUI_designer_colour_test_puzzle_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Test"
+    width = 68
+    height = 68
+    generic_button = False
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = self.game.settings['screen_width'] - 75
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_designer_test']
+        self.x = self.game.settings['screen_width'] - 80
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2607,11 +2607,12 @@ class GUI_designer_colour_colour_picker(GUI_element):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 315
+        self.y = 65
+        self.x = self.game.settings['screen_width'] - 600
         self.y = 15
         self.z = Z_GUI_OBJECT_LEVEL_7
         self.width = 316 #austin
-        self.height = 128
+        self.height = 118
 
         self.selected_hsv_colour = [0.0, 0.0, 1.0]
         self.selected_rgb_colour = self.game.core.HSVtoRGB(*self.selected_hsv_colour)
@@ -2673,9 +2674,11 @@ class GUI_designer_colour_current_colour(GUI_element):
         self.game = game
         self.parent = parent
         self.width = 64
-        self.height = 64
-        self.x = self.parent.value_slider_object.x + self.parent.value_slider_object.width + 16
-        self.y = self.parent.value_slider_object.y + (self.parent.value_slider_object.height / 2) - (self.height / 2)
+        self.height = 45
+        self.x = self.game.settings['screen_width'] - 240
+        self.y = 15
+        #self.x = self.parent.value_slider_object.x + self.parent.value_slider_object.width + 16
+        #self.y = self.parent.value_slider_object.y + (self.parent.value_slider_object.height / 2) - (self.height / 2)
         self.z = Z_GUI_OBJECT_LEVEL_7        
         
         self.gui_init()
@@ -2703,7 +2706,7 @@ class GUI_designer_colour_value_slider(GUI_element):
         self.y = self.parent.palette_object.y
         self.z = Z_GUI_OBJECT_LEVEL_7        
         self.width = 16
-        self.height = 128
+        self.height = 118
         self.gui_init()
 
         self.draw_strategy = "designer_colour_value_slider"
@@ -2758,14 +2761,16 @@ class GUI_designer_colour_value_slider_cursor(Process):
 
 
 class GUI_designer_colour_undo_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Undo"
+    generic_button = False
+    width = 68
+    height = 68
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 800
-        self.y = 20
+        self.image = self.game.core.media.gfx['gui_button_designer_undo']
+        self.x = self.game.settings['screen_width'] - 770
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2781,14 +2786,16 @@ class GUI_designer_colour_undo_button(GUI_element_button):
 
 
 class GUI_designer_colour_redo_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Redo"
+    generic_button = False
+    width = 68
+    height = 68
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 800
-        self.y = 50
+        self.image = self.game.core.media.gfx['gui_button_designer_redo']
+        self.x = self.game.settings['screen_width'] - 690
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2804,15 +2811,15 @@ class GUI_designer_colour_redo_button(GUI_element_button):
 
 
 class GUI_designer_colour_flood_fill_button(GUI_element_button):
-    generic_button = True
-    generic_button_text = "Flood Fill"
+    generic_button = False
     toggle_button = True
     def __init__(self, game, parent):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.x = 800
-        self.y = 90
+        self.image = self.game.core.media.gfx['gui_button_designer_fill']
+        self.x = self.game.settings['screen_width'] - 860
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
