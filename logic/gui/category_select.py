@@ -93,6 +93,11 @@ class GUI_category_select_container(GUI_element):
             if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.gui.mouse.y > (self.game.settings['screen_height'] - 50):
                     self.scroll_down = True
 
+            if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.core.mouse.wheel_up:
+                self.scroll_speed -= 4.0
+            if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.core.mouse.wheel_down:
+                self.scroll_speed += 4.0
+                
         if self.scroll_up:
             self.scroll_speed -= .2
         elif self.scroll_down:
