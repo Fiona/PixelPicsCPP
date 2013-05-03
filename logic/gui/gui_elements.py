@@ -1273,6 +1273,9 @@ class GUI_element_spinner(GUI_element):
     max_value = 100
     min_value = -100
 
+    # by how much the spinner jumps everytime it's pressed
+    jump_count = 1
+    
     # What the current value is.
     current_value = 1
     
@@ -1316,12 +1319,12 @@ class GUI_element_spinner(GUI_element):
 
     def decrease_current_value(self):
         if self.current_value > self.min_value:
-            self.set_current_value(self.current_value - 1)
+            self.set_current_value(self.current_value - self.jump_count)
 
 
     def increase_current_value(self):
         if self.current_value < self.max_value:
-            self.set_current_value(self.current_value + 1)
+            self.set_current_value(self.current_value + self.jump_count)
 
 
     def set_current_value(self, new_val):

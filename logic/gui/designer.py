@@ -811,6 +811,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_width_input(GUI_element_spinner):
     label = "Width:  "
     min_value = 5
     max_value = 40
+    jump_count = 5
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
@@ -828,6 +829,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_height_input(GUI_element_spinner):
     label = "Height: "
     min_value = 5
     max_value = 40
+    jump_count = 5
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
@@ -1784,6 +1786,7 @@ class GUI_designer_puzzle_change_size_width_spinner(GUI_element_spinner):
     label = "Width:  "
     min_value = 5
     max_value = 40
+    jump_count = 5
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
@@ -1800,6 +1803,7 @@ class GUI_designer_puzzle_change_size_height_spinner(GUI_element_spinner):
     label = "Height: "
     min_value = 5
     max_value = 40
+    jump_count = 5
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
@@ -1947,6 +1951,7 @@ class GUI_designer_designer_flood_fill_button(GUI_element_button):
         else:
             self.parent.tool = DRAWING_TOOL_STATE_DRAW
             self.parent.tool_message_display = False
+
 
 
 class GUI_designer_designer_rectangle_button(GUI_element_button):
