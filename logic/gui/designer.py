@@ -720,7 +720,7 @@ class GUI_designer_puzzles_create_puzzle(GUI_element_button):
 
 class GUI_designer_puzzles_add_puzzle_dialog(GUI_element_window):
     title = "Create Puzzle"
-    height = 205
+    height = 200
     width = 450
     objs = {}
 
@@ -802,7 +802,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_name_text_input(GUI_element_text_in
         self.parent = parent
         self.z = self.parent.z - 2
         self.x = self.parent.x + 30
-        self.y = self.parent.y + 70
+        self.y = self.parent.y + 65
         self.gui_init()
 
 
@@ -818,7 +818,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_width_input(GUI_element_spinner):
         self.parent = parent
         self.z = self.parent.z - 2
         self.x = self.parent.x + 30
-        self.y = self.parent.y + 100
+        self.y = self.parent.y + 95
         self.current_value = 5
         self.gui_init()
 
@@ -835,7 +835,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_height_input(GUI_element_spinner):
         self.parent = parent
         self.z = self.parent.z - 2
         self.x = self.parent.x + 30
-        self.y = self.parent.y + 130
+        self.y = self.parent.y + 125
         self.current_value = 5
         self.gui_init()
 
@@ -852,7 +852,7 @@ class GUI_designer_puzzles_add_puzzle_puzzle_confirm_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
-        self.y = self.parent.y + 165
+        self.y = self.parent.y + 160
         self.generic_button_text_object.x = self.x + (self.width / 2)
         self.generic_button_text_object.y = self.y + (self.height / 2)
 
@@ -873,7 +873,7 @@ class GUI_designer_puzzle_add_puzzle_puzzle_cancel_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
-        self.y = self.parent.y + 165
+        self.y = self.parent.y + 160
         self.generic_button_text_object.x = self.x + (self.width / 2)
         self.generic_button_text_object.y = self.y + (self.height / 2)
 
@@ -1706,7 +1706,7 @@ class GUI_designer_puzzles_edit_name_dialog(GUI_designer_puzzles_edit_puzzle_dia
 
 class GUI_designer_puzzles_change_size_dialog(GUI_element_window):
     title = "Change Size"
-    height = 200
+    height = 210
     width = 500
     objs = {}
 
@@ -1726,11 +1726,11 @@ class GUI_designer_puzzles_change_size_dialog(GUI_element_window):
         self.objs = {}
         y = 0
         for text in ["Using this dialog you can edit the size of this puzzle.", "Note that reducing the size could cause you to lose", "some of the shape you've drawn."]:
-            txt = Text(self.game.core.media.fonts['basic'], self.x + 30, self.y + 30 + y, TEXT_ALIGN_TOP_LEFT, text)
+            txt = Text(self.game.core.media.fonts['window_text'], self.x + 28, self.y + 45 + y, TEXT_ALIGN_TOP_LEFT, text)
             txt.z = self.z - 2
-            txt.colour = (0, 0, 0)
+            txt.colour = (0.3, 0.3, 0.3)
             self.objs['text_' + str(y)] = txt
-            y += 15
+            y += txt.text_height + 2 
 
         self.puzzle_width = GUI_designer_puzzle_change_size_width_spinner(self.game, self)
         self.puzzle_width.set_current_value(self.game.manager.current_puzzle.width)
@@ -1791,7 +1791,7 @@ class GUI_designer_puzzle_change_size_width_spinner(GUI_element_spinner):
         self.parent = parent
         self.z = self.parent.z - 2
         self.x = self.parent.x + 30
-        self.y = self.parent.y + 85
+        self.y = self.parent.y + 110
         self.gui_init()
 
 
@@ -1807,7 +1807,7 @@ class GUI_designer_puzzle_change_size_height_spinner(GUI_element_spinner):
         self.parent = parent
         self.z = self.parent.z - 2
         self.x = self.parent.x + 30
-        self.y = self.parent.y + 115
+        self.y = self.parent.y + 140
         self.gui_init()
 
 
@@ -1823,7 +1823,7 @@ class GUI_designer_puzzle_change_size_confirm_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
-        self.y = self.parent.y + 150
+        self.y = self.parent.y + 170
         self.generic_button_text_object.x = self.x + (self.width / 2)
         self.generic_button_text_object.y = self.y + (self.height / 2)
 
@@ -1844,7 +1844,7 @@ class GUI_designer_puzzle_change_size_cancel_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
-        self.y = self.parent.y + 150
+        self.y = self.parent.y + 170
         self.generic_button_text_object.x = self.x + (self.width / 2)
         self.generic_button_text_object.y = self.y + (self.height / 2)
 
