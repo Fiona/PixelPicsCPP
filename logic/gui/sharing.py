@@ -38,6 +38,34 @@ class GUI_sharing_container(GUI_element_network_container):
         GUI_sharing_tab_downloaded(self.game, self)
         GUI_sharing_back(self.game, self)
 
+        if not self.game.player.sharing_content_warning_seen:
+            self.game.player.sharing_content_warning_seen = True
+            self.game.save_player(self.game.player)
+            GUI_element_dialog_box(
+                self.game,
+                self,
+                "Content Warning",
+                ["Please note that packs downloaded through this", "service are entirely user created.", "Stompy Blondie Games are not responsible for", "any inappropriate or offensive content encountered."],
+                callback = self.create_scroll_window
+                )
+        else:
+            self.create_scroll_window()
+            
+        #GUI_sharing_test_button(self.game, self)
+        
+        # Draw strategy data
+        self.draw_strategy = "present_background"
+        self.text_offset_x = 0.0
+        self.text_offset_y = 0.0
+
+
+    def Execute(self):
+        GUI_element_network_container.Execute(self)
+        self.text_offset_x += 5.0
+        self.text_offset_y -= 5.0
+        
+
+    def create_scroll_window(self):
         if self.game.gui.gui_state == GUI_STATE_SHARING_NEWEST:
             GUI_sharing_title(self.game, self, "Newest Puzzles")
             GUI_sharing_newest_puzzles_scroll_window(self.game, self)
@@ -53,33 +81,6 @@ class GUI_sharing_container(GUI_element_network_container):
         elif self.game.gui.gui_state == GUI_STATE_SHARING_DOWNLOADED:
             GUI_sharing_title(self.game, self, "Downloaded Puzzles")
             GUI_sharing_downloaded_scroll_window(self.game, self)
-
-        if not self.game.player.sharing_content_warning_seen:
-            self.game.player.sharing_content_warning_seen = True
-            self.game.save_player(self.game.player)
-            GUI_element_dialog_box(
-                self.game,
-                self,
-                "Content Warning",
-                ["Please note that packs downloaded through this", "service are entirely user created.", "Stompy Blondie Games are not responsible for", "any inappropriate or offensive content encountered."]
-                )
-            
-        #GUI_sharing_test_button(self.game, self)
-        
-        # Draw strategy data
-        self.draw_strategy = "primitive_square"
-        self.draw_strategy_call_parent = False
-        self.primitive_square_width = self.width
-        self.primitive_square_height = self.height
-        self.primitive_square_x = 0.0
-        self.primitive_square_y = 0.0
-        self.primitive_square_four_colours = True
-        self.primitive_square_colour = (
-              (.7,.65,.8,1.0),
-              (.5,.4,.6,1.0),
-              (.5,.4,.6,1.0),
-              (.7,.65,.8,1.0),
-            )
         
 
 
@@ -595,34 +596,19 @@ class GUI_sharing_title(GUI_element):
         self.z = Z_GUI_OBJECT_LEVEL_5
         
         self.text = Text(self.game.core.media.fonts['menu_titles'], 10, 10, TEXT_ALIGN_TOP_LEFT, "Download Puzzles")
-        self.text.colour = (.2, .9, .2)
-        self.text.shadow_colour = (.2, .2, .2)
+        self.text.colour = (0.95, 0.58, 0.09)
         self.text.shadow = 2
+        self.text.shadow_colour = (0.7, 0.7, 0.7)
         self.text.z = self.z - 1
 
         if not subtitle is None:
             self.subtitle = Text(self.game.core.media.fonts['menu_subtitles'], 30, 50, TEXT_ALIGN_TOP_LEFT, subtitle)
-            self.subtitle.colour = (.2, .5, .2)
-            self.subtitle.shadow_colour = (.2, .2, .2)
+            self.subtitle.colour = (0.45, 0.45, 0.45)
             self.subtitle.shadow = 2
+            self.subtitle.shadow_colour = (0.9, 0.9, 0.9)
             self.subtitle.z = self.z - 2
         else:
             self.subtitle = None
-
-        # Draw strategy data
-        self.draw_strategy = "primitive_square"
-        self.draw_strategy_call_parent = False
-        self.primitive_square_width = 200
-        self.primitive_square_height = self.text.text_height + 40
-        self.primitive_square_x = 0.0
-        self.primitive_square_y = 0.0
-        self.primitive_square_four_colours = True
-        self.primitive_square_colour = (
-            (.3,.2,.4,1.0),
-            (.4,.3,.5,.0),
-            (.4,.3,.5,.0),
-            (.3,.2,.4,1.0),
-            )
 
 
     def On_Exit(self):
@@ -850,6 +836,11 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
         self.go_to_page(self.current_page)
 
 
+    def Execute(self):
+        self.update()
+        self.adjust_text_positions()
+
+
     def go_to_page(self, page):
         self.current_page = page
         self.parent.make_request_to_server(self.url, {'page' : page}, self.display_loaded_packs, task_text = self.task_text)
@@ -889,6 +880,8 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
         if not self.text_num_pages is None:
             self.text_num_pages.Kill()
         self.text_num_pages = Text(self.game.core.media.fonts['designer_pack_name'], self.x + (self.width / 2), self.y + self.contents_height + 10, TEXT_ALIGN_TOP, "Page " + str(self.current_page) + "/" + str(self.num_pages))
+
+
         self.text_num_pages.z = self.z - 2
         self.text_num_pages.colour = (1.0, 1.0, 1.0)
         self.contents_height += 32
@@ -901,11 +894,6 @@ class GUI_sharing_load_puzzles_scroll_window(GUI_element_scroll_window):
 
         self.adjust_text_positions()
                     
-
-    def Execute(self):
-        self.update()
-        self.adjust_text_positions()
-
 
     def create_pack_objects(self):
         if len(self.pack_items):

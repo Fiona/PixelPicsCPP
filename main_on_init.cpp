@@ -139,6 +139,7 @@ bool Main_App::On_Init()
     draw_strategies["balloons_background"] = &Process::Draw_strategy_balloons_background;
     draw_strategies["tutorial_background"] = &Process::Draw_strategy_tutorial_background;
     draw_strategies["designer_background"] = &Process::Draw_strategy_designer_background;
+    draw_strategies["present_background"] = &Process::Draw_strategy_present_background;
     draw_strategies["puzzle_select"] = &Process::Draw_strategy_puzzle_select;
     draw_strategies["puzzle_select_puzzle_item"] = &Process::Draw_strategy_puzzle_select_puzzle_item;
     draw_strategies["main_menu_title"] = &Process::Draw_strategy_main_menu_title;

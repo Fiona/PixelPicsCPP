@@ -180,7 +180,7 @@ class GUI(Process):
                     else:
                         self.current_visible_gui_elements[GUI_STATE_PUZZLE]['puzzle_container'].show_menu()
 
-            if not self.block_gui_mouse_input:
+            if not self.block_gui_mouse_input and not self.game.paused:
                 self.do_mouse_wheel_zooming()
 
         elif self.game.game_state == GAME_STATE_DESIGNER:
