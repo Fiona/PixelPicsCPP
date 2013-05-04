@@ -75,6 +75,8 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("puzzle_select_speech_bubble", new Font("fnt/basiccomical.ttf", 35)));
     fonts.insert(pair<string,Font*>("puzzle_select_hover_text", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("puzzle_select_rate_pack_text", new Font("fnt/borisblackbloxx.ttf", 20)));
+    fonts.insert(pair<string,Font*>("sharing_page_number", new Font("fnt/borisblackbloxx.ttf", 23)));
+    fonts.insert(pair<string,Font*>("sharing_your_pack_message", new Font("fnt/borisblackbloxx.ttf", 15)));
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/gui/stompyblondie_logo.png")));
@@ -197,7 +199,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_puzzle_select_saved_icon", new Image("gfx/gui/puzzle_select_saved_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_star_icon", new Image("gfx/gui/puzzle_select_star_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_rating_star", new Image("gfx/gui/puzzle_select_rating_star.png", False, 2)));
-    gfx.insert(pair<string, Image*>("gui_sharing_rating_stars", new Image("gfx/gui/sharing_rating_stars.png", False, 6)));
+    gfx.insert(pair<string, Image*>("gui_sharing_rating_stars", new Image("gfx/gui/sharing_rating_stars.png", False, 8)));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_speech_bubble", new Image("gfx/gui/puzzle_select_speech_bubble.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_button_report", new Image("gfx/gui/puzzle_select_button_report.png", False, 4)));
 
@@ -206,12 +208,17 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_chips_sad", new Image("gfx/gui/chips_sad.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_speech_bubble", new Image("gfx/gui/speech_bubble.png")));
 
+    gfx.insert(pair<string, Image*>("gui_button_sharing_tab_top_week", new Image("gfx/gui/button_sharing_tab_top_week.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_tab_top", new Image("gfx/gui/button_sharing_tab_top.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_tab_newest", new Image("gfx/gui/button_sharing_tab_newest.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_tab_downloaded", new Image("gfx/gui/button_sharing_tab_downloaded.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_tab_my_puzzles", new Image("gfx/gui/button_sharing_tab_my_puzzles.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_upload", new Image("gfx/gui/button_sharing_upload.png", False, 3)));
-    gfx.insert(pair<string, Image*>("gui_button_sharing_download", new Image("gfx/gui/button_sharing_download.png", False, 3)));
-    gfx.insert(pair<string, Image*>("gui_button_sharing_play", new Image("gfx/gui/button_sharing_play.png", False, 3)));
-    gfx.insert(pair<string, Image*>("gui_button_sharing_delete", new Image("gfx/gui/button_sharing_delete.png", False, 3)));
-    gfx.insert(pair<string, Image*>("gui_button_sharing_next", new Image("gfx/gui/button_sharing_next.png", False, 3)));
-    gfx.insert(pair<string, Image*>("gui_button_sharing_prev", new Image("gfx/gui/button_sharing_prev.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_download", new Image("gfx/gui/button_sharing_download.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_play", new Image("gfx/gui/button_sharing_play.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_delete", new Image("gfx/gui/button_sharing_delete.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_next", new Image("gfx/gui/button_sharing_next.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_prev", new Image("gfx/gui/button_sharing_prev.png", False, 4)));
 
     // Sound effects!
     sfx.insert(pair<string,SFX*>("empty_square", new SFX("sfx/empty_square.wav", game, False)));

@@ -229,6 +229,12 @@ class GUI_element_button(GUI_element):
     # Set false to disable clicks and stuff 
     play_sound = True
 
+    # Which frome of the button graphic to display if a toggle button and is toggled on
+    toggle_frame = 3
+
+    # if a toggle button and currently toggled this disables the click animation on it
+    no_click_when_toggled = False
+    
     generic_button_text_object = None
     sequence_count = 0
 
@@ -284,7 +290,7 @@ class GUI_element_button(GUI_element):
             self.image_sequence = 4
             return
         if self.toggle_button and self.toggle_state:
-            self.image_sequence = 3 if self.sequence_count > 3 else 0
+            self.image_sequence = self.toggle_frame if self.sequence_count >= self.toggle_frame else 0
         elif self.toggle_button:
             self.image_sequence = 1
 
@@ -316,6 +322,8 @@ class GUI_element_button(GUI_element):
 
     def mouse_left_down(self):
         if self.disabled:
+            return
+        if (self.toggle_button and self.toggle_state) and self.no_click_when_toggled:
             return
         if self.sequence_count > 2:
             self.image_sequence = 3
@@ -1665,9 +1673,9 @@ class GUI_network_loading_indicator(GUI_element):
         if not task_text is None:
             self.task_text = Text(self.game.core.media.fonts['menu_subtitles'], self.width / 2, (self.height / 2) + 20, TEXT_ALIGN_CENTER, str(task_text))
             self.task_text.z = self.z - 1
-            self.task_text.colour = (.7, .7, .7, 1.0)
+            self.task_text.colour = (0.95, 0.58, 0.09)
             self.task_text.shadow = 2
-            self.task_text.shadow_colour = (.3, .3, .3, 1.0)
+            self.task_text.shadow_colour = (0.7, 0.7, 0.7)
             
         # Draw strategy data
         self.draw_strategy = "primitive_square"
