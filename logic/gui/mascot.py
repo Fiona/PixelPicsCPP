@@ -203,6 +203,16 @@ class Mascot_Main_Menu(Mascot):
                 ["Check the Extra Puzzles", "menu for even more", "puzzles made by people", "all over the world!"],
                 ["Cats rule!"],
                 ["Meow meow meow!", "Mr-eeow mow!", "Mow mow...", ".. MEOW!"],
+                ["PixelPics are known by", "many other names including", "Nonograms, Griddlers,", "and Japanese Crosswords!"],
+                ["For a reminder of how", "to play, hit the \"Play!\"", "button and then choose", "\"Tutorial\""],
+                ["Stuck on a puzzle?", "Take a break and come", "back to it - your progress", "will be saved!"],
+                ["If you guess at a", "puzzle, you risk losing", "a life.", "Try to think logically!"],
+                ["X's aren't checked for", "correctness - so be", "careful you put them in", "the right place!"],
+                ["A \"0\" clue means there", "are no blocks on that", "row or column.", "Fill it with X's right away!"],
+                ["The word \"pixel\" is",  "short for \"picture", "element\".", "Pixels are the tiny dots", "that make up a", "digital image!"],
+                ["When you've found all", "the blocks a row or column,", "remember to fill the", "remaining squares with", "X's!"],
+                ["Check each space", "carefully.", "Is it possible a block", "could be there?", "If not, put an X there", "to eliminate it!"],
+                ["I have 9 lives, but",  "YOU only get 4 per", "puzzle - so be careful!"]
                 ]
             self.set_speech(random.choice(items))
             

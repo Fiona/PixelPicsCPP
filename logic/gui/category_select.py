@@ -60,9 +60,9 @@ class GUI_category_select_container(GUI_element):
             ("Manageable",    "0006", (1.0, 1.0, .5)),
             ("Troublesome",   "0007", (1.0, 1.0, .5)),
             ("Formidable",    "0008", (1.0, 1.0, .5)),
-            ("Demanding",     "0008", (1.0, 1.0, .5)),
-            ("Heavy",         "0008", (1.0, 1.0, .5)),
-            ("Challenging!",  "0008", (1.0, 1.0, .5))
+            ("Demanding",     "0009", (1.0, 1.0, .5)),
+            ("Heavy",         "0009", (1.0, 1.0, .5)),
+            ("Challenging!",  "last", (1.0, 1.0, .5))
             ]
         self.category_objs = []
 
@@ -93,6 +93,11 @@ class GUI_category_select_container(GUI_element):
             if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.gui.mouse.y > (self.game.settings['screen_height'] - 50):
                     self.scroll_down = True
 
+            if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.core.mouse.wheel_up:
+                self.scroll_speed -= 4.0
+            if self.game.gui.mouse.x > ((self.game.settings['screen_width'] / 2) - 100) and self.game.core.mouse.wheel_down:
+                self.scroll_speed += 4.0
+                
         if self.scroll_up:
             self.scroll_speed -= .2
         elif self.scroll_down:

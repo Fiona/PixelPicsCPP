@@ -441,6 +441,8 @@ class GUI_puzzle(GUI_element):
         self.parent.text_offset_y = 0.0
         if self.game.game_state == GAME_STATE_TUTORIAL:
             self.parent.draw_strategy = "tutorial_background"
+        elif self.game.game_state == GAME_STATE_DESIGNER:
+            self.parent.draw_strategy = "designer_background"
         else:
             self.parent.draw_strategy = "balloons_background"
             
