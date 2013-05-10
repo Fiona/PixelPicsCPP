@@ -39,7 +39,7 @@ class GUI_puzzle_select_container(GUI_element_network_container):
         self.title.shadow_colour = (0.7, 0.7, 0.7)
 
         self.author = None
-        if not self.game.manager.user_created_puzzles:
+        if self.game.manager.user_created_puzzles:
             self.author = Text(self.game.core.media.fonts['menu_subtitles'], 40, 55, TEXT_ALIGN_TOP_LEFT, "by " + str(self.game.manager.current_pack.author_name))
             self.author.z = Z_GUI_OBJECT_LEVEL_2
             self.author.colour = (0.45, 0.45, 0.45)
