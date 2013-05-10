@@ -56,6 +56,20 @@ class Game(Process):
 
     # list of categories in order that they are to be unlocked
     game_categories = ["0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011"]
+
+    # This is the list of packs 
+    game_category_uuids = [
+        'd42f1f29-d679-4aee-a6bc-4de633f71a1b',
+        '51a6257b-2051-4c5a-9791-9d157d58e3f7',
+        '23a04ccf-aa24-40a6-b4bc-d0cb973b65e2',
+        '7277a126-54d8-41f8-bf28-c2223abe8a7a',
+        '240d1789-2f38-4e9e-a7ad-13e42710ad5c',
+        'ed01f64c-48de-4264-b7ac-54401c2ab3e4',
+        'e9f5a59b-8387-4b25-aad4-6b22ee01d25c',
+        '547a2952-ff49-4b92-88c6-42f36a9315f9',
+        'bcd0a834-48fe-4b0a-a2d0-65f0a2d94df6',
+        '0adbfd2e-8669-4e52-a2bd-901193c8d724'
+        ]
     
     # Name of a category that we're going to do the unlock animation on if appropriate
     category_to_unlock = None    
@@ -282,13 +296,19 @@ class Game(Process):
         # -----------
         # Gather together how many puzzles we've finished
         num_puzzles_cleared = 0
+        print self.game_category_uuids
         for cat_uuid in self.player.cleared_puzzles:
             # ignore the tutorial
             if cat_uuid == TUTORIAL_UUID:
                 continue
+            print cat_uuid
+            # we only count puzzles in the main 
+            if not cat_uuid in self.game_category_uuids:
+                continue
             for puzzle_name in self.player.cleared_puzzles[cat_uuid]:
                 num_puzzles_cleared += 1
-
+        print "num  cleared ", num_puzzles_cleared
+        
         # If we determine we should have more categories unlocked that we do
         # then we determine which category in the sequence we haven't unlocked and
         # tell the game to unlock it (this is for animation purposes only)
