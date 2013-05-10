@@ -408,6 +408,7 @@ class GUI_puzzle(GUI_element):
         if self.game.game_state == GAME_STATE_DESIGNER:
             self.state = PUZZLE_STATE_SOLVING
             self.designer = True
+            self.puzzle_solver_state = True
         # --- DESIGNER ONLY ---
         if self.game.game_state == GAME_STATE_TUTORIAL:
             self.state = PUZZLE_STATE_SOLVING
