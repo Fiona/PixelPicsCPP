@@ -68,7 +68,9 @@ class Game(Process):
         'e9f5a59b-8387-4b25-aad4-6b22ee01d25c',
         '547a2952-ff49-4b92-88c6-42f36a9315f9',
         'bcd0a834-48fe-4b0a-a2d0-65f0a2d94df6',
-        '0adbfd2e-8669-4e52-a2bd-901193c8d724'
+        '0adbfd2e-8669-4e52-a2bd-901193c8d724',
+        'ca7dc2ae-534b-45eb-9a6b-8ced05bba6b6',
+        'dcfabfd9-88fd-4bcd-b447-b1ce57459ef0' # delete
         ]
     
     # Name of a category that we're going to do the unlock animation on if appropriate
@@ -296,18 +298,16 @@ class Game(Process):
         # -----------
         # Gather together how many puzzles we've finished
         num_puzzles_cleared = 0
-        print self.game_category_uuids
+
         for cat_uuid in self.player.cleared_puzzles:
             # ignore the tutorial
             if cat_uuid == TUTORIAL_UUID:
                 continue
-            print cat_uuid
             # we only count puzzles in the main 
             if not cat_uuid in self.game_category_uuids:
                 continue
             for puzzle_name in self.player.cleared_puzzles[cat_uuid]:
                 num_puzzles_cleared += 1
-        print "num  cleared ", num_puzzles_cleared
         
         # If we determine we should have more categories unlocked that we do
         # then we determine which category in the sequence we haven't unlocked and

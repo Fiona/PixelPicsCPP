@@ -1,11 +1,14 @@
-5x5   -  7      
+5x5   -  10
   Giraffe  -  0002/0011.puz - 00:00:06
   Brolly  -  0007/0010.puz - 00:00:07
   Pi  -  0003/0020.puz - 00:00:07
+  Pirate Ship  -  0011/0005.puz - 00:00:07
+  Robin  -  0011/0004.puz - 00:00:10
   Cup  -  0002/0009.puz - 00:00:11
   Cherries  -  0007/0018.puz - 00:00:12
   J  -  0002/0020.puz - 00:00:13
   Worm  -  0007/0012.puz - 00:00:14
+  Clock  -  0011/0006.puz - 00:00:21
 
 5x10  -  5
   Steam Train  -  0003/0015.puz - 00:00:19
@@ -14,14 +17,14 @@
   Paperclip  -  0007/0002.puz - 00:00:28
   Goldfish  -  0007/0016.puz - 00:00:42
 
-10x10  -  32
+10x10  -  30
   Floppy Disk  -  0003/0010.puz - 00:00:29
   Pawn  -  0002/0003.puz - 00:00:35
   Rook  -  0002/0019.puz - 00:00:35
   Rubber Ducky  -  0006/0002.puz - 00:00:35
   Flexing  -  0008/0008.puz - 00:00:35
   Coffee to Go  -  0004/0008.puz - 00:00:41
-  Ka (Fire)  -  0005/0016.puz - 00:00:42
+  Knife & Fork  -  0010/0001.puz - 00:00:42
   Click!  -  0006/0001.puz - 00:00:46
   Cup of Tea  -  0004/0009.puz - 00:00:47
   Arc de Triomphe  -  0004/0004.puz - 00:00:48
@@ -29,13 +32,12 @@
   Fine Vintage  -  0002/0001.puz - 00:00:50
   Knight  -  0002/0004.puz - 00:00:51
   Thumbs Up  -  0003/0009.puz - 00:00:51
-  Ku (Void)  -  0005/0018.puz - 00:00:53
-  Sui (Water)  -  0005/0014.puz - 00:00:55
+  Sunshine  -  0010/0005.puz - 00:00:58
   Four-Leaf Clover  -  0008/0016.puz - 00:01:04
-  Fu (Wind)  -  0005/0015.puz - 00:01:04
   Moon  -  0007/0007.puz - 00:01:05
   Vampire Bite  -  0007/0017.puz - 00:01:07
   Cupcake  -  0005/0012.puz - 00:01:11
+  LOL  -  0010/0002.puz - 00:01:11
   Pipes  -  0007/0014.puz - 00:01:13
   Ghost  -  0004/0013.puz - 00:01:14
   Dice  -  0002/0007.puz - 00:01:17
@@ -43,17 +45,17 @@
   Star  -  0004/0017.puz - 00:01:20
   Skull  -  0006/0006.puz - 00:01:21
   Toadstool  -  0005/0004.puz - 00:01:28
-  Chi (Earth)  -  0005/0019.puz - 00:01:28
   Delicious Cake  -  0002/0013.puz - 00:01:33
   Diamond  -  0009/0017.puz - 00:01:52
   @  -  0007/0015.puz - 00:02:07
 
-10x15  - 19
+10x15  - 20
   Test Tubes  -  0005/0003.puz - 00:00:52
   Aztec Pyramid  -  0003/0018.puz - 00:01:02
   Wizard  -  0006/0007.puz - 00:01:03
   Jolly Roger  -  0006/0009.puz - 00:01:19
   Shuttle Launch  -  0002/0014.puz - 00:01:22
+  Totem Pole  -  0010/0013.puz - 00:01:23
   Eiffel Tower  -  0004/0005.puz - 00:01:32
   Cat  -  0007/0005.puz - 00:01:33
   Fast Food  -  0004/0001.puz - 00:01:33
@@ -96,23 +98,28 @@
   Clown  -  0004/0016.puz - 00:07:07
   Devil Horns  -  0009/0020.puz - 00:09:20
 
-20x10  -  8
+20x10  -  10
   Morse Code  -  0003/0011.puz - 00:01:23
   Batteries  -  0005/0020.puz - 00:01:25
+  Hi-fi  -  0010/0008.puz - 00:01:26
   Piano  -  0004/0007.puz - 00:01:34
   Palm Tree  -  0006/0015.puz - 00:01:39
   The Sphynx  -  0005/0017.puz - 00:01:52
+  Bang!  -  0010/0012.puz - 00:02:56
   Rapunzel  -  0005/0002.puz - 00:03:06
   Skeleton  -  0004/0015.puz - 00:04:06
   Adventurer  -  0009/0005.puz - 0004:58
 
-20x15  - 16
+20x15  - 20
   Pine Tree  -  0006/0012.puz - 00:02:16
   Union Jack  -  0006/0008.puz - 00:02:19
   Loch Ness Monster  -  0008/0009.puz - 00:02:37
+  Cottage  -  0010/0019.puz - 00:03:01
   Sydney Opera House  -  0008/0005.puz - 00:03:28
   Hand of Cards  -  0005/0013.puz - 00:04:25
+  Superhero  -  0011/0001.puz - 00:04:13
   Ship in a Bottle  -  0002/0017.puz - 00:04:46
+  Ladybug  -  0010/0004.puz - 00:05:02
   Stonehenge 2  -  0003/0004.puz - 00:05:10
   Toy Robot  -  0004/0010.puz - 00:05:10
   Fruit Bowl  -  0007/0003.puz - 00:06:14
@@ -122,11 +129,13 @@
   Pharaoh's Mask  -  0003/0017.puz - 00:08:42
   Spider  -  0005/0009.puz - 00:10:05
   Blimp  -  0003/0016.puz - 00:10:20
+  Biplane  -  0010/0018.puz - 00:12:49
   Penguin  -  0008/0002.puz - 00:19:46
 
-20x20  - 21
+20x20  - 25
   Solar Eclipse  -  0006/0011.puz - 00:03:03
   Medusa  -  0002/0012.puz - 00:03:40
+  Ninja  -  0010/0020.puz - 00:04:21
   Impossible Waterfall  -  0005/0007.puz - 00:04:56
   Jupiter  -  0003/0002.puz - 00:05:16
   Hipster  -  0002/0015.puz - 00:05:37
@@ -136,9 +145,12 @@
   Gamepad  -  0004/0012.puz - 00:06:35
   Planet Earth  -  0008/0014.puz - 00:08:00
   Sunset  -  0007/0008.puz - 00:08:02
+  Brain in a Jar  -  0010/0011.puz - 00:08:12
   DJ  -  0002/0006.puz - 00:08:23
   Snowman  -  0009/0012.puz - 00:09:35
   Teddybear  -  0009/0010.puz - 00:09:41
+  Desk Fan  -  0010/0003.puz - 00:10:00
+  Narwharl  -  0010/0007.puz - 00:10:35
   Atom  -  0008/0012.puz - 00:11:09
   Pixel Pigs  -  0005/0011.puz - 00:12:16
   Potter's Wheel  -  0006/0004.puz - 00:14:59
@@ -147,11 +159,15 @@
   Hot Air Balloons  -  0004/0003.puz - 00:20:52
   Sunflower  -  0009/0007.puz - 00:23:54
 
-25x15  -  6
+25x15  -  10
   Gangster Boss  -  0006/0020.puz - 00:02:51
   Lightning  -  0006/0018.puz - 00:03:42
+  Formula 1  -  0010/0017.puz - 00:04:15
   Kraken  -  0009/0003.puz - 00:05:53
+  Date  -  0010/0016.puz - 00:06:08
   Easter Island Moai  -  0005/0008.puz - 00:06:45
+  Key  -  0010/0015.puz - 00:07:45
+  Graffiti  -  0011/0002.puz - 00:11:01
   Rabbit Out of a Hat  -  0008/0007.puz - 00:13:35
   Milky Way  -  0003/0001.puz - 00:25:41
 
@@ -167,24 +183,39 @@
   Celtic Cross  -  0009/0009.puz - 00:12:46
   Atlas  -  0009/0016.puz - 00:09:54 
 
-25x25  -  6
+25x25  -  10
+  Poker Game  -  0010/0009.puz - 00:11:26
+  Graduation  -  0010/0014.puz - 00:12:17
+  Nerd  -  0010/0010.puz - 00:12:46
   Koch Snowflake  -  0006/0005.puz - 00:13:15
   Wakka Wakka  -  0002/0016.puz - 00:13:37
   Snowboarder  -  0009/0001.puz - 00:14:03
   Japanese Garden  -  0009/0015.puz - 00:14:10
   Ride 'em Cowboy!  -  0007/0020.puz - 00:16:42
   Tennis  -  0009/0014.puz - 00:36:43
+  QR Code  -  0011/0003.puz - 00:58:13
 
 30x10  -  1
   Statue of Liberty  -  0007/0004.puz - 00:03:25
 
-30x15  -  3
+30x15  -  4
   Birch Tree  -  0006/0014.puz - 00:04:57
   Leaning Tower of Pisa  -  0008/0015.puz - 00:04:29
   Violin  -  0008/0019.puz - 00:07:29
+  Evolution of Man  -  0010/0006.puz - 00:16:26
 
 
-?????????
+-----------
+CUT PUZZLES 
+-----------
+
 
 15x10
   Stonehenge  -  0003/0003.puz - 00:00:27
+
+10x10
+  Ku (Void)  -  0005/0018.puz - 00:00:53
+  Sui (Water)  -  0005/0014.puz - 00:00:55
+  Chi (Earth)  -  0005/0019.puz - 00:01:28
+  Fu (Wind)  -  0005/0015.puz - 00:01:04
+  Ka (Fire)  -   0005/0016.puz - 00:00:42
