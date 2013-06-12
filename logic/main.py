@@ -59,18 +59,7 @@ class Game(Process):
 
     # This is the list of packs 
     game_category_uuids = [
-        'd42f1f29-d679-4aee-a6bc-4de633f71a1b',
-        '51a6257b-2051-4c5a-9791-9d157d58e3f7',
-        '23a04ccf-aa24-40a6-b4bc-d0cb973b65e2',
-        '7277a126-54d8-41f8-bf28-c2223abe8a7a',
-        '240d1789-2f38-4e9e-a7ad-13e42710ad5c',
-        'ed01f64c-48de-4264-b7ac-54401c2ab3e4',
-        'e9f5a59b-8387-4b25-aad4-6b22ee01d25c',
-        '547a2952-ff49-4b92-88c6-42f36a9315f9',
-        'bcd0a834-48fe-4b0a-a2d0-65f0a2d94df6',
-        '0adbfd2e-8669-4e52-a2bd-901193c8d724',
-        'ca7dc2ae-534b-45eb-9a6b-8ced05bba6b6',
-        'dcfabfd9-88fd-4bcd-b447-b1ce57459ef0' # delete
+        'e6ee1b0e-7bba-4ba0-a9c3-b472f487216b'
         ]
     
     # Name of a category that we're going to do the unlock animation on if appropriate
