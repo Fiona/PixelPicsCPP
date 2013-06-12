@@ -20,7 +20,7 @@ def get_names_of_puzzles_in(path):
         f = open(puzzle_filename, "rb")
         puzzle = pickle.load(f)
         f.close()
-        print puzzle_filename + " - " + puzzle.name
+        print puzzle_filename + " - " + puzzle.name + " - " + str(puzzle.width) + "x" + str(puzzle.height)
 
     f = open("pack.dat", "rb")
     pack = pickle.load(f)

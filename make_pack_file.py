@@ -7,7 +7,9 @@ sys.modules["core"] = fakecore
 sys.path.append(os.path.join(os.getcwd(), "logic"))
 from puzzle import Pack
 
-AUTHOR_ID = "f2494e4b-8eff-4899-ae03-888fe9b7a94d"
+#AUTHOR_ID = "f2494e4b-8eff-4899-ae03-888fe9b7a94d"
+AUTHOR_ID = "dc4d7a02-662f-404d-9bc5-d6dda5513a63"
+
 AUTHOR_NAME = "Stompy Blondie"
 PACK_NAME = "Puzzles"
 FREEMODE = False
