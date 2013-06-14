@@ -61,6 +61,8 @@ class Game(Process):
     game_category_uuids = [
         'e6ee1b0e-7bba-4ba0-a9c3-b472f487216b',
         '6430bf70-477c-4986-a3a9-c30ae9a62bac',
+        'a2625422-1e9e-4e82-bd8a-dc1bec88a180',
+        '98536f87-9bb5-4f53-9f18-883629d5be55',
         ]
     
     # Name of a category that we're going to do the unlock animation on if appropriate
