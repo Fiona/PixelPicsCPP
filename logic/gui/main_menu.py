@@ -702,7 +702,7 @@ class Reward_star(Process):
         self.image = self.game.core.media.gfx['gui_reward_star']
         self.y = random.randrange(-self.image.height, self.game.settings['screen_height'])
         self.reposition()
-        self.z = Z_GUI_OBJECT_LEVEL_4
+        self.z = Z_GUI_OBJECT_LEVEL_7
 
 
     def Execute(self):
