@@ -52,19 +52,17 @@ class GUI_category_select_container(GUI_element):
             self.game.gui.mouse.alpha = 0.0
 
         categories = [
-            ("Tutorial",      "0001", (.5, 1.0, .5)),
-            ("Effortless",    "0002", (1.0, .5, .5)),
-            ("Light",         "0003", (.5, .5, 1.0)),
-            ("Piece Of Cake", "0004", (.5, 1.0, 1.0)),
-            ("Uncomplicated", "0005", (1.0, .5, 1.0)),
-            ("Manageable",    "0006", (1.0, 1.0, .5)),
-            ("Troublesome",   "0007", (1.0, 1.0, .5)),
-            ("Formidable",    "0008", (1.0, 1.0, .5)),
-            ("Demanding",     "0009", (1.0, 1.0, .5)),
-            ("Heavy",         "0010", (1.0, 1.0, .5)),
-            
-            #("DELETE",        "0011", (1.0, 1.0, .5)),
-            #("Challenging!",  "last", (1.0, 1.0, .5))
+            ("Tutorial",         "0001", (.5, 1.0, .5)),
+            ("Effortless",       "0002", (1.0, .5, .5)),
+            ("Light",            "0003", (.5, .5, 1.0)),
+            ("Piece Of Cake",    "0004", (.5, 1.0, 1.0)),
+            ("Uncomplicated",    "0005", (1.0, .5, 1.0)),
+            ("Manageable",       "0006", (1.0, 1.0, .5)),
+            ("Troublesome",      "0007", (1.0, 1.0, .5)),
+            ("Formidable",       "0008", (1.0, 1.0, .5)),
+            ("Demanding",        "0009", (1.0, 1.0, .5)),
+            ("Heavy",            "0010", (1.0, 1.0, .5)),
+            ("Final Challenge",  "last", (1.0, 1.0, .5))
             ]
         self.category_objs = []
 
