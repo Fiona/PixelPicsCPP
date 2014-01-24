@@ -123,7 +123,7 @@
   Stonehenge 2  -  0003/0004.puz - 00:05:10
   Toy Robot  -  0004/0010.puz - 00:05:10
   Fruit Bowl  -  0007/0003.puz - 00:06:14
-  Honey Bee  -  0009/0011.puz - 00:06:55
+  Caterpillar  -  caterpillar.puz
   Mobius Strip  -  0008/0011.puz - 00:07:28
   Archery  -  0006/0019.puz - 00:07:38
   Pharaoh's Mask  -  0003/0017.puz - 00:08:42
@@ -219,3 +219,7 @@ CUT PUZZLES
   Chi (Earth)  -  0005/0019.puz - 00:01:28
   Fu (Wind)  -  0005/0015.puz - 00:01:04
   Ka (Fire)  -   0005/0016.puz - 00:00:42
+
+20x15
+  Honey Bee  -  0009/0011.puz - 00:06:55
+
