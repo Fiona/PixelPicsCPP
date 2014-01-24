@@ -65,6 +65,7 @@ class Game(Process):
         '98536f87-9bb5-4f53-9f18-883629d5be55',
         'e8e0c564-bba7-4540-ac6b-4d4dded6b632',
         '6423d890-85cb-4e86-8e24-e672d618b927',
+        'dc4d7a02-662f-404d-9bc5-d6dda5513a63',
         ]
     
     # Name of a category that we're going to do the unlock animation on if appropriate
