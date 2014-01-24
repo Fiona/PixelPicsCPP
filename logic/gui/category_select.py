@@ -99,9 +99,9 @@ class GUI_category_select_container(GUI_element):
                 self.scroll_speed += 4.0
                 
         if self.scroll_up:
-            self.scroll_speed -= .2
+            self.scroll_speed -= .5
         elif self.scroll_down:
-            self.scroll_speed += .2
+            self.scroll_speed += .5 
 
         if self.first_category.y > 75 and self.scroll_speed < 0:
             self.scroll_speed = 0.0
