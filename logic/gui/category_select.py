@@ -59,6 +59,7 @@ class GUI_category_select_container(GUI_element):
             ("Uncomplicated", "0005", (1.0, .5, 1.0)),
             ("Manageable",    "0006", (1.0, 1.0, .5)),
             ("Troublesome",   "0007", (1.0, 1.0, .5)),
+            
             #("Formidable",    "0008", (1.0, 1.0, .5)),
             #("Demanding",     "0009", (1.0, 1.0, .5)),
             #("Heavy",         "0010", (1.0, 1.0, .5)),
@@ -188,7 +189,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
 
         self.iter += 1
         if self.anim_state == 0:
-            if self.y > self.game.settings['screen_height'] - (self.image.height * 2):
+            if self.y > self.game.settings['screen_height'] - self.image.height:
                 self.parent.scroll_speed += .5
             else:
                 self.anim_state = 1
