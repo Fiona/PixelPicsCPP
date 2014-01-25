@@ -2521,8 +2521,8 @@ class GUI_designer_colour_copy_from_puzzle_button(GUI_element_button):
         self.conf_box = GUI_element_confirmation_box(
             self.game,
             self,
-            "Really Copy Colours?",
-            ["This will reset the colours to resemble the puzzle solution.", "This is useful to have a starting point for colouring.", "Are you sure you want to do this?"],
+            "Really Reset Colouring?",
+            ["This will reset all colours to resemble the puzzle solution.", "This is useful to have a starting point for colouring.", "Are you sure you want to do this?"],
             confirm_callback = self.confirm
             )
 
