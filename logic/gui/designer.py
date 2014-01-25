@@ -1,6 +1,6 @@
 """
 PixelPics - Nonograme game
-(c) Stompy Blondie 2011/2012 http://stompyblondie.com
+Copyright (c) 2014 Stompy Blondie Games http://stompyblondie.com
 """
 
 # python imports
@@ -1421,10 +1421,12 @@ class GUI_designer_designer_back(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.image = self.game.core.media.gfx['gui_button_go_back_small']
+        self.image = self.game.core.media.gfx['gui_button_designer_back']
         self.x = 8
-        self.y = 70
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
+        self.width = 68
+        self.height = 68
         self.gui_init()
 
 
@@ -1658,6 +1660,8 @@ class GUI_designer_designer_edit_name_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_name']
         self.x = self.game.settings['screen_width'] - 590
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1678,6 +1682,8 @@ class GUI_designer_designer_change_size_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_size']
         self.x = self.game.settings['screen_width'] - 510
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1887,6 +1893,8 @@ class GUI_designer_designer_undo_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_undo']
         self.x = self.game.settings['screen_width'] - 770
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1912,6 +1920,8 @@ class GUI_designer_designer_redo_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_redo']
         self.x = self.game.settings['screen_width'] - 690
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -1938,6 +1948,8 @@ class GUI_designer_designer_flood_fill_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_fill']
         self.x = self.game.settings['screen_width'] - 870
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2486,6 +2498,8 @@ class GUI_designer_colour_copy_from_puzzle_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_copy']
         self.x = self.game.settings['screen_width'] - 940
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2776,6 +2790,8 @@ class GUI_designer_colour_undo_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_undo']
         self.x = self.game.settings['screen_width'] - 770
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2801,6 +2817,8 @@ class GUI_designer_colour_redo_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_redo']
         self.x = self.game.settings['screen_width'] - 690
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
@@ -2825,6 +2843,8 @@ class GUI_designer_colour_flood_fill_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_button_designer_fill']
         self.x = self.game.settings['screen_width'] - 860
         self.y = 65
+        self.width = 68
+        self.height = 68
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 

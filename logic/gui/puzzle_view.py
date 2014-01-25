@@ -1,6 +1,6 @@
 """
 PixelPics - Nonograme game
-(c) Stompy Blondie 2011/2012 http://stompyblondie.com
+Copyright (c) 2014 Stompy Blondie Games http://stompyblondie.com
 """
 
 # python imports

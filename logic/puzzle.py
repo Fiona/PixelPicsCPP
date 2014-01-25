@@ -1,6 +1,6 @@
 """
 PixelPics - Nonogram game
-(c) Stompy Blondie 2011/2011 http://stompyblondie.com
+Copyright (c) 2014 Stompy Blondie Games http://stompyblondie.com
 """
 
 # Python imports
@@ -108,6 +108,7 @@ class Puzzle_manager(object):
 
     starred_packs = []
     all_main_packs_starred = False
+    last_pack_unlocked = False
     
 
     def __init__(self, game):
@@ -115,7 +116,8 @@ class Puzzle_manager(object):
         self.load_packs()
         self.load_packs(user_created = False)
         self.check_which_packs_starred()
-        
+        self.check_if_last_pack_unlocked()
+
 
     def load_packs(self, user_created = True):
         if user_created:
@@ -190,6 +192,16 @@ class Puzzle_manager(object):
                 self.all_main_packs_starred = False
                 break
                 
+
+    def check_if_last_pack_unlocked(self):
+        self.last_pack_unlocked = True
+        for p in self.game_packs:
+            if p == 'last':
+                continue
+            if not self.game_packs[p].uuid in self.game.player.cleared_categories:
+                self.last_pack_unlocked = False
+                break
+
 
     def load_pack(self, pack_dir, user_created = True):
         try:
