@@ -1,6 +1,6 @@
 """
 PixelPics - Nonograme game
-(c) Stompy Blondie 2011/2012 http://stompyblondie.com
+Copyright (c) 2014 Stompy Blondie Games http://stompyblondie.com
 """
 
 # python imports
@@ -507,7 +507,7 @@ class GUI_main_menu_credits(GUI_element_window):
         " -- Level Design -- ",
         "Fiona Burrows & Mark Frimston",
         "",
-        "Stompy Blondie Games, 2011-2012",
+        "Copyright (c) 2014 Stompy Blondie Games",
         ]
 
     def __init__(self, game, parent = None):
