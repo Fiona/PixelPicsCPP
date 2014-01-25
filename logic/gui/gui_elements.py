@@ -400,7 +400,7 @@ class GUI_element_dialog_box(GUI_element):
     message_text = []
     caption_image_obj = None
 
-    min_box_height = 100
+    min_box_height = 110
     min_box_width = 300    
        
     def __init__(self, game, parent = None, title = "test", message = ["test message"], caption_image = None, callback = None):
