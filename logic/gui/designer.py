@@ -1167,7 +1167,7 @@ class GUI_designer_puzzles_edit_puzzle_dialog(GUI_element_window):
 
 class GUI_designer_puzzles_edit_puzzle_puzzle_confirm_button(GUI_element_button):
     generic_button = True
-    generic_button_text = "Edt Puzzle"
+    generic_button_text = "Confirm"
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
@@ -1824,7 +1824,7 @@ class GUI_designer_puzzle_change_size_height_spinner(GUI_element_spinner):
 
 class GUI_designer_puzzle_change_size_confirm_button(GUI_element_button):
     generic_button = True
-    generic_button_text = "Edt Puzzle"
+    generic_button_text = "Confirm"
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
@@ -2521,8 +2521,8 @@ class GUI_designer_colour_copy_from_puzzle_button(GUI_element_button):
         self.conf_box = GUI_element_confirmation_box(
             self.game,
             self,
-            "Really Copy Colours?",
-            ["This will reset the colours to resemble the puzzle solution.", "This is useful to have a starting point for colouring.", "Are you sure you want to do this?"],
+            "Really Reset Colouring?",
+            ["This will reset all colours to resemble the puzzle solution.", "This is useful to have a starting point for colouring.", "Are you sure you want to do this?"],
             confirm_callback = self.confirm
             )
 
