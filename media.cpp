@@ -159,6 +159,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_designer_fill", new Image("gfx/gui/button_designer_fill.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_designer_copy", new Image("gfx/gui/button_designer_copy.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_designer_puzzle", new Image("gfx/gui/button_designer_puzzle.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_back", new Image("gfx/gui/button_designer_back.png", False, 4)));
 
     gfx.insert(pair<string, Image*>("gui_palette_cursor", new Image("gfx/gui/palette_cursor.png")));
     gfx.insert(pair<string, Image*>("gui_value_slider", new Image("gfx/gui/value_slider.png")));

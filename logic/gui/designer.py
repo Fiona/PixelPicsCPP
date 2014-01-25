@@ -1421,9 +1421,9 @@ class GUI_designer_designer_back(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.image = self.game.core.media.gfx['gui_button_go_back_small']
+        self.image = self.game.core.media.gfx['gui_button_designer_back']
         self.x = 8
-        self.y = 70
+        self.y = 65
         self.z = Z_GUI_OBJECT_LEVEL_5
         self.gui_init()
 
