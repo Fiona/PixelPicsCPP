@@ -1167,7 +1167,7 @@ class GUI_designer_puzzles_edit_puzzle_dialog(GUI_element_window):
 
 class GUI_designer_puzzles_edit_puzzle_puzzle_confirm_button(GUI_element_button):
     generic_button = True
-    generic_button_text = "Edt Puzzle"
+    generic_button_text = "Confirm"
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
@@ -1824,7 +1824,7 @@ class GUI_designer_puzzle_change_size_height_spinner(GUI_element_spinner):
 
 class GUI_designer_puzzle_change_size_confirm_button(GUI_element_button):
     generic_button = True
-    generic_button_text = "Edt Puzzle"
+    generic_button_text = "Confirm"
 
     def __init__(self, game, parent = None):
         Process.__init__(self)
