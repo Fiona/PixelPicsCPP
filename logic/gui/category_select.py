@@ -46,7 +46,10 @@ class GUI_category_select_container(GUI_element):
         GUI_category_select_down_button(self.game, self)
         
         if not self.game.category_to_unlock == None:
-            self.mascot_object.set_speech(["Wow, you unlocked", "a new category!"])
+            if self.game.category_to_unlock == 'last':
+                self.mascot_object.set_speech(["Woah! You unlocked", "the final category!"])
+            else:
+                self.mascot_object.set_speech(["Wow, you unlocked", "a new category!"])                
             self.game.gui.block_gui_keyboard_input = True
             self.game.gui.block_gui_mouse_input = True
             self.game.gui.mouse.alpha = 0.0
@@ -62,9 +65,11 @@ class GUI_category_select_container(GUI_element):
             ("Formidable",       "0008", (1.0, 1.0, .5)),
             ("Demanding",        "0009", (1.0, 1.0, .5)),
             ("Heavy",            "0010", (1.0, 1.0, .5)),
-            ("Final Challenge",  "last", (1.0, 1.0, .5))
             ]
         self.category_objs = []
+
+        if self.game.manager.last_pack_unlocked:
+            categories.append(("Final Challenge",  "last", (1.0, 1.0, .5)))
 
         i = 0
         self.last_category = None

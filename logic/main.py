@@ -55,7 +55,7 @@ class Game(Process):
     paused = False
 
     # list of categories in order that they are to be unlocked
-    game_categories = ["0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011"]
+    game_categories = ["0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "last"]
 
     # This is the list of packs 
     game_category_uuids = [
@@ -294,6 +294,9 @@ class Game(Process):
         # -----------
         # Handle category unlocking
         # -----------
+        # first check that we haven't unlocked the final cat with this
+        self.manager.check_if_last_pack_unlocked()
+        
         # Gather together how many puzzles we've finished
         num_puzzles_cleared = 0
 
