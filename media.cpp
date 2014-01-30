@@ -169,6 +169,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_go_back", new Image("gfx/gui/button_go_back.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_go_back_small", new Image("gfx/gui/button_go_back_small.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category", new Image("gfx/gui/button_select_category.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_select_category_last", new Image("gfx/gui/button_select_category_last.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_select_category_shadow", new Image("gfx/gui/button_select_category_shadow.png")));
     gfx.insert(pair<string, Image*>("gui_button_select_category_unlock_mask", new Image("gfx/gui/button_select_category_unlock_mask.png")));
     gfx.insert(pair<string, Image*>("gui_category_complete_tick", new Image("gfx/gui/category_complete_tick.png")));

@@ -150,7 +150,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.pack_dir = pack_dir
         self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
         self.z = self.parent.z - 3
-        self.image = self.game.core.media.gfx['gui_button_select_category']
+        self.image = self.game.core.media.gfx['gui_button_select_category_last' if self.pack_dir == 'last' else 'gui_button_select_category']
         self.gui_init()
         self.x = (self.game.settings['screen_width'] / 2) - 100
         self.y = 75 + (80 * num) + (40 * num)
