@@ -16,15 +16,19 @@ env.Append(LIBS = ['SDL', 'pthread', 'm', 'dl', 'SDL_image', 'SDL_ttf', 'SDL_mix
 sources = Glob('*.cpp')
 
 # Switch to debug
+out_dir = 'release'
+
 debug = ARGUMENTS.get('debug', 0)
 if int(debug):
+   out_dir = 'debug'
    env.Append(CCFLAGS = '-g')
+   env.Append(CPPDEFINES=['DEBUG'])
 else:
    env.Append(CCFLAGS = '-O')
 
 # Build executable
 object_list = env.Object(source = sources)
-main_executable = env.Program(target = 'pixelpics', source = object_list)
+main_executable = env.Program(target = os.path.join(out_dir, 'pixelpics'), source = object_list)
 
 Default(main_executable)
 
