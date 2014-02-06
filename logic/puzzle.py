@@ -196,7 +196,9 @@ class Puzzle_manager(object):
     def check_if_last_pack_unlocked(self):
         self.last_pack_unlocked = True
         for p in self.game_packs:
-            if p == 'last':
+            # skip last pack and tutorial because they are not required for
+            # unlocking the final pack.
+            if p in ['last', '0001']:
                 continue
             if not self.game_packs[p].uuid in self.game.player.cleared_categories:
                 self.last_pack_unlocked = False
