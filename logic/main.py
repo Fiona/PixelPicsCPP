@@ -294,9 +294,25 @@ class Game(Process):
         # -----------
         # Handle category unlocking
         # -----------
+        if not self.manager.last_pack_unlocked:
+            self.unlock_category_if_necessary()
+           
+        # -----------
+        # finalise
+        # -----------
+        self.save_player(self.player)
+        self.manager.check_which_packs_starred()
+
+
+    def unlock_category_if_necessary(self):
         # first check that we haven't unlocked the final cat with this
         self.manager.check_if_last_pack_unlocked()
-        
+
+        if self.manager.last_pack_unlocked:
+            self.category_to_unlock = 'last'
+            self.player.unlocked_categories.append('last')
+            return
+            
         # Gather together how many puzzles we've finished
         num_puzzles_cleared = 0
 
@@ -304,6 +320,9 @@ class Game(Process):
             # ignore the tutorial
             if cat_uuid == TUTORIAL_UUID:
                 continue
+            # Ignore the last pack for these purposes
+            if cat_uuid == self.game_category_uuids[-1]:
+                continue            
             # we only count puzzles in the main 
             if not cat_uuid in self.game_category_uuids:
                 continue
@@ -316,16 +335,12 @@ class Game(Process):
         # the + 2 is to take into account the default unlocks (tutorial and first category)
         if ((num_puzzles_cleared / PUZZLE_UNLOCK_THRESHOLD) + 2) > len(self.player.unlocked_categories):
             for puzzle_cat in self.game_categories:
+                if puzzle_cat == 'last':
+                    continue                
                 if not puzzle_cat in self.player.unlocked_categories:
                     self.player.unlocked_categories.append(puzzle_cat)
                     self.category_to_unlock = puzzle_cat
                     break
-            
-        # -----------
-        # finalise
-        # -----------
-        self.save_player(self.player)
-        self.manager.check_which_packs_starred()
 
 
     def rate_pack(self, pack_uuid, rating):
