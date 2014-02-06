@@ -204,6 +204,18 @@
   Violin  -  0008/0019.puz - 00:07:29
   Evolution of Man  -  0010/0006.puz - 00:16:26
 
+30x30 - 10
+  Wolf Howl       -  last/0010.puz - 00:08:55
+  Dolphins        -  last/0006.puz - 00:15:00
+  Pirate          -  last/0008.puz - 00:15:17 
+  Volcano         -  last/0003.puz - 00:20:45
+  Time Travellers -  last/0007.puz - 00:21:33
+  Witch           -  last/0004.puz - 00:23:02
+  Karate          -  last/0009.puz - 00:23:35
+  Air Palace      -  last/0002.puz - 00:30:00
+  Wall of China   -  last/0001.puz - 00:47:04
+  Dragon          -  last/0005.puz - 01:05:53
+
 
 -----------
 CUT PUZZLES 
