@@ -69,7 +69,7 @@ class GUI_category_select_container(GUI_element):
         self.category_objs = []
 
         if self.game.manager.last_pack_unlocked:
-            categories.append(("Final Challenge",  "last", (1.0, 1.0, .5)))
+            categories.append(("Final Challenge",  "last", (1.0, 1.0, 1.0)))
 
         i = 0
         self.last_category = None
