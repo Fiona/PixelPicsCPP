@@ -528,6 +528,13 @@ class GUI_puzzle(GUI_element):
                              break
             # --- DESIGNER ONLY ---
 
+            # --- DEBUG ONLY ---
+            if DEBUG:
+                if self.game.core.Keyboard_key_released(key.F11):
+                    self.set_cleared()                    
+            # --- DEBUG ONLY ---            
+
+
         # ****************
         # PUZZLE_STATE - Player has failed the puzzle, display message
         # ****************
