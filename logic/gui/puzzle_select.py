@@ -288,7 +288,6 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
         self.game.manager.current_puzzle_file = self.puzzle_filename
-        print self.game.manager.current_puzzle_pack + "/" + self.puzzle_filename
         if self.saved_icon:
             self.game.manager.load_puzzle_state_from = self.game.manager.current_puzzle_pack + "_" + self.puzzle_filename + FILE_SAVES_EXTENSION
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 40, stop_music = True)
