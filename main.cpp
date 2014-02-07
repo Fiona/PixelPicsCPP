@@ -50,12 +50,6 @@ Media* Main_App::media = NULL;
 Main_App::Main_App()
 {
 
-#ifdef DEBUG
-    cout << "debug build" << endl;
-#else
-    cout << "release build" << endl;
-#endif
-
     surf_display = NULL;
     running = True;
     desired_fps = 60;
