@@ -787,7 +787,7 @@ class GUI_sharing_packs_button_upload(GUI_element_button):
         self.pack = pack
         self.pack_num = pack_num
         self.z = Z_GUI_OBJECT_LEVEL_6
-        self.x = self.parent.width - 60
+        self.x = self.parent.width - 140
         self.y = (65 * display_count) + 5 + (10 * display_count) + 12
         self.image = self.game.core.media.gfx['gui_button_sharing_upload']
         self.gui_init()
@@ -984,7 +984,7 @@ class GUI_sharing_load_puzzles_pack_item(GUI_element):
         
         if self.pack['uuid'] in self.game.manager.pack_uuids:
             if self.pack['author_id'] == self.game.author_id:
-                self.text_pack_yours = Text(self.game.core.media.fonts['sharing_your_pack_message'], self.x + self.width + self.scroll_element.x - 85, 0.0, TEXT_ALIGN_CENTER, "Your pack")
+                self.text_pack_yours = Text(self.game.core.media.fonts['sharing_your_pack_message'], self.x + self.width + self.scroll_element.x - 100, 0.0, TEXT_ALIGN_CENTER, "Your pack")
                 self.text_pack_yours.z = self.z - 2
                 self.text_pack_yours.colour = (.55, .55, .55)
             else:

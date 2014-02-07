@@ -76,7 +76,7 @@ Media::Media(Main_App* _game)
     fonts.insert(pair<string,Font*>("puzzle_select_hover_text", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("puzzle_select_rate_pack_text", new Font("fnt/borisblackbloxx.ttf", 20)));
     fonts.insert(pair<string,Font*>("sharing_page_number", new Font("fnt/borisblackbloxx.ttf", 23)));
-    fonts.insert(pair<string,Font*>("sharing_your_pack_message", new Font("fnt/borisblackbloxx.ttf", 15)));
+    fonts.insert(pair<string,Font*>("sharing_your_pack_message", new Font("fnt/borisblackbloxx.ttf", 25)));
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/gui/stompyblondie_logo.png")));
@@ -215,7 +215,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_sharing_tab_newest", new Image("gfx/gui/button_sharing_tab_newest.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_tab_downloaded", new Image("gfx/gui/button_sharing_tab_downloaded.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_tab_my_puzzles", new Image("gfx/gui/button_sharing_tab_my_puzzles.png", False, 4)));
-    gfx.insert(pair<string, Image*>("gui_button_sharing_upload", new Image("gfx/gui/button_sharing_upload.png", False, 3)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_upload", new Image("gfx/gui/button_sharing_upload.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_download", new Image("gfx/gui/button_sharing_download.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_play", new Image("gfx/gui/button_sharing_play.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_delete", new Image("gfx/gui/button_sharing_delete.png", False, 4)));
