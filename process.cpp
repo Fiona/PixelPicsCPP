@@ -470,15 +470,16 @@ void Process::Draw_strategy_gui_spinner()
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_QUADS);
+    glColor4f(.84f, .89f, .94f, 1.0f);
     glVertex2f(draw_x, draw_y);
     glVertex2f(width + draw_x, draw_y);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glVertex2f(width + draw_x, height + draw_y);
     glVertex2f(draw_x, height + draw_y);
     glEnd();
 
-    glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+    glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
     glLineWidth(1.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(draw_x, draw_y);

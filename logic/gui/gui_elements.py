@@ -1314,7 +1314,7 @@ class GUI_element_spinner(GUI_element):
 
         self.text_object = Text(self.game.core.media.fonts['dropdown_text'], self.x + 6, self.y + 6, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
         self.text_object.z = self.z - 2
-        self.text_object.colour = (0.8,0.8,0.8)
+        self.text_object.colour = (.2,.2,.2)
 
         #self.text_object = Text(self.game.core.media.fonts['basic'], self.x + 5, self.y + 2, TEXT_ALIGN_TOP_LEFT, str(self.current_value))
         #self.text_object.z = self.z - 1
@@ -1356,10 +1356,10 @@ class GUI_element_spinner_button_down(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.width = 19
-        self.height = 12
+        self.width = 32
+        self.height = 13
         self.x = self.parent.x + self.parent.width
-        self.y = self.parent.y + 12
+        self.y = self.parent.y + 13
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_spinner_down']
         self.gui_init()
@@ -1388,10 +1388,10 @@ class GUI_element_spinner_button_up(GUI_element_button):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.width = 19
-        self.height = 12
+        self.width = 32
+        self.height = 13
         self.x = self.parent.x + self.parent.width
-        self.y = self.parent.y - 1 
+        self.y = self.parent.y
         self.z = self.parent.z - 1
         self.image = self.game.core.media.gfx['gui_button_spinner_up']
         self.gui_init()
