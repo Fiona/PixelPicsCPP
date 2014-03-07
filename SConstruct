@@ -36,7 +36,7 @@ else:
 # Output to dist directory if necessary
 dist = ARGUMENTS.get('dist', 0)
 if int(dist):
-   out_dir = 'dist'
+   out_dir = os.path.join('dist', 'bin')
 
 # Build executable
 object_list = env.Object(source = sources)
@@ -55,10 +55,10 @@ if int(dist):
    if not os.path.isdir("dist"): os.mkdir("dist")
 
    # destroy everything in there first
-   for file in ["logic.dat"]:
+   for file in ["logic.dat", "pixelpics"]:
       if os.path.isfile(os.path.join("dist", file)):
          os.remove(os.path.join("dist", file))
-   for dir in ["sfx", "music", "gfx", "fnt", "packs", "python27"]:
+   for dir in ["sfx", "music", "gfx", "fnt", "packs", "python27", "libs"]:
       if os.path.isdir(os.path.join("dist", dir)):
          shutil.rmtree(os.path.join("dist", dir))
 
@@ -99,3 +99,9 @@ if int(dist):
    # copy std library .so files
    for item in os.listdir(os.path.join("python27", "lib-dynload")):
        shutil.copy2(os.path.join("python27", "lib-dynload", item), os.path.join("dist", "python27", item))
+
+   # copy bash script, make it executable, tell user to collate libs
+   shutil.copy("pixelpics.sh", os.path.join("dist", "pixelpics"))
+   os.system("chmod +x dist/pixelpics")
+   os.mkdir(os.path.join("dist", "libs"))
+   print "Manually CD to 'dist' and execute '../cpld.sh bin/pixelpics libs' to collate dynamic libraries"
