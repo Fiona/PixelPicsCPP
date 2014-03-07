@@ -10,7 +10,6 @@ import sys, os, pickle
 from core import *
 
 # Game imports
-sys.path.append(os.path.join(os.getcwd(), "logic"))
 from consts import *
 from gui import GUI, Mouse
 from puzzle import Puzzle_manager
@@ -379,4 +378,3 @@ class Player(object):
         self.sharing_upload_content_agreed = False
         
 
-Game(core)
