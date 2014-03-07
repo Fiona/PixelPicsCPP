@@ -535,31 +535,15 @@ bool Python_Interface::initialise_python_interpreter()
 
 #ifdef DEBUG
         // In debug we load code from a source directory
-        PyList_Insert(sysPath, 0, PyString_FromString((char*)"logic/"));
         paths = "sys.path += ['logic']\n";
 #else
         // In release we load code and std library from zip files
-        //paths = "sys.path = ['logic.dat', 'python27.zip', 'python27.zip/plat-linux2', 'python27.zip/lib-tk', 'python27.zip/lib-old', 'python27.zip/lib-dynload']\n";
         paths = "sys.path = ['logic.dat', 'python27/python27.zip', 'python27/python27.zip/plat-linux2', 'python27/python27.zip/lib-tk', 'python27/python27.zip/lib-old', 'python27']\n";
-
-
-        //PyList_Insert(sysPath, 0, PyString_FromString((char*)"logic.dat"));
-        /*
-        sysPath = PyList_New(0);
-        PyList_Append(sysPath, PyString_FromString((char*)"logic.dat"));
-        PyList_Append(sysPath, PyString_FromString((char*)"python27.zip"));
-        PyList_Append(sysPath, PyString_FromString((char*)"python27.zip/plat-linux2"));
-        PyList_Append(sysPath, PyString_FromString((char*)"python27.zip/lib-tk"));
-        PyList_Append(sysPath, PyString_FromString((char*)"python27.zip/lib-old"));
-        PyList_Append(sysPath, PyString_FromString((char*)"python27.zip/lib-dynload"));
-        */
 #endif
 
         // Bootstrap the main game object and start it
         std::string code = std::string("import sys\n") +
-            "print sys.path\n" +
             paths +
-            "print sys.path\n" +
             "from core import *\n" +
             "from main import *\n" +
             "Game(core)\n";
