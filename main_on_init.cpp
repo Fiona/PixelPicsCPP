@@ -39,7 +39,7 @@ bool Main_App::On_Init()
     SDL_ShowCursor(SDL_DISABLE);
 
 	SDL_WM_SetCaption("PixelPics", "PixelPics"); 
-	SDL_WM_SetIcon(IMG_Load("gfx/pixelpics.png"), NULL);
+	SDL_WM_SetIcon(IMG_Load("gfx/prog_icon_32.png"), NULL);
 
     // create window
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
