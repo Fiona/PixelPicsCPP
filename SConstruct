@@ -1,13 +1,8 @@
 # Setup
 import os, zipfile, shutil, compileall
 import glob as pyglob
+from build_tools import walk_subdirs, create_logic_dat
 env = Environment()
-
-# Tools
-def walk_subdirs(path_dir):
-    list = [name for name in os.listdir(path_dir) if os.path.isdir(os.path.join(path_dir, name)) and name[0] != '.']
-    list.sort()
-    return list
 
 
 # Libraries
@@ -62,25 +57,8 @@ if int(dist):
       if os.path.isdir(os.path.join("dist", dir)):
          shutil.rmtree(os.path.join("dist", dir))
 
-   # force recompilation of python files
-   compileall.compile_dir("logic")
-
-   # get together directories and files for logic.dat
-   logic_subdirs = walk_subdirs("logic")
-   os.chdir("logic")
-   logic_sources = pyglob.glob('*.pyc')
-   for subdir in logic_subdirs:
-       logic_sources += pyglob.glob(os.path.join(subdir, "*.pyc"))
-
-   # build logic.dat
-   zf = zipfile.ZipFile("../dist/logic.dat", "w")
-   for x in logic_subdirs:
-       zf.write(x)
-   for x in logic_sources:
-       zf.write(x)
-   zf.close()
-
-   os.chdir("..")
+   # Generate logic.dat file of pyc files
+   create_logic_dat()
 
    # copy all packs
    os.mkdir(os.path.join("dist", "packs"))
