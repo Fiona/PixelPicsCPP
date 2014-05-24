@@ -4,14 +4,15 @@ Copyright (c) 2014 Stompy Blondie Games http://stompyblondie.com
 """
 
 # python imports
-from itertools import izip
-import os, urllib2, json
+import os
+import urllib2
+import json
 
 if os.name == 'nt':
     import threading
 else:
     import multiprocessing
-
+    
 # Game engine imports
 from core import *
 
@@ -26,11 +27,13 @@ def lerp(i, speed, start, end, smooth = True):
 
 
 def reverse_enumerate(l):
-    return izip(xrange(len(l)-1, -1, -1), reversed(l))
+   for index in reversed(xrange(len(l))):
+      yield index, l[index]
 
 
 
 if os.name == 'nt':
+   
     class FakeQueue(object):
         items = []
         def __init__(self):

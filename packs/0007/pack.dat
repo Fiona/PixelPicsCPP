@@ -20,7 +20,7 @@ S'Stompy Blondie'
 p9
 sS'name'
 p10
-S'Puzzles'
+S'Advanced'
 p11
 sS'puzzles'
 p12
@@ -63,7 +63,7 @@ aI20
 asS'0010.puz'
 p29
 (lp30
-VStonehenge 2
+VStonehenge
 p31
 aI20
 aI15

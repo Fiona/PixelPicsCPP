@@ -528,12 +528,27 @@ bool Python_Interface::initialise_python_interpreter()
 
         initcore();
 
-        // Give the main app instance
 		main_namespace["core"] = ptr(game);
-		string const file_name = "logic/main.py";
 
-        object ignored = exec_file(
-            file_name.c_str(),
+        PyObject* sysPath = PySys_GetObject((char*)"path");
+        std::string paths;
+
+#ifdef DEBUG
+        // In debug we load code from a source directory
+        paths = "sys.path += ['logic']\n";
+#else
+        // In release we load code and std library from zip files
+        paths = "sys.path = ['logic.dat', 'python27/python27.zip', 'python27/python27.zip/plat-linux2', 'python27/python27.zip/lib-tk', 'python27/python27.zip/lib-old', 'python27']\n";
+#endif
+
+        // Bootstrap the main game object and start it
+        std::string code = std::string("import sys\n") +
+            paths +
+            "from core import *\n" +
+            "from main import *\n" +
+            "Game(core)\n";
+        object ignored = exec(
+            boost::python::str(code),
             main_namespace,
 			main_namespace
             );
