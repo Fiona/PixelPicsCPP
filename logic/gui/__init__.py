@@ -134,10 +134,10 @@ class GUI(Process):
             """
             LOGO SCREEN
             """
-            if self.current_game_state_gui_ticks == 30:
+            if self.current_game_state_gui_ticks == 135:
                 self.current_visible_gui_elements[GAME_STATE_LOGO]['stompyblondie_logo_text'] = Stompyblondie_Logo_Text(self.game)
                 #self.game.play_sound_effect("stompyblondie")
-            if self.current_game_state_gui_ticks == 120 or self.game.core.Keyboard_key_down(key.ESCAPE):
+            if self.current_game_state_gui_ticks == 230 or self.game.core.Keyboard_key_down(key.ESCAPE):
                 self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), colour = (0,0,0))
 
         elif self.game.game_state == GAME_STATE_MENU:

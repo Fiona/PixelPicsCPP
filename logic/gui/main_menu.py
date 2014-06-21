@@ -40,11 +40,14 @@ class GUI_main_menu_container(GUI_element):
                 Main_menu_background(self.game)
                 )
 
-        if self.game.manager.all_main_packs_starred:
+        if not self.game.manager.all_main_packs_starred:
             for x in range(20):
                 self.objs.append(
-                    Reward_star(self.game)
+                    Reward_star(self.game, x)
                     )
+
+        self.firework_counter_to = random.randint(20, 60)
+        self.firework_counter = 0
 
         # Draw strategy data
         self.draw_strategy = "primitive_square"
@@ -64,6 +67,15 @@ class GUI_main_menu_container(GUI_element):
 
     def Execute(self):
         self.update()
+        if self.game.manager.cleared_all_main_categories:
+            if self.firework_counter == self.firework_counter_to:
+                self.firework_counter_to = random.randint(10, 20)
+                self.firework_counter = 0
+                self.objs.append(
+                    Firework(self.game)
+                    )
+            self.firework_counter += 1
+            
 
 
     def On_Exit(self):
@@ -416,7 +428,7 @@ class Main_menu_background(Process):
         self.image = self.game.core.media.gfx['gui_main_menu_background']
         self.y = int(random.randrange(0 - self.image.height, self.game.settings['screen_height']) / 64) * 64
         self.reposition()
-        self.z = Z_GUI_OBJECT_LEVEL_1
+        self.z = Z_GUI_OBJECT_LEVEL_0
         self.alpha = .2
         rotation = (0, 90, 180, 270)
         self.rotation = random.choice(rotation)
@@ -696,13 +708,13 @@ class GUI_main_menu_puzzle_type_select_go_back(GUI_element_button):
 
 
 class Reward_star(Process):
-    def __init__(self, game):
+    def __init__(self, game, z):
         Process.__init__(self)
         self.game = game
         self.image = self.game.core.media.gfx['gui_reward_star']
         self.y = random.randrange(-self.image.height, self.game.settings['screen_height'])
         self.reposition()
-        self.z = Z_GUI_OBJECT_LEVEL_7
+        self.z = Z_GUI_OBJECT_LEVEL_2 + 1 + z
 
 
     def Execute(self):
@@ -721,3 +733,51 @@ class Reward_star(Process):
         if self.rot == 0:
             self.rot = 1
         self.x_shift = random.randrange(-10, 10) * .1
+
+
+
+class Firework(Process):
+    def __init__(self, game):
+        Process.__init__(self)
+        self.game = game
+        self.image = self.game.core.media.gfx['gui_title_firework']
+        self.x = random.randrange(self.image.width, self.game.settings['screen_width'])
+        self.y = random.randrange(-self.image.height, self.game.settings['screen_height'])
+        self.y_origin = self.y
+        self.z = Z_GUI_OBJECT_LEVEL_7-1
+        self.alpha = 0.0
+        self.image_sequence = random.randint(1, 4)
+        self.target_scale = .7 + (random.random() * .3)
+        colours = [
+            (1.0, 1.0, 1.0),
+            (1.0, 0.3, 0.3),
+            (0.3, 1.0, 0.3),
+            (0.3, 0.3, 1.0),
+            (1.0, 1.0, 0.3),
+            (0.3, 1.0, 1.0),
+            (1.0, 0.3, 1.0),
+            ]
+        self.colour = random.choice(colours)
+        self.state = 0
+        self.iter = 0
+        self.iter_wait = 20
+
+
+    def Execute(self):
+        if self.state == 0:
+            self.iter += 1
+            self.alpha = lerp(self.iter, self.iter_wait, 0.0, .8)
+            self.scale = lerp(self.iter, self.iter_wait, 0.5, self.target_scale)
+            if self.iter > self.iter_wait:
+                self.iter_wait = 50
+                self.iter = 0
+                self.state = 1
+        elif self.state == 1:
+            self.iter += 1
+            self.alpha = lerp(self.iter, self.iter_wait, 0.8, 0.0)
+            self.y = lerp(self.iter, self.iter_wait, self.y_origin, self.y_origin + 40)
+            if self.iter > self.iter_wait:
+                self.Kill()
+                
+    def get_screen_draw_position(self):
+        return self.x - ((self.image.width * self.scale) / 2), self.y - ((self.image.height * self.scale) / 2)
