@@ -26,6 +26,18 @@ def lerp(i, speed, start, end, smooth = True):
     return start + (end - start) * p
 
 
+def inverse_sequare_lerp(i, speed, start, end):
+    # i = i
+    # n = speed
+    # a = start
+    # b = end
+    speed -= 1
+    p = 1.0/speed*i
+    p = 1 - ((1 - p) * (1 - p))
+    #p = ((p) * (p) * (3 - 2 * (p)))
+    return start + (end - start) * p
+
+
 def reverse_enumerate(l):
    for index in reversed(xrange(len(l))):
       yield index, l[index]

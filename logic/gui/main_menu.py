@@ -745,7 +745,8 @@ class Firework(Process):
         self.y = random.randrange(-self.image.height, self.game.settings['screen_height'])
         self.y_origin = self.y
         self.z = Z_GUI_OBJECT_LEVEL_7-1
-        self.alpha = 0.0
+        self.alpha = 1.0
+        self.scale = .5
         self.image_sequence = random.randint(1, 4)
         self.target_scale = .7 + (random.random() * .3)
         colours = [
@@ -761,21 +762,29 @@ class Firework(Process):
         self.state = 0
         self.iter = 0
         self.iter_wait = 20
+        #self.y_iter = 0
+        #self.y_iter_wait = 80
+        self.y_to_move = 0.0
 
 
     def Execute(self):
+        #self.y = lerp(self.y_iter, self.y_iter_wait, self.y_origin, self.y_origin + 40)
+        #self.y_iter += 1
+        if self.y_to_move < 2.0:
+            self.y_to_move += .02
+        self.y += self.y_to_move
+        
         if self.state == 0:
             self.iter += 1
-            self.alpha = lerp(self.iter, self.iter_wait, 0.0, .8)
-            self.scale = lerp(self.iter, self.iter_wait, 0.5, self.target_scale)
+            #self.alpha = lerp(self.iter, self.iter_wait, 0.0, .8)
+            self.scale = inverse_sequare_lerp(self.iter, self.iter_wait, 0.5, self.target_scale)
             if self.iter > self.iter_wait:
                 self.iter_wait = 50
                 self.iter = 0
                 self.state = 1
         elif self.state == 1:
             self.iter += 1
-            self.alpha = lerp(self.iter, self.iter_wait, 0.8, 0.0)
-            self.y = lerp(self.iter, self.iter_wait, self.y_origin, self.y_origin + 40)
+            self.alpha = lerp(self.iter, self.iter_wait, 1.0, 0.0, smooth = False)
             if self.iter > self.iter_wait:
                 self.Kill()
                 
