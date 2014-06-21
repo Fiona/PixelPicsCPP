@@ -71,7 +71,7 @@
 #define BUMP_SCROLL_BORDER_WIDTH 20
 #define BUMP_SCROLL_SPEED 8
 #define LOCAL_SHARING_ADDRESS "http://127.0.0.1:8000/"
-#define REMOTE_SHARING_ADDRESS "http://sharing.pixelpics.com/"
+#define REMOTE_SHARING_ADDRESS "http://sharing.pixelpicsgame.com/"
 
 // STD and boost includes
 #include <vector>
