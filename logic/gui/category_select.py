@@ -54,6 +54,8 @@ class GUI_category_select_container(GUI_element):
             self.game.gui.block_gui_mouse_input = True
             self.game.gui.mouse.alpha = 0.0
 
+        """
+        # High sat
         colours = {
             'skyblue' : (.24, .53, 1.0),
             'cyan' : (.24, 1.0, .69),
@@ -67,6 +69,37 @@ class GUI_category_select_container(GUI_element):
             'purple' : (.52, .12, .5),
             'poop' : (.52, .36, .12)
             }
+        """
+        # Mid sat
+        colours = {
+            'skyblue' : (.37, .61, 1.0),
+            'cyan' : (.37, 1.0, .74),
+            'midnight_blue' : (.56, .37, 1.0),
+            'red' : (1.0, .37, .37),
+            'yellow' : (1.0, .98, .37),
+            'orange' : (1.0, .7, .37),
+            'apple_green' : (.5, 1.0, .37),
+            'forest_green' : (.33, .6, .27),
+            'magenta' : (1.0, .37, .88),
+            'purple' : (.6, .27, .58),
+            'poop' : (.6, .47, .27),
+            }
+        """
+        # Low sat
+        colours = {
+            'apple_green' : (.58, 1.0, .48),
+            'red' : (1.0, .47, .47),
+            'skyblue' : (.48, .68, 1.0),
+            'cyan' : (.47, 1.0, .79),
+            'yellow' : (1.0, .98, .48),
+            'orange' : (1.0, .75, .47),
+            'midnight_blue' : (.63, .47, 1.0),
+            'purple' : (.54, .24, .52),
+            'forest_green' : (.31, .54, .25),
+            'poop' : (.52, .41, .24),
+            'magenta' : (1.0, .47, .90),
+            }
+        """
         
         categories = [
             ("Tutorial", "0001", colours['apple_green']),
@@ -74,7 +107,7 @@ class GUI_category_select_container(GUI_element):
             ("Easy",     "0003", colours['skyblue']),
             ("Moderate", "0004", colours['cyan']),
             ("Tricky",   "0005", colours['yellow']),
-            ("Taxing",   "0006", colours['magenta']),
+            ("Taxing",   "0006", colours['orange']),
             ("Advanced", "0007", colours['midnight_blue']),
             ("Hard",     "0008", colours['purple']),
             ("Expert",   "0009", colours['forest_green']),
@@ -83,7 +116,7 @@ class GUI_category_select_container(GUI_element):
         self.category_objs = []
 
         if self.game.manager.last_pack_unlocked:
-            categories.append(("Final Challenge",  "last", colours['orange']))
+            categories.append(("Final Challenge",  "last", colours['magenta']))
 
         i = 0
         self.last_category = None
