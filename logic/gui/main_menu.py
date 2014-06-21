@@ -762,21 +762,19 @@ class Firework(Process):
         self.state = 0
         self.iter = 0
         self.iter_wait = 20
-        #self.y_iter = 0
-        #self.y_iter_wait = 80
         self.y_to_move = 0.0
+        rand_sound = random.randint(1, 6)
+        if rand_sound < 4:
+            self.game.core.media.sfx['firework' + str(rand_sound)].play(0)
 
 
     def Execute(self):
-        #self.y = lerp(self.y_iter, self.y_iter_wait, self.y_origin, self.y_origin + 40)
-        #self.y_iter += 1
         if self.y_to_move < 2.0:
             self.y_to_move += .02
         self.y += self.y_to_move
         
         if self.state == 0:
             self.iter += 1
-            #self.alpha = lerp(self.iter, self.iter_wait, 0.0, .8)
             self.scale = inverse_sequare_lerp(self.iter, self.iter_wait, 0.5, self.target_scale)
             if self.iter > self.iter_wait:
                 self.iter_wait = 50

@@ -237,6 +237,9 @@ Media::Media(Main_App* _game)
     sfx.insert(pair<string,SFX*>("paint", new SFX("sfx/paint.wav", game, False)));
     sfx.insert(pair<string,SFX*>("fill", new SFX("sfx/fill.wav", game)));
     sfx.insert(pair<string,SFX*>("pipette", new SFX("sfx/pipette.wav", game)));
+    sfx.insert(pair<string,SFX*>("firework1", new SFX("sfx/firework.wav", game)));
+    sfx.insert(pair<string,SFX*>("firework2", new SFX("sfx/firework2.wav", game)));
+    sfx.insert(pair<string,SFX*>("firework3", new SFX("sfx/firework3.wav", game)));
 
     // Music
     music.insert(pair<string,Music*>("title", new Music("music/title.ogg", game)));

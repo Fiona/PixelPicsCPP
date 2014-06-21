@@ -54,22 +54,36 @@ class GUI_category_select_container(GUI_element):
             self.game.gui.block_gui_mouse_input = True
             self.game.gui.mouse.alpha = 0.0
 
+        colours = {
+            'skyblue' : (.24, .53, 1.0),
+            'cyan' : (.24, 1.0, .69),
+            'midnight_blue' : (.48, .24, 1.0),
+            'red' : (1.0, .24, .24),
+            'yellow' : (1.0, .97, .24),
+            'orange' : (1.0, .64, .24),
+            'apple_green' : (.39, 1.0, .24),
+            'forest_green' : (.2, .52, .12),
+            'magenta' : (1.0, .24, .86),
+            'purple' : (.52, .12, .5),
+            'poop' : (.52, .36, .12)
+            }
+        
         categories = [
-            ("Tutorial", "0001", (.5, 1.0, .5)),
-            ("Beginner", "0002", (1.0, .5, .5)),
-            ("Easy",     "0003", (.5, .5, 1.0)),
-            ("Moderate", "0004", (.5, 1.0, 1.0)),
-            ("Tricky",   "0005", (1.0, .5, 1.0)),
-            ("Taxing",   "0006", (1.0, 1.0, .5)),
-            ("Advanced", "0007", (1.0, 1.0, .5)),
-            ("Hard",     "0008", (1.0, 1.0, .5)),
-            ("Expert",   "0009", (1.0, 1.0, .5)),
-            ("Master",   "0010", (1.0, 1.0, .5)),
+            ("Tutorial", "0001", colours['apple_green']),
+            ("Beginner", "0002", colours['red']),
+            ("Easy",     "0003", colours['skyblue']),
+            ("Moderate", "0004", colours['cyan']),
+            ("Tricky",   "0005", colours['yellow']),
+            ("Taxing",   "0006", colours['magenta']),
+            ("Advanced", "0007", colours['midnight_blue']),
+            ("Hard",     "0008", colours['purple']),
+            ("Expert",   "0009", colours['forest_green']),
+            ("Master",   "0010", colours['poop']),
             ]
         self.category_objs = []
 
         if self.game.manager.last_pack_unlocked:
-            categories.append(("Final Challenge",  "last", (1.0, 1.0, 1.0)))
+            categories.append(("Final Challenge",  "last", colours['orange']))
 
         i = 0
         self.last_category = None
