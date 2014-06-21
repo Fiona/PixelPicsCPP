@@ -13,6 +13,9 @@ from helpers import lerp
 
                         
 class Stompyblondie_Logo(Process):
+    frame_switch_times = [
+        30, 15, 15, 15, 15, 15
+        ]
     def __init__(self, game):
         Process.__init__(self)
         self.game = game
@@ -20,6 +23,17 @@ class Stompyblondie_Logo(Process):
         self.x = (self.game.settings['screen_width']/2)
         self.y = (self.game.settings['screen_height']/2)
         self.z = Z_STOMPYBLONDIE_LOGO
+        self.iter = 0
+        self.frame = 0
+
+    def Execute(self):
+        if self.frame == len(self.frame_switch_times):
+            return
+        self.iter += 1
+        if self.iter >= self.frame_switch_times[self.frame]:
+            self.frame += 1
+            self.image_sequence = 2 if self.image_sequence == 1 else 1
+            self.iter = 0
         
 
 class Stompyblondie_Logo_Text(Process):

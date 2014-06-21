@@ -50,7 +50,7 @@ bool Main_App::On_Init()
     SDL_Rect** modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
     for(int i = 0; modes[i]; ++i)
     {
-        if(modes[i]->w < DEFAULT_SETTING_SCREEN_WIDTH || modes[i]->h < DEFAULT_SETTING_SCREEN_HEIGHT)
+        if(modes[i]->w < FALLBACK_SCREEN_WIDTH || modes[i]->h < FALLBACK_SCREEN_HEIGHT)
             continue;
         vector<float> size;
         size.push_back(modes[i]->w); size.push_back(modes[i]->h);
@@ -65,8 +65,8 @@ bool Main_App::On_Init()
     if(surf_display == NULL)
     {
 
-        settings->screen_width = DEFAULT_SETTING_SCREEN_WIDTH;
-        settings->screen_height = DEFAULT_SETTING_SCREEN_HEIGHT;
+        settings->screen_width = FALLBACK_SCREEN_WIDTH;
+        settings->screen_height = FALLBACK_SCREEN_HEIGHT;
 
         surf_display = SDL_SetVideoMode(settings->screen_width, settings->screen_height, 32, SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL);
         if(surf_display == NULL)

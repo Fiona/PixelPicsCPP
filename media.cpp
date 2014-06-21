@@ -80,7 +80,7 @@ Media::Media(Main_App* _game)
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/stompyblondie_logo.png")));
-    gfx.insert(pair<string, Image*>("gui_stompyblondie_logo", new Image("gfx/stompyblondie_logo.png")));
+    gfx.insert(pair<string, Image*>("gui_stompyblondie_logo", new Image("gfx/stompyblondie_logo.png", False, 2)));
     gfx.insert(pair<string, Image*>("gui_stompyblondie_logo_text", new Image("gfx/stompyblondie_logo_text.png")));
 
     gfx.insert(pair<string, Image*>("gui_cursor_1", new Image("gfx/cursor_tool_1.png")));
@@ -121,6 +121,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_title_r", new Image("gfx/title_r.png")));
     gfx.insert(pair<string, Image*>("gui_title_!", new Image("gfx/title_exclamationmark.png")));
 
+    gfx.insert(pair<string, Image*>("gui_title_firework", new Image("gfx/title_firework.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_title_speech_bubble", new Image("gfx/title_speech_bubble.png")));
     gfx.insert(pair<string, Image*>("gui_button_main_menu_play", new Image("gfx/button_main_menu_play.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_button_main_menu_extras", new Image("gfx/button_main_menu_extras.png", False, 3)));

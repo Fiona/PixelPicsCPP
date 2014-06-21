@@ -109,7 +109,10 @@ class Puzzle_manager(object):
     starred_packs = []
     all_main_packs_starred = False
     last_pack_unlocked = False
-    
+
+    # If True will do the firework animation on the title screen
+    cleared_all_main_categories = False    
+
 
     def __init__(self, game):
         self.game = game
@@ -117,6 +120,7 @@ class Puzzle_manager(object):
         self.load_packs(user_created = False)
         self.check_which_packs_starred()
         self.check_if_last_pack_unlocked()
+        self.check_if_cleared_all_main_categories()
 
 
     def load_packs(self, user_created = True):
@@ -202,6 +206,14 @@ class Puzzle_manager(object):
                 continue
             if not self.game_packs[p].uuid in self.game.player.cleared_categories:
                 self.last_pack_unlocked = False
+                break
+
+
+    def check_if_cleared_all_main_categories(self):
+        self.cleared_all_main_categories = True
+        for uuid_to_check in self.game.game_category_uuids:
+            if not uuid_to_check in self.game.player.cleared_categories:
+                self.cleared_all_main_categories = False
                 break
 
 

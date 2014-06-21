@@ -90,7 +90,6 @@ class Game(Process):
 
     # Keeps track of what we should be playing even if we are not
     music_to_play = None
-    
 
     def __init__(self, core):
         Process.__init__(self)
@@ -115,7 +114,7 @@ class Game(Process):
         self.settings['lock_drawing'] = self.core.settings.lock_drawing
         self.author_id = self.core.author_id
         self.load_player()
-
+            
         # Debug display
         if DEBUG_SHOW_FPS:
             self.fps_text = Text(self.core.media.fonts["basic"], 0, 0, TEXT_ALIGN_TOP_LEFT, "blank")
@@ -301,6 +300,7 @@ class Game(Process):
         # -----------
         self.save_player(self.player)
         self.manager.check_which_packs_starred()
+        self.manager.check_if_cleared_all_main_categories()
 
 
     def unlock_category_if_necessary(self):

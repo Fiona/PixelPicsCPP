@@ -26,6 +26,18 @@ def lerp(i, speed, start, end, smooth = True):
     return start + (end - start) * p
 
 
+def inverse_sequare_lerp(i, speed, start, end):
+    # i = i
+    # n = speed
+    # a = start
+    # b = end
+    speed -= 1
+    p = 1.0/speed*i
+    p = 1 - ((1 - p) * (1 - p))
+    #p = ((p) * (p) * (3 - 2 * (p)))
+    return start + (end - start) * p
+
+
 def reverse_enumerate(l):
    for index in reversed(xrange(len(l))):
       yield index, l[index]
@@ -133,8 +145,9 @@ class Net_Process_POST(object):
         data = json.dumps(data)
         response = None
         try:
+            debuglevel = 2 if DEBUG else 0
             req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
-            opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=2))
+            opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=debuglevel))
             f = opener.open(req)
             response = f.read()
             queue.put(response)
