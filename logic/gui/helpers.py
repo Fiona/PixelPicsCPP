@@ -133,8 +133,9 @@ class Net_Process_POST(object):
         data = json.dumps(data)
         response = None
         try:
+            debuglevel = 2 if DEBUG else 0
             req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
-            opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=2))
+            opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=debuglevel))
             f = opener.open(req)
             response = f.read()
             queue.put(response)
