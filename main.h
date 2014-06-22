@@ -39,9 +39,9 @@
 // Default settings
 #define DEFAULT_SETTING_SCREEN_WIDTH 1280
 #define DEFAULT_SETTING_SCREEN_HEIGHT 1024
-#define DEFAULT_SETTING_FULL_SCREEN "0"
-#define DEFAULT_SETTING_SOUND_EFFECTS_ON "1"
-#define DEFAULT_SETTING_MUSIC_ON "1"
+#define DEFAULT_SETTING_FULL_SCREEN "1"
+#define DEFAULT_SETTING_SOUND_EFFECTS_ON "0"
+#define DEFAULT_SETTING_MUSIC_ON "0"
 #define DEFAULT_SETTING_SOUND_EFFECTS_VOL "128"
 #define DEFAULT_SETTING_MUSIC_VOL "128"
 #define DEFAULT_SETTING_MOUSE_LEFT_EMPTY "0"
@@ -144,6 +144,7 @@ public:
     typedef void (Process::*FuncGetter)();
     static map <string, FuncGetter> draw_strategies;
 
+    static bool first_run;
     static float screen_width;
     static float screen_height;
 

@@ -46,15 +46,40 @@ bool Main_App::On_Init()
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
     Uint32 flags = SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL;
 
+    vector<float> default_screen_res;
+
     // Get all the allowed screen modes
     SDL_Rect** modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
     for(int i = 0; modes[i]; ++i)
     {
+        // Discard anything that's under the lowest allowed res
         if(modes[i]->w < FALLBACK_SCREEN_WIDTH || modes[i]->h < FALLBACK_SCREEN_HEIGHT)
             continue;
+        // Discard anything that's an absurd aspect ratio. This is because linux was
+        // reporting both monitors together as one big screen. lol
+        if((float)modes[i]->w / (float)modes[i]->h > 2.0f)
+            continue;
+
+        // Plop the screen list into the allowed screen sizes list
         vector<float> size;
         size.push_back(modes[i]->w); size.push_back(modes[i]->h);
         allowed_screen_sizes.push_back(size);
+
+        // If higher than the current highest default then save it
+        if(default_screen_res.size() == 0 || modes[i]->w > default_screen_res[0])
+        {
+            default_screen_res.empty();
+            default_screen_res.push_back(modes[i]->w);
+            default_screen_res.push_back(modes[i]->h);
+        }
+    }
+
+    // If first run this we set the settings to the found default
+    if(Main_App::first_run)
+    {
+        settings->screen_width = default_screen_res[0];
+        settings->screen_height = default_screen_res[1];
+        settings->save();
     }
 
     if(settings->full_screen)

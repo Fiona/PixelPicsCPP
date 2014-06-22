@@ -44,6 +44,7 @@ Uint32 SDL_AMASK = 0xff000000;
 map <string, Main_App::FuncGetter> Main_App::draw_strategies;
 float Main_App::screen_width;
 float Main_App::screen_height;
+bool Main_App::first_run = False;
 Media* Main_App::media = NULL;
 
 
@@ -434,6 +435,7 @@ Settings::Settings(string _filename)
         pt.put("cat_mode", DEFAULT_SETTING_CAT_MODE);
 
 		write_json(filename, pt);
+        Main_App::first_run = True;
     }
 
     screen_width = pt.get<float>("screen_width");
