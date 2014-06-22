@@ -597,7 +597,7 @@ class GUI_main_menu_puzzle_type_selection(GUI_element):
         Process.__init__(self)
         self.game = game
         self.parent = parent
-        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.z = Z_GUI_OBJECT_LEVEL_8
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
         self.gui_init()
