@@ -26,6 +26,8 @@ class GUI_options(GUI_element_window):
         Process.__init__(self)
         self.game = game
         self.parent = parent
+        if self.game.manager.can_has_cat_mode():
+            self.height = 700
         self.gui_init()
 
 
@@ -56,7 +58,11 @@ class GUI_options(GUI_element_window):
         self.widgets['lock_drawing'] = GUI_options_lock_drawing(self.game, self)
         self.widgets['cancel_button'] = GUI_options_cancel_button(self.game, self)
         self.widgets['apply_button'] = GUI_options_apply_button(self.game, self)
-        
+
+        if self.game.manager.can_has_cat_mode():
+            self.objs['title_cat_mode'] = GUI_options_title(self.game, self, "Meow?", 570)
+            self.widgets['cat_mode'] = GUI_options_cat_mode(self.game, self)
+
         self.game.gui.block_gui_keyboard_input = True
         self.x = 0
         self.y = 0
@@ -91,6 +97,10 @@ class GUI_options(GUI_element_window):
         self.game.core.settings.mouse_left_empty = bool(self.objs['mouse_image'].current_value)
         self.game.core.settings.bump_scroll = bool(self.widgets['bump_scroll'].current_value)
         self.game.core.settings.lock_drawing = bool(self.widgets['lock_drawing'].current_value)
+        if self.game.manager.can_has_cat_mode():
+            self.game.core.settings.cat_mode = bool(self.widgets['cat_mode'].current_value)
+        else:
+            self.game.core.settings.cat_mode = False
         self.game.core.settings.save()
 
         self.game.settings['mouse_left_empty'] = self.game.core.settings.mouse_left_empty
@@ -510,7 +520,7 @@ class GUI_options_bump_scroll(GUI_element_yes_no_radios):
         self.current_value = bool(self.game.core.settings.bump_scroll)
         self.gui_init()
 
-        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Enable bump scrolling?")
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Enable bump scrolling")
         self.name_text.z = self.z - 1
         self.name_text.colour = (0.3, 0.3, 0.3)
 
@@ -533,6 +543,28 @@ class GUI_options_lock_drawing(GUI_element_yes_no_radios):
         self.gui_init()
 
         self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Lock drawing to row/column")
+        self.name_text.z = self.z - 1
+        self.name_text.colour = (0.3, 0.3, 0.3)
+
+
+    def On_Exit(self):
+        GUI_element_yes_no_radios.On_Exit(self)
+        self.name_text.Kill()
+
+
+
+class GUI_options_cat_mode(GUI_element_yes_no_radios):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.x = self.parent.x + 260
+        self.y = self.parent.y + 610
+        self.z = self.parent.z - 3
+        self.current_value = bool(self.game.core.settings.cat_mode)
+        self.gui_init()
+
+        self.name_text = Text(self.game.core.media.fonts["window_text"], self.parent.x + 30, self.y + 7, TEXT_ALIGN_TOP_LEFT, "Cat mode")
         self.name_text.z = self.z - 1
         self.name_text.colour = (0.3, 0.3, 0.3)
 

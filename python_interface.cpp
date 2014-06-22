@@ -92,6 +92,7 @@ BOOST_PYTHON_MODULE(core)
         .add_property("mouse_left_empty", make_getter(&Settings::mouse_left_empty), make_setter(&Settings::mouse_left_empty))
         .add_property("bump_scroll", make_getter(&Settings::bump_scroll), make_setter(&Settings::bump_scroll))
         .add_property("lock_drawing", make_getter(&Settings::lock_drawing), make_setter(&Settings::lock_drawing))
+        .add_property("cat_mode", make_getter(&Settings::cat_mode), make_setter(&Settings::cat_mode))
         .def("save", &Settings::save)
         ;
 

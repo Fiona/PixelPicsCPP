@@ -431,6 +431,7 @@ Settings::Settings(string _filename)
         pt.put("mouse_left_empty", DEFAULT_SETTING_MOUSE_LEFT_EMPTY);
         pt.put("bump_scroll", DEFAULT_SETTING_BUMP_SCROLL);
         pt.put("lock_drawing", DEFAULT_SETTING_LOCK_DRAWING);
+        pt.put("cat_mode", DEFAULT_SETTING_CAT_MODE);
 
 		write_json(filename, pt);
     }
@@ -445,6 +446,7 @@ Settings::Settings(string _filename)
     mouse_left_empty = pt.get<bool>("mouse_left_empty");
     bump_scroll = pt.get<bool>("bump_scroll");
     lock_drawing = pt.get<bool>("lock_drawing");
+    cat_mode = pt.get<bool>("cat_mode");
 
 }
 
@@ -464,6 +466,7 @@ bool Settings::save()
     pt.put("mouse_left_empty", mouse_left_empty);
     pt.put("bump_scroll", bump_scroll);
     pt.put("lock_drawing", lock_drawing);
+    pt.put("cat_mode", cat_mode);
     try
     {
         write_json(filename, pt);

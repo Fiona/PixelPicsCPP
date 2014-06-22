@@ -47,6 +47,7 @@
 #define DEFAULT_SETTING_MOUSE_LEFT_EMPTY "0"
 #define DEFAULT_SETTING_BUMP_SCROLL "1"
 #define DEFAULT_SETTING_LOCK_DRAWING "1"
+#define DEFAULT_SETTING_CAT_MODE "0"
 
 // Misc defines
 #define FALLBACK_SCREEN_WIDTH 1024
@@ -232,6 +233,7 @@ public:
     bool mouse_left_empty;
     bool bump_scroll;
     bool lock_drawing;
+    bool cat_mode;
 
     bool save();
 };

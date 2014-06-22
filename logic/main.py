@@ -392,5 +392,4 @@ class Player(object):
         self.auto_save = False    
         self.sharing_content_warning_seen = False
         self.sharing_upload_content_agreed = False
-        
 

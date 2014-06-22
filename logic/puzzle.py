@@ -112,7 +112,7 @@ class Puzzle_manager(object):
 
     # If True will do the firework animation on the title screen
     cleared_all_main_categories = False    
-
+    
 
     def __init__(self, game):
         self.game = game
@@ -215,6 +215,10 @@ class Puzzle_manager(object):
             if not uuid_to_check in self.game.player.cleared_categories:
                 self.cleared_all_main_categories = False
                 break
+
+
+    def can_has_cat_mode(self):
+        return self.cleared_all_main_categories and self.all_main_packs_starred
 
 
     def load_pack(self, pack_dir, user_created = True):
