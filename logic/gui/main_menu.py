@@ -518,7 +518,7 @@ class GUI_main_menu_credits(GUI_element_window):
         "",
         " -- Music -- ",
         "Back On Track, Comparsa, Laid Back Guitars, No Frills Salsa,",
-        "MORE MUSIC",
+        "Beachfront Celebration,",
         "Kevin MacLeod (incompetech.com)",
         "",
         " -- Level Design -- ",
