@@ -548,7 +548,7 @@ class GUI_puzzle(GUI_element):
                     self.game.gui.block_gui_mouse_input = True
                     self.game.gui.mouse.alpha = 0.0
                     self.title_text = GUI_failed_title(self.game, self)
-                    self.game.fade_out_music(500)
+                    self.game.fade_out_music(1000)
                     self.wait_time = 0
 
                 self.anim_state = 1
@@ -559,6 +559,8 @@ class GUI_puzzle(GUI_element):
                         self.zoom_out_fade_and_position(self.iter, 120)
                         self.iter += 1
                 else:
+                    self.game.music_to_play = "failure"
+                    self.game.ensure_correct_music_playing()
                     self.anim_state = 2
                     self.iter = 0
 
@@ -1243,7 +1245,6 @@ class GUI_puzzle(GUI_element):
             self.made_mistake = True
             if self.game.lives <= 0:
                 self.state = PUZZLE_STATE_FAILED
-                self.game.core.media.sfx['failure'].play(0)
             self.game.core.media.sfx['incorrect_square'].play(0)
             return
 

@@ -227,7 +227,6 @@ Media::Media(Main_App* _game)
     sfx.insert(pair<string,SFX*>("empty_square", new SFX("sfx/empty_square.wav", game, False)));
     sfx.insert(pair<string,SFX*>("fill_square", new SFX("sfx/fill_square.wav", game, False)));
     sfx.insert(pair<string,SFX*>("incorrect_square", new SFX("sfx/incorrect_square.wav", game)));
-    sfx.insert(pair<string,SFX*>("failure", new SFX("sfx/failure.wav", game)));
     sfx.insert(pair<string,SFX*>("success", new SFX("sfx/success.wav", game)));
     sfx.insert(pair<string,SFX*>("unlock", new SFX("sfx/unlock.wav", game)));
     sfx.insert(pair<string,SFX*>("button_click", new SFX("sfx/button_click.wav", game)));
@@ -246,6 +245,7 @@ Media::Media(Main_App* _game)
     music.insert(pair<string,Music*>("select_puzzle", new Music("music/select_puzzle.ogg", game)));
     music.insert(pair<string,Music*>("puzzle", new Music("music/puzzle.ogg", game)));
     music.insert(pair<string,Music*>("editor", new Music("music/editor.ogg", game)));
+    music.insert(pair<string,Music*>("failure", new Music("music/failure.ogg", game)));
 
 }
 

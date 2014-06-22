@@ -497,8 +497,8 @@ class GUI_main_menu_credits_button(GUI_element_button):
 
 class GUI_main_menu_credits(GUI_element_window):
     title = "Credits"
-    height = 490
-    width = 450
+    height = 590
+    width = 500
     objs = {}
     text_to_write = [
         "PixelPics",
@@ -513,8 +513,13 @@ class GUI_main_menu_credits(GUI_element_window):
         " -- Visuals -- ",
         "Fiona Burrows & Mark Frimston",
         "",
-        " -- Audio -- ",
+        " -- SFX -- ",
         "Fiona Burrows",
+        "",
+        " -- Music -- ",
+        "Back On Track, Comparsa, Laid Back Guitars, No Frills Salsa,",
+        "MORE MUSIC",
+        "Kevin MacLeod (incompetech.com)",
         "",
         " -- Level Design -- ",
         "Fiona Burrows & Mark Frimston",
