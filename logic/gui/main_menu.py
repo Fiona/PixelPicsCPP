@@ -517,7 +517,7 @@ class GUI_main_menu_credits(GUI_element_window):
         "Fiona Burrows",
         "",
         " -- Music -- ",
-        "Back On Track, Comparsa, Laid Back Guitars, No Frills Salsa,",
+        "Back On Track, Comparsa, Samba Stings, No Frills Salsa,",
         "Beachfront Celebration, No Frills Cumbia,",
         "Hackbeat, Modern Jazz Samba, Tango De Manzana",
         "by Kevin MacLeod (incompetech.com)",

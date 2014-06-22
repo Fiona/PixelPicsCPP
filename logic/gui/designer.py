@@ -155,7 +155,7 @@ class GUI_designer_packs_create_pack(GUI_element_button):
 
 class GUI_designer_packs_add_pack_dialog(GUI_element_window):
     title = "Create Pack"
-    height = 245
+    height = 210
     width = 480
     objs = {}
 
@@ -185,13 +185,13 @@ class GUI_designer_packs_add_pack_dialog(GUI_element_window):
         self.author_text = GUI_designer_packs_add_pack_author_text_input(self.game, self)
         GUI_designer_packs_add_pack_pack_confirm_button(self.game, self)
         GUI_designer_packs_add_pack_pack_cancel_button(self.game, self)
-
+        """
         txt = Text(self.game.core.media.fonts['window_text'], self.x + 30, self.y + 165, TEXT_ALIGN_TOP_LEFT, "Game mode: ")
         txt.z = self.z - 2
         txt.colour = (0.3, 0.3, 0.3)
         self.objs['text_dropdown'] = txt        
         self.puzzle_type_dropdown = GUI_designer_packs_edit_pack_puzzle_type_dropdown(self.game, self)
-        
+        """
         self.game.gui.block_gui_keyboard_input = True
         self.x = 0
         self.y = 0
@@ -211,7 +211,8 @@ class GUI_designer_packs_add_pack_dialog(GUI_element_window):
         dont_kill = False
         
         try:
-            self.game.manager.add_new_pack(self.pack_name_text.current_text, self.author_text.current_text, True if self.puzzle_type_dropdown.selected_item == 1 else False)
+            #self.game.manager.add_new_pack(self.pack_name_text.current_text, self.author_text.current_text, True if self.puzzle_type_dropdown.selected_item == 1 else False)
+            self.game.manager.add_new_pack(self.pack_name_text.current_text, self.author_text.current_text, freemode = False)
         except IOError as e:
             GUI_element_dialog_box(self.game, self.parent, "Input error", [str(e)])
             dont_kill = True
@@ -295,7 +296,7 @@ class GUI_designer_packs_add_pack_pack_confirm_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) - (self.width) - 10
-        self.y = self.parent.y + 200
+        self.y = self.parent.y + self.parent.height - 45
         self.generic_button_text_object.x = self.x + (self.width / 2)
         self.generic_button_text_object.y = self.y + (self.height / 2)
 
@@ -317,7 +318,7 @@ class GUI_designer_packs_add_pack_pack_cancel_button(GUI_element_button):
         self.z = self.parent.z - 2
         self.gui_init()
         self.x = self.parent.x + (self.parent.width / 2) + 10
-        self.y = self.parent.y + 200
+        self.y = self.parent.y + self.parent.height - 45
         self.generic_button_text_object.x = self.x + (self.width / 2)
         self.generic_button_text_object.y = self.y + (self.height / 2)
 
@@ -651,10 +652,11 @@ class GUI_designer_puzzles_container(GUI_element):
         subtitle.z = Z_GUI_OBJECT_LEVEL_5
         self.objs.append(subtitle)
 
-        subtitle2 = Text(self.game.core.media.fonts['basic'], self.game.settings['screen_width']/2, 120, TEXT_ALIGN_CENTER, "Use the green arrows to reorder puzzles. (If there are multiple in this pack.)")
-        subtitle2.colour = (.4, .4, .4)
-        subtitle2.z = subtitle.z
-        self.objs.append(subtitle2)
+        if len(self.game.manager.current_pack.order) > 1:
+            subtitle2 = Text(self.game.core.media.fonts['basic'], self.game.settings['screen_width']/2, 120, TEXT_ALIGN_CENTER, "Use the arrows to the left to reorder puzzles.")
+            subtitle2.colour = (.4, .4, .4)
+            subtitle2.z = subtitle.z
+            self.objs.append(subtitle2)
 
         self.scroll = GUI_designer_puzzles_puzzles_list_scroll_window(self.game, self)
         
