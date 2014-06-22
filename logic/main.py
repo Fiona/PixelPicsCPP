@@ -4,7 +4,7 @@ Copyright (c) 2014 Stompy Blondie Games http://stompyblondie.com
 """
 
 # python imports
-import sys, os, pickle
+import sys, os, pickle, random
 
 # Game engine imports
 from core import *
@@ -129,11 +129,20 @@ class Game(Process):
     def Execute(self):
         """
         Execute method for the main game
-        updates debug display
+        updates debug display and iterates music playlist
         """
         if DEBUG_SHOW_FPS:
             self.fps_text.text = "fps: " + str(self.core.current_fps)
-
+            
+        # Makes sure correct music is playing in puzzle
+        if self.game_state in [GAME_STATE_PUZZLE, GAME_STATE_TEST] and not self.puzzle_music_stop:
+            if not self.core.Is_music_playing():
+                self.puzzle_music_to_play += 1
+                if self.puzzle_music_to_play == len(self.puzzle_music_playlist):
+                    self.puzzle_music_to_play = 0
+                self.current_playing_music = self.puzzle_music_playlist[self.puzzle_music_to_play]
+                self.core.media.music[self.current_playing_music].play(1000)
+                
 
     def save_player(self, player):
         """
@@ -198,10 +207,10 @@ class Game(Process):
             self.lives = INITIAL_LIVES
             self.timer = 0
             self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file, user_created = self.manager.user_created_puzzles)
-            #self.manager.load_puzzle("MarksAmezzinPuzzles0001", "Cat0001.puz")
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
-            self.music_to_play = "puzzle"
+            self.fade_out_music()
+            self.init_puzzle_music_playlist()
         elif state == GAME_STATE_CATEGORY_SELECT:
             self.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
             self.manager.user_created_puzzles = False
@@ -225,7 +234,8 @@ class Game(Process):
             self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file)
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_PUZZLE if gui_state is None else gui_state)
-            self.music_to_play = "puzzle"
+            self.fade_out_music()
+            self.init_puzzle_music_playlist()
         elif state == GAME_STATE_SHARING:
             self.gui.fade_toggle(speed = 20)
             self.gui.switch_gui_state_to(GUI_STATE_SHARING_NEWEST if gui_state is None else gui_state)
@@ -237,7 +247,7 @@ class Game(Process):
             self.manager.load_puzzle(self.manager.current_puzzle_pack, self.manager.current_puzzle_file, user_created = False)
             self.gui.fade_toggle(speed = 120)
             self.gui.switch_gui_state_to(GUI_STATE_TUTORIAL if gui_state is None else gui_state)
-            self.music_to_play = "puzzle"
+            self.music_to_play = "tutorial"
 
         self.ensure_correct_music_playing()
 
@@ -263,6 +273,12 @@ class Game(Process):
         if not self.current_playing_music is None:
             self.core.media.music[self.current_playing_music].set_volume(volume)
         
+
+    def init_puzzle_music_playlist(self):
+        self.puzzle_music_playlist = ["puzzle1", "puzzle2", "puzzle3", "puzzle4"]
+        self.puzzle_music_to_play = random.randint(0, len(self.puzzle_music_playlist) - 1)
+        self.puzzle_music_stop = False
+
 
     def player_action_cleared_puzzle(self, category_uuid, puzzle):
         # -----------

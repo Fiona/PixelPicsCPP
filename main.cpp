@@ -394,6 +394,16 @@ tuple<int, int, int> Main_App::PyHSVtoRGB(float h, float s, float v)
 }
 
 
+bool Main_App::Is_music_playing()
+{
+
+    if(Mix_PlayingMusic() == 0)
+        return False;
+    return True;
+
+}
+
+
 
 Settings::Settings(){ }
 

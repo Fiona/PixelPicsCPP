@@ -549,6 +549,7 @@ class GUI_puzzle(GUI_element):
                     self.game.gui.mouse.alpha = 0.0
                     self.title_text = GUI_failed_title(self.game, self)
                     self.game.fade_out_music(1000)
+                    self.game.puzzle_music_stop = True
                     self.wait_time = 0
 
                 self.anim_state = 1
@@ -620,6 +621,7 @@ class GUI_puzzle(GUI_element):
                         self.game.gui.mouse.alpha = 0.0
                     self.title_text = GUI_cleared_title(self.game, self)
                     self.wait_time = 0
+                    self.game.puzzle_music_stop = True
                     self.game.core.media.sfx['success'].play(0)
                     self.game.fade_out_music(500)
                 self.anim_state = 1

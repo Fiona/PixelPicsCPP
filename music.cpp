@@ -54,6 +54,22 @@ void Music::play_loop(int fade_out_time)
 
 }
 
+void Music::play(int fade_out_time)
+{
+
+    if(game->settings->music_vol <= 10 || !game->settings->music_on)
+        return;
+
+    if(game->current_playing_music != NULL)
+        game->current_playing_music->stop(fade_out_time);
+
+    game->current_playing_music = this;
+
+    Mix_VolumeMusic(game->settings->music_vol);
+    Mix_PlayMusic(sound, 1);
+
+}
+
 
 void Music::stop(int fade_out_time)
 {

@@ -64,6 +64,7 @@ BOOST_PYTHON_MODULE(core)
         ;
     class_<Music>("Music")
         .def("play_loop", &Music::play_loop)
+        .def("play", &Music::play)
         .def("stop", &Music::stop)
         .def("set_volume", &Music::set_volume)
         ;
@@ -199,6 +200,7 @@ BOOST_PYTHON_MODULE(core)
         .def("Toggle_text_input", &Main_App::Toggle_text_input)
         .def("Quit", &Main_App::Quit)
         .def("HSVtoRGB", &Main_App::PyHSVtoRGB)
+        .def("Is_music_playing", &Main_App::Is_music_playing)
         ;
 
     // Used for outputting debugging

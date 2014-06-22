@@ -186,6 +186,7 @@ public:
     bool Keyboard_key_down(SDLKey Key);
     bool Keyboard_key_released(SDLKey Key);
     void Toggle_text_input();
+    bool Is_music_playing();
 
 };
 

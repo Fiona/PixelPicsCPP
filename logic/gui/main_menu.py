@@ -497,8 +497,8 @@ class GUI_main_menu_credits_button(GUI_element_button):
 
 class GUI_main_menu_credits(GUI_element_window):
     title = "Credits"
-    height = 590
-    width = 500
+    height = 660
+    width = 520
     objs = {}
     text_to_write = [
         "PixelPics",
@@ -518,8 +518,11 @@ class GUI_main_menu_credits(GUI_element_window):
         "",
         " -- Music -- ",
         "Back On Track, Comparsa, Laid Back Guitars, No Frills Salsa,",
-        "Beachfront Celebration,",
-        "Kevin MacLeod (incompetech.com)",
+        "Beachfront Celebration, No Frills Cumbia,",
+        "Hackbeat, Modern Jazz Samba, Tango De Manzana",
+        "by Kevin MacLeod (incompetech.com)",
+        "",
+        "Brazil Samba by http://bensound.com",
         "",
         " -- Level Design -- ",
         "Fiona Burrows & Mark Frimston",

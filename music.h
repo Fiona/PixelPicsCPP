@@ -28,6 +28,7 @@ public:
     Music(string sound_file, Main_App* _game);
     ~Music();
     void play_loop(int fade_out_time = 1000);
+    void play(int fade_out_time = 1000);
     void stop(int fade_out_time);
     void set_volume(int volume);
 
