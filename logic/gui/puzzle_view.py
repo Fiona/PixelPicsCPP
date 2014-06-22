@@ -797,6 +797,11 @@ class GUI_puzzle(GUI_element):
             self.game.current_zoom_level = 1.0
         self.game.minimum_zoom_level = self.game.current_zoom_level
 
+        # --- DESIGNER ONLY ---
+        if self.game.game_state == GAME_STATE_DESIGNER:
+            self.game.minimum_zoom_level /= 2
+        # --- DESIGNER ONLY ---
+
         # Work out initial placement of the grid
         self.grid_x = int(self.row_number_width - ((self.row_number_width + self.grid_width) / 2) - PUZZLE_CELL_WIDTH)
         self.grid_y = int(self.column_number_height - ((self.column_number_height + self.grid_height) / 2) - PUZZLE_CELL_HEIGHT)

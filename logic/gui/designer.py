@@ -2288,7 +2288,7 @@ class GUI_designer_colour_puzzle(GUI_element):
 
         if self.game.current_zoom_level > 1.0:
             self.game.current_zoom_level = 1.0
-        self.game.minimum_zoom_level = self.game.current_zoom_level
+        self.game.minimum_zoom_level = self.game.current_zoom_level / 2
 
         # Work out initial placement of the grid
         self.grid_x = (-((self.grid_width) / 2))
