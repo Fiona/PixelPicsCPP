@@ -896,7 +896,26 @@ class GUI_puzzle(GUI_element):
 
 
     def do_bump_scrolling(self):
-        if self.currently_panning or not self.game.settings['bump_scroll']:
+        # Early exit if middle click panning
+        if self.currently_panning:
+            return
+
+        # Keyboard key scrolling
+        diff = [0, 0]
+        
+        if self.game.core.Keyboard_key_down(key.LEFT):
+            diff[0] += BUMP_SCROLL_SPEED
+        if self.game.core.Keyboard_key_down(key.RIGHT):
+            diff[0] -= BUMP_SCROLL_SPEED
+        if self.game.core.Keyboard_key_down(key.UP):
+            diff[1] += BUMP_SCROLL_SPEED
+        if self.game.core.Keyboard_key_down(key.DOWN):
+            diff[1] -= BUMP_SCROLL_SPEED
+            
+        self.adjust_camera_pos(diff[0], diff[1])
+
+        # All bump scrolling below here
+        if not self.game.settings['bump_scroll']:
             return
 
         diff = [0, 0]
