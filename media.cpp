@@ -80,7 +80,7 @@ Media::Media(Main_App* _game)
 
     // Visuals
     //gfx.insert(pair<string, Image*>("blank", new Image("gfx/stompyblondie_logo.png")));
-    gfx.insert(pair<string, Image*>("gui_stompyblondie_logo", new Image("gfx/stompyblondie_logo.png", False, 2)));
+    gfx.insert(pair<string, Image*>("gui_stompyblondie_logo", new Image("gfx/stompyblondie_logo.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_stompyblondie_logo_text", new Image("gfx/stompyblondie_logo_text.png")));
 
     gfx.insert(pair<string, Image*>("gui_cursor_1", new Image("gfx/cursor_tool_1.png")));
