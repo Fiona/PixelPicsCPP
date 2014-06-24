@@ -403,6 +403,7 @@ class GUI_puzzle(GUI_element):
         self.height = self.game.settings['screen_height']
 
         self.designer = False
+        self.tutorial = False
 
         # --- DESIGNER ONLY ---
         if self.game.game_state == GAME_STATE_DESIGNER:
@@ -412,6 +413,8 @@ class GUI_puzzle(GUI_element):
         # --- DESIGNER ONLY ---
         if self.game.game_state == GAME_STATE_TUTORIAL:
             self.state = PUZZLE_STATE_SOLVING
+            self.tutorial = True
+            self.hint_alpha = .1
 
         self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
         self.grid_height = float(PUZZLE_CELL_HEIGHT * self.game.manager.current_puzzle.height)
@@ -743,7 +746,10 @@ class GUI_puzzle(GUI_element):
                     for j in i:
                         j.Kill()
         self.text = {'rows' : [], 'cols' : []}
-        
+
+        hint_alpha = 0.2 if self.game.game_state == GAME_STATE_TUTORIAL else 1.0
+        shadow_hint_alpha = 0.1 if self.game.game_state == GAME_STATE_TUTORIAL else .5
+
         for row_num, number_list in enumerate(self.game.manager.current_puzzle.row_numbers):
             # --- DESIGNER ONLY ---
             if self.game.game_state == GAME_STATE_DESIGNER:
@@ -752,9 +758,10 @@ class GUI_puzzle(GUI_element):
             self.text['rows'].append([])
             for index, number in enumerate(number_list[::-1]):
                 text = Text(self.game.core.media.fonts['puzzle_hint_numbers'], 0, 0, TEXT_ALIGN_TOP_LEFT, str(number))
-                text.colour = PUZZLE_HINT_COMPLETED_COLOUR if number_list == (0,) else PUZZLE_HINT_COLOUR
+                col = PUZZLE_HINT_COMPLETED_COLOUR if number_list == (0,) else PUZZLE_HINT_COLOUR
+                text.colour = (col[0], col[1], col[2], hint_alpha)
                 text.shadow = 2
-                text.shadow_colour = (.5, .5, .5, .5)
+                text.shadow_colour = (.5, .5, .5, shadow_hint_alpha)
                 text.generate_mipmaps = True
                 text.z = Z_GUI_OBJECT_LEVEL_5
                 self.text['rows'][row_num].append(text)
@@ -768,9 +775,10 @@ class GUI_puzzle(GUI_element):
             self.text['cols'].append([])
             for index, number in enumerate(number_list[::-1]):
                 text = Text(self.game.core.media.fonts['puzzle_hint_numbers'], 0, 0, TEXT_ALIGN_TOP_LEFT, str(number))
-                text.colour = PUZZLE_HINT_COMPLETED_COLOUR if number_list == (0,) else PUZZLE_HINT_COLOUR
+                col = PUZZLE_HINT_COMPLETED_COLOUR if number_list == (0,) else PUZZLE_HINT_COLOUR
+                text.colour = (col[0], col[1], col[2], hint_alpha)
                 text.shadow = 2
-                text.shadow_colour = (.5, .5, .5, .5)
+                text.shadow_colour = (.5, .5, .5, shadow_hint_alpha)
                 text.generate_mipmaps = True
                 text.z = Z_GUI_OBJECT_LEVEL_5
                 self.text['cols'][col_num].append(text)
@@ -796,6 +804,11 @@ class GUI_puzzle(GUI_element):
         if self.game.current_zoom_level > 1.0:
             self.game.current_zoom_level = 1.0
         self.game.minimum_zoom_level = self.game.current_zoom_level
+
+        # --- DESIGNER ONLY ---
+        if self.game.game_state == GAME_STATE_DESIGNER:
+            self.game.minimum_zoom_level /= 2
+        # --- DESIGNER ONLY ---
 
         # Work out initial placement of the grid
         self.grid_x = int(self.row_number_width - ((self.row_number_width + self.grid_width) / 2) - PUZZLE_CELL_WIDTH)
@@ -855,6 +868,10 @@ class GUI_puzzle(GUI_element):
 
 
     def adjust_text_hint_coords(self):
+        hint_alpha = 0.2 if self.game.game_state == GAME_STATE_TUTORIAL else 1.0
+        if self.game.paused:
+            hint_alpha = 0.0
+            
         # Don't even ask about this, it works, alright?
         for row_num, number_list in enumerate(self.text['rows']):
             grid_x = self.grid_gui_x
@@ -866,7 +883,7 @@ class GUI_puzzle(GUI_element):
                             
             for index, text in enumerate(number_list):
                 if self.state == PUZZLE_STATE_SOLVING:
-                    text.alpha = 1.0 if not self.game.paused else 0.0
+                    text.alpha = hint_alpha
                 text.x = grid_x - (((PUZZLE_CELL_WIDTH * index) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = self.grid_gui_y + (((PUZZLE_CELL_HEIGHT * row_num) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level
@@ -885,7 +902,7 @@ class GUI_puzzle(GUI_element):
                             
             for index, text in enumerate(number_list):
                 if self.state == PUZZLE_STATE_SOLVING:
-                    text.alpha = 1.0 if not self.game.paused else 0.0
+                    text.alpha = hint_alpha
                 text.x = self.grid_gui_x + (((PUZZLE_CELL_WIDTH * col_num) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = grid_y - (((PUZZLE_CELL_HEIGHT * index) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level

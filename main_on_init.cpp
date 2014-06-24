@@ -59,6 +59,17 @@ bool Main_App::On_Init()
         // reporting both monitors together as one big screen. lol
         if((float)modes[i]->w / (float)modes[i]->h > 2.0f)
             continue;
+        // BUT FUN TIMES HAPPEN IF YOU HAVE A CERTAIN SET-UP
+	// Basically, TwinView reports both screens as a single resolution to SDL
+	// and there's fucking NOTHING I CAN DO ABOUT IT
+	// So at work I have two monitors, one of which is rotated vertically, together
+	// they have an aspect ratio of like 1.6~, which means the game defaults to 
+	// this hilarious res that's like bounded to both screens.
+	// SO FUCK IT I DON'T CARE. IF YOU HAVE A RESOLUTION THAT'S OVER 3000 IN WIDTH
+	// THEN KILL YOURSELF. The game looks horrendous at that scale anyway.
+	// worst work around ever
+	if((float)modes[i]->w > 3000.0f)
+            continue;
 
         // Plop the screen list into the allowed screen sizes list
         vector<float> size;

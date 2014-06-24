@@ -1068,6 +1068,7 @@ void Process::Draw_strategy_puzzle()
     bool reset_vectors;
     bool reset_hint_gradients;
     bool designer; 
+    bool tutorial; 
 
     bool display_rectangle_marker;
     boost::python::object rectangle_marker_top_left;
@@ -1097,6 +1098,7 @@ void Process::Draw_strategy_puzzle()
              reset_vectors = boost::python::extract<bool>(self_.attr("draw_strategy_reset_vectors"));
              reset_hint_gradients = boost::python::extract<bool>(self_.attr("draw_strategy_reset_hint_gradients"));
              designer = boost::python::extract<bool>(self_.attr("designer"));
+             tutorial = boost::python::extract<bool>(self_.attr("tutorial"));
 
              display_rectangle_marker = boost::python::extract<bool>(self_.attr("display_rectangle_marker"));
              rectangle_marker_top_left = boost::python::extract<boost::python::object>(self_.attr("rectangle_marker_top_left"));
@@ -1128,6 +1130,7 @@ void Process::Draw_strategy_puzzle()
         self_.attr("__dict__")["draw_strategy_reset_hint_gradients"] = False;
     }
 
+    float tutorial_faded_alpha = 0.3f;
 
     // ****************
     // Set up matrix
@@ -1146,7 +1149,7 @@ void Process::Draw_strategy_puzzle()
     // White puzzle background
     // ****************
     glDisable(GL_TEXTURE_2D);
-    glColor4f(1.0f, 1.0f, 1.0f, 0.9f);
+    glColor4f(1.0f, 1.0f, 1.0f, tutorial ? tutorial_faded_alpha : .9f);
     glBegin(GL_QUADS);
     glVertex2f(0.0f, 0.0f);
     glVertex2f(grid_width, 0.0f);
@@ -1165,7 +1168,7 @@ void Process::Draw_strategy_puzzle()
     glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_grid_background"]->texture);
     float vertex_pointer[] = {grid_width, grid_height, 0.0f, 0.0f, grid_height, 0.0f, grid_width, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     glVertexPointer(3, GL_FLOAT, 0, vertex_pointer);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glColor4f(1.0f, 1.0f, 1.0f, tutorial ? tutorial_faded_alpha : 1.0f);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
      
     // ****************
@@ -1405,7 +1408,7 @@ void Process::Draw_strategy_puzzle()
 
     //glLineWidth(1.0f / zoom_level);
     glLineWidth(1.0f);
-    glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
+    glColor4f(.3f, .3f, .3f, tutorial ? tutorial_faded_alpha : 1.0f);
     glVertexPointer(2, GL_FLOAT, 0, &grid_lines[0]);
     glDrawArrays(GL_LINES, 0, (current_puzzle_width + current_puzzle_height) * 2);
     
@@ -1440,10 +1443,8 @@ void Process::Draw_strategy_puzzle()
     if(every_five_lines.size() > 0)
     {
 
-		//glLineWidth(2.0f / zoom_level);
 		glLineWidth(2.0f);
-	    //glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
-	    glColor4f(.2f, .2f, .2f, 1.0f);
+        glColor4f(.2f, .2f, .2f, tutorial ? tutorial_faded_alpha : 1.0f);
 		glVertexPointer(2, GL_FLOAT, 0, &every_five_lines[0]);
 	    glDrawArrays(GL_LINES, 0, every_five_lines.size() / 2);
 
@@ -1452,8 +1453,7 @@ void Process::Draw_strategy_puzzle()
     // ****************
     // Puzzle border
     // ****************
-    glColor4f(0.95f, 0.58f, 0.09f, 1.0f);
-    //glLineWidth(2.0f / zoom_level);
+    glColor4f(0.95f, 0.58f, 0.09f, tutorial ? tutorial_faded_alpha : 1.0f);
     glLineWidth(3.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(0.0f, 0.0f);
@@ -1482,7 +1482,7 @@ void Process::Draw_strategy_puzzle()
     // Set up for drawing markers
     // ****************
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glColor4f(1.0f, 1.0f, 1.0f, tutorial ? tutorial_faded_alpha : 1.0f);
     glEnable(GL_TEXTURE_2D);
 
     // ****************
