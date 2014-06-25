@@ -118,10 +118,11 @@ class GUI_options(GUI_element_window):
         # alter music settings were appropriate
         self.game.set_music_volume(self.game.core.settings.music_vol)
         
-        if self.game.core.settings.music_on:
-            self.game.ensure_correct_music_playing()
-        else:
-            self.game.fade_out_music()
+        if not self.game.game_state in [GAME_STATE_PUZZLE, GAME_STATE_TEST]:
+            if self.game.core.settings.music_on:
+                self.game.ensure_correct_music_playing()
+            else:
+                self.game.fade_out_music()
         
         self.Kill()
     

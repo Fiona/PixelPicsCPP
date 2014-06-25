@@ -270,7 +270,7 @@ class Game(Process):
 
 
     def set_music_volume(self, volume):
-        if not self.current_playing_music is None:
+        if self.core.Is_music_playing():#not self.current_playing_music is None:
             self.core.media.music[self.current_playing_music].set_volume(volume)
         
 
