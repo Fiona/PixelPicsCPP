@@ -1122,8 +1122,9 @@ class GUI_puzzle(GUI_element):
         if self.game.game_state == GAME_STATE_TUTORIAL:
             return
 
-        diff = (self.game.gui.mouse.x - self.remember_mouse_pos[0], self.game.gui.mouse.y - self.remember_mouse_pos[1])
-        self.adjust_camera_pos(diff[0], diff[1])
+        #diff = (self.game.gui.mouse.x - self.remember_mouse_pos[0], self.game.gui.mouse.y - self.remember_mouse_pos[1])
+        #self.adjust_camera_pos(diff[0], diff[1])
+        self.adjust_camera_pos(-self.game.core.mouse.x_rel, -self.game.core.mouse.y_rel)
 
         self.currently_panning = True
         self.game.gui.mouse.alpha = 0.0
