@@ -8,9 +8,10 @@ env = Environment()
 # Libraries
 env.Append(CPPPATH = ['/usr/include/python2.7/'])
 env.Append(LIBS = [
-                'SDL', 'pthread', 'm', 'dl', 'SDL_image', 'SDL_ttf', 'SDL_mixer', 'freetype', 'bz2', 'GL', 'GLU', 'python2.7',
+                'SDL', 'pthread', 'm', 'dl', 'SDL_image', 'SDL_ttf', 'SDL_mixer', 'freetype', 'bz2', 'GL', 'GLU', 'python2.7', "z",
                 #'bboost_python', 'boost_filesystem', 'boost_system'
-                File('/usr/lib/libboost_python.a'), File('/usr/lib/libboost_filesystem.a'), File('/usr/lib/libboost_system.a'), File('/usr/lib/libz.a')
+                File('/usr/lib/libboost_python.a'), File('/usr/lib/libboost_filesystem.a'), File('/usr/lib/libboost_system.a')
+                #, File('/usr/lib/libz.a')
                 ]
                 )
 
