@@ -536,13 +536,20 @@ bool Python_Interface::initialise_python_interpreter()
 
         PyObject* sysPath = PySys_GetObject((char*)"path");
         std::string paths;
+        std::string module_path;
+
+#if defined(_M_IX86) || defined(__i386__)
+        module_path = "'python27/i386'";
+#else
+        module_path = "'python27/x86_64'";
+#endif
 
 #ifdef DEBUG
         // In debug we load code from a source directory
         paths = "sys.path += ['logic']\n";
 #else
         // In release we load code and std library from zip files
-        paths = "sys.path = ['logic.dat', 'python27/python27.zip', 'python27/python27.zip/plat-linux2', 'python27/python27.zip/lib-tk', 'python27/python27.zip/lib-old', 'python27']\n";
+        paths = "sys.path = ['logic.dat', 'python27/python27.zip', 'python27/python27.zip/plat-linux2', 'python27/python27.zip/lib-tk', 'python27/python27.zip/lib-old', 'python27', " + module_path + "]\n";
 #endif
 
         // Bootstrap the main game object and start it

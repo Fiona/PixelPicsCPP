@@ -4,6 +4,12 @@ import glob as pyglob
 from build_tools import walk_subdirs, create_logic_dat
 env = Environment()
 
+# Figure out architecture
+if sys.maxsize > 2**32:
+    arch = 64
+else:
+    arch = 32
+
 # Bin name
 exe_name = "pixelpics"
 
@@ -34,7 +40,7 @@ else:
 # Output to dist directory if necessary
 dist = ARGUMENTS.get('dist', 0)
 if int(dist):
-   if sys.maxsize > 2**32:
+   if arch == 64:
        out_dir = os.path.join('dist', 'bin', 'x86_64')
    else:
        out_dir = os.path.join('dist', 'bin', 'i386')
@@ -76,13 +82,22 @@ if int(dist):
    for dir in ["music", "sfx", "fnt", "gfx"]:
       shutil.copytree(os.path.join(dir), os.path.join("dist", dir))
 
-   # copy standard library
+   # create python library directories
    os.mkdir(os.path.join("dist", "python27"))
+   os.mkdir(os.path.join("dist", "python27", "i386"))
+   os.mkdir(os.path.join("dist", "python27", "x86_64"))
+
+   # copy standard library
    shutil.copy("python27.zip", os.path.join("dist", "python27", "python27.zip"))
+
+   if arch == 64:
+       pylib_dir = 'x86_64'
+   else:
+       pylib_dir = 'i386'
 
    # copy std library .so files
    for item in os.listdir(os.path.join("python27", "lib-dynload")):
-       shutil.copy2(os.path.join("python27", "lib-dynload", item), os.path.join("dist", "python27", item))
+       shutil.copy2(os.path.join("python27", "lib-dynload", item), os.path.join("dist", "python27", pylib_dir, item))
 
    # copy bash script, make it executable, tell user to collate libs
    shutil.copy("pixelpics.sh", os.path.join("dist", "pixelpics"))
