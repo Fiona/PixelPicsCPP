@@ -1,7 +1,13 @@
 #!/bin/sh
 
-LIBS=./libs
-BIN=./bin/pixelpics
+if [ `getconf LONG_BIT` = "64" ]
+then
+    LIBS=./libs/x86_64
+    BIN=./bin/x86_64/pixelpics
+else
+    LIBS=./libs/i386
+    BIN=./bin/i386/pixelpics
+fi
 
 # Work around for touchpads being too fast in fullscreen mode
 export SDL_MOUSE_RELATIVE=0

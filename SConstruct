@@ -1,9 +1,11 @@
 # Setup
-import os, zipfile, shutil, compileall
+import sys, os, zipfile, shutil, compileall
 import glob as pyglob
 from build_tools import walk_subdirs, create_logic_dat
 env = Environment()
 
+# Bin name
+exe_name = "pixelpics"
 
 # Libraries
 env.Append(CPPPATH = ['/usr/include/python2.7/'])
@@ -32,12 +34,15 @@ else:
 # Output to dist directory if necessary
 dist = ARGUMENTS.get('dist', 0)
 if int(dist):
-   out_dir = os.path.join('dist', 'bin')
+   if sys.maxsize > 2**32:
+       out_dir = os.path.join('dist', 'bin', 'x86_64')
+   else:
+       out_dir = os.path.join('dist', 'bin', 'i386')
 
 # Build executable
 object_list = env.Object(source = sources)
 main_executable = env.Program(
-                target = os.path.join(out_dir, 'pixelpics'),
+                target = os.path.join(out_dir, exe_name),
                 source = object_list,
                 LINKFLAGS = "-Xlinker -export-dynamic"
                 )
@@ -83,4 +88,9 @@ if int(dist):
    shutil.copy("pixelpics.sh", os.path.join("dist", "pixelpics"))
    os.system("chmod +x dist/pixelpics")
    os.mkdir(os.path.join("dist", "libs"))
-   print "Manually CD to 'dist' and execute '../cpld.sh bin/pixelpics libs' to collate dynamic libraries"
+   os.mkdir(os.path.join("dist", "libs" , "i386"))
+   os.mkdir(os.path.join("dist", "libs" , "x86_64"))
+   if sys.maxsize > 2**32:
+      print "Manually CD to 'dist' and execute '../cpld.sh bin/x86_64/pixelpics libs/x86_64' to collate dynamic libraries"
+   else:
+      print "Manually CD to 'dist' and execute '../cpld.sh bin/i386/pixelpics libs/i386' to collate dynamic libraries"
