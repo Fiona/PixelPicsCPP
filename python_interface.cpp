@@ -61,6 +61,7 @@ BOOST_PYTHON_MODULE(core)
     class_<Font>("Font");
     class_<SFX>("SFX")
         .def("play", &SFX::play)
+        .def("stop", &SFX::stop)
         ;
     class_<Music>("Music")
         .def("play_loop", &Music::play_loop)

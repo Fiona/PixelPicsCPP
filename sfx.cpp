@@ -54,3 +54,16 @@ void SFX::play(int times_repeat)
     channel = Mix_PlayChannel(-1, sound, times_repeat);
 
 }
+
+
+void SFX::stop()
+{
+
+    if(channel == -1)
+        return;
+
+    Mix_FadeOutChannel(channel, 750);
+
+    channel = -1;
+
+}

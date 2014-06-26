@@ -240,6 +240,8 @@ Media::Media(Main_App* _game)
     sfx.insert(pair<string,SFX*>("firework1", new SFX("sfx/firework.wav", game)));
     sfx.insert(pair<string,SFX*>("firework2", new SFX("sfx/firework2.wav", game)));
     sfx.insert(pair<string,SFX*>("firework3", new SFX("sfx/firework3.wav", game)));
+    sfx.insert(pair<string,SFX*>("catmode-failure", new SFX("sfx/catmode-failure.wav", game)));
+    sfx.insert(pair<string,SFX*>("catmode-empty_square", new SFX("sfx/catmode-empty_square.wav", game, False)));
 
     // Music
     music.insert(pair<string,Music*>("title", new Music("music/title.ogg", game)));

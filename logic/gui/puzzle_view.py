@@ -552,7 +552,10 @@ class GUI_puzzle(GUI_element):
                     self.game.gui.mouse.alpha = 0.0
                     self.title_text = GUI_failed_title(self.game, self)
                     self.game.puzzle_music_stop = True
-                    self.game.core.media.sfx['failure'].play(0)
+                    if self.game.settings['cat_mode']:
+                        self.game.core.media.sfx['catmode-failure'].play(0)
+                    else:
+                        self.game.core.media.sfx['failure'].play(0)
                     self.game.fade_out_music(250)
                     self.wait_time = 0
 
@@ -1065,6 +1068,9 @@ class GUI_puzzle(GUI_element):
         if not self.state == PUZZLE_STATE_SOLVING or self.currently_panning:
             return
 
+        if self.game.settings['cat_mode']:
+            self.game.core.media.sfx['catmode-empty_square'].stop()
+
         self.made_mistake = False
         
         if self.parent.tool == DRAWING_TOOL_STATE_FILL:
@@ -1290,8 +1296,10 @@ class GUI_puzzle(GUI_element):
         if self.last_state_set is True:
             self.game.core.media.sfx['fill_square'].play(0)
         elif self.last_state_set is False:
-            self.game.core.media.sfx['empty_square'].play(0)
-        
+            if self.game.settings['cat_mode']:
+                self.game.core.media.sfx['catmode-empty_square'].play(-1)
+            else:
+                self.game.core.media.sfx['empty_square'].play(0)
 
 
     def check_line_completion(self, row_index, column_index):

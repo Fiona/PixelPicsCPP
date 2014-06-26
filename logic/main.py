@@ -112,6 +112,7 @@ class Game(Process):
         self.settings['mouse_left_empty'] = self.core.settings.mouse_left_empty
         self.settings['bump_scroll'] = self.core.settings.bump_scroll
         self.settings['lock_drawing'] = self.core.settings.lock_drawing
+        self.settings['cat_mode'] = self.core.settings.cat_mode
         self.author_id = self.core.author_id
         self.load_player()
             

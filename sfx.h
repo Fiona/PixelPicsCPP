@@ -28,6 +28,7 @@ public:
     SFX(string sound_file, Main_App* _game, bool overlap = True);
     ~SFX();
     void play(int times_repeat = 0);
+    void stop();
 
     int channel;
     bool overlap;
