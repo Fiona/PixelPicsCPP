@@ -40,7 +40,7 @@ class GUI_designer_packs_container(GUI_element):
         self.alpha = 0.1
 
         GUI_designer_title(self.game, self, title = "Select Pack")
-        GUI_designer_packs_back(self.game, self)
+        self.back_button = GUI_designer_packs_back(self.game, self)
         GUI_designer_packs_create_pack(self.game, self)
         
         self.objs = []
@@ -67,6 +67,10 @@ class GUI_designer_packs_container(GUI_element):
         self.text_offset_x += 5.0
         self.text_offset_y -= 5.0
 
+        if not self.game.gui.block_gui_keyboard_input:
+            if self.game.core.Keyboard_key_released(key.ESCAPE):
+                self.back_button.mouse_left_up()
+                
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
@@ -642,7 +646,7 @@ class GUI_designer_puzzles_container(GUI_element):
         self.alpha = 0.1
 
         GUI_designer_title(self.game, self, title  = str(self.game.manager.current_pack.name), subtitle  = "by " + str(self.game.manager.current_pack.author_name))
-        GUI_designer_puzzles_back(self.game, self)
+        self.back_button = GUI_designer_puzzles_back(self.game, self)
         GUI_designer_puzzles_create_puzzle(self.game, self)
 
         self.objs = []
@@ -669,6 +673,10 @@ class GUI_designer_puzzles_container(GUI_element):
     def Execute(self):
         self.text_offset_x += 5.0
         self.text_offset_y -= 5.0
+
+        if not self.game.gui.block_gui_keyboard_input:
+            if self.game.core.Keyboard_key_released(key.ESCAPE):
+                self.back_button.mouse_left_up()
 
 
     def On_Exit(self):
@@ -1356,7 +1364,7 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
 
         GUI_designer_designer_menu_bar(self.game, self)
         self.set_title(self.game.manager.current_puzzle.name, str(self.game.manager.current_puzzle.width) + " x " + str(self.game.manager.current_puzzle.height))
-        GUI_designer_designer_back(self.game, self)
+        self.back_button = GUI_designer_designer_back(self.game, self)
         self.puzzle_object = GUI_puzzle(self.game, self)
         GUI_verify_status(self.game, self, self.puzzle_object)
         GUI_designer_designer_edit_name_button(self.game, self)
@@ -1378,6 +1386,10 @@ class GUI_designer_designer_container(GUI_element, Undo_manager_mixin):
     def Execute(self):
         self.update()
         #self.tool_message.alpha = 1.0 if self.tool_message_display else 0.0
+
+        if not self.game.gui.block_gui_keyboard_input:
+            if self.game.core.Keyboard_key_released(key.ESCAPE):
+                self.back_button.mouse_left_up()
 
 
     def untoggle_tools(self, ignore):
@@ -2200,7 +2212,7 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
             no_background = True,
             small = True
             )
-        GUI_designer_designer_back(self.game, self)
+        self.back_button = GUI_designer_designer_back(self.game, self)
         self.puzzle_object = GUI_designer_colour_puzzle(self.game, self)
         #GUI_designer_designer_change_puzzle_background_button(self.game, self)
         GUI_designer_colour_undo_button(self.game, self)
@@ -2225,6 +2237,10 @@ class GUI_designer_colour_container(GUI_element, Undo_manager_mixin):
         self.text_offset_x += 5.0
         self.text_offset_y -= 5.0
         self.update()
+
+        if not self.game.gui.block_gui_keyboard_input:
+            if self.game.core.Keyboard_key_released(key.ESCAPE):
+                self.back_button.mouse_left_up()
 
 
     def On_Exit(self):

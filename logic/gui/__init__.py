@@ -144,11 +144,10 @@ class GUI(Process):
             """
             MAIN MENU
             """
-            #if not self.block_gui_keyboard_input:
+            if not self.block_gui_keyboard_input:
                 # Quit on escape
-            #    if self.game.core.Keyboard_key_released(key.ESCAPE):
-            #        self.game.quit_game()
-            pass
+                if self.game.core.Keyboard_key_released(key.ESCAPE):
+                    self.parent_window.quit_game()
                     
         elif self.game.game_state == GAME_STATE_CATEGORY_SELECT:
             """
@@ -166,7 +165,10 @@ class GUI(Process):
             if not self.block_gui_keyboard_input:
                 # Quit on escape
                 if self.game.core.Keyboard_key_released(key.ESCAPE):
-                    self.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT))
+                    if self.game.manager.user_created_puzzles:
+                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING, gui_state = GUI_STATE_SHARING_DOWNLOADED), speed = 20)
+                    else:
+                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 20)
 
         elif self.game.game_state in [GAME_STATE_PUZZLE, GAME_STATE_TUTORIAL, GAME_STATE_TEST]:
             """

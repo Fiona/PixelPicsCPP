@@ -31,7 +31,7 @@ class GUI_main_menu_container(GUI_element):
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
         self.alpha = .1
-        GUI_main_menu_title(self.game, self, self.game.no_button_anim)
+        self.title = GUI_main_menu_title(self.game, self, self.game.no_button_anim)
         self.game.no_button_anim = True
         
         self.objs = []
@@ -77,6 +77,9 @@ class GUI_main_menu_container(GUI_element):
             self.firework_counter += 1
             
 
+    def quit_game(self):
+        self.title.quit_game()
+        
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
@@ -139,7 +142,7 @@ class GUI_main_menu_title(GUI_element):
                 GUI_main_menu_sharing_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_puzzle_designer_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_options_button(self.game, self, self.no_button_anim)
-                GUI_main_menu_quit_button(self.game, self, self.no_button_anim)
+                self.quit_button = GUI_main_menu_quit_button(self.game, self, self.no_button_anim)
                 GUI_main_menu_credits_button(self.game, self)
                 self.mascot = Mascot_Main_Menu(self.game)
                 self.title_state = 1
@@ -150,6 +153,10 @@ class GUI_main_menu_title(GUI_element):
             if self.wait >= 30:
                 self.title_state = 2
 
+
+    def quit_game(self):
+        if self.title_state == 2:
+            self.quit_button.mouse_left_up()
         
 
     def finish(self):
@@ -608,11 +615,13 @@ class GUI_main_menu_puzzle_type_selection(GUI_element):
         self.z = Z_GUI_OBJECT_LEVEL_8
         self.width = self.game.settings['screen_width']
         self.height = self.game.settings['screen_height']
+        self.game.gui.block_gui_keyboard_input = True
+
         self.gui_init()
 
         GUI_main_menu_puzzle_type_select_main(self.game, self)
         GUI_main_menu_puzzle_type_select_downloaded(self.game, self)
-        GUI_main_menu_puzzle_type_select_go_back(self.game, self)
+        self.back_button = GUI_main_menu_puzzle_type_select_go_back(self.game, self)
         
         # Draw strategy data
         self.draw_strategy = "primitive_square"
@@ -624,6 +633,17 @@ class GUI_main_menu_puzzle_type_selection(GUI_element):
         self.primitive_square_y = 0.0
         self.primitive_square_colour = (0.0, 0.0, 0.0, .4)
 
+
+    def Execute(self):
+        self.update()
+        if self.game.core.Keyboard_key_released(key.ESCAPE):
+            self.back_button.mouse_left_up()
+        
+
+    def On_Exit(self):
+        GUI_element.On_Exit(self)        
+        self.game.gui.block_gui_keyboard_input = False
+        
 
 
 class GUI_main_menu_puzzle_type_select_main(GUI_element_button):
