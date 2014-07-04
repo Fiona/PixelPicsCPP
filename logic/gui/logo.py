@@ -35,8 +35,19 @@ class Stompyblondie_Logo(Process):
         self.z = Z_STOMPYBLONDIE_LOGO
         self.iter = 0
         self.frame = 0
+        self.init_wait = True if self.game.settings['full_screen'] else False
+
 
     def Execute(self):
+        # initial full screen wait
+        if self.init_wait:
+            self.iter += 1
+            if self.iter == 60:
+                self.init_wait = False
+                self.iter = 0
+            return
+
+        # Do the animation
         if self.frame == len(self.frame_switch_times) - 1:
             return
         self.iter += 1
@@ -44,6 +55,7 @@ class Stompyblondie_Logo(Process):
             self.frame += 1
             self.image_sequence = self.frame_switch_times[self.frame][0]
             self.iter = 0
+
         
 
 class Stompyblondie_Logo_Text(Process):
