@@ -1478,6 +1478,8 @@ class GUI_verify_status(GUI_element):
         self.image = self.game.core.media.gfx['gui_verify_status']
         self.gui_init()
         self.objs = []
+        self.throbber_sequence = 1
+        self.throbber_count = 0
 
     def Execute(self):
         if not self.current_solver_state == self.puzzle.puzzle_solver_state: 
@@ -1485,11 +1487,11 @@ class GUI_verify_status(GUI_element):
             for x in self.objs:
                 x.Kill()
             self.objs = []
+            self.current_solver_state = None
             if self.current_solver_state is None:
-                self.image_sequence = 1
+                self.image = self.game.core.media.gfx['gui_designer_throbber']
                 self.text.text = "Verifying Puzzle"                    
             elif self.current_solver_state == True:
-                self.rotation = 0 
                 self.image_sequence = 2
                 self.text.text = "Valid Puzzle"
                 self.objs.append(
@@ -1502,7 +1504,6 @@ class GUI_verify_status(GUI_element):
                     GUI_designer_designer_test_puzzle_button(self.game, self)
                     )
             elif self.current_solver_state == False:
-                self.rotation = 0
                 self.image_sequence = 3                    
                 self.text.text = "Invalid Puzzle"
                 self.objs.append(
@@ -1519,8 +1520,14 @@ class GUI_verify_status(GUI_element):
                     )
 
         if self.current_solver_state is None:
-            self.rotation += 5
-
+            self.throbber_count += 1
+            self.image_sequence = self.throbber_sequence
+            if self.throbber_count > 5:
+                self.throbber_count = 0
+                self.throbber_sequence += 1
+                if self.throbber_sequence > self.image.num_of_frames:
+                    self.throbber_sequence = 1                    
+            
         self.update()
 
 
