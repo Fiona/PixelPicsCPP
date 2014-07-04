@@ -454,6 +454,19 @@ class Main_menu_background(Process):
 
 
 class GUI_main_menu_credits_button(GUI_element_button):
+    frame_switch_times = [
+        (1, 10),
+        (2, 10),
+        (3, 5),
+        (1, 15),
+        (2, 10),
+        (3, 5),
+        (1, 15),
+        (2, 10),
+        (3, 5),
+        (1, 10)
+        ]
+
     def __init__(self, game, parent = None):
         Process.__init__(self)
         self.game = game
@@ -464,7 +477,9 @@ class GUI_main_menu_credits_button(GUI_element_button):
         self.image = self.game.core.media.gfx['gui_stompyblondie_logo_mini']
         self.gui_init()
         self.alpha = 0.0
-
+        self.iter = 0
+        self.frame = 0
+        self.animate = False
         self.text = Text(self.game.core.media.fonts['basic'], self.x - 20, self.y + 50, TEXT_ALIGN_TOP_LEFT, "Credits")
         self.text.z = self.z - 1
         self.text.alpha = 0.0
@@ -474,7 +489,18 @@ class GUI_main_menu_credits_button(GUI_element_button):
     def Execute(self):
         if self.alpha < 1.0:
             self.alpha += .05
-        self.update()
+        #self.update()
+        if self.animate:
+            if self.frame == len(self.frame_switch_times) - 1:
+                self.frame = 0
+            self.iter += 1
+            if self.iter >= self.frame_switch_times[self.frame][1]:
+                self.frame += 1
+                self.image_sequence = self.frame_switch_times[self.frame][0]
+                self.iter = 0
+            
+        else:
+            self.image_sequence = 1
 
     
     def mouse_left_up(self):
@@ -483,12 +509,14 @@ class GUI_main_menu_credits_button(GUI_element_button):
         
 
     def mouse_over(self):
-        GUI_element_button.mouse_over(self)
+        #GUI_element_button.mouse_over(self)
+        self.animate = True
         self.text.alpha = 1.0
 
 
     def mouse_out(self):
-        GUI_element_button.mouse_out(self)
+        #GUI_element_button.mouse_out(self)
+        self.animate = False
         self.text.alpha = 0.0
 
 
