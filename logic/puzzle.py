@@ -165,6 +165,8 @@ class Puzzle_manager(object):
 
         game_packs = []
         for p in self.game_packs:
+            if p == "0001":
+                continue
             game_packs.append(self.game_packs[p])
             
         for pack in game_packs + self.packs:
