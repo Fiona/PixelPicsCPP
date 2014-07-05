@@ -29,16 +29,16 @@ class GUI_tutorial_container(GUI_puzzle_container):
         "Whoops! That's incorrect! Remember to use the RIGHT mouse",
         "button to fill squares and the LEFT mouse button to mark", 
         "squares as empty. Only click a square when you can",
-        "logically deduce what's there."
+        "definitely figure out what's there."
         ]
     message_final_stage_wrong_cell_alt = [
         "Whoops! That's incorrect! Remember to use the LEFT mouse",
         "button to fill squares and the RIGHT mouse button to",
-        "mark squares as empty. Only click a square when you can",
-        "logically deduce what's there."
+        "squares as empty. Only click a square when you can",
+        "definitely figure out what's there."
         ]
     message_final_stage_cell_filled = ["Whoops! That square has already been completed!"]
-    message_tutorial_complete = ["Great work - you solved the puzzle and revealed the hidden", "picture!", "That's all I have to teach you!", "Have fun playing PixelPics!"]
+    message_tutorial_complete = ["Congratulations, you've solved the puzzle and", "revealed the hidden picture!", "Now try out the puzzles in the Beginner category.", "Have fun playing PixelPics!"]
 
     
     def __init__(self, game, parent = None):
@@ -99,8 +99,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             row_highlight = 0,
             )
         self.add_stage(
-            instructions = ["We can determine that there is a two square OVERLAP", "which is filled.", "Right click which squares are definitely filled."],
-            alt_instructions = ["We can determine that there is a two square OVERLAP", "which is filled.", "Left click which squares are definitely filled."],
+            instructions = ["We can determine that there is a two square OVERLAP", "which is filled.", "Right click the squares that are definitely filled."],
+            alt_instructions = ["We can determine that there is a two square OVERLAP", "which is filled.", "Left click the squares that are definitely filled."],
             row_highlight = 0,
             cells_fill = [(0, 1), (0, 2)],
             wrong_cell = ["Try again! Remember to mark only the definite overlap."],
@@ -110,7 +110,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
               ],            
             )
         self.add_stage(
-            instructions = ["Multiple numbers indicate separated groups of filled squares", "They are always separated by at least one empty square", "and are always in the same order as the numbers."],
+            instructions = ["Multiple numbers indicate groups of filled squares", "They are always in the order shown and separated", "by at least one empty square."],
             col_highlight = 3,
             )
         self.add_stage(
@@ -119,14 +119,14 @@ class GUI_tutorial_container(GUI_puzzle_container):
             col_highlight = 3,
             cells_empty = [(1, 3)],
             cells_fill = [(0, 3), (2, 3), (3, 3), (4, 3)],
-            wrong_cell = ["Try again! Remember, multiple numbers indicate more", "than one group of filled squares - separated by", "at least one empty square."],
+            wrong_cell = ["Try again! Remember, multiple numbers indicate groups of", "filled squares. They are always order shown and separated by", "at least one empty square"],
             )
         self.add_stage(
             instructions = ["Sometimes you can't solve all the squares at once.", "Here there's only ONE square we can work out.", "Can you mark which square you think is solvable?"],
             alt_instructions = ["Sometimes you can't solve all the squares at once.", "Here there's only ONE square we can work out.", "Can you mark which square you think is solvable?"],
             row_highlight = 3,
             cells_empty = [(3, 2)],
-            wrong_cell = ["Try again! Remember that filled groups of squares must", "have at least one empty square.", "We can't know for sure where the other filled", "square is - do we know which are definitely empty?"],
+            wrong_cell = ["Try again! Remember that filled groups of squares must be", "separated by at least one empty square.", "We can't know for sure where the other filled", "square is - do we know which are definitely empty?"],
             wrong_input = [
                 ["Are you sure you want to fill a square?", "Look carefully, can you know for certain that the", "other filled square is solvable?"],
                 ["Are you sure you want to fill a square?", "Look carefully, can you know for certain that the", "other filled square is solvable?"],
@@ -144,13 +144,15 @@ class GUI_tutorial_container(GUI_puzzle_container):
                 ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark squares as empty!"]
               ],            
             )
-        
+
+        """
         self.add_stage(
-            instructions = ["Wow, we've already solved quite a lot together!", "I'm going to show you the rest of the puzzle now."],
+            instructions = ["I'm going to show you the rest of the puzzle now."],
             mood = "happy"            
             )
+            """
         self.add_stage(
-            instructions = ["Now I want you to solve the rest of the puzzle on", "your own without my help... Good luck!"],
+            instructions = ["Now try solving the rest of the puzzle on your", "own... Good luck!"],
             mood = "happy"            
             )
 
