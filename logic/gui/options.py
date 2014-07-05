@@ -106,6 +106,7 @@ class GUI_options(GUI_element_window):
         self.game.settings['mouse_left_empty'] = self.game.core.settings.mouse_left_empty
         self.game.settings['bump_scroll'] = self.game.core.settings.bump_scroll
         self.game.settings['lock_drawing'] = self.game.core.settings.lock_drawing
+        self.game.settings['cat_mode'] = self.game.core.settings.cat_mode
 
         if res_or_full_screen_changed:
             GUI_element_dialog_box(
