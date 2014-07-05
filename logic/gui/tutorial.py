@@ -84,8 +84,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             row_highlight = 2,
             )
         self.add_stage(
-            instructions = ["This 4 means there are 4 filled squares in that row.", "We've already solved one of the squares in this row.", "Right click which squares are to be filled in."],
-            alt_instructions = ["This 4 means there are 4 filled squares in that row.", "We've already solved one of the squares in this row.", "Left click which squares are to be filled in."],
+            instructions = ["This 4 means there are 4 filled squares in that row.", "We've already solved one of the squares in this row.", "Right click the squares that are definitely filled."],
+            alt_instructions = ["This 4 means there are 4 filled squares in that row.", "We've already solved one of the squares in this row.", "Left click the squares that are definitely filled."],
             wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted row for now!"],
             wrong_input = [
                 ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
