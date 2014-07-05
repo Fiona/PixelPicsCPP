@@ -371,7 +371,9 @@ class GUI_tutorial_puzzle(GUI_puzzle):
 
     def Execute(self):
         GUI_puzzle.Execute(self)
-        
+
+        self.draw_strategy_tutorial_col_highlight = 1
+
         if self.state == PUZZLE_STATE_SOLVING:
             if self.parent.current_stage < len(self.parent.tutorial_stages):
                 self.parent.next_stage()
