@@ -598,46 +598,18 @@ class GUI_puzzle(GUI_element):
                 else:
                     self.anim_state = 2
                     self.iter = 0
-
+                    self.wait_time = 0
             elif self.anim_state == 2:
-                if not self.click_to_continue and self.wait_time > 120:
-                    #self.title_text.die()
-                    #self.title_text = None
-                    """
-                    self.additional_text = Puzzle_nameplate_text(
-                        self.game,
-                        self.game.settings['screen_width'] /2,
-                        self.game.settings['screen_height'] - 50,
-                        "Click to continue..."
-                        )
-                        """
-                    self.additional_text = Text(
-                        self.game.core.media.fonts['puzzle_click_to_continue'],
-                        self.game.settings['screen_width'] - 10,
-                        self.game.settings['screen_height'] - 10,
-                        TEXT_ALIGN_BOTTOM_RIGHT,
-                        "Click to continue..."
-                        )
-                    self.additional_text.colour = (0.4, 0.4, 0.4)
-                    self.additional_text.alpha = 0.0
-                    self.additional_text.z = Z_GUI_OBJECT_LEVEL_4
-                    self.objs.append(self.additional_text)
-                    
-                    self.objs.append(self.additional_text)
-                    self.click_to_continue = True
-
-                if self.wait_time > 200 and self.additional_text.alpha < 1.0:
-                    self.additional_text.alpha += 0.01
-
-                if self.click_to_continue and self.game.core.mouse.left_up:
-                    if self.game.game_state == GAME_STATE_TEST:
-                        self.game.gui.fade_toggle(self.back_to_designer, speed = 60)
-                    elif self.game.game_state == GAME_STATE_TUTORIAL:
-                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
-                    else:
-                        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
+                if self.wait_time == 1:
                     self.game.gui.block_gui_mouse_input = False
-                    self.game.gui.block_gui_keyboard_input = False
+                    self.game.gui.mouse.alpha = 1.0
+                    self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL                    
+                    self.objs.append(
+                        Button_Retry_Puzzle(self.game, self)
+                        )
+                    self.objs.append(
+                        Button_Select_Puzzle(self.game, self)
+                        )
                     
         # ****************
         # PUZZLE_STATE - Puzzle has been cleared, display the coloured image and cleared message
@@ -2243,3 +2215,45 @@ class Button_Select_Puzzle(GUI_element_button):
         GUI_element_button.mouse_left_up(self)
         self.parent.close_puzzle_cleanup()
         self.parent.close_puzzle()
+
+
+
+class Button_Retry_Puzzle(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = Z_GUI_OBJECT_LEVEL_7
+        self.image = self.game.core.media.gfx['gui_button_retry_puzzle']
+        self.gui_init()
+        self.x = self.game.settings['screen_width'] - self.image.width + 32
+        self.y = self.game.settings['screen_height'] - self.image.height + 16
+        self.width = 200
+        self.height = 90
+        self.alpha = 0.0
+        self.wait_to_display = 50
+        
+
+    def Execute(self):
+        self.update()
+        self.wait_to_display -= 1
+        if self.wait_to_display > 0:
+            return
+        if self.alpha < 1.0:
+            self.alpha += .05
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        if self.game.game_state == GAME_STATE_TEST:
+            self.game.manager.reset_puzzle_state()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TEST), speed = 20)
+        elif self.game.game_state == GAME_STATE_TUTORIAL:
+            self.game.manager.reset_puzzle_state()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_TUTORIAL), speed = 20)
+        else:
+            self.game.manager.reset_puzzle_state()
+            self.game.manager.delete_current_puzzle_save()
+            self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 20)
