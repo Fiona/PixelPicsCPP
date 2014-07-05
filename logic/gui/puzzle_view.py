@@ -398,6 +398,8 @@ class GUI_puzzle(GUI_element):
     black_squares_to_ignore = []
     white_squares_to_ignore = []
 
+    markers_dont_die = False    
+
     def __init__(self, game, parent = None):
         Process.__init__(self)
         self.game = game
@@ -422,6 +424,8 @@ class GUI_puzzle(GUI_element):
 
         self.designer = False
         self.tutorial = False
+        self.hide_hint_numbers = False
+        self.marker_objs = []
 
         # --- DESIGNER ONLY ---
         if self.game.game_state == GAME_STATE_DESIGNER:
@@ -431,7 +435,7 @@ class GUI_puzzle(GUI_element):
         # --- DESIGNER ONLY ---
         if self.game.game_state == GAME_STATE_TUTORIAL:
             self.state = PUZZLE_STATE_SOLVING
-            self.tutorial = True
+            #self.tutorial = True
             self.hint_alpha = .1
 
         self.grid_width = float(PUZZLE_CELL_WIDTH * self.game.manager.current_puzzle.width)
@@ -456,7 +460,7 @@ class GUI_puzzle(GUI_element):
 
         self.current_locked_row = None
         self.current_locked_col = None
-
+               
         self.PUZZLE_VERIFIER_ITERATIONS = PUZZLE_VERIFIER_ITERATIONS
 
         # For unlockable special states
@@ -702,14 +706,15 @@ class GUI_puzzle(GUI_element):
                 if self.wait_time == 180 and not self.finished_special_puzzle:
                     self.game.gui.block_gui_mouse_input = False
                     self.game.gui.mouse.alpha = 1.0
-                    self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL                    
-                    self.objs.append(
-                        Button_Next_Puzzle(self.game, self)
-                        )
-                    self.objs.append(
-                        Button_Select_Puzzle(self.game, self)
-                        )
-                    self.buttons_to_continue = True
+                    self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL
+                    if not self.game.game_state == GAME_STATE_TUTORIAL:
+                        self.objs.append(
+                            Button_Next_Puzzle(self.game, self)
+                            )
+                        self.objs.append(
+                            Button_Select_Puzzle(self.game, self)
+                            )
+                        self.buttons_to_continue = True
 
                 if self.wait_time > 200:
                     if not self.additional_text is None and self.additional_text.alpha < 1.0:
@@ -839,8 +844,8 @@ class GUI_puzzle(GUI_element):
         self.grid_y = 0
 
         # display row hint numbers
-        for x in self.cell_marker_objs:
-            self.cell_marker_objs[x].Kill()
+        #for x in self.cell_marker_objs:
+        #    self.cell_marker_objs[x].Kill()
         if not self.text is None:
             for x in self.text:
                 for i in self.text[x]:
@@ -971,7 +976,7 @@ class GUI_puzzle(GUI_element):
 
 
     def adjust_text_hint_coords(self):
-        hint_alpha = 0.2 if self.game.game_state == GAME_STATE_TUTORIAL else 1.0
+        hint_alpha = 0.0 if self.hide_hint_numbers else 1.0
         if self.game.paused:
             hint_alpha = 0.0
             
@@ -986,7 +991,7 @@ class GUI_puzzle(GUI_element):
                             
             for index, text in enumerate(number_list):
                 if self.state == PUZZLE_STATE_SOLVING:
-                    text.alpha = hint_alpha
+                    text.alpha = 1.0 if self.draw_strategy_tutorial_row_highlight == row_num else hint_alpha
                 text.x = grid_x - (((PUZZLE_CELL_WIDTH * index) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = self.grid_gui_y + (((PUZZLE_CELL_HEIGHT * row_num) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level
@@ -1005,7 +1010,7 @@ class GUI_puzzle(GUI_element):
                             
             for index, text in enumerate(number_list):
                 if self.state == PUZZLE_STATE_SOLVING:
-                    text.alpha = hint_alpha
+                    text.alpha = 1.0 if self.draw_strategy_tutorial_col_highlight == col_num else hint_alpha
                 text.x = self.grid_gui_x + (((PUZZLE_CELL_WIDTH * col_num) + (PUZZLE_CELL_WIDTH / 2)) * self.game.current_zoom_level) - ((text.text_width/2) * self.game.current_zoom_level)
                 text.y = grid_y - (((PUZZLE_CELL_HEIGHT * index) + (PUZZLE_CELL_HEIGHT / 2)) * self.game.current_zoom_level) - ((text.text_height/2) * self.game.current_zoom_level)
                 text.scale = self.game.current_zoom_level
@@ -1609,6 +1614,13 @@ class GUI_puzzle(GUI_element):
         pass
 
 
+    def kill_all_visible_markers(self):
+        it_changes_during_the_iteration = copy.copy(self.cell_marker_objs)
+        for x in it_changes_during_the_iteration:
+            self.cell_marker_objs[x].Kill()
+        self.cell_marker_objs = {}
+
+
     def On_Exit(self):        
         GUI_element.On_Exit(self)
         for x in self.cell_marker_objs:
@@ -1720,7 +1732,8 @@ class Puzzle_marker(Process):
                 self.puzzle.reset_drawing_blacks((self.row, self.col))
             else:
                 self.puzzle.reset_drawing_whites((self.row, self.col))
-            self.Kill()
+            if not self.puzzle.markers_dont_die:
+                self.Kill()
 
         self.update_pos()
 
@@ -1742,7 +1755,15 @@ class Puzzle_marker(Process):
     def On_Exit(self):
         if (self.row, self.col) in self.puzzle.cell_marker_objs:
             del(self.puzzle.cell_marker_objs[(self.row, self.col)])
-        
+        if self.state:
+            if (self.row, self.col) in self.puzzle.black_squares_to_ignore:
+                self.puzzle.black_squares_to_ignore.remove((self.row, self.col))
+            self.puzzle.reset_drawing_blacks((self.row, self.col))                
+        else:
+            if (self.row, self.col) in self.puzzle.white_squares_to_ignore:
+                self.puzzle.white_squares_to_ignore.remove((self.row, self.col))
+            self.puzzle.reset_drawing_whites((self.row, self.col))
+    
     
 
 class Puzzle_pixel_message(Pixel_message):

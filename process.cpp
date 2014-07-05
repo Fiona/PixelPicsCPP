@@ -1201,7 +1201,7 @@ void Process::Draw_strategy_puzzle()
         glTexCoordPointer(2, GL_FLOAT, 0, tutorial_tex_coords_pointer);
 
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_grid_background_highlight"]->texture);
+        glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_grid_background"]->texture);
         float shift_y = tutorial_row_highlight * PUZZLE_CELL_HEIGHT;
         float tutorial_vertex_pointer[] = {
             grid_width, PUZZLE_CELL_HEIGHT + shift_y, 0.0f,
@@ -1613,6 +1613,7 @@ void Process::Draw_strategy_puzzle()
             col.resize((int)ceil((float)current_puzzle_width / PUZZLE_RENDER_CHUNK_SIZE), vector<float>());
         BOOST_FOREACH(vector< vector<float> > &col, black_chunks_textures)
             col.resize((int)ceil((float)current_puzzle_width / PUZZLE_RENDER_CHUNK_SIZE), vector<float>());
+
     }
     else
     {
@@ -1624,9 +1625,11 @@ void Process::Draw_strategy_puzzle()
         {
             for(int i=0; i<boost::python::len(black_chunks_to_redraw); i++)
             {
+
                 boost::python::tuple chunk_to_redraw = boost::python::extract<boost::python::tuple>(black_chunks_to_redraw[i]);
                 black_chunks[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
                 black_chunks_textures[boost::python::extract<int>(chunk_to_redraw[0])][boost::python::extract<int>(chunk_to_redraw[1])].clear();
+
             }
         }
 
@@ -1738,6 +1741,7 @@ void Process::Draw_strategy_puzzle()
         }
 
     }
+
 
     // ****************
     // The white squares marking location of blank squares
@@ -1915,12 +1919,14 @@ void Process::Draw_strategy_puzzle()
 
     }
 
+
     // ****************
     // Reset matrix
     // ****************
     glPopMatrix();
     Process::current_bound_texture = -1;
     glTexCoordPointer(2, GL_FLOAT, 0, &Process::default_texture_coords[0]);
+
 
 }
 
