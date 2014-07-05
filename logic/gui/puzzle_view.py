@@ -98,12 +98,12 @@ class GUI_failed_title(GUI_puzzle_title):
         GUI_puzzle_title.__init__(self, game, parent)
         self.y = 150
         self.letters = []
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "F", -205, 0, 20))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "a", -100, 4, 30))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -20, -6, 40))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 30, -4, 50))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e_normal", 110, 2, 60))
-        self.letters.append(GUI_main_menu_title_letter(self.game, self, "d", 220, -4, 70))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "F", -214, 0, 20))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "a", -109, 4, 30))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "i", -29, -6, 40))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "l", 21, -4, 50))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "e_normal", 101, 2, 60))
+        self.letters.append(GUI_main_menu_title_letter(self.game, self, "d", 211, -4, 70))
 
 
 
