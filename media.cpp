@@ -140,6 +140,8 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_black", new Image("gfx/puzzle_cell_black.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_cell_black_designer", new Image("gfx/puzzle_cell_black_designer.png")));
 
+    gfx.insert(pair<string, Image*>("gui_button_next_puzzle", new Image("gfx/button_next_puzzle.png", False, 4)));
+
     gfx.insert(pair<string, Image*>("gui_heart", new Image("gfx/heart.png", False, 2)));
 
     gfx.insert(pair<string, Image*>("gui_verify_status", new Image("gfx/verify_status.png", False, 3)));
