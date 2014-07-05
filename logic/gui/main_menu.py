@@ -49,6 +49,9 @@ class GUI_main_menu_container(GUI_element):
         self.firework_counter_to = random.randint(20, 60)
         self.firework_counter = 0
 
+        if self.game.special_finish_state == SPECIAL_FINISH_STARRED:
+            self.msg_count = 60
+
         # Draw strategy data
         self.draw_strategy = "primitive_square"
         self.draw_strategy_call_parent = False
@@ -75,7 +78,17 @@ class GUI_main_menu_container(GUI_element):
                     Firework(self.game)
                     )
             self.firework_counter += 1
-            
+        if self.game.special_finish_state == SPECIAL_FINISH_STARRED:
+            self.msg_count -= 1
+            if self.msg_count == 0:
+                self.game.special_finish_state = None
+                GUI_element_dialog_box(
+                    self.game,
+                    self,
+                    "Oh?",
+                    ["'Cat Mode' is now available."]
+                    )
+
 
     def quit_game(self):
         self.title.quit_game()
