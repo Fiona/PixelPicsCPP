@@ -91,6 +91,11 @@ class Game(Process):
     # Keeps track of what we should be playing even if we are not
     music_to_play = None
 
+    # When we finish a puzzle and have a special state, we need to keep track
+    # of it outside a puzzle to give messages etc
+    special_finish_state = None
+
+
     def __init__(self, core):
         Process.__init__(self)
         self.core = core
@@ -123,6 +128,14 @@ class Game(Process):
             self.fps_text.z = -2000
             
         self.manager = Puzzle_manager(self)
+
+        # Trying to cheat cat mode
+        if not self.manager.can_has_cat_mode() and self.settings['cat_mode']:
+            self.settings['cat_mode'] = False
+            self.core.settings.cat_mode = False
+            self.core.settings.save()
+            
+        # Start the game real
         self.gui = GUI(self)
         self.switch_game_state_to(GAME_STATE_LOGO)
 

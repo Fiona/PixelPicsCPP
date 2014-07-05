@@ -458,6 +458,12 @@ class GUI_puzzle(GUI_element):
         self.current_locked_col = None
 
         self.PUZZLE_VERIFIER_ITERATIONS = PUZZLE_VERIFIER_ITERATIONS
+
+        # For unlockable special states
+        self.init_starred_all = self.game.manager.all_main_packs_starred
+        self.init_last_pack_unlocked = self.game.manager.last_pack_unlocked
+        self.init_cleared_all_main_categories = self.game.manager.cleared_all_main_categories
+        self.game.special_finish_state = None
         
 
     def reload_puzzle_background(self):
@@ -642,6 +648,12 @@ class GUI_puzzle(GUI_element):
                 self.hovered_row = -1
                 self.parent.pause_button.fade_and_die()
 
+                self.has_record = False
+                if (not self.game.manager.current_pack.uuid in self.game.player.puzzle_scores or \
+                    not self.game.manager.current_puzzle_file in self.game.player.puzzle_scores[self.game.manager.current_pack.uuid] or \
+                    self.game.timer < self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.game.manager.current_puzzle_file][0]):
+                    self.has_record = True
+
                 if self.title_text is None and self.additional_text is None:                    
                     self.game.gui.block_gui_keyboard_input = True
                     if not self.game.game_state == GAME_STATE_TUTORIAL:                    
@@ -682,14 +694,7 @@ class GUI_puzzle(GUI_element):
                         self.click_to_continue = False
                         self.buttons_to_continue = False
 
-                        # If we're playing the last puzzle in a pack it's a special state
-                        idx = self.game.manager.current_pack.order.index(self.game.manager.current_puzzle_file)
-                        if len(self.game.manager.current_pack.puzzles) == idx+1:
-                            self.finished_special_puzzle = True
-
-                        # Playing in test mode is special
-                        if self.game.game_state == GAME_STATE_TEST:
-                            self.finished_special_puzzle = True
+                        self.finished_special_puzzle = self.have_finished_special_puzzle()
 
                         # Special states show a click to continue instead of a next puzzle button
                         if self.finished_special_puzzle:
@@ -716,9 +721,7 @@ class GUI_puzzle(GUI_element):
                             )
                         has_perfect = True
 
-                    if (not self.game.manager.current_pack.uuid in self.game.player.puzzle_scores or \
-                            not self.game.manager.current_puzzle_file in self.game.player.puzzle_scores[self.game.manager.current_pack.uuid] or \
-                            self.game.timer < self.game.player.puzzle_scores[self.game.manager.current_pack.uuid][self.game.manager.current_puzzle_file][0]):
+                    if self.has_record:
                         self.objs.append(
                             Puzzle_record_clock(self.game, self, has_perfect = has_perfect)
                             )
@@ -765,15 +768,37 @@ class GUI_puzzle(GUI_element):
         elif self.game.game_state == GAME_STATE_TUTORIAL:
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
         else:
-            if self.game.category_to_unlock is None:
+            if self.game.special_finish_state in [SPECIAL_FINISH_OTHER, None]:
                 self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 60)
-            else:
-                self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)
+            elif self.game.special_finish_state == SPECIAL_FINISH_LAST_PACK:
+                self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 60)                
+            elif self.game.special_finish_state == SPECIAL_FINISH_STARRED:
+                self.game.gui.block_gui_mouse_input = False
+                self.game.gui.mouse.alpha = 1.0
+                self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL                                    
+                GUI_element_dialog_box(
+                    self.game,
+                    self.parent,
+                    "Wow!",
+                    ["You've managed to get a star on every puzzle in PixelPics!", " ", "Have you tried any player-made puzzles from the", "'Extra Puzzles' section?"],
+                    callback = lambda: self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 60)
+                    )
+            elif self.game.special_finish_state == SPECIAL_FINISH_CLEARED:
+                self.game.gui.block_gui_mouse_input = False
+                self.game.gui.mouse.alpha = 1.0
+                self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL                                    
+                GUI_element_dialog_box(
+                    self.game,
+                    self.parent,
+                    "Wow!",
+                    ["You've finished every puzzle in PixelPics! Amazing!", " ",
+                     "How many puzzles have you earnt a star on?", "Can you get them all?"],
+                    callback = lambda: self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_MENU), speed = 60)
+                    )
+                
         
 
     def go_next_puzzle(self):
-        self.close_puzzle_cleanup()
-
         idx = self.game.manager.current_pack.order.index(self.game.manager.current_puzzle_file)
         self.game.manager.current_puzzle_file = self.game.manager.current_pack.order[idx+1]
 
@@ -785,6 +810,46 @@ class GUI_puzzle(GUI_element):
         if os.path.exists(os.path.join(save_path, self.game.manager.current_puzzle_pack + "_" + self.game.manager.current_puzzle_file + FILE_SAVES_EXTENSION)):
             self.game.manager.load_puzzle_state_from = self.game.manager.current_puzzle_pack + "_" + self.game.manager.current_puzzle_file + FILE_SAVES_EXTENSION
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE), speed = 40, stop_music = True)
+
+
+    def have_finished_special_puzzle(self):
+        # Playing in test mode is special
+        if self.game.game_state == GAME_STATE_TEST:
+            self.game.special_finish_state = SPECIAL_FINISH_OTHER
+            return True
+        
+        # These special states only apply to built-in puzzles
+        if not self.game.manager.user_created_puzzles:
+            self.close_puzzle_cleanup()
+            
+            # If we have just, with that one, starred all the puzzles then it's special
+            if not self.init_starred_all and self.game.manager.all_main_packs_starred:
+                self.game.special_finish_state = SPECIAL_FINISH_STARRED
+                return True
+
+            # If we've finished all main puzzles
+            if not self.init_cleared_all_main_categories and self.game.manager.cleared_all_main_categories:
+                self.game.special_finish_state = SPECIAL_FINISH_CLEARED
+                return True
+
+            # If we've unlocked the final pack!
+            if not self.init_last_pack_unlocked and self.game.manager.last_pack_unlocked:
+                self.game.special_finish_state = SPECIAL_FINISH_LAST_PACK
+                return True
+
+            # If we've unlocked a category
+            if not self.game.category_to_unlock is None:
+                self.game.special_finish_state = SPECIAL_FINISH_UNLOCKED
+                return True
+            
+        # If we're playing the last puzzle in a pack it's special
+        idx = self.game.manager.current_pack.order.index(self.game.manager.current_puzzle_file)
+        if len(self.game.manager.current_pack.puzzles) == idx+1:
+            self.game.special_finish_state = SPECIAL_FINISH_OTHER
+            return True
+
+        # Not special
+        return False
 
 
     def back_to_designer(self):
