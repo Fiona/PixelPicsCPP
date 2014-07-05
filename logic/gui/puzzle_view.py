@@ -158,6 +158,8 @@ class GUI_puzzle_container(GUI_element):
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
+        if not self.pause_button is None:
+            self.pause_button.Kill()
         for x in self.objs:
             x.Kill()
 
@@ -177,6 +179,22 @@ class GUI_puzzle_pause_button(GUI_element_button):
         self.y = -16
         self.width = 105
         self.height = 105
+        self.dying = False
+
+
+    def Execute(self):
+        if self.dying:
+            self.alpha -= 0.05
+            if self.alpha < 0:
+                self.parent.pause_button = None
+                self.Kill()
+        else:
+            self.update()
+            
+
+    def fade_and_die(self):
+        self.dying = True
+
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
@@ -548,6 +566,7 @@ class GUI_puzzle(GUI_element):
             if self.anim_state == 0:
                 self.hovered_column = -1
                 self.hovered_row = -1
+                self.parent.pause_button.fade_and_die()
 
                 if self.title_text is None and self.additional_text is None:
                     self.game.gui.block_gui_keyboard_input = True
@@ -621,6 +640,7 @@ class GUI_puzzle(GUI_element):
             if self.anim_state == 0:
                 self.hovered_column = -1
                 self.hovered_row = -1
+                self.parent.pause_button.fade_and_die()
 
                 if self.title_text is None and self.additional_text is None:                    
                     self.game.gui.block_gui_keyboard_input = True
@@ -710,6 +730,9 @@ class GUI_puzzle(GUI_element):
                     self.game.cursor_tool_state = DRAWING_TOOL_STATE_NORMAL                    
                     self.objs.append(
                         Button_Next_Puzzle(self.game, self)
+                        )
+                    self.objs.append(
+                        Button_Select_Puzzle(self.game, self)
                         )
                     self.buttons_to_continue = True
 
@@ -886,7 +909,6 @@ class GUI_puzzle(GUI_element):
 
         for x in self.parent.objs:
             x.alpha = self.hint_alpha
-        self.parent.pause_button.alpha = self.hint_alpha
 
         self.draw_strategy_reset_hint_gradients = True
         
@@ -2102,10 +2124,10 @@ class Button_Next_Puzzle(GUI_element_button):
         self.z = Z_GUI_OBJECT_LEVEL_7
         self.image = self.game.core.media.gfx['gui_button_next_puzzle']
         self.gui_init()
-        self.x = self.game.settings['screen_width'] - self.image.width + 16
+        self.x = self.game.settings['screen_width'] - self.image.width + 32
         self.y = self.game.settings['screen_height'] - self.image.height + 16
-        self.width = 196
-        self.height = 76
+        self.width = 200
+        self.height = 90
         self.alpha = 0.0
         self.wait_to_display = 50
         
@@ -2123,3 +2145,36 @@ class Button_Next_Puzzle(GUI_element_button):
         GUI_element_button.mouse_left_up(self)
         self.parent.go_next_puzzle()
 
+
+
+class Button_Select_Puzzle(GUI_element_button):
+    generic_button = False
+
+    def __init__(self, game, parent = None):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.z = Z_GUI_OBJECT_LEVEL_7
+        self.image = self.game.core.media.gfx['gui_button_select_puzzle']
+        self.x = 32
+        self.y = 32
+        self.width = 100
+        self.height = 100
+        self.gui_init()
+        self.alpha = 0.0
+        self.wait_to_display = 50
+        
+
+    def Execute(self):
+        self.update()
+        self.wait_to_display -= 1
+        if self.wait_to_display > 0:
+            return
+        if self.alpha < 1.0:
+            self.alpha += .05
+            
+
+    def mouse_left_up(self):
+        GUI_element_button.mouse_left_up(self)
+        self.parent.close_puzzle_cleanup()
+        self.parent.close_puzzle()
