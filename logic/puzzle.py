@@ -85,8 +85,8 @@ class Puzzle_save(object):
 
 class Puzzle_manager(object):
 
-    current_puzzle_file = "001"
-    current_puzzle_pack = "001"
+    current_puzzle_file = "0001.puz"
+    current_puzzle_pack = "0001"
 
     current_puzzle = None
     current_pack = None

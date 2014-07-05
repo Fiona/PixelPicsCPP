@@ -1069,6 +1069,8 @@ void Process::Draw_strategy_puzzle()
     bool reset_hint_gradients;
     bool designer; 
     bool tutorial; 
+    int tutorial_row_highlight;
+    int tutorial_col_highlight;
 
     bool display_rectangle_marker;
     boost::python::object rectangle_marker_top_left;
@@ -1099,6 +1101,8 @@ void Process::Draw_strategy_puzzle()
              reset_hint_gradients = boost::python::extract<bool>(self_.attr("draw_strategy_reset_hint_gradients"));
              designer = boost::python::extract<bool>(self_.attr("designer"));
              tutorial = boost::python::extract<bool>(self_.attr("tutorial"));
+             tutorial_row_highlight = boost::python::extract<int>(self_.attr("draw_strategy_tutorial_row_highlight"));
+             tutorial_col_highlight = boost::python::extract<int>(self_.attr("draw_strategy_tutorial_col_highlight"));
 
              display_rectangle_marker = boost::python::extract<bool>(self_.attr("display_rectangle_marker"));
              rectangle_marker_top_left = boost::python::extract<boost::python::object>(self_.attr("rectangle_marker_top_left"));
@@ -1172,7 +1176,107 @@ void Process::Draw_strategy_puzzle()
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
      
     // ****************
-    //Gradients behind numbers
+    // Tutorial higlighted row
+    // ****************
+    if(tutorial && tutorial_row_highlight > -1)
+    {
+
+        float tutorial_tex_coords_pointer[8];
+
+        if(tutorial_row_highlight % 2)
+        {
+            tutorial_tex_coords_pointer[0] = coords_x; tutorial_tex_coords_pointer[1] = 1.0f;
+            tutorial_tex_coords_pointer[2] = 0.0f; tutorial_tex_coords_pointer[3] = 1.0f;
+            tutorial_tex_coords_pointer[4] = coords_x; tutorial_tex_coords_pointer[5] = 0.5f;
+            tutorial_tex_coords_pointer[6] = 0.0f; tutorial_tex_coords_pointer[7] = 0.5f;
+        }
+        else
+        {
+            tutorial_tex_coords_pointer[0] = coords_x; tutorial_tex_coords_pointer[1] = .5f;
+            tutorial_tex_coords_pointer[2] = 0.0f; tutorial_tex_coords_pointer[3] = .5f;
+            tutorial_tex_coords_pointer[4] = coords_x; tutorial_tex_coords_pointer[5] = 0.0f;
+            tutorial_tex_coords_pointer[6] = 0.0f; tutorial_tex_coords_pointer[7] = 0.0f;
+        }
+
+        glTexCoordPointer(2, GL_FLOAT, 0, tutorial_tex_coords_pointer);
+
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_grid_background_highlight"]->texture);
+        float shift_y = tutorial_row_highlight * PUZZLE_CELL_HEIGHT;
+        float tutorial_vertex_pointer[] = {
+            grid_width, PUZZLE_CELL_HEIGHT + shift_y, 0.0f,
+            0.0f, PUZZLE_CELL_HEIGHT + shift_y, 0.0f,
+            grid_width, shift_y, 0.0f,
+            0.0f, shift_y, 0.0f
+        };
+        glVertexPointer(3, GL_FLOAT, 0, tutorial_vertex_pointer);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
+        glLineWidth(2.0f);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(0.0f, shift_y);
+        glVertex2f(grid_width, shift_y);
+        glVertex2f(grid_width, PUZZLE_CELL_HEIGHT + shift_y);
+        glVertex2f(0.0f, PUZZLE_CELL_HEIGHT + shift_y);
+        glEnd();
+
+    }
+
+    // ****************
+    // Tutorial higlighted col
+    // ****************
+    if(tutorial && tutorial_col_highlight > -1)
+    {
+
+        float tutorial_tex_coords_pointer[8];
+
+        if(tutorial_col_highlight % 2)
+        {
+            tutorial_tex_coords_pointer[0] = 0.5; tutorial_tex_coords_pointer[1] = 0.0f;
+            tutorial_tex_coords_pointer[2] = 0.5; tutorial_tex_coords_pointer[3] = coords_y;
+            tutorial_tex_coords_pointer[4] = 1.0f; tutorial_tex_coords_pointer[5] = 0.0f;
+            tutorial_tex_coords_pointer[6] = 1.0f; tutorial_tex_coords_pointer[7] = coords_y;
+        }
+        else
+        {
+            tutorial_tex_coords_pointer[0] = 0.0; tutorial_tex_coords_pointer[1] = 0.0f;
+            tutorial_tex_coords_pointer[2] = 0.0; tutorial_tex_coords_pointer[3] = coords_y;
+            tutorial_tex_coords_pointer[4] = 0.5f; tutorial_tex_coords_pointer[5] = 0.0f;
+            tutorial_tex_coords_pointer[6] = 0.5f; tutorial_tex_coords_pointer[7] = coords_y;
+        }
+
+        glTexCoordPointer(2, GL_FLOAT, 0, tutorial_tex_coords_pointer);
+
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, media->gfx["gui_puzzle_grid_background"]->texture);
+        float shift_x = tutorial_col_highlight * PUZZLE_CELL_WIDTH;
+        float tutorial_vertex_pointer[] = {
+            PUZZLE_CELL_WIDTH + shift_x, grid_height, 0.0f,
+            PUZZLE_CELL_WIDTH + shift_x, 0.0f, 0.0f,
+            shift_x, grid_height, 0.0f,
+            shift_x, 0.0f, 0.0f
+        };
+        glVertexPointer(3, GL_FLOAT, 0, tutorial_vertex_pointer);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
+        glLineWidth(2.0f);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(shift_x, 0.0f);
+        glVertex2f(shift_x, grid_height);
+        glVertex2f(PUZZLE_CELL_WIDTH + shift_x, grid_height);
+        glVertex2f(PUZZLE_CELL_WIDTH + shift_x, 0.0f);
+        glEnd();
+
+    }
+
+    // ****************
+    // Gradients behind numbers
     // ****************
     float draw_start;
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);

@@ -930,6 +930,8 @@ class GUI_puzzle(GUI_element):
         self.draw_strategy_current_puzzle_height = self.game.manager.current_puzzle.height
         self.draw_strategy_current_puzzle_state = self.game.manager.current_puzzle_state
         self.draw_strategy_reset_hint_gradients = False
+        self.draw_strategy_tutorial_row_highlight = -1
+        self.draw_strategy_tutorial_col_highlight = -1
 
         self.display_rectangle_marker = False
         self.rectangle_marker_top_left = (0, 0)
