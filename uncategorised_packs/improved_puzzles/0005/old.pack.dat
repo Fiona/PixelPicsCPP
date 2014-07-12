@@ -1,0 +1,37 @@
+ccopy_reg
+_reconstructor
+p1
+(cpuzzle
+Pack
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'uuid'
+p6
+S'6c9a1f1f-fb61-4b0e-9f0a-4efc60f56e5d'
+p7
+sS'author_name'
+p8
+VStompy Blondie
+p9
+sS'name'
+p10
+VPuzzle Improvements
+p11
+sS'puzzles'
+p12
+(dp13
+sS'author_id'
+p14
+S'0c3a976c-5926-4804-8c2f-8d0b5224863f'
+p15
+sS'order'
+p16
+(lp17
+sS'freemode'
+p18
+I00
+sb.
