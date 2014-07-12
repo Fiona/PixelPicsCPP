@@ -137,8 +137,7 @@ class Game(Process):
             
         # Start the game real
         self.gui = GUI(self)
-        #self.switch_game_state_to(GAME_STATE_LOGO)
-        self.switch_game_state_to(GAME_STATE_TUTORIAL)        
+        self.switch_game_state_to(GAME_STATE_LOGO)
 
 
     def Execute(self):
