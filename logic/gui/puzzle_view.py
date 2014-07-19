@@ -1184,11 +1184,12 @@ class GUI_puzzle(GUI_element):
             cell_list = []
             self.checked_fill_stack = []
             self.fill_stack = [(self.hovered_row, self.hovered_column)]
-            while self.fill_at(True, cell_list):
+            state = True if self.game.manager.current_puzzle_state[self.hovered_row][self.hovered_column] is None else None
+            while self.fill_at(state, cell_list):
                 pass
             if len(cell_list) > 0:
                 self.parent.need_to_save = True        
-                self.change_cells(cell_list, True)
+                self.change_cells(cell_list, state)
 
         elif self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
             self.draw_rectangle(True, self.rectangle_marker_top_left, self.rectangle_marker_bottom_right)
@@ -1216,7 +1217,8 @@ class GUI_puzzle(GUI_element):
             cell_list = []
             self.checked_fill_stack = []
             self.fill_stack = [(self.hovered_row, self.hovered_column)]
-            while self.fill_at(None, cell_list):
+            state = True if self.game.manager.current_puzzle_state[self.hovered_row][self.hovered_column] is None else None
+            while self.fill_at(state, cell_list):
                 pass
             if len(cell_list) > 0:
                 self.parent.need_to_save = True        
