@@ -214,6 +214,13 @@ BOOST_PYTHON_MODULE(core)
     scope().attr("SHARING_ADDRESS") = REMOTE_SHARING_ADDRESS;
 #endif
 
+    // Demo mode
+#ifdef DEMO
+    scope().attr("DEMO") = true;
+#else
+    scope().attr("DEMO") = false;
+#endif
+
     // Expose the framework constants
     scope().attr("TEXT_ALIGN_TOP_LEFT") = TEXT_ALIGN_TOP_LEFT;
     scope().attr("TEXT_ALIGN_TOP") = TEXT_ALIGN_TOP;
