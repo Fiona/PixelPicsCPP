@@ -35,7 +35,7 @@ aI10
 asS'0001.puz'
 p17
 (lp18
-VSkull
+VSorceress
 p19
 aI10
 aI10
@@ -84,10 +84,10 @@ aI15
 asS'0019.puz'
 p38
 (lp39
-VSay Cheese!
+VTreble Clef
 p40
-aI15
 aI10
+aI15
 asS'0007.puz'
 p41
 (lp42
@@ -105,21 +105,21 @@ aI10
 asS'0002.puz'
 p47
 (lp48
-VToadstool
+VMovie Camera
 p49
 aI10
 aI10
 asS'0005.puz'
 p50
 (lp51
-V@
+VCandy Bar
 p52
 aI10
 aI10
 asS'0004.puz'
 p53
 (lp54
-VDiamond
+VQuill Pen
 p55
 aI10
 aI10
@@ -154,7 +154,7 @@ aI15
 asS'0003.puz'
 p68
 (lp69
-VDelicious Cake
+VGenie
 p70
 aI10
 aI10
