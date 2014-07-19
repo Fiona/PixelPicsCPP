@@ -174,6 +174,43 @@ nav.navbar .navbar-collapse
   text-decoration: none;
 }
 
+.media-section .gallery
+{
+  padding-top : 10px;
+}
+
+/*************
+ * contact styling
+ *************/
+
+.contact-section
+{
+  height: 220px;
+  padding-top: 40px;
+  text-align: center;
+  background: #eee;
+}
+
+.contact-section p a
+{
+  font-family: 'Open Sans';
+  font-size: 16px;
+  font-weight: bold;
+  padding-left: 5px;
+}
+
+@media (min-width: 768px)
+{
+  .contact-section p a
+  {
+    font-size: 19px;
+  }
+  .contact-section
+  {
+    height: 150px;
+  }
+}
+
 /*************
  * outro styling
  *************/
@@ -225,14 +262,12 @@ nav.navbar .navbar-collapse
   color: #df9652;
 }
 
-/*************
- * dumb dumb styling
- *************/
 
-.contact-section
-{
-  height: 100%;
-  padding-top: 20px;
-  text-align: center;
-  background: #eee;
+
+
+section#footer {
+  width: 100%;
+  height: 60px;
+  background-color: #f5f5f5;
+  margin-top: 30px;
 }
