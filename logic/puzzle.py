@@ -220,6 +220,8 @@ class Puzzle_manager(object):
 
 
     def can_has_cat_mode(self):
+        if DEMO:
+            return False
         return self.cleared_all_main_categories and self.all_main_packs_starred
 
 

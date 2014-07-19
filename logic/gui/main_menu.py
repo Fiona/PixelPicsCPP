@@ -163,7 +163,9 @@ class GUI_main_menu_title(GUI_element):
                 self.mascot = Mascot_Main_Menu(self.game)
                 self.title_state = 1
                 self.wait = 0
-
+                if DEMO:
+                    GUI_main_menu_buy_full_button(self.game, self)
+                    
         if self.title_state == 1:
             self.wait += 1
             if self.wait >= 30:
@@ -464,6 +466,26 @@ class GUI_main_menu_quit_button(GUI_main_menu_button):
     def confirm(self):
         self.game.quit_game()
 
+
+class GUI_main_menu_buy_full_button(GUI_main_menu_button):
+
+    def __init__(self, game, parent = None, no_button_anim = False):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.image = self.game.core.media.gfx['title_button_buy_full']
+        self.z = Z_GUI_OBJECT_LEVEL_2        
+        self.main_menu_button_init(y_shift_to = 230, y_shift = 150, iter_wait = 200)
+        self.x += 300
+        if no_button_anim:
+            self.y = self.y_to
+            self.main_menu_button_state = 1
+
+
+    def mouse_left_up(self):
+        GUI_main_menu_button.mouse_left_up(self)
+        import webbrowser
+        webbrowser.open("http://pixelpicsgame.com", new = 2)
 
 
 class Main_menu_background(Process):
