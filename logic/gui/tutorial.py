@@ -340,6 +340,8 @@ class GUI_tutorial_puzzle(GUI_puzzle):
         GUI_puzzle.__init__(self, game, parent)
         self.hide_hint_numbers = True
         self.markers_dont_die = True
+        self.check_stage_completion = False
+        self.mouse_down = False
         
 
     def Execute(self):
@@ -348,6 +350,10 @@ class GUI_tutorial_puzzle(GUI_puzzle):
         if self.state == PUZZLE_STATE_SOLVING:
             if self.parent.current_stage < len(self.parent.tutorial_stages):
                 self.parent.next_stage()
+            if self.check_stage_completion and not self.mouse_down:
+                self.check_stage_completion = False
+                if not self.parent.final_stage:
+                    self.parent.check_stage_completion()
 
 
     def mark_cell(self, state, cell, skip_animation = False):
@@ -409,11 +415,30 @@ class GUI_tutorial_puzzle(GUI_puzzle):
 
         GUI_puzzle.mark_cell(self, state, cell, skip_animation)
 
-        if not self.parent.final_stage:
-            self.parent.check_stage_completion()
-
+        self.check_stage_completion = True
+        
         self.reset_drawing_blacks()
         self.reset_drawing_whites()
+    
+
+    def mouse_right_down(self):
+        self.mouse_down = True
+        GUI_puzzle.mouse_right_down(self)
+
+
+    def mouse_left_down(self):
+        self.mouse_down = True
+        GUI_puzzle.mouse_left_down(self)
+
+
+    def mouse_right_up(self):
+        self.mouse_down = False
+        GUI_puzzle.mouse_right_up(self)
+
+
+    def mouse_left_up(self):
+        self.mouse_down = False
+        GUI_puzzle.mouse_left_up(self)
 
 
     def do_bump_scrolling(self):
