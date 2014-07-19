@@ -192,6 +192,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_tutorial_next", new Image("gfx/button_tutorial_next.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_tutorial_speech_bubble", new Image("gfx/tutorial_speech_bubble.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_record_clock", new Image("gfx/puzzle_record_clock.png")));
+    gfx.insert(pair<string, Image*>("tutorial_stage_finish", new Image("gfx/tutorial_stage_finish.png")));
 
     gfx.insert(pair<string, Image*>("gui_background_present", new Image("gfx/background_present.png", True)));
     gfx.insert(pair<string, Image*>("gui_background_balloons", new Image("gfx/background_balloons.png", True)));
@@ -226,7 +227,6 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_sharing_play", new Image("gfx/button_sharing_play.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_delete", new Image("gfx/button_sharing_delete.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_next", new Image("gfx/button_sharing_next.png", False, 4)));
-    gfx.insert(pair<string, Image*>("gui_button_sharing_prev", new Image("gfx/button_sharing_prev.png", False, 4)));
 
     // Sound effects!
     sfx.insert(pair<string,SFX*>("empty_square", new SFX("sfx/empty_square.wav", game, False)));
