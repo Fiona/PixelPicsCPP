@@ -152,8 +152,10 @@ class GUI_puzzle_container(GUI_element):
 
 
     def show_menu(self):
+        if not self.puzzle.state == PUZZLE_STATE_SOLVING:
+            return
         self.game.paused = True
-        self.menu = GUI_puzzle_pause_menu(self.game, self)        
+        self.menu = GUI_puzzle_pause_menu(self.game, self)
 
 
     def On_Exit(self):
