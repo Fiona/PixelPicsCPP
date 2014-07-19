@@ -1625,7 +1625,7 @@ class GUI_puzzle(GUI_element):
 
     def On_Exit(self):        
         GUI_element.On_Exit(self)
-        for x in self.cell_marker_objs:
+        for x in dict(self.cell_marker_objs):
             self.cell_marker_objs[x].Kill()
         for x in self.text:
             for i in self.text[x]:
