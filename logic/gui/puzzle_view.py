@@ -1695,9 +1695,11 @@ class Puzzle_marker(Process):
             self.alpha = lerp(self.iter, 10, self.alpha, 1.0)
             if self.iter > 10:
                 if self.state:
-                    self.puzzle.black_squares_to_ignore.remove((self.row, self.col))
+                    if (self.row, self.col) in self.puzzle.black_squares_to_ignore:
+                        self.puzzle.black_squares_to_ignore.remove((self.row, self.col))
                 else:
-                    self.puzzle.white_squares_to_ignore.remove((self.row, self.col))
+                    if (self.row, self.col) in self.puzzle.white_squares_to_ignore:
+                        self.puzzle.white_squares_to_ignore.remove((self.row, self.col))
                 self.marker_state = 0
                 self.iter = 0
             else:
