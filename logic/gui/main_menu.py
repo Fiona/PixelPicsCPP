@@ -40,11 +40,12 @@ class GUI_main_menu_container(GUI_element):
                 Main_menu_background(self.game)
                 )
 
-        if self.game.manager.all_main_packs_starred:
-            for x in range(20):
-                self.objs.append(
-                    Reward_star(self.game, x)
-                    )
+        if not DEMO:
+            if self.game.manager.all_main_packs_starred:
+                for x in range(20):
+                    self.objs.append(
+                        Reward_star(self.game, x)
+                        )
 
         self.firework_counter_to = random.randint(20, 60)
         self.firework_counter = 0
@@ -70,6 +71,8 @@ class GUI_main_menu_container(GUI_element):
 
     def Execute(self):
         self.update()
+        if DEMO:
+            return
         if self.game.manager.cleared_all_main_categories:
             if self.firework_counter == self.firework_counter_to:
                 self.firework_counter_to = random.randint(10, 20)
@@ -303,8 +306,10 @@ class GUI_main_menu_button(GUI_element_button):
         self.main_menu_button_state = 0
         self.iter = 0
         self.iter_wait = iter_wait
+        self.full_game_only = None
+        if self.disabled:
+            self.full_game_only = Full_Game_Only_Notice(self.game, self)
 
-        
     def Execute(self):
         self.update()
         if self.main_menu_button_state == 0:
@@ -312,6 +317,10 @@ class GUI_main_menu_button(GUI_element_button):
             self.y = lerp(self.iter, self.iter_wait, self.y, self.y_to)
             if self.iter > self.iter_wait:
                 self.main_menu_button_state = 1
+
+    def On_Exit(self):
+        if not self.full_game_only is None:
+            self.full_game_only.Kill()
 
         
 
@@ -324,11 +333,9 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
         self.image = self.game.core.media.gfx['gui_button_main_menu_play']
         self.z = Z_GUI_OBJECT_LEVEL_2
         self.main_menu_button_init(y_shift_to = 40, iter_wait = 50)
-
         if no_button_anim:
             self.y = self.y_to
             self.main_menu_button_state = 1
-
 
     def mouse_left_up(self):
         GUI_main_menu_button.mouse_left_up(self)
@@ -338,7 +345,6 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
                 continue
             no_download_items = False
             break
-
         if no_download_items:
             self.game.manager.user_created_puzzles = False
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30, stop_music = True)
@@ -355,14 +361,15 @@ class GUI_main_menu_puzzle_designer_button(GUI_main_menu_button):
         self.parent = parent
         self.image = self.game.core.media.gfx['gui_button_main_menu_designer']
         self.z = Z_GUI_OBJECT_LEVEL_2        
+        self.disabled = DEMO
         self.main_menu_button_init(y_shift_to = 150, y_shift = 100, iter_wait = 150)
-
         if no_button_anim:
             self.y = self.y_to
             self.main_menu_button_state = 1
 
-
     def mouse_left_up(self):
+        if self.disabled:
+            return
         GUI_main_menu_button.mouse_left_up(self)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_DESIGNER), speed = 20, stop_music = True)
 
@@ -376,18 +383,36 @@ class GUI_main_menu_sharing_button(GUI_main_menu_button):
         self.parent = parent
         self.image = self.game.core.media.gfx['gui_button_main_menu_extras']
         self.z = Z_GUI_OBJECT_LEVEL_2        
+        self.disabled = DEMO
         self.main_menu_button_init(y_shift_to = 95, y_shift = 50, iter_wait = 100)
-
         if no_button_anim:
             self.y = self.y_to
             self.main_menu_button_state = 1
 
-
     def mouse_left_up(self):
+        if self.disabled:
+            return
         GUI_main_menu_button.mouse_left_up(self)
         self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_SHARING), speed = 20)
 
 
+            
+class Full_Game_Only_Notice(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.image = self.game.core.media.gfx['full_game_stamp']
+        self.z = self.parent.z - 1
+        self.scale = .5
+        self.alpha = 0.0
+        
+    def Execute(self):
+        self.x = self.parent.x + 350
+        self.y = self.parent.y + 80
+        if self.parent.main_menu_button_state == 1 and self.alpha < 1.0:
+            self.alpha += 0.1
+            
 
 class GUI_main_menu_options_button(GUI_main_menu_button):
 
