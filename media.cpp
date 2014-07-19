@@ -189,6 +189,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_speech_bubble", new Image("gfx/speech_bubble.png")));
 
     gfx.insert(pair<string, Image*>("full_game_stamp", new Image("gfx/full_game_stamp.png")));
+    gfx.insert(pair<string, Image*>("title_button_buy_full", new Image("gfx/title_button_buy_full.png", False, 4)));
 
     // Non-demo graphics
 #ifndef DEMO
