@@ -879,6 +879,7 @@ class GUI_element_text_input(GUI_element):
                 and not input_key == key.ESCAPE
                 and not input_key == key.BACKSPACE
                 and not input_key == key.DELETE
+                and not input_key == key.TAB
                 ):
                 self.game.core.media.sfx['type'].play(0)                
                 if len(self.current_text) < self.max_length:
