@@ -115,7 +115,7 @@ class GUI_category_select_container(GUI_element):
             ]
         self.category_objs = []
 
-        if self.game.manager.last_pack_unlocked:
+        if not DEMO and self.game.manager.last_pack_unlocked:
             categories.append(("Final Challenge",  "last", colours['magenta']))
 
         i = 0
