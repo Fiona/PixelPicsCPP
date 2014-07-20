@@ -221,6 +221,8 @@ BOOST_PYTHON_MODULE(core)
     scope().attr("DEMO") = false;
 #endif
 
+    scope().attr("VERSION") = VERSION;
+
     // Expose the framework constants
     scope().attr("TEXT_ALIGN_TOP_LEFT") = TEXT_ALIGN_TOP_LEFT;
     scope().attr("TEXT_ALIGN_TOP") = TEXT_ALIGN_TOP;
