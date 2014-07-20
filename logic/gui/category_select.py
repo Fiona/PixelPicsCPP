@@ -195,7 +195,6 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.game = game
         self.parent = parent
         self.pack_dir = pack_dir
-        self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
         self.z = self.parent.z - 3
         self.image = self.game.core.media.gfx['gui_button_select_category_last' if self.pack_dir == 'last' else 'gui_button_select_category']
         self.gui_init()
@@ -216,6 +215,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
 
         if DEMO:
             if self.pack_dir in ["0001", "0002", "0003", "0004"]:
+                self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
                 self.colour = self.normal_colour
                 self.create_unlocked_objects()
             else:
@@ -224,6 +224,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
                 self.colour = (1.0, 1.0, 1.0)
                 self.disabled = True
         else:
+            self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
             if self.game.category_to_unlock == self.pack_dir or not self.pack_dir in self.game.player.unlocked_categories:
                 self.objs['status_icon'] = GUI_category_locked(self.game)
                 self.colour = (1.0, 1.0, 1.0)

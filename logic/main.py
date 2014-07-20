@@ -120,7 +120,7 @@ class Game(Process):
         self.settings['cat_mode'] = self.core.settings.cat_mode
         self.author_id = self.core.author_id
         self.load_player()
-            
+
         # Debug display
         if DEBUG:
             self.fps_text = Text(self.core.media.fonts["basic"], 0, 0, TEXT_ALIGN_TOP_LEFT, "blank")
