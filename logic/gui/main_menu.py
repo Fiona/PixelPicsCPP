@@ -164,7 +164,7 @@ class GUI_main_menu_title(GUI_element):
                 self.title_state = 1
                 self.wait = 0
                 if DEMO:
-                    GUI_main_menu_buy_full_button(self.game, self)
+                    GUI_main_menu_buy_full_button(self.game, self, self.no_button_anim)
                     
         if self.title_state == 1:
             self.wait += 1
@@ -347,6 +347,8 @@ class GUI_main_menu_play_button(GUI_main_menu_button):
                 continue
             no_download_items = False
             break
+        if DEMO:
+            no_download_items = True
         if no_download_items:
             self.game.manager.user_created_puzzles = False
             self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_CATEGORY_SELECT), speed = 30, stop_music = True)
@@ -446,7 +448,6 @@ class GUI_main_menu_quit_button(GUI_main_menu_button):
         self.image = self.game.core.media.gfx['gui_button_main_menu_quit']
         self.z = Z_GUI_OBJECT_LEVEL_2        
         self.main_menu_button_init(y_shift_to = 260, y_shift = 200, iter_wait = 250)
-
         if no_button_anim:
             self.y = self.y_to
             self.main_menu_button_state = 1
