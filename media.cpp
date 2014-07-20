@@ -175,7 +175,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_mouse", new Image("gfx/mouse.png")));
 
     gfx.insert(pair<string, Image*>("gui_puzzle_image_unsolved", new Image("gfx/puzzle_image_unsolved.png")));
-    gfx.insert(pair<string, Image*>("gui_puzzle_select_puzzle_box", new Image("gfx/puzzle_select_puzzle_box.png", False, 2)));
+    gfx.insert(pair<string, Image*>("gui_puzzle_select_puzzle_box", new Image("gfx/puzzle_select_puzzle_box.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_solved_icon", new Image("gfx/puzzle_select_solved_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_saved_icon", new Image("gfx/puzzle_select_saved_icon.png")));
     gfx.insert(pair<string, Image*>("gui_puzzle_select_star_icon", new Image("gfx/puzzle_select_star_icon.png")));
