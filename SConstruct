@@ -103,7 +103,7 @@ if int(demo):
         os.chdir(_dir)
         for filename in  pyglob.glob("*.puz"):
             num = filename[:filename.find(".")]
-            if num.isdigit() and int(num) > 5:
+            if num.isdigit() and int(num) > 10:
                 os.remove(filename)
         os.chdir("..")
     os.chdir(os.path.join("..", ".."))
