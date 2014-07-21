@@ -620,8 +620,9 @@ class GUI_puzzle(GUI_element):
         # ****************
         # PUZZLE_STATE - Puzzle has been cleared, display the coloured image and cleared message
         # ****************
-        if self.state == PUZZLE_STATE_CLEARED:
+        if self.state == PUZZLE_STATE_CLEARED:                
             if self.anim_state == 0:
+                self.finished_special_puzzle = self.have_finished_special_puzzle()
                 self.hovered_column = -1
                 self.hovered_row = -1
                 self.parent.pause_button.fade_and_die()
@@ -655,25 +656,21 @@ class GUI_puzzle(GUI_element):
                     self.iter = 0
 
             elif self.anim_state == 2:
-                if not self.click_to_continue and self.wait_time > 100:
-
-                    if not self.shown_nameplate:
-                        self.objs.append(
-                                Puzzle_nameplate_text(
-                                    self.game,
-                                    self.game.settings['screen_width'] / 2,
-                                    self.grid_gui_y + self.grid_gui_height + 40,
-                                    str(self.game.manager.current_puzzle.name)
-                                )
-                            )
-                        self.shown_nameplate = True
-
+                if self.wait_time > 100 and not self.shown_nameplate:
+                    self.objs.append(
+                        Puzzle_nameplate_text(
+                        self.game,
+                        self.game.settings['screen_width'] / 2,
+                        self.grid_gui_y + self.grid_gui_height + 40,
+                        str(self.game.manager.current_puzzle.name)
+                        )
+                        )
+                    self.shown_nameplate = True
+                if not self.click_to_continue and self.wait_time == 110:
                     if (not self.game.game_state == GAME_STATE_TUTORIAL) and (not self.click_to_continue and not self.buttons_to_continue):
-                        self.click_to_continue = False
+                        self.click_to_continue = False                    
                         self.buttons_to_continue = False
-
-                        self.finished_special_puzzle = self.have_finished_special_puzzle()
-
+                        
                         # Special states show a click to continue instead of a next puzzle button
                         if self.finished_special_puzzle:
                             self.additional_text = Text(
@@ -800,33 +797,42 @@ class GUI_puzzle(GUI_element):
         # These special states only apply to built-in puzzles
         if not self.game.manager.user_created_puzzles:
             self.close_puzzle_cleanup()
-            
-            # If we have just, with that one, starred all the puzzles then it's special
-            if not self.init_starred_all and self.game.manager.all_main_packs_starred:
-                self.game.special_finish_state = SPECIAL_FINISH_STARRED
-                return True
 
-            # If we've finished all main puzzles
-            if not self.init_cleared_all_main_categories and self.game.manager.cleared_all_main_categories:
-                self.game.special_finish_state = SPECIAL_FINISH_CLEARED
-                return True
+            if not DEMO:
+                # If we have just, with that one, starred all the puzzles then it's special
+                if not self.init_starred_all and self.game.manager.all_main_packs_starred:
+                    self.game.special_finish_state = SPECIAL_FINISH_STARRED
+                    return True
 
-            # If we've unlocked the final pack!
-            if not self.init_last_pack_unlocked and self.game.manager.last_pack_unlocked:
-                self.game.special_finish_state = SPECIAL_FINISH_LAST_PACK
-                return True
+                # If we've finished all main puzzles
+                if not self.init_cleared_all_main_categories and self.game.manager.cleared_all_main_categories:
+                    self.game.special_finish_state = SPECIAL_FINISH_CLEARED
+                    return True
 
-            # If we've unlocked a category
-            if not self.game.category_to_unlock is None:
-                self.game.special_finish_state = SPECIAL_FINISH_UNLOCKED
-                return True
+                # If we've unlocked the final pack!
+                if not self.init_last_pack_unlocked and self.game.manager.last_pack_unlocked:
+                    self.game.special_finish_state = SPECIAL_FINISH_LAST_PACK
+                    return True
+
+                # If we've unlocked a category
+                if not self.game.category_to_unlock is None:
+                    self.game.special_finish_state = SPECIAL_FINISH_UNLOCKED
+                    return True
+            else:
+                self.game.category_to_unlock = None
             
         # If we're playing the last puzzle in a pack it's special
         idx = self.game.manager.current_pack.order.index(self.game.manager.current_puzzle_file)
         if len(self.game.manager.current_pack.puzzles) == idx+1:
             self.game.special_finish_state = SPECIAL_FINISH_OTHER
             return True
-
+        else:
+            # In demo and next puzzle not packaged with puzzle - go back to puzzle select
+            next_puzzle = os.path.join(self.game.core.path_game_pack_directory, self.game.manager.current_puzzle_pack, self.game.manager.current_pack.order[idx + 1])
+            if DEMO and not os.path.exists(next_puzzle):
+                self.game.special_finish_state = SPECIAL_FINISH_OTHER
+                return True
+                
         # Not special
         return False
 
