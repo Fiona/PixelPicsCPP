@@ -1,7 +1,7 @@
 # Setup
-import sys, os, zipfile, shutil, compileall
+import sys, os, shutil
 import glob as pyglob
-from build_tools import walk_subdirs, create_logic_dat
+from build_tools import walk_subdirs, create_logic_dat, clear_distribution_directory, create_distribution_directories_and_copy_libs
 env = Environment()
 
 # Figure out architecture
@@ -29,13 +29,15 @@ sources = Glob('*.cpp')
 # Switch to debug
 out_dir = 'release'
 
+defines = []
+
 debug = ARGUMENTS.get('debug', 0)
 if int(debug):
-   out_dir = 'debug'
-   env.Append(CCFLAGS = '-g')
-   env.Append(CPPDEFINES=['DEBUG'])
+    defines.append("DEBUG")
+    out_dir = 'debug'
+    env.Append(CCFLAGS = '-g')
 else:
-   env.Append(CCFLAGS = '-O')
+    env.Append(CCFLAGS = '-O')
 
 # Output to dist directory if necessary
 dist = ARGUMENTS.get('dist', 0)
@@ -44,6 +46,17 @@ if int(dist):
        out_dir = os.path.join('dist', 'bin', 'x86_64')
    else:
        out_dir = os.path.join('dist', 'bin', 'i386')
+
+# Demo 
+demo = ARGUMENTS.get('demo', 0)
+if int(demo):
+   if arch == 64:
+       out_dir = os.path.join('demo', 'bin', 'x86_64')
+   else:
+       out_dir = os.path.join('demo', 'bin', 'i386')
+   defines.append("DEMO")
+
+env.Append(CPPDEFINES=defines)
 
 # Build executable
 object_list = env.Object(source = sources)
@@ -58,54 +71,93 @@ Default(main_executable)
 
 # Collate everything for distribution if required
 if int(dist):
-   # create dist dir
-   if not os.path.isdir("dist"): os.mkdir("dist")
+    clear_distribution_directory()    
+    create_logic_dat()
+    create_distribution_directories_and_copy_libs(arch)
 
-   # destroy everything in there first
-   for file in ["logic.dat", "pixelpics"]:
-      if os.path.isfile(os.path.join("dist", file)):
-         os.remove(os.path.join("dist", file))
-   for dir in ["sfx", "music", "gfx", "fnt", "packs", "python27", "libs"]:
-      if os.path.isdir(os.path.join("dist", dir)):
-         shutil.rmtree(os.path.join("dist", dir))
+    # copy all packs
+    os.mkdir(os.path.join("dist", "packs"))
+    pack_dirs = ["0001", "0002","0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "last"]
+    for dir in pack_dirs:
+        shutil.copytree(os.path.join("packs", dir), os.path.join("dist", "packs", dir))
 
-   # Generate logic.dat file of pyc files
-   create_logic_dat()
+    # music, sfx, fonts and gfx
+    for dir in ["music", "sfx", "fnt", "gfx"]:
+        shutil.copytree(os.path.join(dir), os.path.join("dist", dir))
 
-   # copy all packs
-   os.mkdir(os.path.join("dist", "packs"))
-   pack_dirs = ["0001", "0002","0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "last"]
-   for dir in pack_dirs:
-       shutil.copytree(os.path.join("packs", dir), os.path.join("dist", "packs", dir))
+# Similar for demo as with dist with a few changes
+if int(demo):
+    clear_distribution_directory('demo')
+    create_logic_dat('demo', skip_files = ['gui/sharing.pyc', 'gui/designer.pyc'])
+    create_distribution_directories_and_copy_libs(arch, 'demo')
 
-   # music, sfx, fonts and gfx
-   for dir in ["music", "sfx", "fnt", "gfx"]:
-      shutil.copytree(os.path.join(dir), os.path.join("dist", dir))
+    # copy some packs
+    os.mkdir(os.path.join("demo", "packs"))
+    pack_dirs = ["0001", "0002","0003", "0004"]
+    for dir in pack_dirs:
+        shutil.copytree(os.path.join("packs", dir), os.path.join("demo", "packs", dir))
 
-   # create python library directories
-   os.mkdir(os.path.join("dist", "python27"))
-   os.mkdir(os.path.join("dist", "python27", "i386"))
-   os.mkdir(os.path.join("dist", "python27", "x86_64"))
+    # Remove numbers we don't want
+    os.chdir(os.path.join("demo", "packs"))
+    for _dir in ["0003", "0004"]:
+        os.chdir(_dir)
+        for filename in  pyglob.glob("*.puz"):
+            num = filename[:filename.find(".")]
+            if num.isdigit() and int(num) > 10:
+                os.remove(filename)
+        os.chdir("..")
+    os.chdir(os.path.join("..", ".."))
 
-   # copy standard library
-   shutil.copy("python27.zip", os.path.join("dist", "python27", "python27.zip"))
+    # music, sfx, fonts and gfx
+    for dir in ["music", "sfx", "fnt", "gfx"]:
+        shutil.copytree(os.path.join(dir), os.path.join("demo", dir))
 
-   if arch == 64:
-       pylib_dir = 'x86_64'
-   else:
-       pylib_dir = 'i386'
+    # remove unwanted music
+    os.remove(os.path.join("demo", "music", "editor.ogg"))
 
-   # copy std library .so files
-   for item in os.listdir(os.path.join("python27", "lib-dynload")):
-       shutil.copy2(os.path.join("python27", "lib-dynload", item), os.path.join("dist", "python27", pylib_dir, item))
+    # remove unwanted sounds
+    for x in ['catmode-empty_square.wav', 'catmode-failure.wav', 'firework.wav', 'firework2.wav', 'firework3.wav', 'pipette.wav']:
+        os.remove(os.path.join("demo", "sfx", x))
 
-   # copy bash script, make it executable, tell user to collate libs
-   shutil.copy("pixelpics.sh", os.path.join("dist", "pixelpics"))
-   os.system("chmod +x dist/pixelpics")
-   os.mkdir(os.path.join("dist", "libs"))
-   os.mkdir(os.path.join("dist", "libs" , "i386"))
-   os.mkdir(os.path.join("dist", "libs" , "x86_64"))
-   if sys.maxsize > 2**32:
-      print "Manually CD to 'dist' and execute '../cpld.sh bin/x86_64/pixelpics libs/x86_64' to collate dynamic libraries"
-   else:
-      print "Manually CD to 'dist' and execute '../cpld.sh bin/i386/pixelpics libs/i386' to collate dynamic libraries"
+    # remove unwanted graphics
+    unwanted_gfx = [
+        'background_designer.png',
+        'background_present.png',
+        'button_designer_back.png',
+        'button_designer_copy.png',
+        'button_designer_create.png',
+        'button_designer_delete.png',
+        'button_designer_edit.png',
+        'button_designer_fill.png',
+        'button_designer_help.png',
+        'button_designer_move_down.png',
+        'button_designer_move_up.png',
+        'button_designer_name.png',
+        'button_designer_paint.png',
+        'button_designer_puzzle.png',
+        'button_designer_redo.png',
+        'button_designer_save.png',
+        'button_designer_size.png',
+        'button_designer_test.png',
+        'button_designer_undo.png',
+        'button_sharing_delete.png',
+        'button_sharing_download.png',
+        'button_sharing_next.png',
+        'button_sharing_play.png',
+        'button_sharing_prev.png',
+        'button_sharing_tab_downloaded.png',
+        'button_sharing_tab_my_puzzles.png',
+        'button_sharing_tab_newest.png',
+        'button_sharing_tab_top.png',
+        'button_sharing_tab_top_week.png',
+        'button_sharing_upload.png',
+        'designer_throbber.png',
+        'palette_cursor.png',
+        'puzzle_cell_black_designer.png',
+        'reward_star.png',
+        'title_firework.png',
+        'sharing_rating_stars.png',
+        'verify_status.png',
+        ]
+    for x in unwanted_gfx:
+        os.remove(os.path.join("demo", "gfx", x))

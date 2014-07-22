@@ -77,7 +77,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
             wrong_input = [
                 ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark squares as empty!"],
                 ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark squares as empty!"]
-              ]
+              ],
+            congratulate_finish = True
             )
         self.add_stage(
             instructions = ["Numbers indicate how many connected filled squares are", "in that column or row."],
@@ -93,6 +94,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
               ],
             row_highlight = 2,
             cells_fill = [(2, 0), (2, 1), (2, 2), (2, 3)],
+            congratulate_finish = True
             )
         self.add_stage(
             instructions = ["This clue indicates a connected group of 3 squares.", "But there are two possible places they could be."],
@@ -108,6 +110,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
                 ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
                 ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"]
               ],            
+            congratulate_finish = True
             )
         self.add_stage(
             instructions = ["Multiple numbers indicate groups of filled squares", "They are always in the order shown and separated", "by at least one empty square."],
@@ -120,6 +123,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             cells_empty = [(1, 3)],
             cells_fill = [(0, 3), (2, 3), (3, 3), (4, 3)],
             wrong_cell = ["Try again! Remember, multiple numbers indicate groups of", "filled squares. They are always order shown and separated by", "at least one empty square"],
+            congratulate_finish = True
             )
         self.add_stage(
             instructions = ["Sometimes you can't solve all the squares at once.", "Here there's only ONE square we can work out.", "Can you mark which square you think is solvable?"],
@@ -131,8 +135,8 @@ class GUI_tutorial_container(GUI_puzzle_container):
                 ["Are you sure you want to fill a square?", "Look carefully, can you know for certain that the", "other filled square is solvable?"],
                 ["Are you sure you want to fill a square?", "Look carefully, can you know for certain that the", "other filled square is solvable?"],
               ],            
+            congratulate_finish = True
             )
-
         self.add_stage(
             instructions = ["Even though we've solved this column, it's a good", "idea to mark the rest of the empty squares to help", "us work out the rest of the puzzle."],
             alt_instructions = ["Even though we've solved this column, it's a good", "idea to mark the rest of the empty squares to help", "us work out the rest of the puzzle."],
@@ -143,199 +147,18 @@ class GUI_tutorial_container(GUI_puzzle_container):
                 ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark squares as empty!"],
                 ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark squares as empty!"]
               ],            
+            congratulate_finish = True
             )
-
-        """
-        self.add_stage(
-            instructions = ["I'm going to show you the rest of the puzzle now."],
-            mood = "happy"            
-            )
-            """
         self.add_stage(
             instructions = ["Now try solving the rest of the puzzle on your", "own... Good luck!"],
-            mood = "happy"            
-            )
-
-        """
-        self.add_stage(
-            instructions = ["Hi there, I'm Chips!", "I'm going to show you how to solve PixelPics puzzles!"]
-            )
-        self.add_stage(
-            instructions = ["The goal is to reveal the hidden picture in each puzzle.", "This is done by figuring out which squares are filled and", "which are empty."]
-            )
-        self.add_stage(
-            instructions = ["Take a look at this one."]
-            )
-        self.add_stage(
-            instructions = ["See the numbers along the edges?", "They tell you the lengths of the filled blocks that can be", "found on that row or column, in the order they", "appear."]
-            )
-        self.add_stage(
-            instructions = ["This column has only one number, a 2!", "So somewhere in this column there's a single block of 2", "filled squares."],
-            col_highlights = [[(0,0), (0,4)]]
-            )
-        self.add_stage(
-            instructions = ["This row has two separate numbers, each being a 1.", "So somewhere in this row there are two separated filled", "squares."],
-            row_highlights = [[(0,3), (4,3)]]
-            )
-        self.add_stage(
-            instructions = ["Sounds tricky right? It's actually really easy!"]
-            )
-        self.add_stage(
-            instructions = ["PixelPics puzzles never require any guesswork at all!", "They can always be solved by thinking logically. I'll show you!"]
-            )
-        self.add_stage(
-            instructions = ["Let's start with this column.", "The clue says there's a single block of 5 squares here."],
-            col_highlights = [[(2,0), (2,4)]]
-            )
-        self.add_stage(
-            instructions = ["That's the whole height of the board! So we know for sure", "that they must all be filled in."],
-            col_highlights = [[(2,0), (2,4)]]
-            )
-        self.add_stage(
-            instructions = ["Go ahead and fill in those squares by clicking on them with", "your right mouse button!"],
-            alt_instructions = ["Go ahead and fill in those squares by clicking on them with", "your left mouse button!"],
-            col_highlights = [[(2, 0), (2, 4)]],
-            cells_fill = [(0, 2), (1, 2), (2, 2), (3, 2), (4, 2)],
-            wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
-            wrong_input = [
-                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
-                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"]
-              ]
-            )
-        self.add_stage(
-            instructions = ["Great!", "The squares that you figure out will help you solve more", "of the puzzle!"],
             mood = "happy"
             )
-        self.add_stage(
-            instructions = ["Take a look at this column.", "The clue is 0, that means there are no filled squares in this", "column at all!"],
-            col_highlights = [[(4,0), (4,4)]]
-            )
-        self.add_stage(
-            instructions = ["When we know for sure that a square isn't filled in,", "we can mark it with an 'X'."],
-            col_highlights = [[(4,0), (4,4)]]
-            )
-        self.add_stage(
-            instructions = ["Go ahead and mark those squares as empty with your", "left mouse button!"],
-            alt_instructions = ["Go ahead and mark those squares as empty with your", "right mouse button!"],
-            col_highlights = [[(4,0), (4,4)]],
-            cells_empty = [(0, 4), (1, 4), (2, 4), (3, 4), (4, 4)],
-            wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
-            wrong_input = [
-                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!"],
-                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"]
-              ]
-            )
-        self.add_stage(
-            instructions = ["Excellent!", "These will help us deduce more of the puzzle too."],
-            mood = "happy"            
-            )
-        self.add_stage(
-            instructions = ["Remember this row? The clue says there are 2 separated", "filled squares.", "Hey, we've already found one of them!"],
-            row_highlights = [[(0,3), (4,3)]]
-            )
-        self.add_stage(
-            instructions = ["Each block of squares must be separated by at least 1", "empty square.", "That means that the squares either side of the", "filled block must be empty!"],
-            cell_highlights = [(1,3), (3,3)]
-            )
-        self.add_stage(
-            instructions = ["Go ahead and mark those spaces as empty with your left", "mouse button."],
-            alt_instructions = ["Go ahead and mark those spaces as empty with your right", "mouse button."],
-            cell_highlights = [(1,3), (3,3)],
-            cells_empty = [(3,1), (3,3)],
-            wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
-            wrong_input = [
-                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!"],
-                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"]
-              ]            
-            )
-        self.add_stage(
-            instructions = ["Fabulous!"],
-            mood = "happy"            
-            )        
-        self.add_stage(
-            instructions = ["Sometimes there is only 1 remaining place a block of squares", "could be.", "So the other filled square must be in the highlighted", "space!"],
-            cell_highlights = [(0,3)]
-            )
-        self.add_stage(
-            instructions = ["Go ahead and fill it!"],
-            cell_highlights = [(0,3)],
-            cells_fill = [(3,0)],
-            wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
-            wrong_input = [
-                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
-                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"]
-              ]            
-            )
-        self.add_stage(
-            instructions = ["Bravo!"],
-            mood = "happy"            
-            )        
-        self.add_stage(
-            instructions = ["Check out this row. The clue says there's a single block of 3.", "But there are 4 spaces!", "So we don't know for sure exactly where the block", "starts and ends."],
-            row_highlights = [[(0,0), (4,0)]]
-            )
-        self.add_stage(
-            instructions = ["Maybe it's over here..."],
-            row_highlights = [[(0,0), (2,0)]]
-            )
-        self.add_stage(
-            instructions = ["Or maybe it's over here?"],
-            row_highlights = [[(1,0), (3,0)]]
-            )
-        self.add_stage(
-            instructions = ["Either way there's an overlap of two squares in the middle.", "So we know for sure that those squares must be filled!"],
-            row_highlights = [[(1,0), (2,0)]]
-            )
-        self.add_stage(
-            instructions = ["Go ahead and fill that middle square to complete the overlap!"],
-            cell_highlights = [(1,0)],
-            cells_fill = [(0, 1)],
-            wrong_cell = ["We'll get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
-            wrong_input = [
-                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
-                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"]
-              ]            
-            )
-        self.add_stage(
-            instructions = ["You got it!"],
-            mood = "happy"            
-            )
-        self.add_stage(
-            instructions = ["Take a look at these rows. We've already found the blocks", "mentioned in the clues!", "Notice that the clues change colour when we've", "solved them."],
-            row_highlights = [[(0,1), (4,1)], [(0,4), (4,4)]]
-            )
-        self.add_stage(
-            instructions = ["That means we know for sure that the other squares on", "these rows must be empty."],
-            row_highlights = [[(0,1), (4,1)], [(0,4), (4,4)]]
-            )
-        self.add_stage(
-            instructions = ["Go ahead and mark those squares as empty!"],
-            row_highlights = [[(0,1), (4,1)], [(0,4), (4,4)]],
-            cells_empty = [(1,0), (1,1), (4,0), (4,1), (1,3), (4, 3)],
-            wrong_cell = ["Well get to the other squares in a second - let's focus on the", "highlighted ones for now!"],
-            wrong_input = [
-                ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to mark spaces as empty!"],
-                ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to mark spaces as empty!"]
-              ]            
-            )
-        self.add_stage(
-            instructions = ["Teriffic!"],
-            mood = "happy"            
-            )
-        self.add_stage(
-            instructions = ["Now there are only a few unfilled squares left.", "How about you take it from here?"]
-            )
-        self.add_stage(
-            instructions = ["Remember, only mark squares that you know for sure.", "Good luck!"],
-            mood = "happy"            
-            )
-            """
-        
+
 
     def add_stage(
           self, instructions = [""], alt_instructions = [""], row_highlight = -1, col_highlight = -1,  \
           cells_fill = [], cells_empty = [], wrong_cell = "", wrong_input = [[""], [""]], mood = "normal",
-          no_hide_puzzle = False
+          no_hide_puzzle = False, congratulate_finish = False
           ):
         empty_stage = {
             'instructions' : instructions,
@@ -348,6 +171,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             'wrong_input' : wrong_input,
             'mood' : mood,
             'no_hide_puzzle' : no_hide_puzzle,
+            'congratulate_finish' : congratulate_finish,
             }
         self.tutorial_stages.append(empty_stage)
         
@@ -369,6 +193,9 @@ class GUI_tutorial_container(GUI_puzzle_container):
                 self.wait_one_left_click = True
             else:
                 self.wait_one_left_click = False
+        # Tick when do good
+        if self.tutorial_stages[self.current_stage]['congratulate_finish']:
+            Tutorial_Stage_Finish(self.game, self)
         self.stage_object.Kill()
         self.stage_object = None
         self.current_stage += 1
@@ -523,6 +350,8 @@ class GUI_tutorial_puzzle(GUI_puzzle):
         GUI_puzzle.__init__(self, game, parent)
         self.hide_hint_numbers = True
         self.markers_dont_die = True
+        self.check_stage_completion = False
+        self.mouse_down = False
         
 
     def Execute(self):
@@ -531,17 +360,27 @@ class GUI_tutorial_puzzle(GUI_puzzle):
         if self.state == PUZZLE_STATE_SOLVING:
             if self.parent.current_stage < len(self.parent.tutorial_stages):
                 self.parent.next_stage()
+            if self.check_stage_completion and not self.mouse_down:
+                self.check_stage_completion = False
+                if not self.parent.final_stage:
+                    self.parent.check_stage_completion()
 
 
     def mark_cell(self, state, cell, skip_animation = False):
         if not self.parent.stage_object is None and self.parent.stage_object.click_to_continue:
             return
 
+        if self.check_stage_completion:
+            return
+        
         if -1 in cell:
             self.parent.out_of_board()
             return
 
         if not self.parent.final_stage:
+            if self.game.manager.current_puzzle_state[cell[0]][cell[1]] == state:
+                return
+            
             stage = self.parent.tutorial_stages[self.parent.current_stage]            
 
             # We have a hybrid stage        
@@ -592,11 +431,30 @@ class GUI_tutorial_puzzle(GUI_puzzle):
 
         GUI_puzzle.mark_cell(self, state, cell, skip_animation)
 
-        if not self.parent.final_stage:
-            self.parent.check_stage_completion()
-
+        self.check_stage_completion = True
+        
         self.reset_drawing_blacks()
         self.reset_drawing_whites()
+    
+
+    def mouse_right_down(self):
+        self.mouse_down = True
+        GUI_puzzle.mouse_right_down(self)
+
+
+    def mouse_left_down(self):
+        self.mouse_down = True
+        GUI_puzzle.mouse_left_down(self)
+
+
+    def mouse_right_up(self):
+        self.mouse_down = False
+        GUI_puzzle.mouse_right_up(self)
+
+
+    def mouse_left_up(self):
+        self.mouse_down = False
+        GUI_puzzle.mouse_left_up(self)
 
 
     def do_bump_scrolling(self):
@@ -604,8 +462,10 @@ class GUI_tutorial_puzzle(GUI_puzzle):
     
 
     def finish_cleared_anim(self):
+        if self.parent.puzzle_cleared:
+            return
         self.parent.puzzle_cleared = True
-        self.parent.mascot.set_speech(self.parent.message_tutorial_complete)
+        self.parent.mascot.set_speech(self.parent.message_tutorial_complete, bubble = False)
         self.parent.show_message(self.parent.message_tutorial_complete)
         
 
@@ -707,7 +567,7 @@ class GUI_tutorial_button_next(GUI_element_button):
         self.game = game
         self.parent = parent
         self.callback = callback
-        self.z = Z_GUI_OBJECT_LEVEL_8
+        self.z = Z_GUI_OBJECT_LEVEL_7 - 2
         self.image = self.game.core.media.gfx['gui_button_tutorial_next']
         self.gui_init()
         self.x = (self.game.settings['screen_width'] / 2) + 280
@@ -832,3 +692,46 @@ class Tutorial_Cell_Highlight(Process):
         self.primitive_square_x = self.x
         self.primitive_square_y = self.y
         self.primitive_square_colour = (1.0, 0.0, 0.0, self.alpha)
+
+
+
+class Tutorial_Stage_Finish(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.puzzle = self.parent.puzzle                
+        self.z = Z_GUI_OBJECT_LEVEL_7 - 1
+        self.image = self.game.core.media.gfx['tutorial_stage_finish']
+        self.x = self.puzzle.grid_gui_x + self.puzzle.grid_width + 32
+        self.y = self.puzzle.grid_gui_y + self.puzzle.grid_height + 32
+        self.scale = 0.0
+        self.state = 0
+        self.iter = 0
+        
+    def Execute(self):
+        if self.state == 0:
+            self.scale = lerp(self.iter, 20, 0, 1.2)
+            if self.scale >= 1.2:
+                self.state = 1
+                self.iter = 0
+        elif self.state == 1:
+            self.scale = lerp(self.iter, 5, 1.2, 1.0)
+            if self.scale <= 1.0:
+                self.state = 2
+                self.iter = 0
+        elif self.state == 2:
+            if self.iter == 45:
+                self.state = 3
+        elif self.state == 3:
+            self.alpha -= 0.05
+            if self.alpha <= 0.0:
+                self.Kill()
+        self.iter += 1
+            
+            
+    def get_screen_draw_position(self):
+        return (
+            self.x - ((self.image.width * self.scale) / 2),
+            self.y - ((self.image.height * self.scale) / 2)
+            )

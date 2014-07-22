@@ -190,6 +190,13 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         self.gui_init()
         self.width = 128
         self.height = 128
+        self.saved_icon = None
+        self.solved_icon = None
+        self.star_icon = None
+        self.full_game_only_icon = None
+        self.number_text = None
+        self.monochrome_picture = None
+        self.cleared = False
         
         column = self.puzzle_num % 5
         row = self.puzzle_num / 5
@@ -204,10 +211,15 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
             
         self.z = Z_GUI_OBJECT_LEVEL_4
 
+        if DEMO:
+            puzzle_file_path = os.path.join(self.game.core.path_game_pack_directory, self.game.manager.current_puzzle_pack, self.puzzle_filename)
+            if not os.path.exists(puzzle_file_path):
+                self.disabled = True
+                self.full_game_only_icon = Full_Game_Only_Notice(self.game, self)
+                return
+
         if self.game.manager.current_pack.uuid in self.game.player.cleared_puzzles and self.puzzle_filename in self.game.player.cleared_puzzles[self.game.manager.current_pack.uuid]:
             self.cleared = True
-        else:
-            self.cleared = False
 
         self.number_text = Text(
             self.game.core.media.fonts['puzzle_select_number'],
@@ -246,10 +258,6 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         else:
             self.monochrome_picture = GUI_puzzle_puzzle_item_picture_unsolved(self.game, self)
             
-        self.saved_icon = None
-        self.solved_icon = None
-        self.star_icon = None
-
         if self.game.manager.user_created_puzzles:
             save_path = self.game.core.path_saves_user_directory
         else:
@@ -277,6 +285,8 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         
 
     def mouse_left_down(self):
+        if self.disabled:
+            return
         self.image_sequence = 2
         if self.cleared:
             self.monochrome_picture.press()
@@ -286,6 +296,8 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
         
 
     def mouse_left_up(self):
+        if self.disabled:
+            return
         GUI_element_button.mouse_left_up(self)
         self.game.manager.current_puzzle_file = self.puzzle_filename
         if self.saved_icon:
@@ -296,6 +308,8 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
 
         
     def mouse_not_over(self):
+        if self.disabled:
+            return
         if self.cleared:
             if self.coloured_picture.alpha > 0.0:
                 self.coloured_picture.alpha -= .1
@@ -306,6 +320,8 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
 
         
     def mouse_over(self):
+        if self.disabled:
+            return
         if self.play_sound and not self.hover_sound:
             self.game.core.media.sfx['button_hover'].play(0)
             self.hover_sound = True
@@ -336,8 +352,12 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
 
     def On_Exit(self):
         GUI_element_button.On_Exit(self)
-        self.number_text.Kill()
-        self.monochrome_picture.Kill()
+        if self.number_text:
+            self.number_text.Kill()
+        if self.monochrome_picture:
+            self.monochrome_picture.Kill()
+        if self.full_game_only_icon:
+            self.full_game_only_icon.Kill()
         if self.saved_icon:
             self.saved_icon.Kill()
         if self.cleared:
@@ -346,6 +366,18 @@ class GUI_puzzle_puzzle_item(GUI_element_button):
                 self.solved_icon.Kill()       
             if self.star_icon:
                 self.star_icon.Kill()
+
+
+class Full_Game_Only_Notice(Process):
+    def __init__(self, game, parent):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.image = self.game.core.media.gfx['full_game_stamp']
+        self.z = self.parent.z -1
+        self.x = self.parent.x + 100
+        self.y = self.parent.y + 100
+        self.scale = .7
 
 
 

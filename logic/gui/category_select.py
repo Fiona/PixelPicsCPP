@@ -115,7 +115,7 @@ class GUI_category_select_container(GUI_element):
             ]
         self.category_objs = []
 
-        if self.game.manager.last_pack_unlocked:
+        if not DEMO and self.game.manager.last_pack_unlocked:
             categories.append(("Final Challenge",  "last", colours['magenta']))
 
         i = 0
@@ -195,7 +195,6 @@ class GUI_category_select_select_category_button(GUI_element_button):
         self.game = game
         self.parent = parent
         self.pack_dir = pack_dir
-        self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
         self.z = self.parent.z - 3
         self.image = self.game.core.media.gfx['gui_button_select_category_last' if self.pack_dir == 'last' else 'gui_button_select_category']
         self.gui_init()
@@ -214,13 +213,25 @@ class GUI_category_select_select_category_button(GUI_element_button):
         text.colour = (1.0, 1.0, 1.0)
         self.objs['cat_name'] = text
 
-        if self.game.category_to_unlock == self.pack_dir or not self.pack_dir in self.game.player.unlocked_categories:
-            self.objs['status_icon'] = GUI_category_locked(self.game)
-            self.colour = (1.0, 1.0, 1.0)
-            self.disabled = True
+        if DEMO:
+            if self.pack_dir in ["0001", "0002", "0003", "0004"]:
+                self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
+                self.colour = self.normal_colour
+                self.create_unlocked_objects()
+            else:
+                self.objs['full_game_only'] = Full_Game_Only_Notice(self.game)
+                self.objs['status_icon'] = GUI_category_locked(self.game)
+                self.colour = (1.0, 1.0, 1.0)
+                self.disabled = True
         else:
-            self.colour = self.normal_colour
-            self.create_unlocked_objects()
+            self.pack_uuid = self.game.manager.extract_pack_uuid(pack_dir, user_created = False)
+            if self.game.category_to_unlock == self.pack_dir or not self.pack_dir in self.game.player.unlocked_categories:
+                self.objs['status_icon'] = GUI_category_locked(self.game)
+                self.colour = (1.0, 1.0, 1.0)
+                self.disabled = True
+            else:
+                self.colour = self.normal_colour
+                self.create_unlocked_objects()
 
         self.iter = 0
 
@@ -320,6 +331,10 @@ class GUI_category_select_select_category_button(GUI_element_button):
             self.objs['status_icon'].x = self.x + 10
             self.objs['status_icon'].y = self.y + 60
 
+        if 'full_game_only' in self.objs:
+            self.objs['full_game_only'].x = self.x + 400
+            self.objs['full_game_only'].y = self.y + 70
+
         if not self.lock_icon is None:
             self.lock_icon.x = self.x + 10
             self.lock_icon.y = self.y + 60
@@ -353,6 +368,15 @@ class GUI_category_select_select_category_button(GUI_element_button):
         for x in self.objs:
             self.objs[x].Kill()
 
+
+
+class Full_Game_Only_Notice(Process):
+    def __init__(self, game):
+        Process.__init__(self)
+        self.game = game
+        self.image = self.game.core.media.gfx['full_game_stamp']
+        self.z = Z_GUI_OBJECT_LEVEL_4
+        self.scale = .8
 
 
 class Select_category_button_shadow(Process):

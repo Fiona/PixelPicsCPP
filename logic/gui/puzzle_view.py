@@ -152,8 +152,10 @@ class GUI_puzzle_container(GUI_element):
 
 
     def show_menu(self):
+        if not self.puzzle.state == PUZZLE_STATE_SOLVING:
+            return
         self.game.paused = True
-        self.menu = GUI_puzzle_pause_menu(self.game, self)        
+        self.menu = GUI_puzzle_pause_menu(self.game, self)
 
 
     def On_Exit(self):
@@ -618,8 +620,9 @@ class GUI_puzzle(GUI_element):
         # ****************
         # PUZZLE_STATE - Puzzle has been cleared, display the coloured image and cleared message
         # ****************
-        if self.state == PUZZLE_STATE_CLEARED:
+        if self.state == PUZZLE_STATE_CLEARED:                
             if self.anim_state == 0:
+                self.finished_special_puzzle = self.have_finished_special_puzzle()
                 self.hovered_column = -1
                 self.hovered_row = -1
                 self.parent.pause_button.fade_and_die()
@@ -653,25 +656,21 @@ class GUI_puzzle(GUI_element):
                     self.iter = 0
 
             elif self.anim_state == 2:
-                if not self.click_to_continue and self.wait_time > 100:
-
-                    if not self.shown_nameplate:
-                        self.objs.append(
-                                Puzzle_nameplate_text(
-                                    self.game,
-                                    self.game.settings['screen_width'] / 2,
-                                    self.grid_gui_y + self.grid_gui_height + 40,
-                                    str(self.game.manager.current_puzzle.name)
-                                )
-                            )
-                        self.shown_nameplate = True
-
+                if self.wait_time > 100 and not self.shown_nameplate:
+                    self.objs.append(
+                        Puzzle_nameplate_text(
+                        self.game,
+                        self.game.settings['screen_width'] / 2,
+                        self.grid_gui_y + self.grid_gui_height + 40,
+                        str(self.game.manager.current_puzzle.name)
+                        )
+                        )
+                    self.shown_nameplate = True
+                if not self.click_to_continue and self.wait_time == 110:
                     if (not self.game.game_state == GAME_STATE_TUTORIAL) and (not self.click_to_continue and not self.buttons_to_continue):
-                        self.click_to_continue = False
+                        self.click_to_continue = False                    
                         self.buttons_to_continue = False
-
-                        self.finished_special_puzzle = self.have_finished_special_puzzle()
-
+                        
                         # Special states show a click to continue instead of a next puzzle button
                         if self.finished_special_puzzle:
                             self.additional_text = Text(
@@ -798,33 +797,42 @@ class GUI_puzzle(GUI_element):
         # These special states only apply to built-in puzzles
         if not self.game.manager.user_created_puzzles:
             self.close_puzzle_cleanup()
-            
-            # If we have just, with that one, starred all the puzzles then it's special
-            if not self.init_starred_all and self.game.manager.all_main_packs_starred:
-                self.game.special_finish_state = SPECIAL_FINISH_STARRED
-                return True
 
-            # If we've finished all main puzzles
-            if not self.init_cleared_all_main_categories and self.game.manager.cleared_all_main_categories:
-                self.game.special_finish_state = SPECIAL_FINISH_CLEARED
-                return True
+            if not DEMO:
+                # If we have just, with that one, starred all the puzzles then it's special
+                if not self.init_starred_all and self.game.manager.all_main_packs_starred:
+                    self.game.special_finish_state = SPECIAL_FINISH_STARRED
+                    return True
 
-            # If we've unlocked the final pack!
-            if not self.init_last_pack_unlocked and self.game.manager.last_pack_unlocked:
-                self.game.special_finish_state = SPECIAL_FINISH_LAST_PACK
-                return True
+                # If we've finished all main puzzles
+                if not self.init_cleared_all_main_categories and self.game.manager.cleared_all_main_categories:
+                    self.game.special_finish_state = SPECIAL_FINISH_CLEARED
+                    return True
 
-            # If we've unlocked a category
-            if not self.game.category_to_unlock is None:
-                self.game.special_finish_state = SPECIAL_FINISH_UNLOCKED
-                return True
+                # If we've unlocked the final pack!
+                if not self.init_last_pack_unlocked and self.game.manager.last_pack_unlocked:
+                    self.game.special_finish_state = SPECIAL_FINISH_LAST_PACK
+                    return True
+
+                # If we've unlocked a category
+                if not self.game.category_to_unlock is None:
+                    self.game.special_finish_state = SPECIAL_FINISH_UNLOCKED
+                    return True
+            else:
+                self.game.category_to_unlock = None
             
         # If we're playing the last puzzle in a pack it's special
         idx = self.game.manager.current_pack.order.index(self.game.manager.current_puzzle_file)
         if len(self.game.manager.current_pack.puzzles) == idx+1:
             self.game.special_finish_state = SPECIAL_FINISH_OTHER
             return True
-
+        else:
+            # In demo and next puzzle not packaged with puzzle - go back to puzzle select
+            next_puzzle = os.path.join(self.game.core.path_game_pack_directory, self.game.manager.current_puzzle_pack, self.game.manager.current_pack.order[idx + 1])
+            if DEMO and not os.path.exists(next_puzzle):
+                self.game.special_finish_state = SPECIAL_FINISH_OTHER
+                return True
+                
         # Not special
         return False
 
@@ -1182,11 +1190,12 @@ class GUI_puzzle(GUI_element):
             cell_list = []
             self.checked_fill_stack = []
             self.fill_stack = [(self.hovered_row, self.hovered_column)]
-            while self.fill_at(True, cell_list):
+            state = True if self.game.manager.current_puzzle_state[self.hovered_row][self.hovered_column] is None else None
+            while self.fill_at(state, cell_list):
                 pass
             if len(cell_list) > 0:
                 self.parent.need_to_save = True        
-                self.change_cells(cell_list, True)
+                self.change_cells(cell_list, state)
 
         elif self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
             self.draw_rectangle(True, self.rectangle_marker_top_left, self.rectangle_marker_bottom_right)
@@ -1214,7 +1223,8 @@ class GUI_puzzle(GUI_element):
             cell_list = []
             self.checked_fill_stack = []
             self.fill_stack = [(self.hovered_row, self.hovered_column)]
-            while self.fill_at(None, cell_list):
+            state = True if self.game.manager.current_puzzle_state[self.hovered_row][self.hovered_column] is None else None
+            while self.fill_at(state, cell_list):
                 pass
             if len(cell_list) > 0:
                 self.parent.need_to_save = True        
@@ -1623,7 +1633,7 @@ class GUI_puzzle(GUI_element):
 
     def On_Exit(self):        
         GUI_element.On_Exit(self)
-        for x in self.cell_marker_objs:
+        for x in dict(self.cell_marker_objs):
             self.cell_marker_objs[x].Kill()
         for x in self.text:
             for i in self.text[x]:
@@ -1695,9 +1705,11 @@ class Puzzle_marker(Process):
             self.alpha = lerp(self.iter, 10, self.alpha, 1.0)
             if self.iter > 10:
                 if self.state:
-                    self.puzzle.black_squares_to_ignore.remove((self.row, self.col))
+                    if (self.row, self.col) in self.puzzle.black_squares_to_ignore:
+                        self.puzzle.black_squares_to_ignore.remove((self.row, self.col))
                 else:
-                    self.puzzle.white_squares_to_ignore.remove((self.row, self.col))
+                    if (self.row, self.col) in self.puzzle.white_squares_to_ignore:
+                        self.puzzle.white_squares_to_ignore.remove((self.row, self.col))
                 self.marker_state = 0
                 self.iter = 0
             else:

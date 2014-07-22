@@ -32,6 +32,9 @@
 
 #endif
 
+// Hello
+#define VERSION 1.0f
+
 // Yeah so what?
 #define True true
 #define False false
