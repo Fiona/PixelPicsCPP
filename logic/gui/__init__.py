@@ -242,9 +242,13 @@ class GUI(Process):
     def do_mouse_wheel_zooming(self):
         # Mouse wheel zooming
         if self.game.core.mouse.wheel_down:
-            self.game.current_zoom_level *= 0.75
+            if not self.game.current_zoom_level == self.game.minimum_zoom_level:
+                self.game.core.media.sfx['zoom'].play(0)
+                self.game.current_zoom_level *= 0.75
         if self.game.core.mouse.wheel_up:
-            self.game.current_zoom_level *= 1.25
+            if not self.game.current_zoom_level == 1.00:
+                self.game.core.media.sfx['zoom'].play(0)
+                self.game.current_zoom_level *= 1.25
 
         # page up/page down
         if self.game.core.Keyboard_key_down(key.PAGEUP):
@@ -257,6 +261,7 @@ class GUI(Process):
             self.game.current_zoom_level = 1.00
         if self.game.current_zoom_level < self.game.minimum_zoom_level:
             self.game.current_zoom_level = self.game.minimum_zoom_level
+            
         
 
     def switch_gui_state_to(self, state):
