@@ -259,6 +259,7 @@ class GUI_category_select_select_category_button(GUI_element_button):
                 self.iter = 0
                 self.anim_state = 2
                 self.unlock_mask = GUI_category_select_select_category_button_unlock_overlay(self.game, self)
+                self.game.core.media.sfx['new_category'].play(0)
         elif self.anim_state == 2:
             self.unlock_mask.alpha = lerp(self.iter, 120, 0.0, 1.0)
             #self.objs['status_icon'].alpha = lerp(self.iter, 60, self.objs['status_icon'].alpha, 0.0)

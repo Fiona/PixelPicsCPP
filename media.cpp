@@ -241,7 +241,6 @@ Media::Media(Main_App* _game)
     sfx.insert(pair<string,SFX*>("incorrect_square", new SFX("sfx/incorrect_square.wav", game)));
     sfx.insert(pair<string,SFX*>("success", new SFX("sfx/success.wav", game)));
     sfx.insert(pair<string,SFX*>("failure", new SFX("sfx/failure.wav", game)));
-    sfx.insert(pair<string,SFX*>("unlock", new SFX("sfx/unlock.wav", game)));
     sfx.insert(pair<string,SFX*>("button_click", new SFX("sfx/button_click.wav", game)));
     sfx.insert(pair<string,SFX*>("button_hover", new SFX("sfx/button_hover.wav", game)));
     sfx.insert(pair<string,SFX*>("meow1", new SFX("sfx/meow1.wav", game, False)));
@@ -251,6 +250,8 @@ Media::Media(Main_App* _game)
 
     // non-demo sounds
 #ifndef DEMO
+    sfx.insert(pair<string,SFX*>("unlock", new SFX("sfx/unlock.wav", game)));
+    sfx.insert(pair<string,SFX*>("new_category", new SFX("sfx/new_category.wav", game)));
     sfx.insert(pair<string,SFX*>("pipette", new SFX("sfx/pipette.wav", game)));
     sfx.insert(pair<string,SFX*>("firework1", new SFX("sfx/firework.wav", game)));
     sfx.insert(pair<string,SFX*>("firework2", new SFX("sfx/firework2.wav", game)));
