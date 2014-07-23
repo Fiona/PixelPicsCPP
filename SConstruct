@@ -116,7 +116,23 @@ if int(demo):
     os.remove(os.path.join("demo", "music", "editor.ogg"))
 
     # remove unwanted sounds
-    for x in ['catmode-empty_square.wav', 'catmode-failure.wav', 'firework.wav', 'firework2.wav', 'firework3.wav', 'pipette.wav']:
+    unwanted_sfx = [
+        'firework.wav',
+        'firework2.wav',
+        'firework3.wav',
+        'pipette.wav',
+        'unlock.wav',
+        'new_category.wav',
+        'catmode-empty_square.wav',
+        'catmode-failure.wav',
+        'catmode-fill_square1.wav',
+        'catmode-fill_square2.wav',
+        'catmode-fill_square3.wav',
+        'catmode-fill_square4.wav',
+        'catmode-fill_square5.wav',
+        'catmode-success.wav'
+        ]
+    for x in unwanted_sfx:
         os.remove(os.path.join("demo", "sfx", x))
 
     # remove unwanted graphics

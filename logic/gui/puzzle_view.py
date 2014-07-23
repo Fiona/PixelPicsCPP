@@ -641,7 +641,10 @@ class GUI_puzzle(GUI_element):
                     self.title_text = GUI_cleared_title(self.game, self)
                     self.wait_time = 0
                     self.game.puzzle_music_stop = True
-                    self.game.core.media.sfx['success'].play(0)
+                    if self.game.settings['cat_mode']:
+                        self.game.core.media.sfx['catmode-success'].play(0)
+                    else:
+                        self.game.core.media.sfx['success'].play(0)
                     self.game.fade_out_music(250)
                 self.anim_state = 1
 
@@ -1409,7 +1412,10 @@ class GUI_puzzle(GUI_element):
 
         # play sound effect on drawing
         if self.last_state_set is True:
-            self.game.core.media.sfx['fill_square'].play(0)
+            if self.game.settings['cat_mode']:
+                self.game.core.media.sfx['catmode-fill_square' + str(random.randint(1, 5))].play(0)                
+            else:
+                self.game.core.media.sfx['fill_square'].play(0)
         elif self.last_state_set is False:
             if self.game.settings['cat_mode']:
                 self.game.core.media.sfx['catmode-empty_square'].play(-1)
