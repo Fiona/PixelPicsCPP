@@ -241,7 +241,6 @@ Media::Media(Main_App* _game)
     sfx.insert(pair<string,SFX*>("incorrect_square", new SFX("sfx/incorrect_square.wav", game)));
     sfx.insert(pair<string,SFX*>("success", new SFX("sfx/success.wav", game)));
     sfx.insert(pair<string,SFX*>("failure", new SFX("sfx/failure.wav", game)));
-    sfx.insert(pair<string,SFX*>("unlock", new SFX("sfx/unlock.wav", game)));
     sfx.insert(pair<string,SFX*>("button_click", new SFX("sfx/button_click.wav", game)));
     sfx.insert(pair<string,SFX*>("button_hover", new SFX("sfx/button_hover.wav", game)));
     sfx.insert(pair<string,SFX*>("meow1", new SFX("sfx/meow1.wav", game, False)));
@@ -251,12 +250,20 @@ Media::Media(Main_App* _game)
 
     // non-demo sounds
 #ifndef DEMO
+    sfx.insert(pair<string,SFX*>("unlock", new SFX("sfx/unlock.wav", game)));
+    sfx.insert(pair<string,SFX*>("new_category", new SFX("sfx/new_category.wav", game)));
     sfx.insert(pair<string,SFX*>("pipette", new SFX("sfx/pipette.wav", game)));
     sfx.insert(pair<string,SFX*>("firework1", new SFX("sfx/firework.wav", game)));
     sfx.insert(pair<string,SFX*>("firework2", new SFX("sfx/firework2.wav", game)));
     sfx.insert(pair<string,SFX*>("firework3", new SFX("sfx/firework3.wav", game)));
     sfx.insert(pair<string,SFX*>("catmode-failure", new SFX("sfx/catmode-failure.wav", game)));
+    sfx.insert(pair<string,SFX*>("catmode-success", new SFX("sfx/catmode-success.wav", game)));
     sfx.insert(pair<string,SFX*>("catmode-empty_square", new SFX("sfx/catmode-empty_square.wav", game, False)));
+    sfx.insert(pair<string,SFX*>("catmode-fill_square1", new SFX("sfx/catmode-fill_square1.wav", game)));
+    sfx.insert(pair<string,SFX*>("catmode-fill_square2", new SFX("sfx/catmode-fill_square2.wav", game)));
+    sfx.insert(pair<string,SFX*>("catmode-fill_square3", new SFX("sfx/catmode-fill_square3.wav", game)));
+    sfx.insert(pair<string,SFX*>("catmode-fill_square4", new SFX("sfx/catmode-fill_square4.wav", game)));
+    sfx.insert(pair<string,SFX*>("catmode-fill_square5", new SFX("sfx/catmode-fill_square5.wav", game)));
 #endif
 
     // Music
