@@ -247,6 +247,7 @@ Media::Media(Main_App* _game)
     sfx.insert(pair<string,SFX*>("type", new SFX("sfx/type.wav", game)));
     sfx.insert(pair<string,SFX*>("paint", new SFX("sfx/paint.wav", game, False)));
     sfx.insert(pair<string,SFX*>("fill", new SFX("sfx/fill.wav", game)));
+    sfx.insert(pair<string,SFX*>("zoom", new SFX("sfx/zoom.wav", game)));
 
     // non-demo sounds
 #ifndef DEMO
