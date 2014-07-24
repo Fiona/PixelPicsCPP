@@ -36,7 +36,7 @@ class Stompyblondie_Logo(Process):
         self.iter = 0
         self.frame = 0
         self.init_wait = True if self.game.settings['full_screen'] else False
-
+        self.play_initial_sound = False
 
     def Execute(self):
         # initial full screen wait
@@ -47,6 +47,10 @@ class Stompyblondie_Logo(Process):
                 self.iter = 0
             return
 
+        if self.play_initial_sound == False:
+            self.game.core.media.sfx['screams'].play(0)
+            self.play_initial_sound = True
+            
         # Do the animation
         if self.frame == len(self.frame_switch_times) - 1:
             return
@@ -54,6 +58,10 @@ class Stompyblondie_Logo(Process):
         if self.iter >= self.frame_switch_times[self.frame][1]:
             self.frame += 1
             self.image_sequence = self.frame_switch_times[self.frame][0]
+            if self.image_sequence == 3:
+                self.game.core.media.sfx['stomp'].play(0)                
+            if self.frame == 5:
+                self.game.core.media.sfx['car_alarm'].play(0)
             self.iter = 0
 
         
