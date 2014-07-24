@@ -81,7 +81,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             congratulate_finish = True
             )
         self.add_stage(
-            instructions = ["Numbers indicate how many connected filled squares are", "in that column or row."],
+            instructions = ["Each number represents a connected group of filled squares", "in that column or row."],
             row_highlight = 2,
             )
         self.add_stage(
@@ -105,7 +105,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             alt_instructions = ["We can determine that there is a two square OVERLAP", "which is filled.", "Left click the squares that are definitely filled."],
             row_highlight = 0,
             cells_fill = [(0, 1), (0, 2)],
-            wrong_cell = ["Try again! Remember to mark only the definite overlap."],
+            wrong_cell = ["Try again! Try to mark only the definite overlap.", "Remember, a number is a connected group of filled squares and", "how many squares there are."],
             wrong_input = [
                 ["Whoops! That was a left click. Be sure to use the RIGHT", "mouse button to fill in spaces!"],
                 ["Whoops! That was a right click. Be sure to use the LEFT", "mouse button to fill in spaces!"]
@@ -113,7 +113,7 @@ class GUI_tutorial_container(GUI_puzzle_container):
             congratulate_finish = True
             )
         self.add_stage(
-            instructions = ["Multiple numbers indicate groups of filled squares", "They are always in the order shown and separated", "by at least one empty square."],
+            instructions = ["Multiple numbers indicate separate groups of filled squares.", "They are always in the order shown and separated", "by at least one empty square."],
             col_highlight = 3,
             )
         self.add_stage(
@@ -708,6 +708,7 @@ class Tutorial_Stage_Finish(Process):
         self.scale = 0.0
         self.state = 0
         self.iter = 0
+        self.game.core.media.sfx['ding'].play(0)
         
     def Execute(self):
         if self.state == 0:

@@ -1233,7 +1233,7 @@ class GUI_puzzle(GUI_element):
                 pass
             if len(cell_list) > 0:
                 self.parent.need_to_save = True        
-                self.change_cells(cell_list, None)
+                self.change_cells(cell_list, state)
 
         elif self.parent.tool == DRAWING_TOOL_STATE_RECTANGLE:
             self.draw_rectangle(None, self.rectangle_marker_top_left, self.rectangle_marker_bottom_right)

@@ -124,6 +124,12 @@ class GUI_options(GUI_element_window):
                 self.game.ensure_correct_music_playing()
             else:
                 self.game.fade_out_music()
+        else:
+            if self.game.core.settings.music_on:
+                self.game.puzzle_music_stop = False
+            else:
+                self.game.fade_out_music()
+                self.game.puzzle_music_stop = True
         
         self.Kill()
     
