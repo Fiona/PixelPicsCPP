@@ -252,6 +252,7 @@ Media::Media(Main_App* _game)
     sfx.insert(pair<string,SFX*>("screams", new SFX("sfx/screams.wav", game)));
     sfx.insert(pair<string,SFX*>("car_alarm", new SFX("sfx/car_alarm.wav", game)));
     sfx.insert(pair<string,SFX*>("stomp", new SFX("sfx/stomp.wav", game)));
+    sfx.insert(pair<string,SFX*>("logo_bubble", new SFX("sfx/logo_bubble.wav", game)));
 
     // non-demo sounds
 #ifndef DEMO

@@ -78,7 +78,7 @@ class Stompyblondie_Logo_Text(Process):
         self.scale_state = 0
         self.iter = 0
         self.scale_pos = (0.0, self.image.height)
-        
+        self.game.core.media.sfx['logo_bubble'].play(0)        
     
     def Execute(self):
         self.iter += 1
