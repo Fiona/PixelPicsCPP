@@ -708,6 +708,7 @@ class Tutorial_Stage_Finish(Process):
         self.scale = 0.0
         self.state = 0
         self.iter = 0
+        self.game.core.media.sfx['ding'].play(0)
         
     def Execute(self):
         if self.state == 0:
