@@ -1,0 +1,34 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="screams_data" version="1.3.0" audacityversion="2.0.5" sel0="0.0000000000" sel1="0.0000000000" vpos="0" h="0.0000000000" zoom="151.7265419685" rate="48000.0">
+	<tags>
+		<tag name="COMMENTS" value=" 000002AC 00000000 00000BF6 00000000 00001218 00000000 000030F5 00000000 00000978 00000000"/>
+		<tag name="Content group description" value="Human"/>
+		<tag name="GENRE" value="SFX"/>
+		<tag name="ARTIST" value="Johnson Brand Editing"/>
+		<tag name="TITLE" value="human male scream small group torture panic"/>
+		<tag name="ALBUM" value="Johnson Brand Editing SFX Library"/>
+		<tag name="Encoded by" value="iTunes v4.6.0.15"/>
+		<tag name="YEAR" value="2005"/>
+	</tags>
+	<wavetrack name="Audio Track" channel="2" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="0" rate="48000" gain="1.0" pan="0.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="156277">
+				<waveblock start="0">
+					<simpleblockfile filename="e00008ab.au" len="156277" min="-0.34641" max="0.364959" rms="0.067491"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="220149__v0idation__fx-silly-girls" channel="2" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="48000" gain="0.281838" pan="0.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="148619">
+				<waveblock start="0">
+					<simpleblockfile filename="e00003ad.au" len="148619" min="-0.765858" max="0.759438" rms="0.172895"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>
