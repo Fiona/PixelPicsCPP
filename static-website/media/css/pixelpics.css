@@ -88,31 +88,25 @@ nav.navbar .navbar-collapse
 
 .about-section
 {
+  padding: 40px 0;
   text-align: center;
   background: #eee;
-}
-
-.about-section .row
-{
-  margin: 10px 0;
 }
 
 .about-section a.screenshot img
 { 
   border: #aaa solid 1px;
-  margin-top: 10px;
 }
 
 .about-section .info
 { 
-  padding-top: 20px;
+/*  padding-top: 10px;*/
 }
 
 @media (min-width: 768px)
 {
   .about-section .info
   { 
-    padding-top: 70px;
   }
 }
 
@@ -130,7 +124,7 @@ nav.navbar .navbar-collapse
 .about-section ul
 { 
   list-style-type: none;
-  margin: 0;
+  margin: 30px 0 0 0;
   padding: 0;
 }
 
@@ -148,14 +142,25 @@ nav.navbar .navbar-collapse
 }
 
 /*************
+ * demo styling
+ *************/
+
+.demo-section
+{
+  padding: 40px 0;
+  text-align: center;
+  background: #fff;
+}
+
+/*************
  * media styling
  *************/
 
 .media-section
 {
-  padding: 20px 0;
+  padding: 40px 0;
   text-align: center;
-  background: #fff;
+  background: #eee;
 }
 
 .media-section iframe
@@ -188,7 +193,7 @@ nav.navbar .navbar-collapse
   height: 220px;
   padding-top: 40px;
   text-align: center;
-  background: #eee;
+  background: #fff;
 }
 
 .contact-section p a
@@ -215,9 +220,16 @@ nav.navbar .navbar-collapse
  * outro styling
  *************/
 
+.outro-section
+{ 
+  padding: 40px 0;
+  background: #eee;
+}
+
 .outro-section div.chips_wrap
 {
   width: 100%;
+
 }
 
 .outro-section div.chips
