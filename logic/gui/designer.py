@@ -363,6 +363,9 @@ class GUI_designer_packs_packs_list_scroll_window(GUI_element_scroll_window):
             last_item = GUI_designer_packs_pack_item(self.game, self, pack, i, count)
             self.pack_items.append(last_item)
             self.pack_items.append(
+                GUI_designer_packs_button_open_pack(self.game, self, pack, i, count)
+            )
+            self.pack_items.append(
                 GUI_designer_packs_button_edit_pack(self.game, self, pack, i, count)
             )
             self.pack_items.append(
@@ -434,6 +437,25 @@ class GUI_designer_packs_pack_item(GUI_element):
         self.game.manager.load_pack(self.game.manager.pack_directory_list[self.pack_num])
         self.game.gui.fade_toggle(lambda: self.game.gui.switch_gui_state_to(GUI_STATE_DESIGNER_PUZZLES), speed = 20)
         
+
+class GUI_designer_packs_button_open_pack(GUI_element_button):
+    generic_button = False
+    def __init__(self, game, parent = None, pack = None, pack_num = 0, display_count = 0):
+        Process.__init__(self)
+        self.game = game
+        self.parent = parent
+        self.scroll_element = self.parent
+        self.pack = pack
+        self.pack_num = pack_num
+        self.z = Z_GUI_OBJECT_LEVEL_6
+        self.x = self.parent.width - 245
+        self.y = (65 * display_count) + 15 + (10 * display_count) + 3
+        self.image = self.game.core.media.gfx['gui_button_designer_open']
+        self.gui_init()
+
+    def mouse_left_up(self):
+        self.game.manager.load_pack(self.game.manager.pack_directory_list[self.pack_num])
+        self.game.gui.fade_toggle(lambda: self.game.gui.switch_gui_state_to(GUI_STATE_DESIGNER_PUZZLES), speed = 20)
 
 
 class GUI_designer_packs_button_edit_pack(GUI_element_button):
@@ -1050,7 +1072,7 @@ class GUI_designer_puzzles_button_edit_puzzle(GUI_element_button):
         self.z = Z_GUI_OBJECT_LEVEL_6
         self.x = self.parent.width - 185
         self.y = (65 * self.puzzle_num) + 15 + (10 * self.puzzle_num) + 3
-        self.image = self.game.core.media.gfx['gui_button_designer_edit']
+        self.image = self.game.core.media.gfx['gui_button_designer_open']
         self.gui_init()
             
 

@@ -213,6 +213,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_designer_copy", new Image("gfx/button_designer_copy.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_designer_puzzle", new Image("gfx/button_designer_puzzle.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_designer_back", new Image("gfx/button_designer_back.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_designer_open", new Image("gfx/button_designer_open.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_designer_throbber", new Image("gfx/designer_throbber.png", False, 16)));
     gfx.insert(pair<string, Image*>("gui_verify_status", new Image("gfx/verify_status.png", False, 3)));
     gfx.insert(pair<string, Image*>("gui_palette_cursor", new Image("gfx/palette_cursor.png")));
@@ -232,6 +233,7 @@ Media::Media(Main_App* _game)
     gfx.insert(pair<string, Image*>("gui_button_sharing_play", new Image("gfx/button_sharing_play.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_delete", new Image("gfx/button_sharing_delete.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_button_sharing_next", new Image("gfx/button_sharing_next.png", False, 4)));
+    gfx.insert(pair<string, Image*>("gui_button_sharing_prev", new Image("gfx/button_sharing_prev.png", False, 4)));
     gfx.insert(pair<string, Image*>("gui_sharing_rating_stars", new Image("gfx/sharing_rating_stars.png", False, 8)));
 #endif
 
