@@ -798,9 +798,9 @@ class GUI_puzzle(GUI_element):
             return True
         
         # These special states only apply to built-in puzzles
+        self.close_puzzle_cleanup()
+        
         if not self.game.manager.user_created_puzzles:
-            self.close_puzzle_cleanup()
-
             if not DEMO:
                 # If we have just, with that one, starred all the puzzles then it's special
                 if not self.init_starred_all and self.game.manager.all_main_packs_starred:

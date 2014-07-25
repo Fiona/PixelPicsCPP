@@ -357,7 +357,7 @@ class Attempt_Upload_Pack(object):
 
     def upload_puzzle(self, response):
         puzzle_to_do = None
-        for i in self.pack.puzzles:
+        for i in self.pack.order:
             if not i in self.puzzles_processed:
                 puzzle_to_do = i
                 break
