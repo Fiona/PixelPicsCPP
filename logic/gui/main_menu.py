@@ -593,11 +593,15 @@ class GUI_main_menu_credits_button(GUI_element_button):
 
 class GUI_main_menu_credits(GUI_element_window):
     title = "Credits"
-    height = 660
+    height = 565
     width = 520
     objs = {}
     text_to_write = [
         "PixelPics",
+        "",
+        "Copyright (c) 2014 Stompy Blondie Games",
+        "http://stompyblondie.com - @StompyBlondie",
+        "",
         "Dedicated to Felix",
         "",
         " -- Programming -- ",
@@ -606,11 +610,8 @@ class GUI_main_menu_credits(GUI_element_window):
         " -- Additional Programming -- ",
         "Mark Frimston",
         "",
-        " -- Visuals -- ",
+        " -- Visuals, SFX and Level Design -- ",
         "Fiona Burrows & Mark Frimston",
-        "",
-        " -- SFX -- ",
-        "Fiona Burrows",
         "",
         " -- Music -- ",
         "Back On Track, Comparsa, Samba Stings, No Frills Salsa,",
@@ -619,11 +620,6 @@ class GUI_main_menu_credits(GUI_element_window):
         "by Kevin MacLeod (incompetech.com)",
         "",
         "Brazil Samba by http://bensound.com",
-        "",
-        " -- Level Design -- ",
-        "Fiona Burrows & Mark Frimston",
-        "",
-        "Copyright (c) 2014 Stompy Blondie Games",
         ]
 
     def __init__(self, game, parent = None):
