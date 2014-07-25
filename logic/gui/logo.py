@@ -64,6 +64,11 @@ class Stompyblondie_Logo(Process):
                 self.game.core.media.sfx['car_alarm'].play(0)
             self.iter = 0
 
+    def On_Exit(self):
+        self.game.core.media.sfx['car_alarm'].stop()
+        self.game.core.media.sfx['screams'].stop()
+        self.game.core.media.sfx['stomp'].stop()
+        self.game.core.media.sfx['logo_bubble'].stop()
         
 
 class Stompyblondie_Logo_Text(Process):
