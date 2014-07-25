@@ -714,6 +714,50 @@ class GUI_sharing_upload_scroll_window(GUI_element_scroll_window):
         self.parent.pack_num_to_be_uploaded = None
         
 
+    def upload_button_clicked(self, pack_num):
+        self.parent.pack_num_to_be_uploaded = pack_num
+
+        if not self.game.player.sharing_upload_content_agreed:
+            GUI_element_confirmation_box(
+                self.game,
+                self,
+                "Upload Terms",
+                [
+                  "To upload a pack to the PixelPics server you must agree to the following terms:",
+                  "* You will not upload a pack containing inappropriate or offensive content. This",
+                  "  includes but is not limited to nudity, excessive violence, sexism, racism",
+                  "  and homophobia.",
+                  "* Pack names must accurately describe the containing puzzles and not be misleading.",
+                  "* Packs must not be intentionally harmful.",
+                  "* Packs can be be removed from the service by Stompy Blondie at any time and for any",
+                  "  reason.",
+                  "* Your access to the service can be terminated at any time if you violate any of",
+                  "  these terms.",
+                  "Do you agree?"
+                ],
+                confirm_callback = self.Agreed_to_terms
+                )
+        else:
+            self.Agreed_to_terms(pack_num)
+
+
+    def Agreed_to_terms(self, pack_num):
+        self.game.player.sharing_upload_content_agreed = True
+        self.game.save_player(self.game.player)
+        GUI_element_confirmation_box(
+            self.game,
+            self,
+            "Do you want to share?",
+            [
+              "Are you sure you want to share this pack?",
+              '"' + self.game.manager.packs[pack_num].name + '"',
+              "Note that you can't share it again,",
+              "so make sure you have finished this pack."
+            ],
+            confirm_callback = lambda: Attempt_Upload_Pack(self.game, self.game.manager.pack_directory_list[pack_num], self.game.manager.packs[pack_num], self.parent, self.finished_upload)
+            )
+        
+
 
 class GUI_sharing_upload_pack_item(GUI_element):
     def __init__(self, game, parent = None, pack = None, pack_num = 0, display_count = 0):
@@ -759,6 +803,11 @@ class GUI_sharing_upload_pack_item(GUI_element):
         self.adjust_text_positions()
 
 
+    def mouse_left_up(self):
+        if not self.pack.shared:
+            self.parent.upload_button_clicked(self.pack_num)
+
+
     def adjust_text_positions(self):
         self.text_pack_name.y = self.y + self.scroll_element.y + 2 - self.scroll_element.contents_scroll_location
         self.text_pack_name.clip = self.clip
@@ -795,48 +844,7 @@ class GUI_sharing_packs_button_upload(GUI_element_button):
 
     def mouse_left_up(self):
         GUI_element_button.mouse_left_up(self)
-        self.parent.parent.pack_num_to_be_uploaded = self.pack_num
-
-        if not self.game.player.sharing_upload_content_agreed:
-            GUI_element_confirmation_box(
-                self.game,
-                self,
-                "Upload Terms",
-                [
-                  "To upload a pack to the PixelPics server you must agree to the following terms:",
-                  "* You will not upload a pack containing inappropriate or offensive content. This",
-                  "  includes but is not limited to nudity, excessive violence, sexism, racism",
-                  "  and homophobia.",
-                  "* Pack names must accurately describe the containing puzzles and not be misleading.",
-                  "* Packs must not be intentionally harmful.",
-                  "* Packs can be be removed from the service by Stompy Blondie at any time and for any",
-                  "  reason.",
-                  "* Your access to the service can be terminated at any time if you violate any of",
-                  "  these terms.",
-                  "Do you agree?"
-                ],
-                confirm_callback = self.Agreed_to_terms
-                )
-        else:
-            self.Agreed_to_terms()
-
-
-    def Agreed_to_terms(self):
-        self.game.player.sharing_upload_content_agreed = True
-        self.game.save_player(self.game.player)
-        GUI_element_confirmation_box(
-            self.game,
-            self,
-            "Do you want to share?",
-            [
-              "Are you sure you want to share this pack?",
-              '"' + self.pack.name + '"',
-              "Note that you can't share it again,",
-              "so make sure you have finished this pack."
-            ],
-            confirm_callback = lambda: Attempt_Upload_Pack(self.game, self.game.manager.pack_directory_list[self.pack_num], self.pack, self.parent.parent, self.parent.finished_upload)
-            )
-        
+        self.parent.upload_button_clicked(self.pack_num)
 
 
 
@@ -1010,11 +1018,16 @@ class GUI_sharing_load_puzzles_pack_item(GUI_element):
         
         self.draw_strategy = "gui_designer_packs_pack_item"
 
+    def mouse_left_up(self):
+        if self.pack['uuid'] in self.game.manager.pack_uuids:
+            if self.pack['author_id'] == self.game.author_id:
+                return
+        self.button.mouse_left_up()
+
 
     def Execute(self):
         self.update()
         self.adjust_text_positions()
-
 
     def adjust_text_positions(self):
         self.text_pack_name.y = self.y + self.scroll_element.y + 2 - self.scroll_element.contents_scroll_location
@@ -1026,7 +1039,6 @@ class GUI_sharing_load_puzzles_pack_item(GUI_element):
         if not self.text_pack_yours is None:
             self.text_pack_yours.y = self.y + self.scroll_element.y + 30 - self.scroll_element.contents_scroll_location
             self.text_pack_yours.clip = self.clip
-
 
     def On_Exit(self):
         GUI_element.On_Exit(self)
@@ -1255,11 +1267,14 @@ class GUI_sharing_downloaded_pack_item(GUI_element):
 
         self.draw_strategy = "gui_designer_packs_pack_item"
 
+    def mouse_left_up(self):
+        self.game.manager.user_created_puzzles = True
+        self.game.manager.load_pack(self.game.manager.pack_directory_list[self.pack_num], user_created = True)
+        self.game.gui.fade_toggle(lambda: self.game.switch_game_state_to(GAME_STATE_PUZZLE_SELECT), speed = 20)
 
     def Execute(self):
         self.update()
         self.adjust_text_positions()
-
 
     def adjust_text_positions(self):
         self.text_pack_name.y = self.y + self.scroll_element.y + 2 - self.scroll_element.contents_scroll_location
