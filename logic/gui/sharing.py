@@ -824,7 +824,19 @@ class GUI_sharing_packs_button_upload(GUI_element_button):
     def Agreed_to_terms(self):
         self.game.player.sharing_upload_content_agreed = True
         self.game.save_player(self.game.player)
-        Attempt_Upload_Pack(self.game, self.game.manager.pack_directory_list[self.pack_num], self.pack, self.parent.parent, self.parent.finished_upload)
+        GUI_element_confirmation_box(
+            self.game,
+            self,
+            "Do you want to share?",
+            [
+              "Are you sure you want to share this pack?",
+              '"' + self.pack.name + '"',
+              "Note that you can't share it again,",
+              "so make sure you have finished this pack."
+            ],
+            confirm_callback = lambda: Attempt_Upload_Pack(self.game, self.game.manager.pack_directory_list[self.pack_num], self.pack, self.parent.parent, self.parent.finished_upload)
+            )
+        
 
 
 
