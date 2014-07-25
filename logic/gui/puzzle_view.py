@@ -1254,13 +1254,13 @@ class GUI_puzzle(GUI_element):
 
         self.currently_panning = True
         self.game.gui.mouse.alpha = 0.0
-        self.game.core.mouse.set_pos(int(self.remember_mouse_pos[0]), int(self.remember_mouse_pos[1]))
         
 
     def mouse_middle_up(self):
         if not self.state == PUZZLE_STATE_SOLVING:
             return
 
+        #self.game.core.mouse.set_pos(int(self.remember_mouse_pos[0]), int(self.remember_mouse_pos[1]))
         self.remember_mouse_pos = (0, 0)
         self.currently_panning = False
         self.game.gui.mouse.alpha = 1.0
