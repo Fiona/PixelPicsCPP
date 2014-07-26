@@ -1,5 +1,64 @@
 import compileall, glob, zipfile, os, shutil, sys
 
+unwanted_sfx = [
+    'firework.wav',
+    'firework2.wav',
+    'firework3.wav',
+    'pipette.wav',
+    'unlock.wav',
+    'new_category.wav',
+    'catmode-empty_square.wav',
+    'catmode-failure.wav',
+    'catmode-fill_square1.wav',
+    'catmode-fill_square2.wav',
+    'catmode-fill_square3.wav',
+    'catmode-fill_square4.wav',
+    'catmode-fill_square5.wav',
+    'catmode-success.wav'
+    ]
+
+unwanted_gfx = [
+    'background_designer.png',
+    'background_present.png',
+    'button_designer_back.png',
+    'button_designer_copy.png',
+    'button_designer_create.png',
+    'button_designer_delete.png',
+    'button_designer_edit.png',
+    'button_designer_fill.png',
+    'button_designer_help.png',
+    'button_designer_move_down.png',
+    'button_designer_move_up.png',
+    'button_designer_name.png',
+    'button_designer_paint.png',
+    'button_designer_puzzle.png',
+    'button_designer_redo.png',
+    'button_designer_save.png',
+    'button_designer_size.png',
+    'button_designer_test.png',
+    'button_designer_undo.png',
+    'button_sharing_delete.png',
+    'button_sharing_download.png',
+    'button_sharing_next.png',
+    'button_sharing_play.png',
+    'button_sharing_prev.png',
+    'button_sharing_tab_downloaded.png',
+    'button_sharing_tab_my_puzzles.png',
+    'button_sharing_tab_newest.png',
+    'button_sharing_tab_top.png',
+    'button_sharing_tab_top_week.png',
+    'button_sharing_upload.png',
+    'designer_throbber.png',
+    'palette_cursor.png',
+    'puzzle_cell_black_designer.png',
+    'reward_star.png',
+    'title_firework.png',
+    'sharing_rating_stars.png',
+    'verify_status.png',
+    ]
+
+
+
 def walk_subdirs(path_dir):
     list = [name for name in os.listdir(path_dir) if os.path.isdir(os.path.join(path_dir, name)) and name[0] != '.']
     list.sort()
