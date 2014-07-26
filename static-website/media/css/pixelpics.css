@@ -40,7 +40,7 @@ nav.navbar .navbar-left .stompyblondie
   height: 93px;
   width: 130px;
   background-image: url('../img/header_stompyblondie_logo.png');
-  background-repeat: none;
+  background-repeat: no-repeat];
   background-size: 128px 94px;
   position: absolute;
   z-index: 100;
@@ -147,9 +147,58 @@ nav.navbar .navbar-collapse
 
 .demo-section
 {
-  padding: 40px 0;
+  padding: 20px 0;
   text-align: center;
   background: #fff;
+}
+
+.demo-section ul
+{ 
+  list-style-type: none;
+  /*margin: 30px 0 0 0;*/
+  margin: 0;
+  padding: 0;
+}
+
+.demo-section li
+{ 
+  font-family: 'Open Sans';
+  font-size: 27px;
+  webkit-border-radius: 10px;
+  moz-border-radius: 10px;
+  border-radius: 10px;
+  color: #000;
+  margin: 10px;
+  padding: 5px;
+  font-weight: bold:
+  text-align: left;
+  background-repeat: no-repeat;
+  background-position: 10px 9px; 
+}
+
+.demo-section a
+{ 
+  text-align: left;
+  margin-left: 50px;
+  color: #222 !important;
+  display: block;
+  width: 100%;
+}
+.demo-section a:hover
+{
+  color: #555 !important;
+}
+
+.demo-section ul.windows li
+{
+  background-image: url('../img/windows-icon.png');
+  background-color: #9ff1ac;
+}
+
+.demo-section ul.linux li
+{
+  background-image: url('../img/linux-icon.png');
+  background-color: #9fc7f1;
 }
 
 /*************
@@ -277,9 +326,14 @@ nav.navbar .navbar-collapse
 
 
 
-section#footer {
+section#footer
+{
   width: 100%;
   height: 60px;
-  background-color: #f5f5f5;
-  margin-top: 30px;
+  background-color: #fff;
+  text-align: center;
+  padding-top: 20px;
+  font-size: 14px;
+  font-family: 'Open Sans';
+  font-weight: bold;
 }
