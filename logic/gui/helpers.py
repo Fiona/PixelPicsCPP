@@ -5,10 +5,11 @@ Copyright (c) 2014 Stompy Blondie Games http://stompyblondie.com
 
 # python imports
 import os
-import urllib2
 import json
+import urllib2
 
 if os.name == 'nt':
+    import urllib
     import threading
 else:
     import multiprocessing
@@ -68,9 +69,8 @@ if os.name == 'nt':
             data = json.dumps(data)
             response = None
             try:
-                req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
-                opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=2))
-                f = opener.open(req)
+                #import urllib
+                f = urllib.urlopen(url, data)
                 response = f.read()
                 queue.put(response)
                 f.close()
@@ -97,7 +97,7 @@ class Net_Process_POST(object):
         self.url = url
         self.data = data
         self.response = None
-        self.running = True
+        self.running = False
         self.got_error = False
 
         if os.name == 'nt':
@@ -110,7 +110,7 @@ class Net_Process_POST(object):
             print "----------------"
             print "Starting POST net thread to: ", self.url
             print "Sending: ", self.data
-
+        self.running = True        
         self.process.start()
 
 
